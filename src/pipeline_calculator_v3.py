@@ -327,24 +327,39 @@ class PipelineAnalyzer:
             
             if len(current_section) * self.segment_length >= self.min_parallel_length:
                 continuous_sections.append(current_section)
-            
+
             for section in continuous_sections:
                 bundled_length = len(section) * self.segment_length
                 avg_distance = np.mean([s['distance'] for s in section])
-                
+
+                # Compute a representative center point for this bundled section
+                centers = []
+                for seg in section:
+                    mid1 = pipelines[p1_idx]['segments'][seg['pipeline_1_segment']]['midpoint']
+                    mid2 = pipelines[p2_idx]['segments'][seg['pipeline_2_segment']]['midpoint']
+                    centers.append(((mid1[0] + mid2[0]) * 0.5, (mid1[1] + mid2[1]) * 0.5))
+
+                center_lon = float(np.mean([c[0] for c in centers]))
+                center_lat = float(np.mean([c[1] for c in centers]))
+
                 for seg in section:
                     bundled_segments[p1_idx].add(seg['pipeline_1_segment'])
                     bundled_segments[p2_idx].add(seg['pipeline_2_segment'])
-                
+
                 results['bundled_sections'].append({
                     'pipeline_1': pipelines[p1_idx]['name'],
                     'pipeline_2': pipelines[p2_idx]['name'],
                     'bundled_length_meters': bundled_length,
                     'bundled_length_miles': bundled_length / self.survey_mile,
                     'average_separation': avg_distance,
-                    'segment_count': len(section)
+                    'segment_count': len(section),
+                    'center_lon': center_lon,
+                    'center_lat': center_lat,
                 })
-        
+
+        # Sort bundled sections by length (miles) in descending order
+        results['bundled_sections'].sort(key=lambda s: s['bundled_length_miles'], reverse=True)
+
         # Calculate per-pipeline overlaps
         for p_idx, pipeline in enumerate(pipelines):
             bundled_count = len(bundled_segments[p_idx])
@@ -767,7 +782,49 @@ class PipelineCalculatorGUI:
         ))
         
         tree.pack(fill="both", expand=True, padx=10, pady=10)
-    
+
+    def save_overlap_kml(self, section, index):
+        """Write a 1-placemark KML at the bundled section's center and open it."""
+        base_name = os.path.splitext(os.path.basename(self.current_file))[0]
+        default_name = f"{base_name}_overlap_{index:03d}.kml"
+
+        path = filedialog.asksaveasfilename(
+            defaultextension='.kml',
+            initialfile=default_name,
+            filetypes=[('KML files', '*.kml')]
+        )
+        if not path:
+            return
+
+        lon = section.get('center_lon')
+        lat = section.get('center_lat')
+        label = (f"{section['pipeline_1']} ↔ {section['pipeline_2']} "
+                 f"({section['bundled_length_miles']:.3f} mi, "
+                 f"{section['average_separation']:.1f} m)")
+
+        kml = f'''<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <Placemark>
+      <name>{label}</name>
+      <Point><coordinates>{lon:.7f},{lat:.7f},0</coordinates></Point>
+    </Placemark>
+  </Document>
+</kml>'''
+
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(kml)
+
+        try:
+            if sys.platform.startswith('win'):
+                os.startfile(path)  # nosec - user-chosen path
+            elif sys.platform == 'darwin':
+                subprocess.run(['open', path], check=False)
+            else:
+                subprocess.run(['xdg-open', path], check=False)
+        except Exception:
+            pass
+
     def create_overlap_tab(self, parent):
         """Create overlap analysis details tab."""
         overlap = self.current_results['overlap_analysis']
@@ -781,18 +838,22 @@ class PipelineCalculatorGUI:
                     font=("Arial", 16, "bold")).pack(pady=10)
         
         if overlap['bundled_sections']:
-            for section in overlap['bundled_sections']:
+            for idx, section in enumerate(overlap['bundled_sections'], start=1):
                 section_frame = ctk.CTkFrame(scroll_frame)
                 section_frame.pack(fill="x", padx=20, pady=5)
-                
+
                 text = f"{section['pipeline_1']} ↔ {section['pipeline_2']}\n"
                 text += f"Length: {section['bundled_length_miles']:.3f} miles | "
                 text += f"Avg Separation: {section['average_separation']:.1f} m"
-                
-                ctk.CTkLabel(section_frame, text=text, 
+
+                ctk.CTkLabel(section_frame, text=text,
                            font=("Arial", 12)).pack(pady=5)
+
+                ctk.CTkButton(section_frame, text="View in G.E",
+                               command=lambda s=section, i=idx: self.save_overlap_kml(s, i)
+                               ).pack(anchor="w", padx=8, pady=2)
         else:
-            ctk.CTkLabel(scroll_frame, 
+            ctk.CTkLabel(scroll_frame,
                         text="No bundled sections found with current parameters",
                         font=("Arial", 12)).pack()
     
