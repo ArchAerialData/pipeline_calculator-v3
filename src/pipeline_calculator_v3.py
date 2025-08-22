@@ -311,12 +311,16 @@ class PipelineAnalyzer:
                 continue
             
             segments.sort(key=lambda x: x['pipeline_1_segment'])
-            
+
             # Find continuous sections
             continuous_sections = []
-            current_section = [segments[0]]
-            
-            for seg in segments[1:]:
+            current_section = []
+
+            for seg in segments:
+                if not current_section:
+                    current_section = [seg]
+                    continue
+
                 if (seg['pipeline_1_segment'] - current_section[-1]['pipeline_1_segment'] <= 2 and
                     seg['pipeline_2_segment'] - current_section[-1]['pipeline_2_segment'] <= 2):
                     current_section.append(seg)
@@ -324,8 +328,8 @@ class PipelineAnalyzer:
                     if len(current_section) * self.segment_length >= self.min_parallel_length:
                         continuous_sections.append(current_section)
                     current_section = [seg]
-            
-            if len(current_section) * self.segment_length >= self.min_parallel_length:
+
+            if current_section and len(current_section) * self.segment_length >= self.min_parallel_length:
                 continuous_sections.append(current_section)
 
             for section in continuous_sections:
@@ -425,6 +429,7 @@ class PipelineCalculatorGUI:
     
     def __init__(self):
         self.root = TkinterDnD.Tk()
+        self._set_app_icon()
         self.analyzer = PipelineAnalyzer()
         self.current_results = None
         self.current_file = None
@@ -436,6 +441,27 @@ class PipelineCalculatorGUI:
         self.angular_tolerance_var = DoubleVar(value=ANGULAR_TOLERANCE)
         
         self.setup_gui()
+
+    def _set_app_icon(self):
+        """Configure window icon for supported platforms."""
+        try:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            system = platform.system()
+            if system == "Windows":
+                icon_path = os.path.join(base_dir, "icon.ico")
+                if os.path.exists(icon_path):
+                    self.root.iconbitmap(icon_path)
+            elif system == "Darwin":
+                icon_path = os.path.join(base_dir, "icon.icns")
+                if os.path.exists(icon_path):
+                    self.root.iconbitmap(icon_path)
+            else:
+                icon_path = os.path.join(base_dir, "icon.ico")
+                if os.path.exists(icon_path):
+                    from tkinter import PhotoImage
+                    self.root.iconphoto(False, PhotoImage(file=icon_path))
+        except Exception:
+            pass
     
     def setup_gui(self):
         """Initialize the main GUI."""
