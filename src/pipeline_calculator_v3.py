@@ -378,8 +378,8 @@ class PipelineAnalyzer:
             }
         
         # Calculate totals
-        total_bundled = sum(len(section['segment_count']) * self.segment_length 
-                          for section in results['bundled_sections'])
+        total_bundled = sum(section['segment_count'] * self.segment_length
+                            for section in results['bundled_sections'])
         results['total_bundled_length'] = total_bundled
         
         if progress_callback:
@@ -623,10 +623,20 @@ class PipelineCalculatorGUI:
     
     def show_results(self):
         """Display analysis results."""
+        # Ensure window is visible and fully opaque
+        self.root.deiconify()
+        try:
+            self.root.attributes("-alpha", 1.0)
+            self.root.lift()
+            # Set a solid background to avoid transparency artifacts
+            self.root.configure(bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"])
+        except Exception:
+            pass
+
         # Clear window
         for widget in self.root.winfo_children():
             widget.destroy()
-        
+
         self.root.title(f"Pipeline Calculator v{__version__} - Results")
         self.root.geometry("1200x800")
         

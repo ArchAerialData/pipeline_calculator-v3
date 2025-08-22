@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+*.egg
+
+# Build directories
+build/
+dist/
+
+# Virtual environments
+.venv/
+venv/
+
+# OS files
+.DS_Store
+
+# PyInstaller
+*.spec
+
+# Logs
+*.log
