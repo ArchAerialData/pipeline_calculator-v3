@@ -24,6 +24,7 @@ import threading
 import json
 from datetime import datetime
 import warnings
+import re
 warnings.filterwarnings('ignore')
 
 # Version info
@@ -49,96 +50,74 @@ class PipelineAnalyzer:
         self.angular_tolerance = ANGULAR_TOLERANCE
         
     def extract_features_from_file(self, file_path, progress_callback=None):
-        """Extract all features from KMZ/KML file."""
-        # Extract KML content
-        if file_path.lower().endswith('.kmz'):
-            with zipfile.ZipFile(file_path, 'r') as kmz:
+        """Extract all features from KMZ/KML file in a memory-efficient way."""
+
+        def _open_kml(path):
+            if path.lower().endswith('.kmz'):
+                kmz = zipfile.ZipFile(path, 'r')
                 kml_files = [f for f in kmz.namelist() if f.lower().endswith('.kml')]
                 if not kml_files:
                     raise ValueError("No KML file found in KMZ archive")
-                with kmz.open(kml_files[0]) as kml:
-                    kml_content = kml.read().decode('utf-8', errors='ignore')
-        else:
-            with open(file_path, 'r', encoding='utf-8') as kml:
-                kml_content = kml.read()
-        
-        # Parse XML
-        root = ET.fromstring(kml_content)
-        
-        # Find namespace
-        namespace_patterns = [
-            {'kml': 'http://www.opengis.net/kml/2.2'},
-            {'kml': 'http://earth.google.com/kml/2.2'},
-            {'kml': 'http://earth.google.com/kml/2.1'},
-            None
-        ]
-        
-        placemarks = []
-        namespace = None
-        
-        for ns in namespace_patterns:
-            if ns:
-                found_placemarks = root.findall('.//kml:Placemark', ns)
-            else:
-                found_placemarks = root.findall('.//Placemark')
-            
-            if found_placemarks:
-                placemarks = found_placemarks
-                namespace = ns
-                break
-        
-        if not placemarks:
-            raise ValueError("No Placemarks found in KML file")
-        
+                return kmz, kmz.open(kml_files[0])
+            return None, open(path, 'rb')
+
+        kmz, kml_file = _open_kml(file_path)
+
         pipelines = []
         placemark_data = []
         pipeline_count = 0
         placemark_count = 0
-        
-        total_placemarks = len(placemarks)
-        
-        for i, placemark in enumerate(placemarks):
-            if progress_callback:
-                progress = (i + 1) / total_placemarks * 0.5  # First half of progress
-                progress_callback(progress)
-            
-            # Extract name
-            if namespace:
-                name_elem = placemark.find('kml:name', namespace)
-            else:
-                name_elem = placemark.find('name')
-            name = name_elem.text.strip() if name_elem is not None and name_elem.text else f'Item_{i+1}'
-            
-            # Extract OBJECTID
-            objectid = self._extract_objectid(placemark, namespace)
-            
-            # Extract coordinates
-            coords = self._extract_coordinates(placemark, namespace)
-            
-            if coords:
-                # Check geometry type
-                has_linestring = self._has_linestring(placemark, namespace)
-                has_point = self._has_point(placemark, namespace)
-                
-                # Process as pipeline if LineString or multiple coords
-                if has_linestring or (len(coords) >= 2 and not has_point):
-                    pipeline_count += 1
-                    pipelines.append({
-                        'id': pipeline_count - 1,
-                        'objectid': objectid,
-                        'name': name,
-                        'coordinates': coords
-                    })
-                    
-                # Process as placemark if Point or single coord
-                elif has_point or len(coords) == 1:
-                    placemark_count += 1
-                    placemark_data.append({
-                        'Placemark_ID': objectid if objectid != 'N/A' else f'PM_{placemark_count}',
-                        'Name': name,
-                        'Count': 1
-                    })
-        
+
+        try:
+            context = ET.iterparse(kml_file, events=("start", "end"))
+            _, root = next(context)  # get root element
+            ns_match = re.match(r"\{(.*)\}", root.tag)
+            ns = ns_match.group(1) if ns_match else ''
+            namespace = {'kml': ns} if ns else None
+
+            for event, elem in context:
+                if event == 'end' and elem.tag.endswith('Placemark'):
+                    # Extract name
+                    if namespace:
+                        name_elem = elem.find('kml:name', namespace)
+                    else:
+                        name_elem = elem.find('name')
+                    item_index = pipeline_count + placemark_count + 1
+                    name = name_elem.text.strip() if name_elem is not None and name_elem.text else f'Item_{item_index}'
+
+                    # Extract OBJECTID
+                    objectid = self._extract_objectid(elem, namespace)
+
+                    # Extract coordinates
+                    coords = self._extract_coordinates(elem, namespace)
+
+                    if coords:
+                        has_linestring = self._has_linestring(elem, namespace)
+                        has_point = self._has_point(elem, namespace)
+
+                        if has_linestring or (len(coords) >= 2 and not has_point):
+                            pipeline_count += 1
+                            pipelines.append({
+                                'id': pipeline_count - 1,
+                                'objectid': objectid,
+                                'name': name,
+                                'coordinates': coords
+                            })
+                        elif has_point or len(coords) == 1:
+                            placemark_count += 1
+                            placemark_data.append({
+                                'Placemark_ID': objectid if objectid != 'N/A' else f'PM_{placemark_count}',
+                                'Name': name,
+                                'Count': 1
+                            })
+
+                    elem.clear()
+
+        finally:
+            kml_file.close()
+            if kmz:
+                kmz.close()
+
         return pipelines, placemark_data
     
     def _extract_objectid(self, placemark, namespace):
@@ -557,69 +536,45 @@ class PipelineCalculatorGUI:
         self.analyzer.segment_length = self.segment_length_var.get()
         self.analyzer.angular_tolerance = self.angular_tolerance_var.get()
         
-        # Create progress window
-        progress_window = ctk.CTkToplevel(self.root)
-        progress_window.title("Processing...")
-        progress_window.geometry("450x220")
-        progress_window.resizable(False, False)
-        
-        # Center progress window
-        progress_window.update_idletasks()
-        x = (progress_window.winfo_screenwidth() // 2) - (progress_window.winfo_width() // 2)
-        y = (progress_window.winfo_screenheight() // 2) - (progress_window.winfo_height() // 2)
-        progress_window.geometry(f"+{x}+{y}")
-        
-        # Progress content
-        progress_frame = ctk.CTkFrame(progress_window)
-        progress_frame.pack(expand=True, fill="both", padx=20, pady=20)
-        
-        status_label = ctk.CTkLabel(progress_frame, 
-                                   text="Analyzing pipelines and overlaps...", 
+        # Create in-window progress overlay
+        progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
+        progress_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        status_label = ctk.CTkLabel(progress_frame,
+                                   text="Analyzing pipelines and overlaps...",
                                    font=("Arial", 14))
-        status_label.pack(pady=20)
-        
-        progress_bar = ctk.CTkProgressBar(progress_frame, width=300)
+        status_label.pack(pady=20, padx=20)
+
+        progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
         progress_bar.pack(pady=10)
-        progress_bar.set(0)
-        
-        file_label = ctk.CTkLabel(progress_frame, 
-                                 text=f"File: {os.path.basename(file_path)}", 
-                                 font=("Arial", 10), 
-                                 text_color="#CCCCCC")
-        file_label.pack(pady=10)
-        
-        progress_window.update()
-        
-        # Progress callback
-        def update_progress(progress):
-            self.root.after(0, lambda: progress_bar.set(progress))
-        
+        progress_bar.start()
+
         # Worker thread
         result_holder = {}
-        
+
         def worker():
             try:
-                result = self.analyzer.analyze_complete(file_path, update_progress)
-                result_holder['result'] = result
+                result_holder['result'] = self.analyzer.analyze_complete(file_path)
             except Exception as e:
                 result_holder['error'] = e
-        
+
         thread = threading.Thread(target=worker, daemon=True)
         thread.start()
-        
+
         # Check thread completion
         def check_thread():
             if thread.is_alive():
                 self.root.after(100, check_thread)
             else:
-                progress_window.destroy()
+                progress_bar.stop()
+                progress_frame.destroy()
                 if 'error' in result_holder:
                     messagebox.showerror("Processing Error", str(result_holder['error']))
                     self.show_file_selection()
                 else:
                     self.current_results = result_holder['result']
                     self.show_results()
-        
+
         check_thread()
     
     def show_results(self):
@@ -867,55 +822,49 @@ class PipelineCalculatorGUI:
         tree.pack(fill="both", expand=True, padx=10, pady=10)
     
     def reanalyze(self):
-        """Show parameter dialog and reanalyze."""
-        # Create parameter dialog
-        dialog = ctk.CTkToplevel(self.root)
-        dialog.title("Adjust Analysis Parameters")
-        dialog.geometry("500x400")
-        
-        # Center dialog
-        dialog.update_idletasks()
-        x = (dialog.winfo_screenwidth() // 2) - (dialog.winfo_width() // 2)
-        y = (dialog.winfo_screenheight() // 2) - (dialog.winfo_height() // 2)
-        dialog.geometry(f"+{x}+{y}")
-        
-        # Parameters
-        ctk.CTkLabel(dialog, text="Adjust Analysis Parameters", 
-                    font=("Arial", 16, "bold")).pack(pady=10)
-        
+        """Show in-window parameter editor and reanalyze."""
+        if getattr(self, 'param_frame', None):
+            try:
+                self.param_frame.destroy()
+            except Exception:
+                pass
+
+        self.param_frame = ctk.CTkFrame(self.root, corner_radius=10)
+        self.param_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+        ctk.CTkLabel(self.param_frame, text="Adjust Analysis Parameters",
+                    font=("Arial", 16, "bold")).pack(pady=10, padx=20)
+
         # Detection range
-        detection_frame = ctk.CTkFrame(dialog)
+        detection_frame = ctk.CTkFrame(self.param_frame)
         detection_frame.pack(fill="x", padx=20, pady=10)
         ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-        detection_entry = ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var)
-        detection_entry.pack(side="left")
-        
+        ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var).pack(side="left")
+
         # Min parallel
-        parallel_frame = ctk.CTkFrame(dialog)
+        parallel_frame = ctk.CTkFrame(self.param_frame)
         parallel_frame.pack(fill="x", padx=20, pady=10)
         ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-        parallel_entry = ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var)
-        parallel_entry.pack(side="left")
-        
+        ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var).pack(side="left")
+
         # Angular tolerance
-        angular_frame = ctk.CTkFrame(dialog)
+        angular_frame = ctk.CTkFrame(self.param_frame)
         angular_frame.pack(fill="x", padx=20, pady=10)
         ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
-        angular_entry = ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var)
-        angular_entry.pack(side="left")
-        
+        ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var).pack(side="left")
+
         # Buttons
-        button_frame = ctk.CTkFrame(dialog)
+        button_frame = ctk.CTkFrame(self.param_frame)
         button_frame.pack(pady=20)
-        
+
         def apply_and_analyze():
-            dialog.destroy()
+            self.param_frame.destroy()
             self.process_file(self.current_file)
-        
-        ctk.CTkButton(button_frame, text="Apply & Reanalyze", 
+
+        ctk.CTkButton(button_frame, text="Apply & Reanalyze",
                      command=apply_and_analyze).pack(side="left", padx=5)
-        ctk.CTkButton(button_frame, text="Cancel", 
-                     command=dialog.destroy).pack(side="left", padx=5)
+        ctk.CTkButton(button_frame, text="Cancel",
+                     command=self.param_frame.destroy).pack(side="left", padx=5)
     
     def export_results(self):
         """Export analysis results."""
