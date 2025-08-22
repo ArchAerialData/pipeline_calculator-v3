@@ -380,6 +380,7 @@ class PipelineAnalyzer:
         # Calculate totals
         total_bundled = sum(section['segment_count'] * self.segment_length
                             for section in results['bundled_sections'])
+  
         results['total_bundled_length'] = total_bundled
         
         if progress_callback:
