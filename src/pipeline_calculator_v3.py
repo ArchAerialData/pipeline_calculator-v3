@@ -2,7 +2,7 @@
 """
 Pipeline Calculator with Overlap Analysis - KMZ/KML Pipeline Calculator
 Enhanced version with overlap detection and bundling analysis
-Version: 3.0.0
+Version: 3.0.0 - Fixed
 """
 
 import subprocess
@@ -28,7 +28,7 @@ import re
 warnings.filterwarnings('ignore')
 
 # Version info
-__version__ = "3.0.0"
+__version__ = "3.0.0-fixed"
 __author__ = "Pipeline Calculator Team"
 
 # Default analysis parameters
@@ -53,13 +53,16 @@ class PipelineAnalyzer:
         """Extract all features from KMZ/KML file in a memory-efficient way."""
 
         def _open_kml(path):
-            if path.lower().endswith('.kmz'):
-                kmz = zipfile.ZipFile(path, 'r')
-                kml_files = [f for f in kmz.namelist() if f.lower().endswith('.kml')]
-                if not kml_files:
-                    raise ValueError("No KML file found in KMZ archive")
-                return kmz, kmz.open(kml_files[0])
-            return None, open(path, 'rb')
+            try:
+                if path.lower().endswith('.kmz'):
+                    kmz = zipfile.ZipFile(path, 'r')
+                    kml_files = [f for f in kmz.namelist() if f.lower().endswith('.kml')]
+                    if not kml_files:
+                        raise ValueError("No KML file found in KMZ archive")
+                    return kmz, kmz.open(kml_files[0])
+                return None, open(path, 'rb')
+            except Exception as e:
+                raise ValueError(f"Failed to open file: {str(e)}")
 
         kmz, kml_file = _open_kml(file_path)
 
@@ -69,108 +72,143 @@ class PipelineAnalyzer:
         placemark_count = 0
 
         try:
-            context = ET.iterparse(kml_file, events=("start", "end"))
-            _, root = next(context)  # get root element
+            # Parse XML with better error handling
+            try:
+                context = ET.iterparse(kml_file, events=("start", "end"))
+                _, root = next(context)  # get root element
+            except (StopIteration, ET.ParseError) as e:
+                raise ValueError(f"Invalid or empty KML/KMZ file: {str(e)}")
+            
+            # Extract namespace safely
             ns_match = re.match(r"\{(.*)\}", root.tag)
             ns = ns_match.group(1) if ns_match else ''
             namespace = {'kml': ns} if ns else None
 
             for event, elem in context:
                 if event == 'end' and elem.tag.endswith('Placemark'):
-                    # Extract name
-                    if namespace:
-                        name_elem = elem.find('kml:name', namespace)
-                    else:
-                        name_elem = elem.find('name')
-                    item_index = pipeline_count + placemark_count + 1
-                    name = name_elem.text.strip() if name_elem is not None and name_elem.text else f'Item_{item_index}'
+                    try:
+                        # Extract name safely
+                        if namespace:
+                            name_elem = elem.find('kml:name', namespace)
+                        else:
+                            name_elem = elem.find('name')
+                        
+                        item_index = pipeline_count + placemark_count + 1
+                        name = (name_elem.text.strip() if name_elem is not None 
+                               and name_elem.text and name_elem.text.strip() 
+                               else f'Item_{item_index}')
 
-                    # Extract OBJECTID
-                    objectid = self._extract_objectid(elem, namespace)
+                        # Extract OBJECTID
+                        objectid = self._extract_objectid(elem, namespace)
 
-                    # Extract coordinates
-                    coords = self._extract_coordinates(elem, namespace)
+                        # Extract coordinates
+                        coords = self._extract_coordinates(elem, namespace)
 
-                    if coords:
-                        has_linestring = self._has_linestring(elem, namespace)
-                        has_point = self._has_point(elem, namespace)
+                        if coords and len(coords) > 0:
+                            has_linestring = self._has_linestring(elem, namespace)
+                            has_point = self._has_point(elem, namespace)
 
-                        if has_linestring or (len(coords) >= 2 and not has_point):
-                            pipeline_count += 1
-                            pipelines.append({
-                                'id': pipeline_count - 1,
-                                'objectid': objectid,
-                                'name': name,
-                                'coordinates': coords
-                            })
-                        elif has_point or len(coords) == 1:
-                            placemark_count += 1
-                            placemark_data.append({
-                                'Placemark_ID': objectid if objectid != 'N/A' else f'PM_{placemark_count}',
-                                'Name': name,
-                                'Count': 1
-                            })
+                            if has_linestring or (len(coords) >= 2 and not has_point):
+                                pipeline_count += 1
+                                pipelines.append({
+                                    'id': pipeline_count - 1,
+                                    'objectid': objectid,
+                                    'name': name,
+                                    'coordinates': coords
+                                })
+                            elif has_point or len(coords) == 1:
+                                placemark_count += 1
+                                placemark_data.append({
+                                    'Placemark_ID': objectid if objectid != 'N/A' else f'PM_{placemark_count}',
+                                    'Name': name,
+                                    'Count': 1
+                                })
+                    except Exception as e:
+                        # Skip malformed placemarks but continue processing
+                        print(f"Warning: Skipping malformed placemark: {str(e)}")
+                        continue
+                    finally:
+                        elem.clear()
 
-                    elem.clear()
-
+        except Exception as e:
+            raise ValueError(f"Error parsing KML data: {str(e)}")
         finally:
-            kml_file.close()
-            if kmz:
-                kmz.close()
+            try:
+                kml_file.close()
+                if kmz:
+                    kmz.close()
+            except:
+                pass
 
         return pipelines, placemark_data
     
     def _extract_objectid(self, placemark, namespace):
-        """Extract OBJECTID from placemark."""
-        objectid = 'N/A'
-        if namespace:
-            objectid_elem = placemark.find('.//kml:Data[@name="OBJECTID"]/kml:value', namespace)
-            if objectid_elem is None:
-                objectid_elem = placemark.find('.//kml:SimpleData[@name="OBJECTID"]', namespace)
-        else:
-            objectid_elem = placemark.find('.//Data[@name="OBJECTID"]/value')
-            if objectid_elem is None:
-                objectid_elem = placemark.find('.//SimpleData[@name="OBJECTID"]')
-        
-        if objectid_elem is not None and objectid_elem.text:
-            objectid = objectid_elem.text.strip()
-        return objectid
+        """Extract OBJECTID from placemark safely."""
+        try:
+            objectid = 'N/A'
+            if namespace:
+                objectid_elem = placemark.find('.//kml:Data[@name="OBJECTID"]/kml:value', namespace)
+                if objectid_elem is None:
+                    objectid_elem = placemark.find('.//kml:SimpleData[@name="OBJECTID"]', namespace)
+            else:
+                objectid_elem = placemark.find('.//Data[@name="OBJECTID"]/value')
+                if objectid_elem is None:
+                    objectid_elem = placemark.find('.//SimpleData[@name="OBJECTID"]')
+            
+            if objectid_elem is not None and objectid_elem.text:
+                objectid = objectid_elem.text.strip()
+            return objectid
+        except:
+            return 'N/A'
     
     def _has_linestring(self, placemark, namespace):
         """Check if placemark has LineString geometry."""
-        if namespace:
-            return placemark.find('.//kml:LineString', namespace) is not None
-        return placemark.find('.//LineString') is not None
+        try:
+            if namespace:
+                return placemark.find('.//kml:LineString', namespace) is not None
+            return placemark.find('.//LineString') is not None
+        except:
+            return False
     
     def _has_point(self, placemark, namespace):
         """Check if placemark has Point geometry."""
-        if namespace:
-            return placemark.find('.//kml:Point', namespace) is not None
-        return placemark.find('.//Point') is not None
+        try:
+            if namespace:
+                return placemark.find('.//kml:Point', namespace) is not None
+            return placemark.find('.//Point') is not None
+        except:
+            return False
     
     def _extract_coordinates(self, placemark, namespace):
-        """Extract and parse coordinates from placemark."""
-        if namespace:
-            coords_elem = placemark.find('.//kml:coordinates', namespace)
-        else:
-            coords_elem = placemark.find('.//coordinates')
-        
-        coords = []
-        if coords_elem is not None and coords_elem.text:
-            coords_text = coords_elem.text.strip()
+        """Extract and parse coordinates from placemark safely."""
+        try:
+            if namespace:
+                coords_elem = placemark.find('.//kml:coordinates', namespace)
+            else:
+                coords_elem = placemark.find('.//coordinates')
             
-            for coord_str in coords_text.replace('\n', ' ').replace('\t', ' ').split():
-                if coord_str.strip():
+            coords = []
+            if coords_elem is not None and coords_elem.text:
+                coords_text = coords_elem.text.strip()
+                
+                for coord_str in coords_text.replace('\n', ' ').replace('\t', ' ').split():
+                    coord_str = coord_str.strip()
+                    if not coord_str:
+                        continue
+                        
                     try:
                         parts = coord_str.split(',')
                         if len(parts) >= 2:
                             lon = float(parts[0])
                             lat = float(parts[1])
+                            # Validate coordinate ranges
                             if -180 <= lon <= 180 and -90 <= lat <= 90:
                                 coords.append((lon, lat))
                     except (ValueError, IndexError):
                         continue
-        return coords
+            return coords
+        except:
+            return []
     
     def calculate_pipeline_lengths(self, pipelines):
         """Calculate individual pipeline lengths."""
@@ -182,11 +220,19 @@ class PipelineAnalyzer:
             length_meters = 0
             coords = pipeline['coordinates']
             
+            # Ensure we have at least 2 coordinates
+            if len(coords) < 2:
+                continue
+                
             for i in range(len(coords) - 1):
-                lon1, lat1 = coords[i]
-                lon2, lat2 = coords[i + 1]
-                _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
-                length_meters += abs(distance)
+                try:
+                    lon1, lat1 = coords[i]
+                    lon2, lat2 = coords[i + 1]
+                    _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                    length_meters += abs(distance)
+                except Exception as e:
+                    print(f"Warning: Error calculating distance for pipeline {pipeline['name']}: {str(e)}")
+                    continue
             
             length_miles = length_meters / self.survey_mile
             
@@ -205,38 +251,46 @@ class PipelineAnalyzer:
     def segment_pipeline(self, coordinates):
         """Break pipeline into fixed-length segments for analysis."""
         segments = []
+        
+        # Ensure we have at least 2 coordinates
+        if len(coordinates) < 2:
+            return segments
+            
         accumulated_distance = 0
         
-        for i in range(len(coordinates) - 1):
-            lon1, lat1 = coordinates[i]
-            lon2, lat2 = coordinates[i + 1]
-            
-            azimuth, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
-            accumulated_distance += distance
-            
-            while accumulated_distance >= self.segment_length:
-                ratio = (self.segment_length - (accumulated_distance - distance)) / distance
-                mid_lon = lon1 + ratio * (lon2 - lon1)
-                mid_lat = lat1 + ratio * (lat2 - lat1)
+        try:
+            for i in range(len(coordinates) - 1):
+                lon1, lat1 = coordinates[i]
+                lon2, lat2 = coordinates[i + 1]
                 
-                segments.append({
-                    'midpoint': (mid_lon, mid_lat),
-                    'bearing': azimuth,
-                    'length': self.segment_length,
-                    'segment_index': len(segments)
-                })
+                azimuth, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                accumulated_distance += distance
                 
-                accumulated_distance -= self.segment_length
-                lon1, lat1 = mid_lon, mid_lat
+                while accumulated_distance >= self.segment_length:
+                    ratio = (self.segment_length - (accumulated_distance - distance)) / distance
+                    mid_lon = lon1 + ratio * (lon2 - lon1)
+                    mid_lat = lat1 + ratio * (lat2 - lat1)
+                    
+                    segments.append({
+                        'midpoint': (mid_lon, mid_lat),
+                        'bearing': azimuth,
+                        'length': self.segment_length,
+                        'segment_index': len(segments)
+                    })
+                    
+                    accumulated_distance -= self.segment_length
+                    lon1, lat1 = mid_lon, mid_lat
+        except Exception as e:
+            print(f"Warning: Error segmenting pipeline: {str(e)}")
         
         return segments
     
     def find_parallel_segments(self, pipelines, progress_callback=None):
         """Identify pipeline segments that run parallel within detection range."""
         # Segment all pipelines
-        for idx, pipeline in enumerate(pipelines):
+        for p_idx, pipeline in enumerate(pipelines):
             if progress_callback:
-                progress = 0.5 + (idx / len(pipelines)) * 0.25  # 50-75% progress
+                progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
                 progress_callback(progress)
             pipeline['segments'] = self.segment_pipeline(pipeline['coordinates'])
         
@@ -253,40 +307,70 @@ class PipelineAnalyzer:
         if not all_segments:
             return {}
         
-        points = np.array([(lon, lat) for lon, lat in all_segments])
-        tree = KDTree(points)
+        try:
+            points = np.array([(lon, lat) for lon, lat in all_segments])
+            tree = KDTree(points)
+        except Exception as e:
+            print(f"Warning: Error building spatial index: {str(e)}")
+            return {}
         
         # Find parallel segments
         parallel_groups = defaultdict(list)
         
         for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
-            nearby_indices = tree.query_ball_point(points[seg_idx], 
-                                                  self.detection_range / 111000)
-            
-            for near_idx in nearby_indices:
-                if near_idx == seg_idx:
-                    continue
+            try:
+                # Convert detection range from meters to approximate degrees
+                # This is approximate but should work for most cases
+                detection_range_deg = self.detection_range / 111000
                 
-                near_p_idx, near_segment = segment_to_pipeline[near_idx]
+                nearby_indices = tree.query_ball_point(points[seg_idx], detection_range_deg)
                 
-                if p_idx == near_p_idx:
-                    continue
-                
-                bearing_diff = abs(segment['bearing'] - near_segment['bearing'])
-                bearing_diff = min(bearing_diff, 360 - bearing_diff)
-                
-                if bearing_diff <= self.angular_tolerance:
-                    lon1, lat1 = segment['midpoint']
-                    lon2, lat2 = near_segment['midpoint']
-                    _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                for near_idx in nearby_indices:
+                    if near_idx == seg_idx:
+                        continue
                     
-                    if distance <= self.detection_range:
-                        key = tuple(sorted([p_idx, near_p_idx]))
-                        parallel_groups[key].append({
-                            'pipeline_1_segment': segment['segment_index'],
-                            'pipeline_2_segment': near_segment['segment_index'],
-                            'distance': distance
-                        })
+                    # Ensure near_idx is valid
+                    if near_idx not in segment_to_pipeline:
+                        continue
+                        
+                    near_p_idx, near_segment = segment_to_pipeline[near_idx]
+                    
+                    if p_idx == near_p_idx:
+                        continue
+                    
+                    # Check if bearings are similar (parallel)
+                    bearing_diff = abs(segment['bearing'] - near_segment['bearing'])
+                    bearing_diff = min(bearing_diff, 360 - bearing_diff)
+                    
+                    if bearing_diff <= self.angular_tolerance:
+                        # Calculate actual distance
+                        lon1, lat1 = segment['midpoint']
+                        lon2, lat2 = near_segment['midpoint']
+                        _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                        
+                        if distance <= self.detection_range:
+                            # CRITICAL FIX: Ensure segments are stored in correct order
+                            # based on the sorted pipeline indices
+                            key = tuple(sorted([p_idx, near_p_idx]))
+                            
+                            if key[0] == p_idx:
+                                # p_idx is smaller, so it comes first in the key
+                                parallel_groups[key].append({
+                                    'pipeline_1_segment': segment['segment_index'],
+                                    'pipeline_2_segment': near_segment['segment_index'],
+                                    'distance': distance
+                                })
+                            else:
+                                # near_p_idx is smaller, so it comes first in the key
+                                parallel_groups[key].append({
+                                    'pipeline_1_segment': near_segment['segment_index'],
+                                    'pipeline_2_segment': segment['segment_index'],
+                                    'distance': distance
+                                })
+                            
+            except Exception as e:
+                print(f"Warning: Error processing segment {seg_idx}: {str(e)}")
+                continue
         
         return parallel_groups
     
@@ -309,14 +393,23 @@ class PipelineAnalyzer:
         for (p1_idx, p2_idx), segments in parallel_groups.items():
             if not segments:
                 continue
+                
+            # Validate pipeline indices
+            if p1_idx >= len(pipelines) or p2_idx >= len(pipelines):
+                print(f"Warning: Invalid pipeline indices {p1_idx}, {p2_idx}")
+                continue
             
             segments.sort(key=lambda x: x['pipeline_1_segment'])
-            
+
             # Find continuous sections
             continuous_sections = []
-            current_section = [segments[0]]
-            
-            for seg in segments[1:]:
+            current_section = []
+
+            for seg in segments:
+                if not current_section:
+                    current_section = [seg]
+                    continue
+
                 if (seg['pipeline_1_segment'] - current_section[-1]['pipeline_1_segment'] <= 2 and
                     seg['pipeline_2_segment'] - current_section[-1]['pipeline_2_segment'] <= 2):
                     current_section.append(seg)
@@ -324,38 +417,56 @@ class PipelineAnalyzer:
                     if len(current_section) * self.segment_length >= self.min_parallel_length:
                         continuous_sections.append(current_section)
                     current_section = [seg]
-            
-            if len(current_section) * self.segment_length >= self.min_parallel_length:
+
+            if current_section and len(current_section) * self.segment_length >= self.min_parallel_length:
                 continuous_sections.append(current_section)
 
             for section in continuous_sections:
-                bundled_length = len(section) * self.segment_length
-                avg_distance = np.mean([s['distance'] for s in section])
+                try:
+                    bundled_length = len(section) * self.segment_length
+                    avg_distance = np.mean([s['distance'] for s in section])
 
-                # Compute a representative center point for this bundled section
-                centers = []
-                for seg in section:
-                    mid1 = pipelines[p1_idx]['segments'][seg['pipeline_1_segment']]['midpoint']
-                    mid2 = pipelines[p2_idx]['segments'][seg['pipeline_2_segment']]['midpoint']
-                    centers.append(((mid1[0] + mid2[0]) * 0.5, (mid1[1] + mid2[1]) * 0.5))
+                    # Compute a representative center point for this bundled section
+                    centers = []
+                    for seg in section:
+                        # CRITICAL FIX: Validate segment indices before accessing
+                        seg1_idx = seg['pipeline_1_segment']
+                        seg2_idx = seg['pipeline_2_segment']
+                        
+                        p1_segments = pipelines[p1_idx]['segments']
+                        p2_segments = pipelines[p2_idx]['segments']
+                        
+                        if seg1_idx >= len(p1_segments) or seg2_idx >= len(p2_segments):
+                            print(f"Warning: Invalid segment indices {seg1_idx}, {seg2_idx}")
+                            continue
+                            
+                        mid1 = p1_segments[seg1_idx]['midpoint']
+                        mid2 = p2_segments[seg2_idx]['midpoint']
+                        centers.append(((mid1[0] + mid2[0]) * 0.5, (mid1[1] + mid2[1]) * 0.5))
 
-                center_lon = float(np.mean([c[0] for c in centers]))
-                center_lat = float(np.mean([c[1] for c in centers]))
+                    if not centers:
+                        continue
+                        
+                    center_lon = float(np.mean([c[0] for c in centers]))
+                    center_lat = float(np.mean([c[1] for c in centers]))
 
-                for seg in section:
-                    bundled_segments[p1_idx].add(seg['pipeline_1_segment'])
-                    bundled_segments[p2_idx].add(seg['pipeline_2_segment'])
+                    for seg in section:
+                        bundled_segments[p1_idx].add(seg['pipeline_1_segment'])
+                        bundled_segments[p2_idx].add(seg['pipeline_2_segment'])
 
-                results['bundled_sections'].append({
-                    'pipeline_1': pipelines[p1_idx]['name'],
-                    'pipeline_2': pipelines[p2_idx]['name'],
-                    'bundled_length_meters': bundled_length,
-                    'bundled_length_miles': bundled_length / self.survey_mile,
-                    'average_separation': avg_distance,
-                    'segment_count': len(section),
-                    'center_lon': center_lon,
-                    'center_lat': center_lat,
-                })
+                    results['bundled_sections'].append({
+                        'pipeline_1': pipelines[p1_idx]['name'],
+                        'pipeline_2': pipelines[p2_idx]['name'],
+                        'bundled_length_meters': bundled_length,
+                        'bundled_length_miles': bundled_length / self.survey_mile,
+                        'average_separation': avg_distance,
+                        'segment_count': len(section),
+                        'center_lon': center_lon,
+                        'center_lat': center_lat,
+                    })
+                except Exception as e:
+                    print(f"Warning: Error processing bundled section: {str(e)}")
+                    continue
 
         # Sort bundled sections by length (miles) in descending order
         results['bundled_sections'].sort(key=lambda s: s['bundled_length_miles'], reverse=True)
@@ -384,40 +495,50 @@ class PipelineAnalyzer:
     
     def analyze_complete(self, file_path, progress_callback=None):
         """Complete analysis of KMZ/KML file."""
-        # Extract features
-        pipelines, placemarks = self.extract_features_from_file(file_path, progress_callback)
-        
-        # Calculate basic lengths
-        pipeline_data, total_meters, total_miles = self.calculate_pipeline_lengths(pipelines)
-        
-        # Perform overlap analysis if multiple pipelines
-        overlap_results = None
-        if len(pipelines) >= 2:
-            parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
-            overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
+        try:
+            # Extract features
+            pipelines, placemarks = self.extract_features_from_file(file_path, progress_callback)
             
-            # Calculate effective total
-            total_savings = sum(section['bundled_length_meters'] * 0.5 
-                              for section in overlap_results['bundled_sections'])
-            overlap_results['effective_total_meters'] = total_meters - total_savings
-            overlap_results['effective_total_miles'] = overlap_results['effective_total_meters'] / self.survey_mile
-            overlap_results['savings_meters'] = total_savings
-            overlap_results['savings_miles'] = total_savings / self.survey_mile
-            overlap_results['savings_percentage'] = (total_savings / total_meters * 100) if total_meters > 0 else 0
-        
-        return {
-            'pipelines': pipeline_data,
-            'placemarks': placemarks,
-            'total_meters': total_meters,
-            'total_miles': total_miles,
-            'overlap_analysis': overlap_results,
-            'analysis_parameters': {
-                'detection_range': self.detection_range,
-                'min_parallel_length': self.min_parallel_length,
-                'segment_length': self.segment_length,
-                'angular_tolerance': self.angular_tolerance
+            if not pipelines and not placemarks:
+                raise ValueError("No valid features found in the file")
+            
+            # Calculate basic lengths
+            pipeline_data, total_meters, total_miles = self.calculate_pipeline_lengths(pipelines)
+            
+            # Perform overlap analysis if multiple pipelines
+            overlap_results = None
+            if len(pipelines) >= 2:
+                try:
+                    parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
+                    overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
+                    
+                    # Calculate effective total
+                    total_savings = sum(section['bundled_length_meters'] * 0.5 
+                                      for section in overlap_results['bundled_sections'])
+                    overlap_results['effective_total_meters'] = total_meters - total_savings
+                    overlap_results['effective_total_miles'] = overlap_results['effective_total_meters'] / self.survey_mile
+                    overlap_results['savings_meters'] = total_savings
+                    overlap_results['savings_miles'] = total_savings / self.survey_mile
+                    overlap_results['savings_percentage'] = (total_savings / total_meters * 100) if total_meters > 0 else 0
+                except Exception as e:
+                    print(f"Warning: Overlap analysis failed: {str(e)}")
+                    overlap_results = None
+            
+            return {
+                'pipelines': pipeline_data,
+                'placemarks': placemarks,
+                'total_meters': total_meters,
+                'total_miles': total_miles,
+                'overlap_analysis': overlap_results,
+                'analysis_parameters': {
+                    'detection_range': self.detection_range,
+                    'min_parallel_length': self.min_parallel_length,
+                    'segment_length': self.segment_length,
+                    'angular_tolerance': self.angular_tolerance
+                }
             }
-        }
+        except Exception as e:
+            raise ValueError(f"Analysis failed: {str(e)}")
 
 
 class PipelineCalculatorGUI:
@@ -425,6 +546,7 @@ class PipelineCalculatorGUI:
     
     def __init__(self):
         self.root = TkinterDnD.Tk()
+        self._set_app_icon()
         self.analyzer = PipelineAnalyzer()
         self.current_results = None
         self.current_file = None
@@ -436,6 +558,27 @@ class PipelineCalculatorGUI:
         self.angular_tolerance_var = DoubleVar(value=ANGULAR_TOLERANCE)
         
         self.setup_gui()
+
+    def _set_app_icon(self):
+        """Configure window icon for supported platforms."""
+        try:
+            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            system = platform.system()
+            if system == "Windows":
+                icon_path = os.path.join(base_dir, "icon.ico")
+                if os.path.exists(icon_path):
+                    self.root.iconbitmap(icon_path)
+            elif system == "Darwin":
+                icon_path = os.path.join(base_dir, "icon.icns")
+                if os.path.exists(icon_path):
+                    self.root.iconbitmap(icon_path)
+            else:
+                icon_path = os.path.join(base_dir, "icon.ico")
+                if os.path.exists(icon_path):
+                    from tkinter import PhotoImage
+                    self.root.iconphoto(False, PhotoImage(file=icon_path))
+        except Exception:
+            pass
     
     def setup_gui(self):
         """Initialize the main GUI."""
@@ -515,11 +658,14 @@ class PipelineCalculatorGUI:
         
         # Drag and drop
         def on_drop(event):
-            file_path = event.data.strip('{}').strip('"')
-            if file_path.lower().endswith(('.kmz', '.kml')):
-                self.process_file(file_path)
-            else:
-                messagebox.showerror("Invalid File", "Please select a KMZ or KML file.")
+            try:
+                file_path = event.data.strip('{}').strip('"')
+                if file_path.lower().endswith(('.kmz', '.kml')):
+                    self.process_file(file_path)
+                else:
+                    messagebox.showerror("Invalid File", "Please select a KMZ or KML file.")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to process dropped file: {str(e)}")
         
         self.root.drop_target_register(DND_FILES)
         self.root.dnd_bind('<<Drop>>', on_drop)
@@ -528,145 +674,171 @@ class PipelineCalculatorGUI:
         """Handle file browsing."""
         self.root.withdraw()  # Hide main window temporarily
         
-        filetypes = [
-            ("All supported", "*.kmz *.kml"),
-            ("KMZ files", "*.kmz"),
-            ("KML files", "*.kml"),
-            ("All files", "*.*")
-        ]
-        file_path = filedialog.askopenfilename(filetypes=filetypes)
-        
-        self.root.deiconify()  # Show main window again
-        
-        if file_path:
-            self.process_file(file_path)
+        try:
+            filetypes = [
+                ("All supported", "*.kmz *.kml"),
+                ("KMZ files", "*.kmz"),
+                ("KML files", "*.kml"),
+                ("All files", "*.*")
+            ]
+            file_path = filedialog.askopenfilename(filetypes=filetypes)
+            
+            if file_path:
+                self.process_file(file_path)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to browse file: {str(e)}")
+        finally:
+            self.root.deiconify()  # Show main window again
     
     def process_file(self, file_path):
         """Process selected file with progress indication."""
-        self.current_file = file_path
-        
-        # Update analyzer parameters
-        self.analyzer.detection_range = self.detection_range_var.get()
-        self.analyzer.min_parallel_length = self.min_parallel_var.get()
-        self.analyzer.segment_length = self.segment_length_var.get()
-        self.analyzer.angular_tolerance = self.angular_tolerance_var.get()
-        
-        # Create in-window progress overlay
-        progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
-        progress_frame.place(relx=0.5, rely=0.5, anchor="center")
-
-        status_label = ctk.CTkLabel(progress_frame,
-                                   text="Analyzing pipelines and overlaps...",
-                                   font=("Arial", 14))
-        status_label.pack(pady=20, padx=20)
-
-        progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
-        progress_bar.pack(pady=10)
-        progress_bar.start()
-
-        # Worker thread
-        result_holder = {}
-
-        def worker():
+        try:
+            self.current_file = file_path
+            
+            # Validate parameter values
             try:
-                result_holder['result'] = self.analyzer.analyze_complete(file_path)
-            except Exception as e:
-                result_holder['error'] = e
+                detection_range = max(1, self.detection_range_var.get())
+                min_parallel = max(10, self.min_parallel_var.get())
+                segment_length = max(1, self.segment_length_var.get())
+                angular_tolerance = max(1, min(90, self.angular_tolerance_var.get()))
+            except:
+                # Use defaults if invalid values
+                detection_range = DEFAULT_DETECTION_RANGE
+                min_parallel = MIN_PARALLEL_LENGTH
+                segment_length = SEGMENT_LENGTH
+                angular_tolerance = ANGULAR_TOLERANCE
+            
+            # Update analyzer parameters
+            self.analyzer.detection_range = detection_range
+            self.analyzer.min_parallel_length = min_parallel
+            self.analyzer.segment_length = segment_length
+            self.analyzer.angular_tolerance = angular_tolerance
+            
+            # Create in-window progress overlay
+            progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
+            progress_frame.place(relx=0.5, rely=0.5, anchor="center")
 
-        thread = threading.Thread(target=worker, daemon=True)
-        thread.start()
+            status_label = ctk.CTkLabel(progress_frame,
+                                       text="Analyzing pipelines and overlaps...",
+                                       font=("Arial", 14))
+            status_label.pack(pady=20, padx=20)
 
-        # Check thread completion
-        def check_thread():
-            if thread.is_alive():
-                self.root.after(100, check_thread)
-            else:
-                progress_bar.stop()
-                progress_frame.destroy()
-                if 'error' in result_holder:
-                    messagebox.showerror("Processing Error", str(result_holder['error']))
-                    self.show_file_selection()
+            progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
+            progress_bar.pack(pady=10)
+            progress_bar.start()
+
+            # Worker thread
+            result_holder = {}
+
+            def worker():
+                try:
+                    result_holder['result'] = self.analyzer.analyze_complete(file_path)
+                except Exception as e:
+                    result_holder['error'] = e
+
+            thread = threading.Thread(target=worker, daemon=True)
+            thread.start()
+
+            # Check thread completion
+            def check_thread():
+                if thread.is_alive():
+                    self.root.after(100, check_thread)
                 else:
-                    self.current_results = result_holder['result']
-                    self.show_results()
+                    progress_bar.stop()
+                    progress_frame.destroy()
+                    if 'error' in result_holder:
+                        error_msg = str(result_holder['error'])
+                        messagebox.showerror("Processing Error", 
+                                           f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.")
+                        self.show_file_selection()
+                    else:
+                        self.current_results = result_holder['result']
+                        self.show_results()
 
-        check_thread()
+            check_thread()
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to process file: {str(e)}")
+            self.show_file_selection()
     
     def show_results(self):
         """Display analysis results."""
-        # Ensure window is visible and fully opaque
-        self.root.deiconify()
         try:
-            self.root.attributes("-alpha", 1.0)
-            self.root.lift()
-            # Set a solid background to avoid transparency artifacts
-            self.root.configure(bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"])
-        except Exception:
-            pass
+            # Ensure window is visible and fully opaque
+            self.root.deiconify()
+            try:
+                self.root.attributes("-alpha", 1.0)
+                self.root.lift()
+                # Set a solid background to avoid transparency artifacts
+                self.root.configure(bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"])
+            except Exception:
+                pass
 
-        # Clear window
-        for widget in self.root.winfo_children():
-            widget.destroy()
+            # Clear window
+            for widget in self.root.winfo_children():
+                widget.destroy()
 
-        self.root.title(f"Pipeline Calculator v{__version__} - Results")
-        self.root.geometry("1200x800")
-        
-        # Header
-        header_frame = ctk.CTkFrame(self.root)
-        header_frame.pack(fill="x", padx=10, pady=5)
-        
-        file_label = ctk.CTkLabel(header_frame, 
-                                 text=f"File: {os.path.basename(self.current_file)}", 
-                                 font=("Arial", 12))
-        file_label.pack()
-        
-        # Create tabbed view
-        tabview = ctk.CTkTabview(self.root)
-        tabview.pack(fill="both", expand=True, padx=10, pady=5)
-        
-        # Summary tab
-        summary_tab = tabview.add("Summary")
-        self.create_summary_tab(summary_tab)
-        
-        # Pipelines tab
-        if self.current_results['pipelines']:
-            pipeline_tab = tabview.add("Pipelines")
-            self.create_pipeline_tab(pipeline_tab)
-        
-        # Overlap Analysis tab
-        if self.current_results['overlap_analysis']:
-            overlap_tab = tabview.add("Overlap Analysis")
-            self.create_overlap_tab(overlap_tab)
-        
-        # Placemarks tab
-        if self.current_results['placemarks']:
-            placemark_tab = tabview.add("Placemarks")
-            self.create_placemark_tab(placemark_tab)
-        
-        # Button frame
-        button_frame = ctk.CTkFrame(self.root)
-        button_frame.pack(fill="x", padx=10, pady=5)
-        
-        # Export button
-        export_button = ctk.CTkButton(button_frame, text="Export Results", 
-                                     command=self.export_results)
-        export_button.pack(side="left", padx=5)
-        
-        # Reanalyze button
-        reanalyze_button = ctk.CTkButton(button_frame, 
-                                        text="Reanalyze with Different Parameters", 
-                                        command=self.reanalyze)
-        reanalyze_button.pack(side="left", padx=5)
-        
-        # New file button
-        new_file_button = ctk.CTkButton(button_frame, text="Import New KMZ", 
-                                       command=self.show_file_selection)
-        new_file_button.pack(side="left", padx=5)
-        
-        # Close button
-        close_button = ctk.CTkButton(button_frame, text="Exit", 
-                                    command=self.root.quit)
-        close_button.pack(side="right", padx=5)
+            self.root.title(f"Pipeline Calculator v{__version__} - Results")
+            self.root.geometry("1200x800")
+            
+            # Header
+            header_frame = ctk.CTkFrame(self.root)
+            header_frame.pack(fill="x", padx=10, pady=5)
+            
+            file_label = ctk.CTkLabel(header_frame, 
+                                     text=f"File: {os.path.basename(self.current_file)}", 
+                                     font=("Arial", 12))
+            file_label.pack()
+            
+            # Create tabbed view
+            tabview = ctk.CTkTabview(self.root)
+            tabview.pack(fill="both", expand=True, padx=10, pady=5)
+            
+            # Summary tab
+            summary_tab = tabview.add("Summary")
+            self.create_summary_tab(summary_tab)
+            
+            # Pipelines tab
+            if self.current_results['pipelines']:
+                pipeline_tab = tabview.add("Pipelines")
+                self.create_pipeline_tab(pipeline_tab)
+            
+            # Overlap Analysis tab
+            if self.current_results['overlap_analysis']:
+                overlap_tab = tabview.add("Overlap Analysis")
+                self.create_overlap_tab(overlap_tab)
+            
+            # Placemarks tab
+            if self.current_results['placemarks']:
+                placemark_tab = tabview.add("Placemarks")
+                self.create_placemark_tab(placemark_tab)
+            
+            # Button frame
+            button_frame = ctk.CTkFrame(self.root)
+            button_frame.pack(fill="x", padx=10, pady=5)
+            
+            # Export button
+            export_button = ctk.CTkButton(button_frame, text="Export Results", 
+                                         command=self.export_results)
+            export_button.pack(side="left", padx=5)
+            
+            # Reanalyze button
+            reanalyze_button = ctk.CTkButton(button_frame, 
+                                            text="Reanalyze with Different Parameters", 
+                                            command=self.reanalyze)
+            reanalyze_button.pack(side="left", padx=5)
+            
+            # New file button
+            new_file_button = ctk.CTkButton(button_frame, text="Import New KMZ", 
+                                           command=self.show_file_selection)
+            new_file_button.pack(side="left", padx=5)
+            
+            # Close button
+            close_button = ctk.CTkButton(button_frame, text="Exit", 
+                                        command=self.root.quit)
+            close_button.pack(side="right", padx=5)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to display results: {str(e)}")
+            self.show_file_selection()
     
     def create_summary_tab(self, parent):
         """Create summary tab with key metrics."""
@@ -785,24 +957,25 @@ class PipelineCalculatorGUI:
 
     def save_overlap_kml(self, section, index):
         """Write a 1-placemark KML at the bundled section's center and open it."""
-        base_name = os.path.splitext(os.path.basename(self.current_file))[0]
-        default_name = f"{base_name}_overlap_{index:03d}.kml"
+        try:
+            base_name = os.path.splitext(os.path.basename(self.current_file))[0]
+            default_name = f"{base_name}_overlap_{index:03d}.kml"
 
-        path = filedialog.asksaveasfilename(
-            defaultextension='.kml',
-            initialfile=default_name,
-            filetypes=[('KML files', '*.kml')]
-        )
-        if not path:
-            return
+            path = filedialog.asksaveasfilename(
+                defaultextension='.kml',
+                initialfile=default_name,
+                filetypes=[('KML files', '*.kml')]
+            )
+            if not path:
+                return
 
-        lon = section.get('center_lon')
-        lat = section.get('center_lat')
-        label = (f"{section['pipeline_1']} ↔ {section['pipeline_2']} "
-                 f"({section['bundled_length_miles']:.3f} mi, "
-                 f"{section['average_separation']:.1f} m)")
+            lon = section.get('center_lon', 0)
+            lat = section.get('center_lat', 0)
+            label = (f"{section['pipeline_1']} ↔ {section['pipeline_2']} "
+                     f"({section['bundled_length_miles']:.3f} mi, "
+                     f"{section['average_separation']:.1f} m)")
 
-        kml = f'''<?xml version="1.0" encoding="UTF-8"?>
+            kml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
     <Placemark>
@@ -812,18 +985,20 @@ class PipelineCalculatorGUI:
   </Document>
 </kml>'''
 
-        with open(path, 'w', encoding='utf-8') as f:
-            f.write(kml)
+            with open(path, 'w', encoding='utf-8') as f:
+                f.write(kml)
 
-        try:
-            if sys.platform.startswith('win'):
-                os.startfile(path)  # nosec - user-chosen path
-            elif sys.platform == 'darwin':
-                subprocess.run(['open', path], check=False)
-            else:
-                subprocess.run(['xdg-open', path], check=False)
-        except Exception:
-            pass
+            try:
+                if sys.platform.startswith('win'):
+                    os.startfile(path)  # nosec - user-chosen path
+                elif sys.platform == 'darwin':
+                    subprocess.run(['open', path], check=False)
+                else:
+                    subprocess.run(['xdg-open', path], check=False)
+            except Exception:
+                pass
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save KML file: {str(e)}")
 
     def create_overlap_tab(self, parent):
         """Create overlap analysis details tab."""
@@ -884,64 +1059,67 @@ class PipelineCalculatorGUI:
     
     def reanalyze(self):
         """Show in-window parameter editor and reanalyze."""
-        if getattr(self, 'param_frame', None):
-            try:
+        try:
+            if getattr(self, 'param_frame', None):
+                try:
+                    self.param_frame.destroy()
+                except Exception:
+                    pass
+
+            self.param_frame = ctk.CTkFrame(self.root, corner_radius=10)
+            self.param_frame.place(relx=0.5, rely=0.5, anchor="center")
+
+            ctk.CTkLabel(self.param_frame, text="Adjust Analysis Parameters",
+                        font=("Arial", 16, "bold")).pack(pady=10, padx=20)
+
+            # Detection range
+            detection_frame = ctk.CTkFrame(self.param_frame)
+            detection_frame.pack(fill="x", padx=20, pady=10)
+            ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
+            ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var).pack(side="left")
+
+            # Min parallel
+            parallel_frame = ctk.CTkFrame(self.param_frame)
+            parallel_frame.pack(fill="x", padx=20, pady=10)
+            ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
+            ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var).pack(side="left")
+
+            # Angular tolerance
+            angular_frame = ctk.CTkFrame(self.param_frame)
+            angular_frame.pack(fill="x", padx=20, pady=10)
+            ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
+            ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var).pack(side="left")
+
+            # Buttons
+            button_frame = ctk.CTkFrame(self.param_frame)
+            button_frame.pack(pady=20)
+
+            def apply_and_analyze():
                 self.param_frame.destroy()
-            except Exception:
-                pass
+                self.process_file(self.current_file)
 
-        self.param_frame = ctk.CTkFrame(self.root, corner_radius=10)
-        self.param_frame.place(relx=0.5, rely=0.5, anchor="center")
-
-        ctk.CTkLabel(self.param_frame, text="Adjust Analysis Parameters",
-                    font=("Arial", 16, "bold")).pack(pady=10, padx=20)
-
-        # Detection range
-        detection_frame = ctk.CTkFrame(self.param_frame)
-        detection_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var).pack(side="left")
-
-        # Min parallel
-        parallel_frame = ctk.CTkFrame(self.param_frame)
-        parallel_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var).pack(side="left")
-
-        # Angular tolerance
-        angular_frame = ctk.CTkFrame(self.param_frame)
-        angular_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
-        ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var).pack(side="left")
-
-        # Buttons
-        button_frame = ctk.CTkFrame(self.param_frame)
-        button_frame.pack(pady=20)
-
-        def apply_and_analyze():
-            self.param_frame.destroy()
-            self.process_file(self.current_file)
-
-        ctk.CTkButton(button_frame, text="Apply & Reanalyze",
-                     command=apply_and_analyze).pack(side="left", padx=5)
-        ctk.CTkButton(button_frame, text="Cancel",
-                     command=self.param_frame.destroy).pack(side="left", padx=5)
+            ctk.CTkButton(button_frame, text="Apply & Reanalyze",
+                         command=apply_and_analyze).pack(side="left", padx=5)
+            ctk.CTkButton(button_frame, text="Cancel",
+                         command=self.param_frame.destroy).pack(side="left", padx=5)
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to show parameter dialog: {str(e)}")
     
     def export_results(self):
         """Export analysis results."""
-        base_name = os.path.splitext(os.path.basename(self.current_file))[0]
-        
-        # Ask for save location
-        save_path = filedialog.asksaveasfilename(
-            defaultextension='.csv',
-            initialfile=f"{base_name}_analysis",
-            filetypes=[('CSV files', '*.csv'), ('JSON files', '*.json')]
-        )
-        
-        if not save_path:
-            return
-        
         try:
+            base_name = os.path.splitext(os.path.basename(self.current_file))[0]
+            
+            # Ask for save location
+            save_path = filedialog.asksaveasfilename(
+                defaultextension='.csv',
+                initialfile=f"{base_name}_analysis",
+                filetypes=[('CSV files', '*.csv'), ('JSON files', '*.json')]
+            )
+            
+            if not save_path:
+                return
+            
             if save_path.endswith('.json'):
                 # Export as JSON
                 with open(save_path, 'w') as f:
@@ -953,7 +1131,7 @@ class PipelineCalculatorGUI:
                 pipeline_df.to_csv(save_path, index=False)
                 
                 # Overlap data
-                if self.current_results['overlap_analysis']:
+                if self.current_results['overlap_analysis'] and self.current_results['overlap_analysis']['bundled_sections']:
                     overlap_path = save_path.replace('.csv', '_overlaps.csv')
                     overlap_df = pd.DataFrame(self.current_results['overlap_analysis']['bundled_sections'])
                     overlap_df.to_csv(overlap_path, index=False)
@@ -975,35 +1153,50 @@ class PipelineCalculatorGUI:
     
     def run(self):
         """Start the application."""
-        self.root.mainloop()
+        try:
+            self.root.mainloop()
+        except Exception as e:
+            messagebox.showerror("Application Error", f"Application error: {str(e)}")
 
 
 def main():
     """Main entry point."""
-    print(f"Pipeline Calculator v{__version__}")
-    print(f"Running on {platform.system()} {platform.machine()}")
-    print("-" * 50)
-    
-    # Check for required packages (only if not frozen)
-    if not getattr(sys, 'frozen', False):
-        required = ['pyproj', 'pandas', 'numpy', 'scipy', 'customtkinter', 'tkinterdnd2']
-        missing = []
+    try:
+        print(f"Pipeline Calculator v{__version__}")
+        print(f"Running on {platform.system()} {platform.machine()}")
+        print("-" * 50)
         
-        for package in required:
-            try:
-                __import__(package.replace('-', '_'))
-            except ImportError:
-                missing.append(package)
+        # Check for required packages (only if not frozen)
+        if not getattr(sys, 'frozen', False):
+            required = ['pyproj', 'pandas', 'numpy', 'scipy', 'customtkinter', 'tkinterdnd2']
+            missing = []
+            
+            for package in required:
+                try:
+                    __import__(package.replace('-', '_'))
+                except ImportError:
+                    missing.append(package)
+            
+            if missing:
+                print(f"Missing packages: {', '.join(missing)}")
+                print("Installing...")
+                for package in missing:
+                    subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         
-        if missing:
-            print(f"Missing packages: {', '.join(missing)}")
-            print("Installing...")
-            for package in missing:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-    
-    # Run GUI
-    app = PipelineCalculatorGUI()
-    app.run()
+        # Run GUI
+        app = PipelineCalculatorGUI()
+        app.run()
+        
+    except KeyboardInterrupt:
+        print("\nApplication interrupted by user")
+        sys.exit(0)
+    except Exception as e:
+        print(f"Fatal error: {str(e)}")
+        try:
+            messagebox.showerror("Fatal Error", f"A fatal error occurred:\n\n{str(e)}\n\nThe application will now exit.")
+        except:
+            pass
+        sys.exit(1)
 
 
 if __name__ == "__main__":
