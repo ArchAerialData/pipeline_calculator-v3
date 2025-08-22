@@ -1,0 +1,134 @@
+name: Build Pipeline Calculator with Overlap Analysis
+
+on:
+  push:
+    branches: [ main ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyproj>=3.4.0
+        pip install pandas>=1.5.0
+        pip install numpy==1.24.3
+        pip install scipy
+        pip install customtkinter>=5.0.0
+        pip install pyinstaller>=5.0.0
+        pip install tkinterdnd2
+        
+    - name: Create icon file (if not exists)
+      run: |
+        if [ ! -f "icon.icns" ]; then
+          echo "Creating placeholder icon"
+          # Create a simple icon placeholder
+          touch icon.icns
+        fi
+        
+    - name: Build macOS app
+      run: |
+        pyinstaller --onefile \
+          --windowed \
+          --name "Pipeline Calculator v3" \
+          --add-data "README.md:." \
+          --hidden-import scipy.spatial \
+          --hidden-import scipy._lib.messagestream \
+          --hidden-import tkinterdnd2 \
+          src/pipeline_calculator_v3.py
+        
+        # Rename for cleaner appearance
+        mv "dist/Pipeline Calculator v3.app" "dist/Pipeline_Calculator.app"
+
+    - name: Create DMG
+      run: |
+        hdiutil create -volname "Pipeline Calculator v3" \
+          -srcfolder "dist/Pipeline_Calculator.app" \
+          -ov -format UDZO \
+          "Pipeline_Calculator_v3_macOS.dmg"
+        
+    - name: Upload macOS DMG
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-dmg
+        path: Pipeline_Calculator_v3_macOS.dmg
+        
+    - name: Upload macOS app
+      uses: actions/upload-artifact@v4
+      with:
+        name: macos-app
+        path: dist/Pipeline_Calculator.app
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyproj>=3.4.0
+        pip install pandas>=1.5.0
+        pip install numpy==1.24.3
+        pip install scipy
+        pip install customtkinter>=5.0.0
+        pip install pyinstaller>=5.0.0
+        pip install tkinterdnd2
+        
+    - name: Build Windows executable
+      run: |
+        pyinstaller --onefile `
+          --windowed `
+          --name "Pipeline_Calculator_v3" `
+          --add-data "README.md;." `
+          --hidden-import scipy.spatial `
+          --hidden-import scipy._lib.messagestream `
+          --hidden-import tkinterdnd2 `
+          src/pipeline_calculator_v3.py
+        
+    - name: Upload Windows executable
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-exe
+        path: dist/Pipeline_Calculator_v3.exe
+
+  create-release:
+    needs: [build-macos, build-windows]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          macos-dmg/Pipeline_Calculator_v3_macOS.dmg
+          windows-exe/Pipeline_Calculator_v3.exe
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
