@@ -331,45 +331,34 @@ class PipelineAnalyzer:
                 for near_idx in nearby_indices:
                     if near_idx == seg_idx:
                         continue
-                    
+
                     # Ensure near_idx is valid
                     if near_idx not in segment_to_pipeline:
                         continue
-                        
+
                     near_p_idx, near_segment = segment_to_pipeline[near_idx]
-                    
-                    if p_idx == near_p_idx:
+
+                    # Only process each pipeline pair once
+                    if p_idx >= near_p_idx:
                         continue
-                    
+
                     # Check if bearings are similar (parallel)
                     bearing_diff = abs(segment['bearing'] - near_segment['bearing'])
                     bearing_diff = min(bearing_diff, 360 - bearing_diff)
-                    
+
                     if bearing_diff <= self.angular_tolerance:
                         # Calculate actual distance
                         lon1, lat1 = segment['midpoint']
                         lon2, lat2 = near_segment['midpoint']
                         _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
-                        
+
                         if distance <= self.detection_range:
-                            # CRITICAL FIX: Ensure segments are stored in correct order
-                            # based on the sorted pipeline indices
-                            key = tuple(sorted([p_idx, near_p_idx]))
-                            
-                            if key[0] == p_idx:
-                                # p_idx is smaller, so it comes first in the key
-                                parallel_groups[key].append({
-                                    'pipeline_1_segment': segment['segment_index'],
-                                    'pipeline_2_segment': near_segment['segment_index'],
-                                    'distance': distance
-                                })
-                            else:
-                                # near_p_idx is smaller, so it comes first in the key
-                                parallel_groups[key].append({
-                                    'pipeline_1_segment': near_segment['segment_index'],
-                                    'pipeline_2_segment': segment['segment_index'],
-                                    'distance': distance
-                                })
+                            key = (p_idx, near_p_idx)
+                            parallel_groups[key].append({
+                                'pipeline_1_segment': segment['segment_index'],
+                                'pipeline_2_segment': near_segment['segment_index'],
+                                'distance': distance
+                            })
                             
             except Exception as e:
                 print(f"Warning: Error processing segment {seg_idx}: {str(e)}")
@@ -516,7 +505,7 @@ class PipelineAnalyzer:
                     overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
                     
                     # Calculate effective total
-                    total_savings = sum(section['bundled_length_meters'] * 0.5 
+                    total_savings = sum(section['bundled_length_meters']
                                       for section in overlap_results['bundled_sections'])
                     overlap_results['effective_total_meters'] = total_meters - total_savings
                     overlap_results['effective_total_miles'] = overlap_results['effective_total_meters'] / self.survey_mile
