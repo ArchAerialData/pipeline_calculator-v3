@@ -20,7 +20,7 @@ from tkinter import filedialog, messagebox, ttk, StringVar, DoubleVar
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import platform
 import traceback
-import threading
+from concurrent.futures import ProcessPoolExecutor
 import json
 from datetime import datetime
 import warnings
@@ -542,6 +542,15 @@ class PipelineAnalyzer:
         except Exception as e:
             raise ValueError(f"Analysis failed: {str(e)}")
 
+def run_analysis(file_path, detection_range, min_parallel, segment_length, angular_tolerance):
+    """Run analysis in a separate process to keep GUI responsive."""
+    analyzer = PipelineAnalyzer()
+    analyzer.detection_range = detection_range
+    analyzer.min_parallel_length = min_parallel
+    analyzer.segment_length = segment_length
+    analyzer.angular_tolerance = angular_tolerance
+    return analyzer.analyze_complete(file_path)
+
 
 class PipelineCalculatorGUI:
     """Main GUI application for pipeline calculator with overlap analysis."""
@@ -727,35 +736,38 @@ class PipelineCalculatorGUI:
             progress_bar.pack(pady=10)
             progress_bar.start()
 
-            # Worker thread
-            result_holder = {}
+            # Run heavy analysis in separate process
+            executor = ProcessPoolExecutor(max_workers=1)
+            future = executor.submit(
+                run_analysis,
+                file_path,
+                detection_range,
+                min_parallel,
+                segment_length,
+                angular_tolerance,
+            )
 
-            def worker():
-                try:
-                    result_holder['result'] = self.analyzer.analyze_complete(file_path)
-                except Exception as e:
-                    result_holder['error'] = e
-
-            thread = threading.Thread(target=worker, daemon=True)
-            thread.start()
-
-            # Check thread completion
-            def check_thread():
-                if thread.is_alive():
-                    self.root.after(100, check_thread)
+            # Check process completion without blocking GUI
+            def check_future():
+                if not future.done():
+                    self.root.after(100, check_future)
                 else:
                     progress_bar.stop()
                     progress_frame.destroy()
-                    if 'error' in result_holder:
-                        error_msg = str(result_holder['error'])
-                        messagebox.showerror("Processing Error", 
-                                           f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.")
-                        self.show_file_selection()
-                    else:
-                        self.current_results = result_holder['result']
+                    try:
+                        self.current_results = future.result()
                         self.show_results()
+                    except Exception as e:
+                        error_msg = str(e)
+                        messagebox.showerror(
+                            "Processing Error",
+                            f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.",
+                        )
+                        self.show_file_selection()
+                    finally:
+                        executor.shutdown(wait=False)
 
-            check_thread()
+            check_future()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to process file: {str(e)}")
             self.show_file_selection()
