@@ -20,7 +20,7 @@ from tkinter import filedialog, messagebox, ttk, StringVar, DoubleVar
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import platform
 import traceback
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 import json
 from datetime import datetime
 import warnings
@@ -39,6 +39,7 @@ MIN_PARALLEL_LENGTH = 200  # meters
 SEGMENT_LENGTH = 5  # meters
 ANGULAR_TOLERANCE = 15  # degrees
 GAP_TOLERANCE = 5  # meters
+MAX_DISPLAY_SECTIONS = 20  # limit number of overlap sections shown
 
 class PipelineAnalyzer:
     """Combined pipeline length and overlap analyzer."""
@@ -736,8 +737,8 @@ class PipelineCalculatorGUI:
             progress_bar.pack(pady=10)
             progress_bar.start()
 
-            # Run heavy analysis in separate process
-            executor = ProcessPoolExecutor(max_workers=1)
+            # Run heavy analysis in a background thread
+            executor = ThreadPoolExecutor(max_workers=1)
             future = executor.submit(
                 run_analysis,
                 file_path,
@@ -1015,6 +1016,8 @@ class PipelineCalculatorGUI:
                     font=("Arial", 16, "bold")).pack(pady=10)
 
         if overlap['bundled_sections']:
+            display_sections = overlap['bundled_sections'][:MAX_DISPLAY_SECTIONS]
+
             # Create scrollable frame for table content
             scroll_frame = ctk.CTkScrollableFrame(main_frame)
             scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
@@ -1032,8 +1035,8 @@ class PipelineCalculatorGUI:
             ctk.CTkLabel(header_frame, text="Action",
                         font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
 
-            # Data rows
-            for idx, section in enumerate(overlap['bundled_sections'], start=1):
+            # Data rows (limit to top sections)
+            for idx, section in enumerate(display_sections, start=1):
                 row_frame = ctk.CTkFrame(scroll_frame)
                 row_frame.pack(fill="x", pady=2)
 
@@ -1059,9 +1062,9 @@ class PipelineCalculatorGUI:
             summary_frame = ctk.CTkFrame(main_frame)
             summary_frame.pack(fill="x", pady=10)
 
-            total_bundled = sum(s['bundled_length_miles'] for s in overlap['bundled_sections'])
+            total_bundled = sum(s['bundled_length_miles'] for s in display_sections)
             ctk.CTkLabel(summary_frame,
-                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(overlap['bundled_sections'])} sections",
+                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(display_sections)} sections",
                         font=("Arial", 12, "bold")).pack()
         else:
             ctk.CTkLabel(main_frame,
@@ -1236,4 +1239,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
     main()
