@@ -29,6 +29,7 @@ jobs:
         pip install numpy==1.24.3
         pip install scipy
         pip install customtkinter>=5.0.0
+        pip install Pillow>=9.0.0
         pip install pyinstaller>=5.0.0
         pip install tkinterdnd2
         
@@ -49,6 +50,7 @@ jobs:
           --hidden-import scipy.spatial \
           --hidden-import scipy._lib.messagestream \
           --hidden-import tkinterdnd2 \
+          --hidden-import PIL \
           src/pipeline_calculator_v3.py
         
         # Rename for cleaner appearance
@@ -92,6 +94,7 @@ jobs:
         pip install numpy==1.24.3
         pip install scipy
         pip install customtkinter>=5.0.0
+        pip install Pillow>=9.0.0
         pip install pyinstaller>=5.0.0
         pip install tkinterdnd2
         
@@ -104,6 +107,7 @@ jobs:
           --hidden-import scipy.spatial `
           --hidden-import scipy._lib.messagestream `
           --hidden-import tkinterdnd2 `
+          --hidden-import PIL `
           src/pipeline_calculator_v3.py
         
     - name: Upload Windows executable
