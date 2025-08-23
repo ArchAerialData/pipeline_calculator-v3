@@ -881,16 +881,21 @@ class PipelineCalculatorGUI:
                         text_color="#87CEEB").pack()
             
             effective_miles = overlap['effective_total_miles']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Effective Survey Length: {effective_miles:.3f} US Survey Miles",
-                        font=("Arial", 14)).pack()
-            
+            ctk.CTkLabel(
+                adjusted_frame,
+                text=f"Effective Survey Length (Adjusted Mileage): {effective_miles:.3f} US Survey Miles",
+                font=("Arial", 14),
+                text_color="#90EE90",
+            ).pack()
+
             savings_miles = overlap['savings_miles']
             savings_pct = overlap['savings_percentage']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Survey Savings: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
-                        font=("Arial", 14), 
-                        text_color="#90EE90").pack()
+            ctk.CTkLabel(
+                adjusted_frame,
+                text=f"Mileage Removed: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
+                font=("Arial", 14),
+                text_color="white",
+            ).pack()
             
             # Bundled sections count
             bundle_count = len(overlap['bundled_sections'])
@@ -1022,7 +1027,7 @@ class PipelineCalculatorGUI:
             ctk.CTkLabel(header_frame, text="Avg Sep (m)",
                         font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
             ctk.CTkLabel(header_frame, text="Action",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=200, anchor="center").pack(side="left", padx=5)
 
             # Data rows (limit to top sections)
             for idx, section in enumerate(display_sections, start=1):
@@ -1039,13 +1044,18 @@ class PipelineCalculatorGUI:
                 ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
                            font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
 
-                button_container = ctk.CTkFrame(row_frame, width=100)
+                button_container = ctk.CTkFrame(row_frame, width=200, height=40)
                 button_container.pack(side="left", padx=5)
                 button_container.pack_propagate(False)
 
-                ctk.CTkButton(button_container, text="View in G.E",
-                               command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
-                               width=90, height=28).pack(pady=2)
+                view_button = ctk.CTkButton(
+                    button_container,
+                    text="View Area in Google Earth",
+                    command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
+                    width=190,
+                    height=28,
+                )
+                view_button.place(relx=0.5, rely=0.5, anchor="center")
 
             # Summary statistics at bottom
             summary_frame = ctk.CTkFrame(main_frame)
