@@ -26,6 +26,8 @@ from datetime import datetime
 import warnings
 import re
 warnings.filterwarnings('ignore')
+import tempfile
+from PIL import Image, ImageTk
 
 # Version info
 __version__ = "3.0.0-fixed"
@@ -568,15 +570,13 @@ class PipelineCalculatorGUI:
                 icon_path = os.path.join(base_dir, "icon.ico")
                 if os.path.exists(icon_path):
                     self.root.iconbitmap(icon_path)
-            elif system == "Darwin":
-                icon_path = os.path.join(base_dir, "icon.icns")
-                if os.path.exists(icon_path):
-                    self.root.iconbitmap(icon_path)
             else:
-                icon_path = os.path.join(base_dir, "icon.ico")
+                icon_name = "icon.icns" if system == "Darwin" else "icon.ico"
+                icon_path = os.path.join(base_dir, icon_name)
                 if os.path.exists(icon_path):
-                    from tkinter import PhotoImage
-                    self.root.iconphoto(False, PhotoImage(file=icon_path))
+                    img = Image.open(icon_path)
+                    self._icon_image = ImageTk.PhotoImage(img)
+                    self.root.iconphoto(True, self._icon_image)
         except Exception:
             pass
     
@@ -955,20 +955,9 @@ class PipelineCalculatorGUI:
         
         tree.pack(fill="both", expand=True, padx=10, pady=10)
 
-    def save_overlap_kml(self, section, index):
-        """Write a 1-placemark KML at the bundled section's center and open it."""
+    def view_overlap_kml(self, section, index):
+        """Generate a temporary KML for the bundled section and open it."""
         try:
-            base_name = os.path.splitext(os.path.basename(self.current_file))[0]
-            default_name = f"{base_name}_overlap_{index:03d}.kml"
-
-            path = filedialog.asksaveasfilename(
-                defaultextension='.kml',
-                initialfile=default_name,
-                filetypes=[('KML files', '*.kml')]
-            )
-            if not path:
-                return
-
             lon = section.get('center_lon', 0)
             lat = section.get('center_lat', 0)
             label = (f"{section['pipeline_1']} ↔ {section['pipeline_2']} "
@@ -985,12 +974,13 @@ class PipelineCalculatorGUI:
   </Document>
 </kml>'''
 
-            with open(path, 'w', encoding='utf-8') as f:
-                f.write(kml)
+            with tempfile.NamedTemporaryFile('w', suffix=f'_overlap_{index:03d}.kml', delete=False, encoding='utf-8') as tmp:
+                tmp.write(kml)
+                path = tmp.name
 
             try:
                 if sys.platform.startswith('win'):
-                    os.startfile(path)  # nosec - user-chosen path
+                    os.startfile(path)  # nosec - temporary path
                 elif sys.platform == 'darwin':
                     subprocess.run(['open', path], check=False)
                 else:
@@ -998,39 +988,73 @@ class PipelineCalculatorGUI:
             except Exception:
                 pass
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to save KML file: {str(e)}")
+            messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 
     def create_overlap_tab(self, parent):
-        """Create overlap analysis details tab."""
+        """Create overlap analysis details tab with properly aligned table format."""
         overlap = self.current_results['overlap_analysis']
-        
-        # Create scrollable frame
-        scroll_frame = ctk.CTkScrollableFrame(parent)
-        scroll_frame.pack(fill="both", expand=True, padx=10, pady=10)
-        
-        # Bundled sections
-        ctk.CTkLabel(scroll_frame, text="Bundled Pipeline Sections", 
+
+        # Main container
+        main_frame = ctk.CTkFrame(parent)
+        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
+
+        # Title
+        ctk.CTkLabel(main_frame, text="Bundled Pipeline Sections",
                     font=("Arial", 16, "bold")).pack(pady=10)
-        
+
         if overlap['bundled_sections']:
+            # Create scrollable frame for table content
+            scroll_frame = ctk.CTkScrollableFrame(main_frame)
+            scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
+
+            # Table header
+            header_frame = ctk.CTkFrame(scroll_frame)
+            header_frame.pack(fill="x", pady=(0, 10))
+
+            ctk.CTkLabel(header_frame, text="Pipeline Pair",
+                        font=("Arial", 12, "bold"), width=300, anchor="w").pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Length (miles)",
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Avg Sep (m)",
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+            ctk.CTkLabel(header_frame, text="Action",
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+
+            # Data rows
             for idx, section in enumerate(overlap['bundled_sections'], start=1):
-                section_frame = ctk.CTkFrame(scroll_frame)
-                section_frame.pack(fill="x", padx=20, pady=5)
+                row_frame = ctk.CTkFrame(scroll_frame)
+                row_frame.pack(fill="x", pady=2)
 
-                text = f"{section['pipeline_1']} ↔ {section['pipeline_2']}\n"
-                text += f"Length: {section['bundled_length_miles']:.3f} miles | "
-                text += f"Avg Separation: {section['average_separation']:.1f} m"
+                pair_text = f"{section['pipeline_1']} ↔ {section['pipeline_2']}"
+                ctk.CTkLabel(row_frame, text=pair_text,
+                           font=("Arial", 11), width=300, anchor="w").pack(side="left", padx=5)
 
-                ctk.CTkLabel(section_frame, text=text,
-                           font=("Arial", 12)).pack(pady=5)
+                ctk.CTkLabel(row_frame, text=f"{section['bundled_length_miles']:.3f}",
+                           font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
 
-                ctk.CTkButton(section_frame, text="View in G.E",
-                               command=lambda s=section, i=idx: self.save_overlap_kml(s, i)
-                               ).pack(anchor="w", padx=8, pady=2)
+                ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
+                           font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
+
+                button_container = ctk.CTkFrame(row_frame, width=100)
+                button_container.pack(side="left", padx=5)
+                button_container.pack_propagate(False)
+
+                ctk.CTkButton(button_container, text="View in G.E",
+                               command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
+                               width=90, height=28).pack(pady=2)
+
+            # Summary statistics at bottom
+            summary_frame = ctk.CTkFrame(main_frame)
+            summary_frame.pack(fill="x", pady=10)
+
+            total_bundled = sum(s['bundled_length_miles'] for s in overlap['bundled_sections'])
+            ctk.CTkLabel(summary_frame,
+                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(overlap['bundled_sections'])} sections",
+                        font=("Arial", 12, "bold")).pack()
         else:
-            ctk.CTkLabel(scroll_frame,
+            ctk.CTkLabel(main_frame,
                         text="No bundled sections found with current parameters",
-                        font=("Arial", 12)).pack()
+                        font=("Arial", 12)).pack(pady=20)
     
     def create_placemark_tab(self, parent):
         """Create placemark details tab."""

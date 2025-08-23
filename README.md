@@ -9,6 +9,8 @@ A comprehensive GUI application for calculating pipeline lengths and analyzing o
 - **Adjustable Parameters**: Real-time parameter adjustment for different survey altitudes and equipment
 - **Cost Optimization**: Calculates effective survey length accounting for bundled sections
 - **Detailed Analytics**: Provides comprehensive breakdown of overlap statistics
+- **Google Earth Preview**: Open bundled sections directly in Google Earth with a single click
+- **Native App Icons**: Displays `.ico` on Windows and `.icns` on macOS for proper branding
 
 ### Core Features
 - Drag-and-drop file support for KMZ/KML files
