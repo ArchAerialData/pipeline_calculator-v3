@@ -20,7 +20,7 @@ from tkinter import filedialog, messagebox, ttk, StringVar, DoubleVar
 from tkinterdnd2 import TkinterDnD, DND_FILES
 import platform
 import traceback
-import threading
+from concurrent.futures import ThreadPoolExecutor
 import json
 from datetime import datetime
 import warnings
@@ -39,6 +39,7 @@ MIN_PARALLEL_LENGTH = 200  # meters
 SEGMENT_LENGTH = 5  # meters
 ANGULAR_TOLERANCE = 15  # degrees
 GAP_TOLERANCE = 5  # meters
+MAX_DISPLAY_SECTIONS = 20  # limit number of overlap sections shown
 
 class PipelineAnalyzer:
     """Combined pipeline length and overlap analyzer."""
@@ -330,45 +331,34 @@ class PipelineAnalyzer:
                 for near_idx in nearby_indices:
                     if near_idx == seg_idx:
                         continue
-                    
+
                     # Ensure near_idx is valid
                     if near_idx not in segment_to_pipeline:
                         continue
-                        
+
                     near_p_idx, near_segment = segment_to_pipeline[near_idx]
-                    
-                    if p_idx == near_p_idx:
+
+                    # Only process each pipeline pair once
+                    if p_idx >= near_p_idx:
                         continue
-                    
+
                     # Check if bearings are similar (parallel)
                     bearing_diff = abs(segment['bearing'] - near_segment['bearing'])
                     bearing_diff = min(bearing_diff, 360 - bearing_diff)
-                    
+
                     if bearing_diff <= self.angular_tolerance:
                         # Calculate actual distance
                         lon1, lat1 = segment['midpoint']
                         lon2, lat2 = near_segment['midpoint']
                         _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
-                        
+
                         if distance <= self.detection_range:
-                            # CRITICAL FIX: Ensure segments are stored in correct order
-                            # based on the sorted pipeline indices
-                            key = tuple(sorted([p_idx, near_p_idx]))
-                            
-                            if key[0] == p_idx:
-                                # p_idx is smaller, so it comes first in the key
-                                parallel_groups[key].append({
-                                    'pipeline_1_segment': segment['segment_index'],
-                                    'pipeline_2_segment': near_segment['segment_index'],
-                                    'distance': distance
-                                })
-                            else:
-                                # near_p_idx is smaller, so it comes first in the key
-                                parallel_groups[key].append({
-                                    'pipeline_1_segment': near_segment['segment_index'],
-                                    'pipeline_2_segment': segment['segment_index'],
-                                    'distance': distance
-                                })
+                            key = (p_idx, near_p_idx)
+                            parallel_groups[key].append({
+                                'pipeline_1_segment': segment['segment_index'],
+                                'pipeline_2_segment': near_segment['segment_index'],
+                                'distance': distance
+                            })
                             
             except Exception as e:
                 print(f"Warning: Error processing segment {seg_idx}: {str(e)}")
@@ -515,7 +505,7 @@ class PipelineAnalyzer:
                     overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
                     
                     # Calculate effective total
-                    total_savings = sum(section['bundled_length_meters'] * 0.5 
+                    total_savings = sum(section['bundled_length_meters']
                                       for section in overlap_results['bundled_sections'])
                     overlap_results['effective_total_meters'] = total_meters - total_savings
                     overlap_results['effective_total_miles'] = overlap_results['effective_total_meters'] / self.survey_mile
@@ -541,6 +531,15 @@ class PipelineAnalyzer:
             }
         except Exception as e:
             raise ValueError(f"Analysis failed: {str(e)}")
+
+def run_analysis(file_path, detection_range, min_parallel, segment_length, angular_tolerance):
+    """Run analysis in a separate process to keep GUI responsive."""
+    analyzer = PipelineAnalyzer()
+    analyzer.detection_range = detection_range
+    analyzer.min_parallel_length = min_parallel
+    analyzer.segment_length = segment_length
+    analyzer.angular_tolerance = angular_tolerance
+    return analyzer.analyze_complete(file_path)
 
 
 class PipelineCalculatorGUI:
@@ -727,35 +726,38 @@ class PipelineCalculatorGUI:
             progress_bar.pack(pady=10)
             progress_bar.start()
 
-            # Worker thread
-            result_holder = {}
+            # Run heavy analysis in a background thread
+            executor = ThreadPoolExecutor(max_workers=1)
+            future = executor.submit(
+                run_analysis,
+                file_path,
+                detection_range,
+                min_parallel,
+                segment_length,
+                angular_tolerance,
+            )
 
-            def worker():
-                try:
-                    result_holder['result'] = self.analyzer.analyze_complete(file_path)
-                except Exception as e:
-                    result_holder['error'] = e
-
-            thread = threading.Thread(target=worker, daemon=True)
-            thread.start()
-
-            # Check thread completion
-            def check_thread():
-                if thread.is_alive():
-                    self.root.after(100, check_thread)
+            # Check process completion without blocking GUI
+            def check_future():
+                if not future.done():
+                    self.root.after(100, check_future)
                 else:
                     progress_bar.stop()
                     progress_frame.destroy()
-                    if 'error' in result_holder:
-                        error_msg = str(result_holder['error'])
-                        messagebox.showerror("Processing Error", 
-                                           f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.")
-                        self.show_file_selection()
-                    else:
-                        self.current_results = result_holder['result']
+                    try:
+                        self.current_results = future.result()
                         self.show_results()
+                    except Exception as e:
+                        error_msg = str(e)
+                        messagebox.showerror(
+                            "Processing Error",
+                            f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.",
+                        )
+                        self.show_file_selection()
+                    finally:
+                        executor.shutdown(wait=False)
 
-            check_thread()
+            check_future()
         except Exception as e:
             messagebox.showerror("Error", f"Failed to process file: {str(e)}")
             self.show_file_selection()
@@ -879,16 +881,21 @@ class PipelineCalculatorGUI:
                         text_color="#87CEEB").pack()
             
             effective_miles = overlap['effective_total_miles']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Effective Survey Length: {effective_miles:.3f} US Survey Miles",
-                        font=("Arial", 14)).pack()
-            
+            ctk.CTkLabel(
+                adjusted_frame,
+                text=f"Effective Survey Length (Adjusted Mileage): {effective_miles:.3f} US Survey Miles",
+                font=("Arial", 14),
+                text_color="#90EE90",
+            ).pack()
+
             savings_miles = overlap['savings_miles']
             savings_pct = overlap['savings_percentage']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Survey Savings: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
-                        font=("Arial", 14), 
-                        text_color="#90EE90").pack()
+            ctk.CTkLabel(
+                adjusted_frame,
+                text=f"Mileage Removed: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
+                font=("Arial", 14),
+                text_color="white",
+            ).pack()
             
             # Bundled sections count
             bundle_count = len(overlap['bundled_sections'])
@@ -1003,6 +1010,8 @@ class PipelineCalculatorGUI:
                     font=("Arial", 16, "bold")).pack(pady=10)
 
         if overlap['bundled_sections']:
+            display_sections = overlap['bundled_sections'][:MAX_DISPLAY_SECTIONS]
+
             # Create scrollable frame for table content
             scroll_frame = ctk.CTkScrollableFrame(main_frame)
             scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
@@ -1018,10 +1027,10 @@ class PipelineCalculatorGUI:
             ctk.CTkLabel(header_frame, text="Avg Sep (m)",
                         font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
             ctk.CTkLabel(header_frame, text="Action",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=200, anchor="center").pack(side="left", padx=5)
 
-            # Data rows
-            for idx, section in enumerate(overlap['bundled_sections'], start=1):
+            # Data rows (limit to top sections)
+            for idx, section in enumerate(display_sections, start=1):
                 row_frame = ctk.CTkFrame(scroll_frame)
                 row_frame.pack(fill="x", pady=2)
 
@@ -1035,21 +1044,26 @@ class PipelineCalculatorGUI:
                 ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
                            font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
 
-                button_container = ctk.CTkFrame(row_frame, width=100)
+                button_container = ctk.CTkFrame(row_frame, width=200, height=40)
                 button_container.pack(side="left", padx=5)
                 button_container.pack_propagate(False)
 
-                ctk.CTkButton(button_container, text="View in G.E",
-                               command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
-                               width=90, height=28).pack(pady=2)
+                view_button = ctk.CTkButton(
+                    button_container,
+                    text="View Area in Google Earth",
+                    command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
+                    width=190,
+                    height=28,
+                )
+                view_button.place(relx=0.5, rely=0.5, anchor="center")
 
             # Summary statistics at bottom
             summary_frame = ctk.CTkFrame(main_frame)
             summary_frame.pack(fill="x", pady=10)
 
-            total_bundled = sum(s['bundled_length_miles'] for s in overlap['bundled_sections'])
+            total_bundled = sum(s['bundled_length_miles'] for s in display_sections)
             ctk.CTkLabel(summary_frame,
-                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(overlap['bundled_sections'])} sections",
+                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(display_sections)} sections",
                         font=("Arial", 12, "bold")).pack()
         else:
             ctk.CTkLabel(main_frame,
@@ -1224,4 +1238,6 @@ def main():
 
 
 if __name__ == "__main__":
+    import multiprocessing
+    multiprocessing.freeze_support()
     main()
