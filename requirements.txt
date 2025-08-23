@@ -5,3 +5,4 @@ scipy>=1.10.0
 customtkinter>=5.0.0
 pyinstaller>=5.0.0
 tkinterdnd2
+Pillow>=9.0.0
