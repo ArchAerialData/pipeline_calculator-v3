@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:/Program Files/Python313/python.exe\" \"src/pipeline_calculator_v3.py\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

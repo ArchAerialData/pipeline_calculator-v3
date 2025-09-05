@@ -318,6 +318,8 @@ class PipelineAnalyzer:
         
         # Find parallel segments
         parallel_groups = defaultdict(list)
+        # Deduplicate symmetric neighbor hits (A->B and B->A) at the segment level
+        seen_segment_pairs = set()
         
         for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
             try:
@@ -351,19 +353,22 @@ class PipelineAnalyzer:
                         _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
                         
                         if distance <= self.detection_range:
-                            # CRITICAL FIX: Ensure segments are stored in correct order
-                            # based on the sorted pipeline indices
+                            # Deduplicate exact segment pair across both directions
+                            pair_id = (min(seg_idx, near_idx), max(seg_idx, near_idx))
+                            if pair_id in seen_segment_pairs:
+                                continue
+                            seen_segment_pairs.add(pair_id)
+
+                            # Store entry using sorted pipeline indices for stable grouping
                             key = tuple(sorted([p_idx, near_p_idx]))
-                            
+
                             if key[0] == p_idx:
-                                # p_idx is smaller, so it comes first in the key
                                 parallel_groups[key].append({
                                     'pipeline_1_segment': segment['segment_index'],
                                     'pipeline_2_segment': near_segment['segment_index'],
                                     'distance': distance
                                 })
                             else:
-                                # near_p_idx is smaller, so it comes first in the key
                                 parallel_groups[key].append({
                                     'pipeline_1_segment': near_segment['segment_index'],
                                     'pipeline_2_segment': segment['segment_index'],
@@ -428,8 +433,8 @@ class PipelineAnalyzer:
                     bundled_length = len(section) * self.segment_length
                     avg_distance = np.mean([s['distance'] for s in section])
 
-                    # Compute a representative center point for this bundled section
-                    centers = []
+                    # Compute bounding box and center for this bundled section
+                    all_points = []
                     for seg in section:
                         # CRITICAL FIX: Validate segment indices before accessing
                         seg1_idx = seg['pipeline_1_segment']
@@ -444,13 +449,26 @@ class PipelineAnalyzer:
                             
                         mid1 = p1_segments[seg1_idx]['midpoint']
                         mid2 = p2_segments[seg2_idx]['midpoint']
-                        centers.append(((mid1[0] + mid2[0]) * 0.5, (mid1[1] + mid2[1]) * 0.5))
+                        all_points.extend([mid1, mid2])
 
-                    if not centers:
+                    if not all_points:
                         continue
                         
-                    center_lon = float(np.mean([c[0] for c in centers]))
-                    center_lat = float(np.mean([c[1] for c in centers]))
+                    # Calculate bounding box
+                    lons = [p[0] for p in all_points]
+                    lats = [p[1] for p in all_points]
+                    min_lon, max_lon = min(lons), max(lons)
+                    min_lat, max_lat = min(lats), max(lats)
+                    
+                    # Add buffer around the bounding box (in degrees, ~100m at mid latitudes)
+                    buffer = 0.001
+                    min_lon -= buffer
+                    max_lon += buffer
+                    min_lat -= buffer
+                    max_lat += buffer
+                    
+                    center_lon = float((min_lon + max_lon) / 2)
+                    center_lat = float((min_lat + max_lat) / 2)
 
                     for seg in section:
                         bundled_segments[p1_idx].add(seg['pipeline_1_segment'])
@@ -465,6 +483,12 @@ class PipelineAnalyzer:
                         'segment_count': len(section),
                         'center_lon': center_lon,
                         'center_lat': center_lat,
+                        'bbox': {
+                            'min_lon': min_lon,
+                            'max_lon': max_lon,
+                            'min_lat': min_lat,
+                            'max_lat': max_lat
+                        }
                     })
                 except Exception as e:
                     print(f"Warning: Error processing bundled section: {str(e)}")
@@ -494,6 +518,86 @@ class PipelineAnalyzer:
             progress_callback(1.0)  # 100% complete
         
         return results
+
+    def compute_effective_length_by_clusters(self, pipelines, per_pipeline_total_meters, progress_callback=None):
+        """Compute effective length using per-segment clustering across pipelines.
+
+        For each segment midpoint, find nearby parallel segments on other pipelines
+        within detection range. If k pipelines share that neighborhood, attribute
+        only 1/k of that segment length to the effective total. This avoids
+        double-counting and naturally handles 3+ parallel pipelines.
+        """
+        # Ensure segments are present
+        for pipeline in pipelines:
+            if 'segments' not in pipeline:
+                pipeline['segments'] = self.segment_pipeline(pipeline['coordinates'])
+
+        # Flatten segments for KDTree
+        all_midpoints = []
+        seg_index_map = {}  # global_idx -> (p_idx, seg)
+        per_pipeline_segment_sum = defaultdict(float)
+
+        for p_idx, pipeline in enumerate(pipelines):
+            for seg in pipeline['segments']:
+                g = len(all_midpoints)
+                all_midpoints.append(seg['midpoint'])
+                seg_index_map[g] = (p_idx, seg)
+                per_pipeline_segment_sum[p_idx] += float(seg.get('length', self.segment_length))
+
+        if not all_midpoints:
+            return float(sum(per_pipeline_total_meters))
+
+        try:
+            pts = np.array([(lon, lat) for lon, lat in all_midpoints])
+            tree = KDTree(pts)
+        except Exception:
+            return float(sum(per_pipeline_total_meters))
+
+        eff_total = 0.0
+        detection_range_deg = self.detection_range / 111000.0
+
+        for g_idx, (p_idx, seg) in seg_index_map.items():
+            try:
+                neighbor_ids = tree.query_ball_point(pts[g_idx], detection_range_deg)
+            except Exception:
+                neighbor_ids = []
+
+            participating = {p_idx}
+
+            for n_idx in neighbor_ids:
+                if n_idx == g_idx:
+                    continue
+                if n_idx not in seg_index_map:
+                    continue
+                np_idx, nseg = seg_index_map[n_idx]
+                if np_idx == p_idx:
+                    continue
+
+                # Parallel filter via bearings, then exact distance check
+                bd = abs(seg['bearing'] - nseg['bearing'])
+                bd = min(bd, 360 - bd)
+                if bd > self.angular_tolerance:
+                    continue
+
+                lon1, lat1 = seg['midpoint']
+                lon2, lat2 = nseg['midpoint']
+                _, _, d_m = self.geod.inv(lon1, lat1, lon2, lat2)
+                if d_m <= self.detection_range:
+                    participating.add(np_idx)
+
+            k = max(1, len(participating))
+            seg_len = float(seg.get('length', self.segment_length))
+            eff_total += seg_len / k
+
+        # Add any remainder lengths not captured by segmentation resolution
+        tails = 0.0
+        for p_idx, tot in enumerate(per_pipeline_total_meters):
+            segmented = per_pipeline_segment_sum.get(p_idx, 0.0)
+            if tot > segmented:
+                tails += (tot - segmented)
+        eff_total += tails
+
+        return eff_total
     
     def analyze_complete(self, file_path, progress_callback=None):
         """Complete analysis of KMZ/KML file."""
@@ -513,15 +617,20 @@ class PipelineAnalyzer:
                 try:
                     parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
                     overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
-                    
-                    # Calculate effective total
-                    total_savings = sum(section['bundled_length_meters'] * 0.5 
-                                      for section in overlap_results['bundled_sections'])
-                    overlap_results['effective_total_meters'] = total_meters - total_savings
-                    overlap_results['effective_total_miles'] = overlap_results['effective_total_meters'] / self.survey_mile
+                    # Compute effective length via clustered attribution (prevents over-discounting)
+                    per_pipe_totals = [d['Shape_Length'] for d in pipeline_data]
+                    eff_total_m = self.compute_effective_length_by_clusters(pipelines, per_pipe_totals, progress_callback)
+
+                    # Guardrails: clamp effective total to [0, total_meters]
+                    eff_total_m = max(0.0, min(float(total_meters), float(eff_total_m)))
+                    total_savings = max(0.0, float(total_meters) - eff_total_m)
+
+                    overlap_results['effective_total_meters'] = eff_total_m
+                    overlap_results['effective_total_miles'] = eff_total_m / self.survey_mile
                     overlap_results['savings_meters'] = total_savings
                     overlap_results['savings_miles'] = total_savings / self.survey_mile
                     overlap_results['savings_percentage'] = (total_savings / total_meters * 100) if total_meters > 0 else 0
+                    overlap_results['computation_method'] = 'clustered_segments_v1'
                 except Exception as e:
                     print(f"Warning: Overlap analysis failed: {str(e)}")
                     overlap_results = None
@@ -560,6 +669,18 @@ class PipelineCalculatorGUI:
         self.angular_tolerance_var = DoubleVar(value=ANGULAR_TOLERANCE)
         
         self.setup_gui()
+
+    def _get_float_var(self, var, default):
+        """Safely get float value from DoubleVar with fallback to default."""
+        try:
+            return var.get()
+        except Exception:
+            # Reset to default if there's any issue
+            try:
+                var.set(default)
+            except Exception:
+                pass
+            return default
 
     def _set_app_icon(self):
         """Configure window icon for supported platforms."""
@@ -631,9 +752,17 @@ class PipelineCalculatorGUI:
         detection_frame.pack(fill="x", padx=20, pady=5)
         ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
         ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var, width=100).pack(side="left")
-        ctk.CTkLabel(detection_frame, text="(Survey swath width)", 
+        ctk.CTkLabel(detection_frame, text="(Max centerline separation to bundle)", 
                     text_color="#888888").pack(side="left", padx=10)
-        
+
+        # Segment length (analysis resolution)
+        seglen_frame = ctk.CTkFrame(params_frame)
+        seglen_frame.pack(fill="x", padx=20, pady=5)
+        ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
+        ctk.CTkEntry(seglen_frame, textvariable=self.segment_length_var, width=100).pack(side="left")
+        ctk.CTkLabel(seglen_frame, text="(Resolution; smaller = slower, finer)",
+                    text_color="#888888").pack(side="left", padx=10)
+
         # Min parallel length
         parallel_frame = ctk.CTkFrame(params_frame)
         parallel_frame.pack(fill="x", padx=20, pady=5)
@@ -696,17 +825,10 @@ class PipelineCalculatorGUI:
             self.current_file = file_path
             
             # Validate parameter values
-            try:
-                detection_range = max(1, self.detection_range_var.get())
-                min_parallel = max(10, self.min_parallel_var.get())
-                segment_length = max(1, self.segment_length_var.get())
-                angular_tolerance = max(1, min(90, self.angular_tolerance_var.get()))
-            except:
-                # Use defaults if invalid values
-                detection_range = DEFAULT_DETECTION_RANGE
-                min_parallel = MIN_PARALLEL_LENGTH
-                segment_length = SEGMENT_LENGTH
-                angular_tolerance = ANGULAR_TOLERANCE
+            detection_range = max(1, self._get_float_var(self.detection_range_var, DEFAULT_DETECTION_RANGE))
+            min_parallel = max(10, self._get_float_var(self.min_parallel_var, MIN_PARALLEL_LENGTH))
+            segment_length = max(1, self._get_float_var(self.segment_length_var, SEGMENT_LENGTH))
+            angular_tolerance = max(1, min(90, self._get_float_var(self.angular_tolerance_var, ANGULAR_TOLERANCE)))
             
             # Update analyzer parameters
             self.analyzer.detection_range = detection_range
@@ -714,9 +836,16 @@ class PipelineCalculatorGUI:
             self.analyzer.segment_length = segment_length
             self.analyzer.angular_tolerance = angular_tolerance
             
+            # Ensure window is stable and visible
+            self.root.focus_force()
+            self.root.update_idletasks()
+            
             # Create in-window progress overlay
             progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
             progress_frame.place(relx=0.5, rely=0.5, anchor="center")
+            
+            # Ensure overlay is on top
+            progress_frame.lift()
 
             status_label = ctk.CTkLabel(progress_frame,
                                        text="Analyzing pipelines and overlaps...",
@@ -726,26 +855,36 @@ class PipelineCalculatorGUI:
             progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
             progress_bar.pack(pady=10)
             progress_bar.start()
+            
+            # Force UI update
+            self.root.update()
 
             # Worker thread
             result_holder = {}
+            analysis_complete = threading.Event()
 
             def worker():
                 try:
                     result_holder['result'] = self.analyzer.analyze_complete(file_path)
                 except Exception as e:
                     result_holder['error'] = e
+                finally:
+                    analysis_complete.set()
 
             thread = threading.Thread(target=worker, daemon=True)
             thread.start()
 
-            # Check thread completion
+            # Check thread completion with better error handling
             def check_thread():
-                if thread.is_alive():
+                if not analysis_complete.is_set():
                     self.root.after(100, check_thread)
                 else:
-                    progress_bar.stop()
-                    progress_frame.destroy()
+                    try:
+                        progress_bar.stop()
+                        progress_frame.destroy()
+                    except Exception:
+                        pass
+                        
                     if 'error' in result_holder:
                         error_msg = str(result_holder['error'])
                         messagebox.showerror("Processing Error", 
@@ -763,15 +902,20 @@ class PipelineCalculatorGUI:
     def show_results(self):
         """Display analysis results."""
         try:
-            # Ensure window is visible and fully opaque
+            # Ensure window is stable and visible
             self.root.deiconify()
+            self.root.focus_force()
             try:
                 self.root.attributes("-alpha", 1.0)
                 self.root.lift()
+                self.root.attributes("-topmost", False)  # Prevent flashing on other monitors
                 # Set a solid background to avoid transparency artifacts
                 self.root.configure(bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"])
             except Exception:
                 pass
+            
+            # Force window to stay on current monitor
+            self.root.update_idletasks()
 
             # Clear window
             for widget in self.root.winfo_children():
@@ -910,6 +1054,12 @@ class PipelineCalculatorGUI:
         
         ctk.CTkLabel(params_frame, text=param_text, 
                     font=("Arial", 12)).pack()
+        # Additional parameters for clarity
+        params2 = self.current_results['analysis_parameters']
+        param_text2 = f"Segment Length: {params2.get('segment_length', self.analyzer.segment_length)} m\n"
+        param_text2 += f"Angular Tolerance: {params2['angular_tolerance']} deg"
+        ctk.CTkLabel(params_frame, text=param_text2,
+                    font=("Arial", 12), text_color="#AAAAAA").pack()
     
     def create_pipeline_tab(self, parent):
         """Create pipeline details tab."""
@@ -956,25 +1106,73 @@ class PipelineCalculatorGUI:
         tree.pack(fill="both", expand=True, padx=10, pady=10)
 
     def view_overlap_kml(self, section, index):
-        """Generate a temporary KML for the bundled section and open it."""
+        """Generate a temporary KML with polygon corridor for the bundled section and open it."""
         try:
-            lon = section.get('center_lon', 0)
-            lat = section.get('center_lat', 0)
-            label = (f"{section['pipeline_1']} ↔ {section['pipeline_2']} "
-                     f"({section['bundled_length_miles']:.3f} mi, "
-                     f"{section['average_separation']:.1f} m)")
+            # Get bounding box or fallback to center point
+            bbox = section.get('bbox')
+            if bbox:
+                min_lon = bbox['min_lon']
+                max_lon = bbox['max_lon']
+                min_lat = bbox['min_lat']
+                max_lat = bbox['max_lat']
+            else:
+                # Fallback to center point with small buffer
+                lon = section.get('center_lon', 0)
+                lat = section.get('center_lat', 0)
+                buffer = 0.001
+                min_lon = lon - buffer
+                max_lon = lon + buffer
+                min_lat = lat - buffer
+                max_lat = lat + buffer
 
+            label = (
+                f"{section['pipeline_1']} + {section['pipeline_2']} "
+                f"({section['bundled_length_miles']:.3f} mi, "
+                f"{section['average_separation']:.1f} m)"
+            )
+
+            # Create polygon rectangle representing the survey corridor
             kml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
+    <Style id="surveyCorridorStyle">
+      <PolyStyle>
+        <color>7F00FF00</color>
+        <outline>1</outline>
+      </PolyStyle>
+      <LineStyle>
+        <color>FF00FF00</color>
+        <width>2</width>
+      </LineStyle>
+    </Style>
     <Placemark>
       <name>{label}</name>
-      <Point><coordinates>{lon:.7f},{lat:.7f},0</coordinates></Point>
+      <description>Bundled pipeline survey corridor: {section['bundled_length_miles']:.3f} miles at {section['average_separation']:.1f}m average separation</description>
+      <styleUrl>#surveyCorridorStyle</styleUrl>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              {min_lon:.7f},{min_lat:.7f},0
+              {max_lon:.7f},{min_lat:.7f},0
+              {max_lon:.7f},{max_lat:.7f},0
+              {min_lon:.7f},{max_lat:.7f},0
+              {min_lon:.7f},{min_lat:.7f},0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+    <Placemark>
+      <name>Center: {label}</name>
+      <Point>
+        <coordinates>{(min_lon+max_lon)/2:.7f},{(min_lat+max_lat)/2:.7f},0</coordinates>
+      </Point>
     </Placemark>
   </Document>
 </kml>'''
 
-            with tempfile.NamedTemporaryFile('w', suffix=f'_overlap_{index:03d}.kml', delete=False, encoding='utf-8') as tmp:
+            with tempfile.NamedTemporaryFile('w', suffix=f'_corridor_{index:03d}.kml', delete=False, encoding='utf-8') as tmp:
                 tmp.write(kml)
                 path = tmp.name
 
@@ -1007,41 +1205,63 @@ class PipelineCalculatorGUI:
             scroll_frame = ctk.CTkScrollableFrame(main_frame)
             scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
 
-            # Table header
-            header_frame = ctk.CTkFrame(scroll_frame)
+            # Table header with consistent height
+            header_frame = ctk.CTkFrame(scroll_frame, height=40)
             header_frame.pack(fill="x", pady=(0, 10))
+            header_frame.pack_propagate(False)
 
             ctk.CTkLabel(header_frame, text="Pipeline Pair",
-                        font=("Arial", 12, "bold"), width=300, anchor="w").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=300, anchor="w").pack(side="left", padx=5, pady=8)
             ctk.CTkLabel(header_frame, text="Length (miles)",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
             ctk.CTkLabel(header_frame, text="Avg Sep (m)",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
             ctk.CTkLabel(header_frame, text="Action",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5)
+                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
 
-            # Data rows
-            for idx, section in enumerate(overlap['bundled_sections'], start=1):
-                row_frame = ctk.CTkFrame(scroll_frame)
+            # Data rows - limit to top 20 sections
+            sections_to_display = overlap['bundled_sections'][:20] if len(overlap['bundled_sections']) > 20 else overlap['bundled_sections']
+            
+            for idx, section in enumerate(sections_to_display, start=1):
+                row_frame = ctk.CTkFrame(scroll_frame, height=40)
                 row_frame.pack(fill="x", pady=2)
+                row_frame.pack_propagate(False)  # Maintain fixed height
+                
+                # Clean pipeline pair label
+                pair_text = f"{section['pipeline_1']} + {section['pipeline_2']}"
+                pair_label = ctk.CTkLabel(row_frame, text=pair_text,
+                                        font=("Arial", 11), width=300, anchor="w")
+                pair_label.pack(side="left", padx=5, pady=6)  # Center vertically with padding
 
-                pair_text = f"{section['pipeline_1']} ↔ {section['pipeline_2']}"
-                ctk.CTkLabel(row_frame, text=pair_text,
-                           font=("Arial", 11), width=300, anchor="w").pack(side="left", padx=5)
+                length_label = ctk.CTkLabel(row_frame, text=f"{section['bundled_length_miles']:.3f}",
+                                          font=("Arial", 11), width=100, anchor="center")
+                length_label.pack(side="left", padx=5, pady=6)
 
-                ctk.CTkLabel(row_frame, text=f"{section['bundled_length_miles']:.3f}",
-                           font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
+                sep_label = ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
+                                       font=("Arial", 11), width=100, anchor="center")
+                sep_label.pack(side="left", padx=5, pady=6)
 
-                ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
-                           font=("Arial", 11), width=100, anchor="center").pack(side="left", padx=5)
+                # Better aligned button container
+                button_frame = ctk.CTkFrame(row_frame, width=100, height=40)
+                button_frame.pack(side="left", padx=5)
+                button_frame.pack_propagate(False)
 
-                button_container = ctk.CTkFrame(row_frame, width=100)
-                button_container.pack(side="left", padx=5)
-                button_container.pack_propagate(False)
-
-                ctk.CTkButton(button_container, text="View in G.E",
-                               command=lambda s=section, i=idx: self.view_overlap_kml(s, i),
-                               width=90, height=28).pack(pady=2)
+                # Fix button command with proper closure
+                def make_view_command(s, i):
+                    return lambda: self.view_overlap_kml(s, i)
+                
+                view_button = ctk.CTkButton(button_frame, text="View Corridor",
+                                          command=make_view_command(section, idx),
+                                          width=90, height=28)
+                view_button.place(relx=0.5, rely=0.5, anchor="center")  # Perfect centering
+            
+            # Show message if more than 20 sections exist
+            if len(overlap['bundled_sections']) > 20:
+                info_frame = ctk.CTkFrame(scroll_frame)
+                info_frame.pack(fill="x", pady=10)
+                ctk.CTkLabel(info_frame, 
+                           text=f"Showing top 20 of {len(overlap['bundled_sections'])} bundled sections (sorted by length)\nEach 'View Corridor' button opens a polygon area in Google Earth showing the survey corridor",
+                           font=("Arial", 10), text_color="#888888", justify="center").pack(pady=5)
 
             # Summary statistics at bottom
             summary_frame = ctk.CTkFrame(main_frame)
@@ -1084,9 +1304,11 @@ class PipelineCalculatorGUI:
     def reanalyze(self):
         """Show in-window parameter editor and reanalyze."""
         try:
-            if getattr(self, 'param_frame', None):
+            # Clean up any existing parameter frame
+            if hasattr(self, 'param_frame') and self.param_frame is not None:
                 try:
                     self.param_frame.destroy()
+                    self.param_frame = None
                 except Exception:
                     pass
 
@@ -1101,6 +1323,12 @@ class PipelineCalculatorGUI:
             detection_frame.pack(fill="x", padx=20, pady=10)
             ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
             ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var).pack(side="left")
+
+            # Segment length
+            seglen_frame = ctk.CTkFrame(self.param_frame)
+            seglen_frame.pack(fill="x", padx=20, pady=10)
+            ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
+            ctk.CTkEntry(seglen_frame, textvariable=self.segment_length_var).pack(side="left")
 
             # Min parallel
             parallel_frame = ctk.CTkFrame(self.param_frame)
@@ -1119,13 +1347,26 @@ class PipelineCalculatorGUI:
             button_frame.pack(pady=20)
 
             def apply_and_analyze():
-                self.param_frame.destroy()
+                if hasattr(self, 'param_frame') and self.param_frame is not None:
+                    try:
+                        self.param_frame.destroy()
+                        self.param_frame = None
+                    except Exception:
+                        pass
                 self.process_file(self.current_file)
+            
+            def cancel_dialog():
+                if hasattr(self, 'param_frame') and self.param_frame is not None:
+                    try:
+                        self.param_frame.destroy()
+                        self.param_frame = None
+                    except Exception:
+                        pass
 
             ctk.CTkButton(button_frame, text="Apply & Reanalyze",
                          command=apply_and_analyze).pack(side="left", padx=5)
             ctk.CTkButton(button_frame, text="Cancel",
-                         command=self.param_frame.destroy).pack(side="left", padx=5)
+                         command=cancel_dialog).pack(side="left", padx=5)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to show parameter dialog: {str(e)}")
     
