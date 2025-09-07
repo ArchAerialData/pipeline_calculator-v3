@@ -28,6 +28,7 @@ import re
 warnings.filterwarnings('ignore')
 import tempfile
 from PIL import Image, ImageTk
+import math
 
 # Version info
 __version__ = "3.0.0-fixed"
@@ -435,6 +436,7 @@ class PipelineAnalyzer:
 
                     # Compute bounding box and center for this bundled section
                     all_points = []
+                    pair_midpoints = []  # list of ((lon,lat) mid1, (lon,lat) mid2)
                     for seg in section:
                         # CRITICAL FIX: Validate segment indices before accessing
                         seg1_idx = seg['pipeline_1_segment']
@@ -450,6 +452,7 @@ class PipelineAnalyzer:
                         mid1 = p1_segments[seg1_idx]['midpoint']
                         mid2 = p2_segments[seg2_idx]['midpoint']
                         all_points.extend([mid1, mid2])
+                        pair_midpoints.append((mid1, mid2))
 
                     if not all_points:
                         continue
@@ -470,6 +473,244 @@ class PipelineAnalyzer:
                     center_lon = float((min_lon + max_lon) / 2)
                     center_lat = float((min_lat + max_lat) / 2)
 
+                    # Build a corridor that follows curvature along the section
+                    # 1) Compute centerline points as the average of the paired midpoints
+                    centerline_pts = []  # [(lon, lat), ...]
+                    for mid1, mid2 in pair_midpoints:
+                        cl_lon = (mid1[0] + mid2[0]) / 2.0
+                        cl_lat = (mid1[1] + mid2[1]) / 2.0
+                        centerline_pts.append((cl_lon, cl_lat))
+
+                    # Fallback if centerline could not be built
+                    if not centerline_pts and all_points:
+                        # Use average of all points as degenerate centerline
+                        avg_lon = float(np.mean(lons))
+                        avg_lat = float(np.mean(lats))
+                        centerline_pts = [(avg_lon, avg_lat), (avg_lon, avg_lat)]
+
+                    # 2) Convert to a local ENU-like meter frame around the section center for stable geometry
+                    lat0 = center_lat
+                    lon0 = center_lon
+                    # Approx meters per degree at latitude lat0
+                    m_per_deg_y = 111320.0
+                    m_per_deg_x = 111320.0 * math.cos(math.radians(lat0))
+
+                    def to_xy(lon, lat):
+                        return (
+                            (lon - lon0) * m_per_deg_x,
+                            (lat - lat0) * m_per_deg_y
+                        )
+
+                    def to_lonlat(x, y):
+                        return (
+                            lon0 + (x / m_per_deg_x),
+                            lat0 + (y / m_per_deg_y)
+                        )
+
+                    cl_xy = [to_xy(lon, lat) for lon, lat in centerline_pts]
+
+                    # 3) Determine main axis unit vector u from first->last centerline point
+                    if len(cl_xy) >= 2:
+                        x0, y0 = cl_xy[0]
+                        x1, y1 = cl_xy[-1]
+                        vx, vy = (x1 - x0), (y1 - y0)
+                        norm = math.hypot(vx, vy)
+                        if norm < 1e-6:
+                            # Degenerate; pick a default axis
+                            u = (1.0, 0.0)
+                        else:
+                            u = (vx / norm, vy / norm)
+                    else:
+                        u = (1.0, 0.0)
+
+                    # Perpendicular unit vector
+                    v = (-u[1], u[0])
+
+                    # 4) Project centerline to get extents along axis and the mean perpendicular offset
+                    t_vals = []
+                    s_vals = []
+                    for x, y in cl_xy:
+                        t = x * u[0] + y * u[1]
+                        s = x * v[0] + y * v[1]
+                        t_vals.append(t)
+                        s_vals.append(s)
+                    if not t_vals:
+                        # Guard: create tiny extents
+                        t_vals = [0.0, bundled_length]
+                        s_vals = [0.0, 0.0]
+
+                    t_min = float(min(t_vals))
+                    t_max = float(max(t_vals))
+                    s_mean = float(np.mean(s_vals))
+
+                    # 5) Estimate width from actual separations across pairs (in meters), plus small margin
+                    max_sep_m = 0.0
+                    for mid1, mid2 in pair_midpoints:
+                        x1, y1 = to_xy(mid1[0], mid1[1])
+                        x2, y2 = to_xy(mid2[0], mid2[1])
+                        sep = math.hypot(x2 - x1, y2 - y1)
+                        if sep > max_sep_m:
+                            max_sep_m = sep
+                    # Ensure at least a narrow band; cap width to ~2x detection range
+                    margin_m = 10.0
+                    width_m = max(max_sep_m + margin_m, self.segment_length)
+                    if self.detection_range > 0:
+                        # Bugfix: clamp directly to 2 * detection range (previous expression was a no-op)
+                        width_m = min(width_m, 2.0 * self.detection_range)
+
+                    # 6) Add small longitudinal padding to ensure endpoints are covered
+                    pad_m = max(self.segment_length * 1.0, 5.0)
+                    t1 = t_min - pad_m
+                    t2 = t_max + pad_m
+                    half_w = width_m / 2.0
+
+                    # Rectangle corners in XY (A->B->C->D)
+                    A = (u[0] * t1 + v[0] * (s_mean - half_w), u[1] * t1 + v[1] * (s_mean - half_w))
+                    B = (u[0] * t2 + v[0] * (s_mean - half_w), u[1] * t2 + v[1] * (s_mean - half_w))
+                    C = (u[0] * t2 + v[0] * (s_mean + half_w), u[1] * t2 + v[1] * (s_mean + half_w))
+                    D = (u[0] * t1 + v[0] * (s_mean + half_w), u[1] * t1 + v[1] * (s_mean + half_w))
+
+                    oriented_polygon = [
+                        to_lonlat(A[0], A[1]),
+                        to_lonlat(B[0], B[1]),
+                        to_lonlat(C[0], C[1]),
+                        to_lonlat(D[0], D[1]),
+                        to_lonlat(A[0], A[1])  # closed ring
+                    ]
+
+                    # 7) Curved strip corridor with proper joins: compute offset polyline using line intersections
+                    def unit(vec):
+                        vx, vy = vec
+                        nrm = math.hypot(vx, vy)
+                        if nrm < 1e-9:
+                            return (0.0, 0.0)
+                        return (vx / nrm, vy / nrm)
+
+                    def line_intersection(p, d, q, e):
+                        # Solve p + t d = q + u e
+                        cross = d[0]*e[1] - d[1]*e[0]
+                        if abs(cross) < 1e-9:
+                            return None
+                        r = (q[0] - p[0], q[1] - p[1])
+                        t = (r[0]*e[1] - r[1]*e[0]) / cross
+                        return (p[0] + t*d[0], p[1] + t*d[1])
+
+                    N = len(cl_xy)
+                    curved_polygon = None
+                    if N >= 2:
+                        # Build per-segment directions and normals
+                        dirs = []
+                        norms = []
+                        valid_idx = []
+                        for i in range(N-1):
+                            dx = cl_xy[i+1][0] - cl_xy[i][0]
+                            dy = cl_xy[i+1][1] - cl_xy[i][1]
+                            udir = unit((dx, dy))
+                            if udir == (0.0, 0.0):
+                                continue
+                            dirs.append(udir)
+                            norms.append((-udir[1], udir[0]))
+                            valid_idx.append(i)
+
+                        if not dirs:
+                            # Fallback to oriented rectangle if degenerate
+                            curved_polygon = [to_lonlat(px, py) for px, py in [A, B, C, D, A]]
+                        else:
+                            # Compute left/right boundary points with miter joins
+                            miter_limit = 6.0  # in multiples of half_w
+                            left_pts = []
+                            right_pts = []
+
+                            # Start caps from first segment
+                            i0 = valid_idx[0]
+                            p0 = cl_xy[i0]
+                            d0 = dirs[0]
+                            n0 = norms[0]
+                            left_pts.append((p0[0] + n0[0]*half_w, p0[1] + n0[1]*half_w))
+                            right_pts.append((p0[0] - n0[0]*half_w, p0[1] - n0[1]*half_w))
+
+                            for k in range(1, len(dirs)):
+                                i_curr = valid_idx[k]
+                                pi = cl_xy[i_curr]
+                                d_prev = dirs[k-1]
+                                d_curr = dirs[k]
+                                n_prev = norms[k-1]
+                                n_curr = norms[k]
+
+                                # Left offset lines through the vertex
+                                Lp = (pi[0] + n_prev[0]*half_w, pi[1] + n_prev[1]*half_w)
+                                Lc = (pi[0] + n_curr[0]*half_w, pi[1] + n_curr[1]*half_w)
+                                left_int = line_intersection(Lp, d_prev, Lc, d_curr)
+
+                                # Right offset lines through the vertex (negative normals)
+                                Rp = (pi[0] - n_prev[0]*half_w, pi[1] - n_prev[1]*half_w)
+                                Rc = (pi[0] - n_curr[0]*half_w, pi[1] - n_curr[1]*half_w)
+                                right_int = line_intersection(Rp, d_prev, Rc, d_curr)
+
+                                # Fallback to bevel join if nearly parallel or excessive miter
+                                def safe_join(prev_pt, cand, curr_pt):
+                                    if cand is None:
+                                        return [prev_pt, curr_pt]  # bevel
+                                    # Check miter length vs limit
+                                    ml = math.hypot(cand[0]-pi[0], cand[1]-pi[1])
+                                    if ml > miter_limit * half_w:
+                                        return [prev_pt, curr_pt]  # bevel
+                                    return [cand]
+
+                                left_prev_end = left_pts[-1]
+                                right_prev_end = right_pts[-1]
+                                left_join = safe_join(Lp, left_int, Lc)
+                                right_join = safe_join(Rp, right_int, Rc)
+
+                                # Replace last point with intersection/bevel result to keep boundary continuous
+                                left_pts[-1] = left_join[0]
+                                if len(left_join) > 1:
+                                    left_pts.append(left_join[1])
+                                right_pts[-1] = right_join[0]
+                                if len(right_join) > 1:
+                                    right_pts.append(right_join[1])
+
+                            # End caps using last segment
+                            i_last = valid_idx[-1] + 1
+                            pend = cl_xy[i_last]
+                            d_last = dirs[-1]
+                            n_last = norms[-1]
+                            left_pts.append((pend[0] + n_last[0]*half_w, pend[1] + n_last[1]*half_w))
+                            right_pts.append((pend[0] - n_last[0]*half_w, pend[1] - n_last[1]*half_w))
+
+                            # Build a non-self-intersecting ring: left boundary forward, then right boundary backwards
+                            ring_xy = list(left_pts) + list(reversed(right_pts))
+                            # Safety: if the sequence appears to alternate left/right (zig-zag),
+                            # fall back to the oriented rectangle instead of returning a broken polygon.
+                            def looks_zigzag(seq):
+                                try:
+                                    # Check the first few edge lengths
+                                    sample = min(20, len(seq) - 1)
+                                    if sample < 4:
+                                        return False
+                                    dists = []
+                                    for i in range(sample):
+                                        x1, y1 = seq[i]
+                                        x2, y2 = seq[i+1]
+                                        dists.append(math.hypot(x2-x1, y2-y1))
+                                    # If most edges are ~half_w*2 (i.e., width) rather than along-length,
+                                    # it indicates alternating sides
+                                    if not dists:
+                                        return False
+                                    med = float(np.median(dists))
+                                    # Along-length edges should be much larger than width for a corridor; if
+                                    # the median is close to the corridor width, treat it as zigzag
+                                    return med > 0.5 * width_m and med < 3.0 * width_m
+                                except Exception:
+                                    return False
+
+                            if looks_zigzag(ring_xy):
+                                curved_polygon = None
+                            else:
+                                if ring_xy[0] != ring_xy[-1]:
+                                    ring_xy.append(ring_xy[0])
+                                curved_polygon = [to_lonlat(px, py) for (px, py) in ring_xy]
+
                     for seg in section:
                         bundled_segments[p1_idx].add(seg['pipeline_1_segment'])
                         bundled_segments[p2_idx].add(seg['pipeline_2_segment'])
@@ -488,7 +729,13 @@ class PipelineAnalyzer:
                             'max_lon': max_lon,
                             'min_lat': min_lat,
                             'max_lat': max_lat
-                        }
+                        },
+                        # New: oriented corridor polygon for more faithful KML
+                        'oriented_polygon': oriented_polygon,
+                        'oriented_width_m': width_m,
+                        # New: curved corridor polygon following the centerline; if it failed validation,
+                        # use the oriented rectangle to avoid self-intersecting shapes in KML
+                        'corridor_polygon': curved_polygon if curved_polygon else oriented_polygon
                     })
                 except Exception as e:
                     print(f"Warning: Error processing bundled section: {str(e)}")
@@ -1108,22 +1355,51 @@ class PipelineCalculatorGUI:
     def view_overlap_kml(self, section, index):
         """Generate a temporary KML with polygon corridor for the bundled section and open it."""
         try:
-            # Get bounding box or fallback to center point
-            bbox = section.get('bbox')
-            if bbox:
-                min_lon = bbox['min_lon']
-                max_lon = bbox['max_lon']
-                min_lat = bbox['min_lat']
-                max_lat = bbox['max_lat']
-            else:
-                # Fallback to center point with small buffer
-                lon = section.get('center_lon', 0)
-                lat = section.get('center_lat', 0)
-                buffer = 0.001
-                min_lon = lon - buffer
-                max_lon = lon + buffer
-                min_lat = lat - buffer
-                max_lat = lat + buffer
+            # Prefer a curved corridor polygon if available; next try oriented polygon; otherwise, fall back to bbox rectangle
+            coords_list = []  # list of (lon, lat)
+            curved = section.get('corridor_polygon')
+            oriented = section.get('oriented_polygon')
+            if curved and isinstance(curved, (list, tuple)) and len(curved) >= 4:
+                try:
+                    coords_list = [(float(lon), float(lat)) for lon, lat in curved]
+                    if coords_list[0] != coords_list[-1]:
+                        coords_list.append(coords_list[0])
+                except Exception:
+                    coords_list = []
+            elif oriented and isinstance(oriented, (list, tuple)) and len(oriented) >= 4:
+                try:
+                    # Ensure tuples and close ring
+                    coords_list = [(float(lon), float(lat)) for lon, lat in oriented]
+                    if coords_list[0] != coords_list[-1]:
+                        coords_list.append(coords_list[0])
+                except Exception:
+                    coords_list = []
+
+            if not coords_list:
+                # Fallback: axis-aligned bbox
+                bbox = section.get('bbox')
+                if bbox:
+                    min_lon = bbox['min_lon']
+                    max_lon = bbox['max_lon']
+                    min_lat = bbox['min_lat']
+                    max_lat = bbox['max_lat']
+                else:
+                    # Fallback to center point with small buffer
+                    lon = section.get('center_lon', 0)
+                    lat = section.get('center_lat', 0)
+                    buffer = 0.001
+                    min_lon = lon - buffer
+                    max_lon = lon + buffer
+                    min_lat = lat - buffer
+                    max_lat = lat + buffer
+
+                coords_list = [
+                    (min_lon, min_lat),
+                    (max_lon, min_lat),
+                    (max_lon, max_lat),
+                    (min_lon, max_lat),
+                    (min_lon, min_lat)
+                ]
 
             label = (
                 f"{section['pipeline_1']} + {section['pipeline_2']} "
@@ -1131,7 +1407,19 @@ class PipelineCalculatorGUI:
                 f"{section['average_separation']:.1f} m)"
             )
 
-            # Create polygon rectangle representing the survey corridor
+            # KML coordinates string
+            coords_str = "\n              ".join(
+                f"{lon:.7f},{lat:.7f},0" for lon, lat in coords_list
+            )
+
+            # Create polygon representing the survey corridor (oriented when available)
+            width_text = ''
+            try:
+                if 'oriented_width_m' in section:
+                    width_text = f", approx width: {float(section['oriented_width_m']):.1f} m"
+            except Exception:
+                width_text = ''
+
             kml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
@@ -1147,17 +1435,13 @@ class PipelineCalculatorGUI:
     </Style>
     <Placemark>
       <name>{label}</name>
-      <description>Bundled pipeline survey corridor: {section['bundled_length_miles']:.3f} miles at {section['average_separation']:.1f}m average separation</description>
+      <description>Bundled pipeline survey corridor: {section['bundled_length_miles']:.3f} miles at {section['average_separation']:.1f}m average separation{width_text}</description>
       <styleUrl>#surveyCorridorStyle</styleUrl>
       <Polygon>
         <outerBoundaryIs>
           <LinearRing>
             <coordinates>
-              {min_lon:.7f},{min_lat:.7f},0
-              {max_lon:.7f},{min_lat:.7f},0
-              {max_lon:.7f},{max_lat:.7f},0
-              {min_lon:.7f},{max_lat:.7f},0
-              {min_lon:.7f},{min_lat:.7f},0
+              {coords_str}
             </coordinates>
           </LinearRing>
         </outerBoundaryIs>
@@ -1166,7 +1450,7 @@ class PipelineCalculatorGUI:
     <Placemark>
       <name>Center: {label}</name>
       <Point>
-        <coordinates>{(min_lon+max_lon)/2:.7f},{(min_lat+max_lat)/2:.7f},0</coordinates>
+        <coordinates>{float(section.get('center_lon', coords_list[0][0])):.7f},{float(section.get('center_lat', coords_list[0][1])):.7f},0</coordinates>
       </Point>
     </Placemark>
   </Document>
