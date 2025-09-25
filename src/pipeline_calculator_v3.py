@@ -29,6 +29,7 @@ warnings.filterwarnings('ignore')
 import tempfile
 from PIL import Image, ImageTk
 import math
+from xml.sax.saxutils import escape as _xml_escape
 
 # Version info
 __version__ = "3.0.0-fixed"
@@ -1420,6 +1421,12 @@ class PipelineCalculatorGUI:
             except Exception:
                 width_text = ''
 
+            # Escape XML-sensitive characters in label/description
+            label_xml = _xml_escape(label)
+            desc_xml = _xml_escape(
+                f"Bundled pipeline survey corridor: {section['bundled_length_miles']:.3f} miles at {section['average_separation']:.1f}m average separation{width_text}"
+            )
+
             kml = f'''<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2">
   <Document>
@@ -1434,8 +1441,8 @@ class PipelineCalculatorGUI:
       </LineStyle>
     </Style>
     <Placemark>
-      <name>{label}</name>
-      <description>Bundled pipeline survey corridor: {section['bundled_length_miles']:.3f} miles at {section['average_separation']:.1f}m average separation{width_text}</description>
+      <name>{label_xml}</name>
+      <description>{desc_xml}</description>
       <styleUrl>#surveyCorridorStyle</styleUrl>
       <Polygon>
         <outerBoundaryIs>
@@ -1448,7 +1455,7 @@ class PipelineCalculatorGUI:
       </Polygon>
     </Placemark>
     <Placemark>
-      <name>Center: {label}</name>
+      <name>Center: {label_xml}</name>
       <Point>
         <coordinates>{float(section.get('center_lon', coords_list[0][0])):.7f},{float(section.get('center_lat', coords_list[0][1])):.7f},0</coordinates>
       </Point>
@@ -1473,7 +1480,11 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 
     def create_overlap_tab(self, parent):
-        """Create overlap analysis details tab with properly aligned table format."""
+        """Create Overlap Analysis tab using a proper table with aligned columns.
+
+        Replaces the free-form row layout with a ttk.Treeview so that every
+        cell aligns with its column header, similar to a spreadsheet.
+        """
         overlap = self.current_results['overlap_analysis']
 
         # Main container
@@ -1481,84 +1492,201 @@ class PipelineCalculatorGUI:
         main_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
         # Title
-        ctk.CTkLabel(main_frame, text="Bundled Pipeline Sections",
-                    font=("Arial", 16, "bold")).pack(pady=10)
+        ctk.CTkLabel(
+            main_frame,
+            text="Bundled Pipeline Sections",
+            font=("Arial", 16, "bold"),
+        ).pack(pady=(10, 0))
 
         if overlap['bundled_sections']:
-            # Create scrollable frame for table content
-            scroll_frame = ctk.CTkScrollableFrame(main_frame)
-            scroll_frame.pack(fill="both", expand=True, padx=20, pady=10)
+            # Frame to host the tree and its scrollbar
+            table_frame = ctk.CTkFrame(main_frame)
+            table_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
-            # Table header with consistent height
-            header_frame = ctk.CTkFrame(scroll_frame, height=40)
-            header_frame.pack(fill="x", pady=(0, 10))
-            header_frame.pack_propagate(False)
+            # Configure a dark style for Treeview to match the app theme
+            style = ttk.Style()
+            try:
+                style.theme_use("default")
+            except Exception:
+                pass
+            style.configure(
+                "Overlap.Treeview",
+                background="#2b2b2b",
+                foreground="white",
+                fieldbackground="#2b2b2b",
+                rowheight=26,
+            )
+            style.configure("Overlap.Treeview.Heading", font=("Arial", 12, "bold"))
 
-            ctk.CTkLabel(header_frame, text="Pipeline Pair",
-                        font=("Arial", 12, "bold"), width=300, anchor="w").pack(side="left", padx=5, pady=8)
-            ctk.CTkLabel(header_frame, text="Length (miles)",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
-            ctk.CTkLabel(header_frame, text="Avg Sep (m)",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
-            ctk.CTkLabel(header_frame, text="Action",
-                        font=("Arial", 12, "bold"), width=100, anchor="center").pack(side="left", padx=5, pady=8)
+            # Define columns
+            columns = ("Pipeline Pair", "Length (miles)", "Avg Sep (m)", "Action")
+            tree = ttk.Treeview(
+                table_frame,
+                columns=columns,
+                show="headings",
+                height=20,
+                style="Overlap.Treeview",
+            )
+            # Ensure the implicit '#0' column has zero width so bbox math lines up
+            try:
+                tree.column('#0', width=0, stretch=False)
+            except Exception:
+                pass
 
-            # Data rows - limit to top 20 sections
-            sections_to_display = overlap['bundled_sections'][:20] if len(overlap['bundled_sections']) > 20 else overlap['bundled_sections']
-            
+            # Scrollbar
+            vsb = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
+            tree.configure(yscrollcommand=vsb.set)
+
+            # Configure column headings
+            tree.heading("Pipeline Pair", text="Pipeline Pair")
+            tree.heading("Length (miles)", text="Length (miles)")
+            tree.heading("Avg Sep (m)", text="Avg Sep (m)")
+            tree.heading("Action", text="Action")
+
+            # Column widths
+            tree.column("Pipeline Pair", width=700, anchor="w")
+            tree.column("Length (miles)", width=150, anchor="center")
+            tree.column("Avg Sep (m)", width=120, anchor="center")
+            tree.column("Action", width=110, anchor="center")
+
+            # Determine which sections to show (keep previous top-20 behavior)
+            sections_to_display = (
+                overlap['bundled_sections'][:20]
+                if len(overlap['bundled_sections']) > 20
+                else overlap['bundled_sections']
+            )
+
+            # Map of item-id -> (section, index) for event handlers
+            item_map = {}
             for idx, section in enumerate(sections_to_display, start=1):
-                row_frame = ctk.CTkFrame(scroll_frame, height=40)
-                row_frame.pack(fill="x", pady=2)
-                row_frame.pack_propagate(False)  # Maintain fixed height
-                
-                # Clean pipeline pair label
                 pair_text = f"{section['pipeline_1']} + {section['pipeline_2']}"
-                pair_label = ctk.CTkLabel(row_frame, text=pair_text,
-                                        font=("Arial", 11), width=300, anchor="w")
-                pair_label.pack(side="left", padx=5, pady=6)  # Center vertically with padding
+                item_id = tree.insert(
+                    "",
+                    "end",
+                    values=(
+                        pair_text,
+                        f"{section['bundled_length_miles']:.3f}",
+                        f"{section['average_separation']:.1f}",
+                        "",  # leave cell blank; real button is overlaid
+                    ),
+                )
+                item_map[item_id] = (section, idx)
 
-                length_label = ctk.CTkLabel(row_frame, text=f"{section['bundled_length_miles']:.3f}",
-                                          font=("Arial", 11), width=100, anchor="center")
-                length_label.pack(side="left", padx=5, pady=6)
+            # Event handlers for action clicks / double-click anywhere on a row
+            def _open_for_item(item_id):
+                try:
+                    section, idx = item_map[item_id]
+                    self.view_overlap_kml(section, idx)
+                except Exception:
+                    pass
 
-                sep_label = ctk.CTkLabel(row_frame, text=f"{section['average_separation']:.1f}",
-                                       font=("Arial", 11), width=100, anchor="center")
-                sep_label.pack(side="left", padx=5, pady=6)
+            def on_click(event):
+                # Trigger only when clicking the Action column
+                region = tree.identify("region", event.x, event.y)
+                if region != "cell":
+                    return
+                row_id = tree.identify_row(event.y)
+                col = tree.identify_column(event.x)  # '#1' .. '#n'
+                if row_id and col == "#4":  # Action column
+                    _open_for_item(row_id)
 
-                # Better aligned button container
-                button_frame = ctk.CTkFrame(row_frame, width=100, height=40)
-                button_frame.pack(side="left", padx=5)
-                button_frame.pack_propagate(False)
+            def on_double_click(event):
+                row_id = tree.identify_row(event.y)
+                if row_id:
+                    _open_for_item(row_id)
 
-                # Fix button command with proper closure
-                def make_view_command(s, i):
-                    return lambda: self.view_overlap_kml(s, i)
-                
-                view_button = ctk.CTkButton(button_frame, text="View Corridor",
-                                          command=make_view_command(section, idx),
-                                          width=90, height=28)
-                view_button.place(relx=0.5, rely=0.5, anchor="center")  # Perfect centering
-            
-            # Show message if more than 20 sections exist
+            tree.bind("<ButtonRelease-1>", on_click)
+            tree.bind("<Double-1>", on_double_click)
+
+            # Overlay real blue buttons inside the Action column (Treeview doesn't natively support widgets per cell)
+            action_buttons = {}
+
+            def ensure_buttons_positioned(event=None):
+                try:
+                    # Place a button for each visible row
+                    for item_id in tree.get_children(""):
+                        # Use column identifier to avoid off-by-one with hidden '#0'
+                        bbox = tree.bbox(item_id, column="Action")
+                        btn = action_buttons.get(item_id)
+                        if not bbox:
+                            # Item is not visible; hide any existing button
+                            if btn:
+                                btn.place_forget()
+                            continue
+                        x, y, w, h = bbox
+                        if btn is None:
+                            # Create button lazily
+                            section, idx = item_map[item_id]
+                            def make_cmd(s=section, i=idx):
+                                return lambda: self.view_overlap_kml(s, i)
+                            btn = ctk.CTkButton(
+                                table_frame,
+                                text="View Corridor",
+                                width=min(110, max(80, w - 8)),
+                                height=min(26, max(22, h - 6)),
+                                command=make_cmd(),
+                            )
+                            action_buttons[item_id] = btn
+                        # Convert tree-relative bbox to parent coords
+                        btn.place(x=tree.winfo_x() + x + (w // 2),
+                                  y=tree.winfo_y() + y + (h // 2),
+                                  anchor="center")
+                except Exception:
+                    pass
+
+            # Keep buttons aligned on scroll/resize
+            def on_tree_scroll(first, last):
+                try:
+                    vsb.set(first, last)
+                finally:
+                    ensure_buttons_positioned()
+
+            tree.configure(yscrollcommand=on_tree_scroll)
+            tree.bind("<Configure>", ensure_buttons_positioned)
+            tree.bind("<ButtonRelease-1>", ensure_buttons_positioned, add="+")
+            tree.bind("<Motion>", lambda e: None)  # keep events active on Windows
+            try:
+                tree.after(100, ensure_buttons_positioned)
+            except Exception:
+                pass
+
+            # Layout the tree + scrollbar
+            tree.pack(side="left", fill="both", expand=True)
+            vsb.pack(side="right", fill="y")
+
+            # Info if truncated to top 20
             if len(overlap['bundled_sections']) > 20:
-                info_frame = ctk.CTkFrame(scroll_frame)
-                info_frame.pack(fill="x", pady=10)
-                ctk.CTkLabel(info_frame, 
-                           text=f"Showing top 20 of {len(overlap['bundled_sections'])} bundled sections (sorted by length)\nEach 'View Corridor' button opens a polygon area in Google Earth showing the survey corridor",
-                           font=("Arial", 10), text_color="#888888", justify="center").pack(pady=5)
+                ctk.CTkLabel(
+                    main_frame,
+                    text=(
+                        f"Showing top 20 of {len(overlap['bundled_sections'])} bundled sections "
+                        "(sorted by length). Double-click a row, or click 'View' in the Action column "
+                        "to open its corridor in Google Earth."
+                    ),
+                    font=("Arial", 10),
+                    text_color="#888888",
+                    justify="center",
+                    wraplength=1100,
+                ).pack(pady=(4, 6))
 
             # Summary statistics at bottom
             summary_frame = ctk.CTkFrame(main_frame)
             summary_frame.pack(fill="x", pady=10)
-
             total_bundled = sum(s['bundled_length_miles'] for s in overlap['bundled_sections'])
-            ctk.CTkLabel(summary_frame,
-                        text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(overlap['bundled_sections'])} sections",
-                        font=("Arial", 12, "bold")).pack()
+            ctk.CTkLabel(
+                summary_frame,
+                text=(
+                    f"Total Bundled Length: {total_bundled:.3f} miles across "
+                    f"{len(overlap['bundled_sections'])} sections"
+                ),
+                font=("Arial", 12, "bold"),
+            ).pack()
         else:
-            ctk.CTkLabel(main_frame,
-                        text="No bundled sections found with current parameters",
-                        font=("Arial", 12)).pack(pady=20)
+            ctk.CTkLabel(
+                main_frame,
+                text="No bundled sections found with current parameters",
+                font=("Arial", 12),
+            ).pack(pady=20)
     
     def create_placemark_tab(self, parent):
         """Create placemark details tab."""
@@ -1655,15 +1783,22 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Error", f"Failed to show parameter dialog: {str(e)}")
     
     def export_results(self):
-        """Export analysis results."""
+        """Export analysis results.
+
+        Creates a single XLSX workbook with two sheets when `.xlsx` is selected:
+        - Pipeline Length Analysis
+        - Pipeline Overlap Analysis
+
+        JSON export remains available as an alternative.
+        """
         try:
             base_name = os.path.splitext(os.path.basename(self.current_file))[0]
             
             # Ask for save location
             save_path = filedialog.asksaveasfilename(
-                defaultextension='.csv',
-                initialfile=f"{base_name}_analysis",
-                filetypes=[('CSV files', '*.csv'), ('JSON files', '*.json')]
+                defaultextension='.xlsx',
+                initialfile=f"{base_name}_analysis.xlsx",
+                filetypes=[('Excel Workbook', '*.xlsx'), ('JSON files', '*.json')]
             )
             
             if not save_path:
@@ -1674,26 +1809,191 @@ class PipelineCalculatorGUI:
                 with open(save_path, 'w') as f:
                     json.dump(self.current_results, f, indent=2, default=str)
             else:
-                # Export as CSV
-                # Pipeline data
-                pipeline_df = pd.DataFrame(self.current_results['pipelines'])
-                pipeline_df.to_csv(save_path, index=False)
-                
-                # Overlap data
-                if self.current_results['overlap_analysis'] and self.current_results['overlap_analysis']['bundled_sections']:
-                    overlap_path = save_path.replace('.csv', '_overlaps.csv')
-                    overlap_df = pd.DataFrame(self.current_results['overlap_analysis']['bundled_sections'])
-                    overlap_df.to_csv(overlap_path, index=False)
-                    
-                    # Summary
-                    summary_path = save_path.replace('.csv', '_summary.txt')
-                    with open(summary_path, 'w') as f:
-                        f.write("Pipeline Analysis Summary\n")
-                        f.write("=" * 50 + "\n")
-                        f.write(f"Total Original Length: {self.current_results['total_miles']:.3f} miles\n")
-                        f.write(f"Effective Survey Length: {self.current_results['overlap_analysis']['effective_total_miles']:.3f} miles\n")
-                        f.write(f"Survey Savings: {self.current_results['overlap_analysis']['savings_miles']:.3f} miles\n")
-                        f.write(f"Savings Percentage: {self.current_results['overlap_analysis']['savings_percentage']:.1f}%\n")
+                # Export as XLSX workbook with two sheets
+                try:
+                    from openpyxl import Workbook
+                    from openpyxl.styles import Font, Alignment, PatternFill
+                    from openpyxl.utils import get_column_letter
+                except Exception:
+                    messagebox.showerror(
+                        "Export Error",
+                        "openpyxl is required to export .xlsx files.\n\n"
+                        "Install with: pip install openpyxl"
+                    )
+                    return
+
+                wb = Workbook()
+
+                # ---------------- Pipeline Length Analysis sheet ----------------
+                ws = wb.active
+                ws.title = "Pipeline Length Analysis"
+                ws.freeze_panes = 'A2'
+
+                # Headers
+                headers_pla = [
+                    "Object ID (if available)",
+                    "Polyline Name (if available)",
+                    "Pipeline Lengths (US Survey)",
+                    "TOTAL MILEAGE",
+                ]
+                ws.append(headers_pla)
+
+                # Styles
+                header_font = Font(name="Aptos Display", size=11, bold=True)
+                body_font = Font(name="Aptos Narrow", size=11)
+                center = Alignment(horizontal="center", vertical="center")
+                left = Alignment(horizontal="left", vertical="center")
+                yellow = PatternFill("solid", fgColor="FFFFFF00")
+                green = PatternFill("solid", fgColor="FF00B050")
+                gray = PatternFill("solid", fgColor="FFD9D9D9")  # light gray like example
+
+                for col_idx, title in enumerate(headers_pla, start=1):
+                    cell = ws.cell(row=1, column=col_idx)
+                    cell.font = header_font
+                    cell.alignment = center
+                    cell.fill = gray
+                # Special header fills
+                ws.cell(row=1, column=3).fill = yellow
+                ws.cell(row=1, column=4).fill = green
+
+                # Column widths (approximate to example)
+                widths = [25.11, 44.89, 29.55, 27.78]
+                for i, w in enumerate(widths, start=1):
+                    ws.column_dimensions[get_column_letter(i)].width = w
+
+                # Data rows
+                for p in self.current_results['pipelines']:
+                    obj_id = p.get('OBJECTID') if p.get('OBJECTID') not in (None, "") else "N/A"
+                    name = p.get('Name', '')
+                    miles = float(p.get('pipelinelength', 0.0)) if p.get('pipelinelength') is not None else 0.0
+                    ws.append([obj_id, name, miles, None])
+
+                # Apply body styles and number formats
+                max_row = ws.max_row
+                for r in range(2, max_row + 1):
+                    ws.cell(row=r, column=1).alignment = center
+                    ws.cell(row=r, column=1).font = body_font
+                    ws.cell(row=r, column=2).alignment = left
+                    ws.cell(row=r, column=2).font = body_font
+                    c3 = ws.cell(row=r, column=3)
+                    c3.alignment = center
+                    c3.font = body_font
+                    c3.number_format = '0.000'
+
+                # Total formula in D2
+                ws.cell(row=2, column=4).value = "=SUM(C2:C100000)"
+                ws.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
+                ws.cell(row=2, column=4).alignment = center
+
+                # ---------------- Pipeline Overlap Analysis sheet ----------------
+                ws2 = wb.create_sheet("Pipeline Overlap Analysis")
+                ws2.freeze_panes = 'A2'
+
+                headers_poa = [
+                    "Pipeline 1",
+                    "Pipeline 2",
+                    "Bundled Length (mi)",
+                    "TOTAL MILEAGE REMOVED",
+                    "Bundled Length (m)",
+                    "Average Separation",
+                    "Segment Count",
+                    "Center (Long)",
+                    "Center (Lat)",
+                    "bbox",
+                    "oriented_polygon",
+                    "oriented_width_m",
+                    "corridor_polygon",
+                ]
+                ws2.append(headers_poa)
+
+                for col_idx, title in enumerate(headers_poa, start=1):
+                    cell = ws2.cell(row=1, column=col_idx)
+                    cell.font = header_font
+                    cell.alignment = center
+                    cell.fill = gray
+                ws2.cell(row=1, column=3).fill = yellow
+                ws2.cell(row=1, column=4).fill = green
+
+                widths2 = [44.89, 13.0, 20.33, 28.11, 21.0, 19.11, 20.78, 17.11, 20.0, 107.89, 194.55, 16.44, 255.78]
+                for i, w in enumerate(widths2, start=1):
+                    ws2.column_dimensions[get_column_letter(i)].width = w
+
+                # Helper to stringify complex values
+                def _serialize_bbox(b):
+                    if not isinstance(b, dict):
+                        return str(b)
+                    return f"{{min_lon: {b.get('min_lon')}, max_lon: {b.get('max_lon')}, min_lat: {b.get('min_lat')}, max_lat: {b.get('max_lat')} }}"
+
+                def _serialize_points(seq):
+                    try:
+                        if seq is None:
+                            return ""
+                        return str(list(seq))
+                    except Exception:
+                        return str(seq)
+
+                # Data rows
+                bundled = []
+                try:
+                    bundled = list(self.current_results.get('overlap_analysis', {}).get('bundled_sections', []))
+                except Exception:
+                    bundled = []
+
+                for s in bundled:
+                    row = [
+                        s.get('pipeline_1', ''),
+                        s.get('pipeline_2', ''),
+                        float(s.get('bundled_length_miles', 0.0) or 0.0),
+                        None,  # D column is reserved for total line at row 2 only
+                        int(round(float(s.get('bundled_length_meters', 0.0) or 0.0))),
+                        float(s.get('average_separation', 0.0) or 0.0),
+                        int(s.get('segment_count', 0) or 0),
+                        float(s.get('center_lon', 0.0) or 0.0),
+                        float(s.get('center_lat', 0.0) or 0.0),
+                        _serialize_bbox(s.get('bbox')),
+                        _serialize_points(s.get('oriented_polygon')),
+                        float(s.get('oriented_width_m', 0.0) or 0.0),
+                        _serialize_points(s.get('corridor_polygon')),
+                    ]
+                    ws2.append(row)
+
+                # Formats and alignment for numeric columns
+                max_row2 = ws2.max_row
+                for r in range(2, max_row2 + 1):
+                    # Text columns A,B,J,K,M -> left
+                    for c in (1, 2, 10, 11, 13):
+                        ws2.cell(row=r, column=c).font = body_font
+                        ws2.cell(row=r, column=c).alignment = left
+                    # Numeric centered columns
+                    fmt_map = {
+                        3: '0.000',   # miles
+                        4: '0.000',   # the total cell will be numeric too
+                        5: '0',       # meters
+                        6: '0.0',     # avg separation
+                        7: '0',       # segment count
+                        8: '0.0000000',
+                        9: '0.0000000',
+                        12: '0.0',    # width
+                    }
+                    for c, fmt in fmt_map.items():
+                        cell = ws2.cell(row=r, column=c)
+                        cell.font = body_font
+                        cell.alignment = center
+                        cell.number_format = fmt
+
+                # Top-row total for mileage removed: use app-computed savings
+                savings = 0.0
+                try:
+                    savings = float(self.current_results.get('overlap_analysis', {}).get('savings_miles', 0.0) or 0.0)
+                except Exception:
+                    savings = 0.0
+                ws2.cell(row=2, column=4).value = round(savings, 3)
+                ws2.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
+                ws2.cell(row=2, column=4).alignment = center
+                ws2.cell(row=2, column=4).number_format = '0.000'
+
+                # Save workbook
+                wb.save(save_path)
             
             messagebox.showinfo("Export Complete", f"Results exported to:\n{save_path}")
             

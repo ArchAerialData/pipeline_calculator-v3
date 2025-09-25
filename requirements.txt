@@ -6,3 +6,4 @@ customtkinter>=5.0.0
 pyinstaller>=5.0.0
 tkinterdnd2
 Pillow>=9.0.0
+openpyxl>=3.1.0
