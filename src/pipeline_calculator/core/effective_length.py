@@ -5,7 +5,9 @@ from collections import defaultdict
 import numpy as np
 from scipy.spatial import KDTree
 
+from pipeline_calculator.core.angles import bearing_orientation_diff
 from pipeline_calculator.core.segmentation import segment_pipeline
+from pipeline_calculator.core.spatial import compute_origin, lonlat_array_to_xy
 
 
 def compute_effective_length_by_clusters(
@@ -42,17 +44,17 @@ def compute_effective_length_by_clusters(
         return float(sum(per_pipeline_total_meters))
 
     try:
-        pts = np.array([(lon, lat) for lon, lat in all_midpoints])
-        tree = KDTree(pts)
+        lon0, lat0 = compute_origin(all_midpoints)
+        xy = lonlat_array_to_xy(all_midpoints, lon0, lat0)
+        tree = KDTree(xy)
     except Exception:
         return float(sum(per_pipeline_total_meters))
 
     eff_total = 0.0
-    detection_range_deg = detection_range / 111000.0
 
     for g_idx, (p_idx, seg) in seg_index_map.items():
         try:
-            neighbor_ids = tree.query_ball_point(pts[g_idx], detection_range_deg)
+            neighbor_ids = tree.query_ball_point(xy[g_idx], float(detection_range))
         except Exception:
             neighbor_ids = []
 
@@ -67,9 +69,7 @@ def compute_effective_length_by_clusters(
             if np_idx == p_idx:
                 continue
 
-            bd = abs(seg["bearing"] - nseg["bearing"])
-            bd = min(bd, 360 - bd)
-            if bd > angular_tolerance:
+            if bearing_orientation_diff(seg["bearing"], nseg["bearing"]) > angular_tolerance:
                 continue
 
             lon1, lat1 = seg["midpoint"]
@@ -90,4 +90,3 @@ def compute_effective_length_by_clusters(
     eff_total += tails
 
     return eff_total
-

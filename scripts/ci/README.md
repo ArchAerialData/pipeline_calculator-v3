@@ -7,6 +7,12 @@ This folder contains CI scripts used by the GitHub Actions workflow. The workflo
 - `macos_package.sh` — packages the `.app` into a `.dmg`.
 - `macos_sign_and_package.sh` — signs the `.app` and creates a DMG containing the signed app (no notarization; only runs if secrets are provided).
 
+## Build impl selection
+CI defaults to building the modular (refactored) GUI by setting:
+- `PIPELINE_CALCULATOR_BUILD_IMPL=new`
+
+Set `PIPELINE_CALCULATOR_BUILD_IMPL=legacy` to build the original monolithic GUI instead.
+
 ## Secrets used by CI (optional for code signing)
 - `MACOS_CERT_P12` (base64 of Developer ID Application `.p12`)
 - `MACOS_CERT_PASSWORD`

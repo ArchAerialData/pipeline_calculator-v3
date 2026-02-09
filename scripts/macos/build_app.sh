@@ -10,10 +10,12 @@ VENV_DIR="${REPO_DIR}/.venv"
 # Optional overrides:
 #   BUNDLE_ID=com.yourorg.pipelinecalculator
 #   APP_DISPLAY_NAME="Pipeline Calculator v3"
+#   PIPELINE_CALCULATOR_BUILD_IMPL=new|legacy  (default: legacy)
 # Default to a reverse-DNS style bundle identifier so the generated Info.plist is valid.
 # Override by exporting BUNDLE_ID=... in your environment/CI.
 BUNDLE_ID="${BUNDLE_ID:-com.archaerial.pipelinecalculator}"
 APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v3}"
+BUILD_IMPL="${PIPELINE_CALCULATOR_BUILD_IMPL:-legacy}"
 
 if [[ ! -d "${VENV_DIR}" ]]; then
   echo "Missing venv at ${VENV_DIR}."
@@ -43,6 +45,23 @@ if ver < 8.6:
     raise SystemExit(2)
 print(f"Tk OK (TkVersion={ver})")
 PY
+
+ENTRY_SCRIPT=""
+case "${BUILD_IMPL}" in
+  legacy)
+    ENTRY_SCRIPT="${REPO_DIR}/src/pipeline_calculator_v3.py"
+    ;;
+  new|modular|package)
+    ENTRY_SCRIPT="${REPO_DIR}/src/pipeline_calculator_entry.py"
+    ;;
+  *)
+    echo "Unknown PIPELINE_CALCULATOR_BUILD_IMPL=${BUILD_IMPL}. Use 'legacy' or 'new'."
+    exit 1
+    ;;
+esac
+
+echo "Build impl: ${BUILD_IMPL}"
+echo "Entry script: ${ENTRY_SCRIPT}"
 
 ICON_ARGS=()
 if [[ -f "icon.icns" ]]; then
@@ -78,12 +97,13 @@ pyinstaller --noconfirm --clean \
   ${ICON_ARGS[@]+"${ICON_ARGS[@]}"} \
   ${BUNDLE_ID_ARGS[@]+"${BUNDLE_ID_ARGS[@]}"} \
   ${ADD_DATA_ARGS[@]+"${ADD_DATA_ARGS[@]}"} \
+  --hidden-import pipeline_calculator_v3 \
   --hidden-import scipy.spatial \
   --hidden-import scipy._lib.messagestream \
   --hidden-import tkinterdnd2 \
   --hidden-import PIL \
   --additional-hooks-dir "${REPO_DIR}/scripts/pyinstaller_hooks" \
-  "${REPO_DIR}/src/pipeline_calculator_v3.py"
+  "${ENTRY_SCRIPT}"
 
 if [[ -d "dist/${APP_DISPLAY_NAME}.app" ]]; then
   rm -rf "dist/Pipeline_Calculator.app"

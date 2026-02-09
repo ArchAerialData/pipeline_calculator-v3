@@ -6,7 +6,9 @@ from collections import defaultdict
 import numpy as np
 from scipy.spatial import KDTree
 
+from pipeline_calculator.core.angles import bearing_orientation_diff
 from pipeline_calculator.core.segmentation import segment_pipeline
+from pipeline_calculator.core.spatial import compute_origin, lonlat_array_to_xy
 
 
 def find_parallel_segments(pipelines, geod, segment_length, detection_range, angular_tolerance, progress_callback=None):
@@ -35,8 +37,9 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
         return {}
 
     try:
-        points = np.array([(lon, lat) for lon, lat in all_segments])
-        tree = KDTree(points)
+        lon0, lat0 = compute_origin(all_segments)
+        xy = lonlat_array_to_xy(all_segments, lon0, lat0)
+        tree = KDTree(xy)
     except Exception as e:
         print(f"Warning: Error building spatial index: {str(e)}")
         return {}
@@ -46,8 +49,7 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
 
     for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
         try:
-            detection_range_deg = detection_range / 111000.0
-            nearby_indices = tree.query_ball_point(points[seg_idx], detection_range_deg)
+            nearby_indices = tree.query_ball_point(xy[seg_idx], float(detection_range))
 
             for near_idx in nearby_indices:
                 if near_idx == seg_idx:
@@ -59,10 +61,7 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                 if p_idx == near_p_idx:
                     continue
 
-                bearing_diff = abs(segment["bearing"] - near_segment["bearing"])
-                bearing_diff = min(bearing_diff, 360 - bearing_diff)
-
-                if bearing_diff <= angular_tolerance:
+                if bearing_orientation_diff(segment["bearing"], near_segment["bearing"]) <= angular_tolerance:
                     lon1, lat1 = segment["midpoint"]
                     lon2, lat2 = near_segment["midpoint"]
                     _, _, distance = geod.inv(lon1, lat1, lon2, lat2)
@@ -435,4 +434,3 @@ def calculate_overlap_results(
         progress_callback(1.0)
 
     return results
-

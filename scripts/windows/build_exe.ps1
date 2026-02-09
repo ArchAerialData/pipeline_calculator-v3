@@ -10,6 +10,20 @@ $Py = Join-Path $VenvDir "Scripts\python.exe"
 
 if (!(Test-Path $Py)) { throw "Venv not found. Run scripts\\windows\\setup_windows.ps1 first." }
 
+$BuildImpl = $env:PIPELINE_CALCULATOR_BUILD_IMPL
+if ([string]::IsNullOrWhiteSpace($BuildImpl)) { $BuildImpl = "legacy" }
+$BuildImpl = $BuildImpl.ToLowerInvariant()
+
+$Entry = $null
+switch ($BuildImpl) {
+  "legacy" { $Entry = "src\\pipeline_calculator_v3.py" }
+  { $_ -in @("new", "modular", "package") } { $Entry = "src\\pipeline_calculator_entry.py" }
+  default { throw "Unknown PIPELINE_CALCULATOR_BUILD_IMPL='$BuildImpl'. Use 'legacy' or 'new'." }
+}
+
+Write-Host "Build impl: $BuildImpl"
+Write-Host "Entry script: $Entry"
+
 Push-Location $RepoDir
 try {
   if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
@@ -25,12 +39,13 @@ try {
     --add-data "README.md;." `
     --add-data "icon.ico;." `
     --add-data "icon.icns;." `
+    --hidden-import "pipeline_calculator_v3" `
     --hidden-import "scipy.spatial" `
     --hidden-import "scipy._lib.messagestream" `
     --hidden-import "tkinterdnd2" `
     --hidden-import "PIL" `
     --additional-hooks-dir (Join-Path $RepoDir "scripts\\pyinstaller_hooks") `
-    "src\\pipeline_calculator_v3.py"
+    $Entry
 
   if (!(Test-Path "dist\\Pipeline_Calculator_v3.exe")) { throw "Build failed: dist\\Pipeline_Calculator_v3.exe not found." }
   Write-Host "Build complete: dist\\Pipeline_Calculator_v3.exe"
@@ -38,4 +53,3 @@ try {
 finally {
   Pop-Location
 }
-

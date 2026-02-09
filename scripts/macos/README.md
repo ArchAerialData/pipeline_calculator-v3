@@ -14,6 +14,12 @@ These scripts use a repo-local virtualenv at `.venv/`.
 Build a self-contained `.app` with PyInstaller:
 - `bash scripts/macos/build_app.sh`
 
+To build the **refactored/modular GUI** (Phase 6+):
+
+```bash
+PIPELINE_CALCULATOR_BUILD_IMPL=new bash scripts/macos/build_app.sh
+```
+
 Then package a DMG:
 - `bash scripts/macos/package_dmg.sh`
 

@@ -18,6 +18,9 @@ if (Test-Path (Join-Path $RepoDir "requirements-dev.txt")) {
 }
 
 & $Py -m py_compile (Join-Path $RepoDir "src\\pipeline_calculator_v3.py")
+if (Test-Path (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")) {
+  & $Py -m py_compile (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")
+}
 & $Py -m pytest
 
 powershell -ExecutionPolicy Bypass -File (Join-Path $RepoDir "scripts\\windows\\build_exe.ps1")

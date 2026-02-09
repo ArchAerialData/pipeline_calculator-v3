@@ -14,3 +14,9 @@ These scripts use a repo-local virtualenv at `.venv\\`.
 Build a self-contained `.exe` with PyInstaller:
 - `powershell -ExecutionPolicy Bypass -File scripts\\windows\\build_exe.ps1`
 
+To build the **refactored/modular GUI** (Phase 6+), set:
+
+```powershell
+$env:PIPELINE_CALCULATOR_BUILD_IMPL = "new"
+powershell -ExecutionPolicy Bypass -File scripts\\windows\\build_exe.ps1
+```

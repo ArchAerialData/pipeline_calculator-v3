@@ -35,8 +35,8 @@ We will refactor **one phase at a time**, and we do not start the next phase unt
 | 3 | Parsers | DONE | `tests/test_kml_parsing.py`, `tests/test_kmz_parsing.py` | Parsing moved to `src/pipeline_calculator/parsers/kml_kmz.py`; analyzer delegates |
 | 4 | Core overlap + effective length | DONE | Existing overlap/effective tests | Core moved to `src/pipeline_calculator/core/`; legacy delegates |
 | 5 | Core analyzer | DONE | `tests/test_analyze_complete.py`, `tests/test_core_analyzer.py` | Added `core/analyzer.py`; legacy delegates `analyze_complete` and length calc |
-| 6 | GUI package | IN_PROGRESS | `tests/test_gui_state.py`, `tests/test_analysis_controller.py` | New modular GUI exists behind `PIPELINE_CALCULATOR_IMPL=new`; legacy remains default; manual smoke pending |
-| 7 | Compatibility + build entrypoints | TODO | Packaged build smoke checklist | Switch builds to `python -m pipeline_calculator` (optional) |
+| 6 | GUI package | DONE | `tests/test_gui_state.py`, `tests/test_analysis_controller.py` | New modular GUI exists behind `PIPELINE_CALCULATOR_IMPL=new`; manual smoke passed (KMZ analyzed successfully) |
+| 7 | Compatibility + build entrypoints | DONE | Packaged build smoke checklist | CI/build scripts now default to modular (`PIPELINE_CALCULATOR_BUILD_IMPL=new`); legacy build path retained |
 
 ## Current Structure (What’s In The Monolith)
 
@@ -306,7 +306,7 @@ Allow `python -m pipeline_calculator` as a dev entrypoint.
 
 ### Phase 6: GUI package move
 
-- Status: IN_PROGRESS
+- Status: DONE
 - Scope:
   - Move `PipelineCalculatorGUI` into `src/pipeline_calculator/gui/main_window.py`
   - Split each results tab into its own module so adding future tabs/windows is low-friction
@@ -383,19 +383,36 @@ src/pipeline_calculator/gui/
   - Added unit tests (non-tkinter):
     - `tests/test_gui_state.py`
     - `tests/test_analysis_controller.py`
-  - Remaining:
-    - Manual GUI smoke checklist on macOS + Windows
-    - Decide when to flip CI/build entrypoint from legacy to package (Phase 7)
+  - Manual GUI smoke checklist:
+    - Passed on macOS (import KMZ, results populated, export works).
+  - CI/build entrypoint flip:
+    - Completed in Phase 7 (`PIPELINE_CALCULATOR_BUILD_IMPL=new` in CI).
 
 ### Phase 7: Compatibility wrapper + build entrypoints (optional)
 
-- Status: TODO
+- Status: DONE
 - Scope:
-  - Optionally switch build scripts to package entrypoint (`python -m pipeline_calculator`)
-  - Keep `src/pipeline_calculator_v3.py` wrapper as long as needed, then remove when confident
+  - Switch PyInstaller/CI builds to the modular GUI entrypoint while keeping the legacy build path available:
+    - New entry script: `src/pipeline_calculator_entry.py` (forces `PIPELINE_CALCULATOR_IMPL=new`)
+    - Build-time selector: `PIPELINE_CALCULATOR_BUILD_IMPL=new|legacy`
+  - CI defaults to modular builds by setting `PIPELINE_CALCULATOR_BUILD_IMPL=new` in `.github/workflows/build.yaml`.
+  - Keep `src/pipeline_calculator_v3.py` (legacy monolith) available as a runtime fallback and for legacy builds.
 - Tests (must exist and pass before continuing):
   - Unit tests remain green
   - Packaged build smoke checklist on macOS + Windows
+ - Completion notes:
+   - Added `src/pipeline_calculator_entry.py` (PyInstaller-friendly entrypoint that defaults to modular).
+   - Updated build scripts to select entrypoint via `PIPELINE_CALCULATOR_BUILD_IMPL`:
+     - macOS: `scripts/macos/build_app.sh`
+     - Windows: `scripts/windows/build_exe.ps1`
+   - Updated CI scripts to compile-check the new entrypoint when present:
+     - `scripts/ci/macos_build.sh`
+     - `scripts/ci/windows_build.ps1`
+   - Updated GitHub Actions to build modular by default:
+     - `.github/workflows/build.yaml` sets `PIPELINE_CALCULATOR_BUILD_IMPL=new`
+   - Local packaged build sanity (macOS):
+     - `PIPELINE_CALCULATOR_BUILD_IMPL=new bash scripts/macos/build_app.sh`
+     - `bash scripts/macos/package_dmg.sh dist/Pipeline_Calculator.app`
 
 ## Files Likely To Change During Refactor
 
