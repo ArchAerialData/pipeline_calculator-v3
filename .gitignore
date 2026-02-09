@@ -21,3 +21,6 @@ venv/
 
 # Logs
 *.log
+
+# Code signing material (never commit)
+apple_dev/

@@ -14,7 +14,7 @@ This is Pipeline Calculator v3.0, a Python GUI application for analyzing KMZ/KML
 python src/pipeline_calculator_v3.py
 
 # Run test KML generator
-python generate_test_kml.py
+python tests/tools/generate_test_kml.py
 ```
 
 ### Environment Setup
@@ -83,7 +83,7 @@ pyinstaller --onefile --windowed --name Pipeline_Calculator_v3 \
 
 ```
 src/pipeline_calculator_v3.py  # Main application (2000+ lines)
-generate_test_kml.py           # KML test file generator
+tests/tools/generate_test_kml.py  # KML test file generator
 requirements.txt               # Python dependencies
 setup.sh / setup.bat          # Environment setup scripts
 .github/workflows/build.yaml  # CI/CD pipeline
