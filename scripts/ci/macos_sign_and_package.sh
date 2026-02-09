@@ -18,7 +18,15 @@ fi
 WORK_DIR="$(mktemp -d)"
 KEYCHAIN="${WORK_DIR}/ci-signing.keychain-db"
 KEYCHAIN_PASSWORD="$(
-  (command -v python3 >/dev/null 2>&1 && python3 || python) - <<'PY'
+  PY_BIN="$(command -v python3 || true)"
+  if [[ -z "${PY_BIN}" ]]; then
+    PY_BIN="$(command -v python || true)"
+  fi
+  if [[ -z "${PY_BIN}" ]]; then
+    echo "python not found" >&2
+    exit 1
+  fi
+  "${PY_BIN}" - <<'PY'
 import secrets
 import string
 alphabet = string.ascii_letters + string.digits

@@ -19,3 +19,12 @@ Then package a DMG:
 
 Note: CI produces **signed but not notarized** DMGs (matches the reference repo behavior). Gatekeeper prompts are expected outside the Mac App Store unless you notarize.
 
+## Notarization (manual, outside GitHub)
+
+If you want to avoid Gatekeeper prompts for pilots, notarize the distribution artifact **after** GitHub produces the signed DMG:
+
+```bash
+bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v3.dmg
+```
+
+This uses App Store Connect API key credentials from env vars or the gitignored `apple_dev/` helper files (see `CODE_SIGNING.md`).
