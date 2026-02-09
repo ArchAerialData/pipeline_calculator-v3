@@ -1031,6 +1031,30 @@ def main():
         print(f"Pipeline Calculator v{__version__}")
         print(f"Running on {platform.system()} {platform.machine()}")
         print("-" * 50)
+
+        # macOS 26 compatibility: the Apple CommandLineTools Python (3.9) ships Tk 8.5 which
+        # aborts when creating a root window. Fail fast with an actionable message instead
+        # of crashing deep in Tk initialization.
+        if platform.system() == "Darwin":
+            try:
+                import tkinter as _tk
+            except Exception as exc:
+                print("ERROR: tkinter is not available in this Python environment.", file=sys.stderr)
+                print(f"Details: {exc}", file=sys.stderr)
+                print("Fix: on macOS, prefer Homebrew python@3.11 + python-tk@3.11.", file=sys.stderr)
+                print("Tip: run `bash scripts/macos/setup_macos.sh` from the repo root.", file=sys.stderr)
+                sys.exit(1)
+
+            try:
+                _tk_ver = float(getattr(_tk, "TkVersion", 0.0))
+            except Exception:
+                _tk_ver = 0.0
+
+            if _tk_ver < 8.6:
+                print(f"ERROR: Tcl/Tk {_tk_ver} detected. Tk 8.6+ is required for macOS 26 compatibility.", file=sys.stderr)
+                print("Fix: install Homebrew python@3.11 + python-tk@3.11 and re-run.", file=sys.stderr)
+                print("Tip: run `bash scripts/macos/setup_macos.sh` from the repo root.", file=sys.stderr)
+                sys.exit(1)
         
         # Check for required packages (only if not frozen)
         if not getattr(sys, 'frozen', False):

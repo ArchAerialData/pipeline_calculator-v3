@@ -35,7 +35,7 @@ We will refactor **one phase at a time**, and we do not start the next phase unt
 | 3 | Parsers | DONE | `tests/test_kml_parsing.py`, `tests/test_kmz_parsing.py` | Parsing moved to `src/pipeline_calculator/parsers/kml_kmz.py`; analyzer delegates |
 | 4 | Core overlap + effective length | DONE | Existing overlap/effective tests | Core moved to `src/pipeline_calculator/core/`; legacy delegates |
 | 5 | Core analyzer | DONE | `tests/test_analyze_complete.py`, `tests/test_core_analyzer.py` | Added `core/analyzer.py`; legacy delegates `analyze_complete` and length calc |
-| 6 | GUI package | TODO | Smoke tests + keep unit tests green | Move GUI to `gui/` without behavior changes |
+| 6 | GUI package | IN_PROGRESS | `tests/test_gui_state.py`, `tests/test_analysis_controller.py` | New modular GUI exists behind `PIPELINE_CALCULATOR_IMPL=new`; legacy remains default; manual smoke pending |
 | 7 | Compatibility + build entrypoints | TODO | Packaged build smoke checklist | Switch builds to `python -m pipeline_calculator` (optional) |
 
 ## Current Structure (What’s In The Monolith)
@@ -306,13 +306,86 @@ Allow `python -m pipeline_calculator` as a dev entrypoint.
 
 ### Phase 6: GUI package move
 
-- Status: TODO
+- Status: IN_PROGRESS
 - Scope:
   - Move `PipelineCalculatorGUI` into `src/pipeline_calculator/gui/main_window.py`
-  - Optionally split tab builders into `tabs.py`
+  - Split each results tab into its own module so adding future tabs/windows is low-friction
+  - Split non-UI concerns (export, open KML, analysis threading) into testable helper modules
+- Proposed folder structure (Tk/CustomTkinter version):
+
+```text
+src/pipeline_calculator/gui/
+  __init__.py
+  main_window.py              # owns root window + page switching + wires controller/state
+  state.py                    # dataclasses for app state (no tkinter imports)
+  resources.py                # icon/resource path resolution (sys._MEIPASS, etc.)
+  controllers/
+    __init__.py
+    analysis_controller.py    # runs core analyzer on a background thread; publishes progress/events
+  pages/
+    __init__.py
+    file_select_page.py       # drag/drop + browse page (select KMZ/KML)
+    results_page.py           # tab container + top summary + navigation
+  tabs/
+    __init__.py
+    summary_tab.py            # Summary tab UI builder + update hooks
+    pipelines_tab.py          # Pipelines tab UI builder + update hooks
+    overlap_tab.py            # Overlap tab UI builder + update hooks
+    placemarks_tab.py         # Placemarks tab UI builder + update hooks
+  dialogs/
+    __init__.py
+    params_dialog.py          # parameter edit dialog (detection range, etc.)
+  actions/
+    __init__.py
+    export_actions.py         # XLSX/JSON export (uses pipeline_calculator.export.*)
+    open_kml_action.py        # build temp KML + open in OS (uses export/corridor_kml)
+```
+
+- Mapping from legacy monolith methods to new modules:
+  - `PipelineCalculatorGUI.show_file_selection()` -> `gui/pages/file_select_page.py`
+  - `PipelineCalculatorGUI.show_results()` -> `gui/pages/results_page.py`
+  - `PipelineCalculatorGUI.create_summary_tab()` -> `gui/tabs/summary_tab.py`
+  - `PipelineCalculatorGUI.create_pipeline_tab()` -> `gui/tabs/pipelines_tab.py`
+  - `PipelineCalculatorGUI.create_overlap_tab()` -> `gui/tabs/overlap_tab.py`
+  - `PipelineCalculatorGUI.create_placemark_tab()` -> `gui/tabs/placemarks_tab.py`
+  - `PipelineCalculatorGUI.export_results()` -> `gui/actions/export_actions.py`
+  - `PipelineCalculatorGUI.view_overlap_kml()` -> `gui/actions/open_kml_action.py`
+  - parameter dialog + apply/re-analyze -> `gui/dialogs/params_dialog.py` + `gui/controllers/analysis_controller.py`
+
+- Notes:
+  - The GUI layer should depend only on:
+    - `pipeline_calculator.core.*` (analysis)
+    - `pipeline_calculator.export.*` (XLSX + KML)
+    - `pipeline_calculator.parsers.*` (if needed)
+  - Keep GUI modules thin: UI builds widgets; controller does work; state carries data.
 - Tests (must exist and pass before continuing):
   - Unit tests remain green
+  - Add/expand tests for non-UI helpers introduced in this phase:
+    - export actions (already covered via `pipeline_calculator.export.*`)
+    - open KML helpers (already covered via `pipeline_calculator.export.*`)
+    - analysis controller logic (no tkinter imports)
   - Manual GUI smoke checklist updated (launch, import file, export xlsx, open corridor KML)
+  - Optional: keep a tiny `tests/test_gui_imports.py` that imports non-tkinter GUI modules (`state`, `actions`) only
+
+- Manual GUI smoke checklist (update as part of this phase):
+  - Launch app
+  - Import a KMZ/KML via Browse and via Drag-Drop
+  - Verify Summary tab numbers populate (total miles, savings when overlaps exist)
+  - Export XLSX and open it (verify sheets exist)
+  - Open overlap corridor KML and verify it loads in Google Earth
+  - Change analysis params and re-run (no crash, results change)
+
+- Progress notes (so far):
+  - Added new modular GUI package under `src/pipeline_calculator/gui/`:
+    - `main_window.py`, `pages/`, `tabs/`, `dialogs/`, `actions/`, `controllers/`
+  - Wired package entrypoint switch:
+    - `PIPELINE_CALCULATOR_IMPL=new .venv/bin/python -m pipeline_calculator`
+  - Added unit tests (non-tkinter):
+    - `tests/test_gui_state.py`
+    - `tests/test_analysis_controller.py`
+  - Remaining:
+    - Manual GUI smoke checklist on macOS + Windows
+    - Decide when to flip CI/build entrypoint from legacy to package (Phase 7)
 
 ### Phase 7: Compatibility wrapper + build entrypoints (optional)
 
@@ -355,3 +428,5 @@ Allow `python -m pipeline_calculator` as a dev entrypoint.
 - Introduce small typed models (dataclasses) in `util/types.py` to reduce “stringly-typed dict” usage.
 - Add a `core/results.py` module to standardize the result schema (pipelines, overlaps, savings, parameters).
 - Add a CLI mode for headless runs (parse file, output JSON/XLSX) to speed up validation without rebuilding a DMG/EXE.
+- Optional (bigger bet): migrate GUI from Tk/CustomTkinter to Qt/PySide6 (Purway-style) for more powerful widgets, theming, and long-term UI extensibility.
+  - This should be treated as a separate project after Phase 6, because it’s a rewrite rather than an incremental refactor.

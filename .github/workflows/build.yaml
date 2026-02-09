@@ -16,8 +16,8 @@ jobs:
     timeout-minutes: 60
     env:
       MACOSX_DEPLOYMENT_TARGET: "13.0"
-      # Optional: set to your reverse-DNS identifier. Helps with hardened runtime, and is required if you later notarize.
-      # BUNDLE_ID: "com.yourorg.pipelinecalculator"
+      # Reverse-DNS bundle identifier (recommended; required if you later notarize).
+      BUNDLE_ID: "com.archaerial.pipelinecalculator"
     
     steps:
     - uses: actions/checkout@v4

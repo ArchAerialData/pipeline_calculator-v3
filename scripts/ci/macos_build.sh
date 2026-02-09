@@ -24,6 +24,23 @@ fi
 
 export MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-13.0}"
 
+# Sanity check: Tk 8.5 aborts on macOS 26 when creating a window. Ensure Tk 8.6+.
+python - <<'PY'
+import sys
+try:
+    import tkinter as tk
+except Exception as e:
+    print("ERROR: tkinter is not available in this build environment.", file=sys.stderr)
+    print(f"Details: {e}", file=sys.stderr)
+    raise SystemExit(2)
+
+ver = float(getattr(tk, "TkVersion", 0.0))
+if ver < 8.6:
+    print(f"ERROR: Tcl/Tk {ver} detected. Tk 8.6+ is required for macOS 26 compatibility.", file=sys.stderr)
+    raise SystemExit(2)
+print(f"Tk OK (TkVersion={ver})")
+PY
+
 # Basic sanity check without launching the GUI.
 python -m py_compile src/pipeline_calculator_v3.py
 python -m pytest

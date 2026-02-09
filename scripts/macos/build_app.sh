@@ -10,7 +10,9 @@ VENV_DIR="${REPO_DIR}/.venv"
 # Optional overrides:
 #   BUNDLE_ID=com.yourorg.pipelinecalculator
 #   APP_DISPLAY_NAME="Pipeline Calculator v3"
-BUNDLE_ID="${BUNDLE_ID:-}"
+# Default to a reverse-DNS style bundle identifier so the generated Info.plist is valid.
+# Override by exporting BUNDLE_ID=... in your environment/CI.
+BUNDLE_ID="${BUNDLE_ID:-com.archaerial.pipelinecalculator}"
 APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v3}"
 
 if [[ ! -d "${VENV_DIR}" ]]; then
@@ -24,9 +26,27 @@ source "${VENV_DIR}/bin/activate"
 
 cd "${REPO_DIR}"
 
+python - <<'PY'
+import sys
+try:
+    import tkinter as tk
+except Exception as e:
+    print("ERROR: tkinter is not available in this environment.", file=sys.stderr)
+    print(f"Details: {e}", file=sys.stderr)
+    print("Fix: run `bash scripts/macos/setup_macos.sh` to install Homebrew python + Tk bindings.", file=sys.stderr)
+    raise SystemExit(2)
+
+ver = float(getattr(tk, "TkVersion", 0.0))
+if ver < 8.6:
+    print(f"ERROR: Tcl/Tk {ver} detected. Builds made with Tk 8.5 are known to crash on macOS 26.", file=sys.stderr)
+    print("Fix: ensure your venv was created with Homebrew python@3.11 + python-tk@3.11.", file=sys.stderr)
+    raise SystemExit(2)
+print(f"Tk OK (TkVersion={ver})")
+PY
+
 ICON_ARGS=()
 if [[ -f "icon.icns" ]]; then
-  ICON_ARGS+=(--icon "icon.icns")
+  ICON_ARGS+=(--icon "${REPO_DIR}/icon.icns")
 fi
 
 BUNDLE_ID_ARGS=()
@@ -34,18 +54,30 @@ if [[ -n "${BUNDLE_ID}" ]]; then
   BUNDLE_ID_ARGS+=(--osx-bundle-identifier "${BUNDLE_ID}")
 fi
 
+ADD_DATA_ARGS=()
+if [[ -f "${REPO_DIR}/README.md" ]]; then
+  ADD_DATA_ARGS+=(--add-data "${REPO_DIR}/README.md:.")
+fi
+if [[ -f "${REPO_DIR}/icon.icns" ]]; then
+  ADD_DATA_ARGS+=(--add-data "${REPO_DIR}/icon.icns:.")
+fi
+if [[ -f "${REPO_DIR}/icon.ico" ]]; then
+  ADD_DATA_ARGS+=(--add-data "${REPO_DIR}/icon.ico:.")
+fi
+
 rm -rf build dist
 
+# Bash 3.2 (macOS default) + `set -u` errors on empty array expansions.
+# Use the `${arr[@]+"${arr[@]}"} ` pattern so empty arrays expand safely.
 pyinstaller --noconfirm --clean \
   --name "${APP_DISPLAY_NAME}" \
   --windowed \
   --onedir \
   --specpath "build" \
-  "${ICON_ARGS[@]}" \
-  "${BUNDLE_ID_ARGS[@]}" \
-  --add-data "README.md:." \
-  --add-data "icon.icns:." \
-  --add-data "icon.ico:." \
+  --paths "${REPO_DIR}/src" \
+  ${ICON_ARGS[@]+"${ICON_ARGS[@]}"} \
+  ${BUNDLE_ID_ARGS[@]+"${BUNDLE_ID_ARGS[@]}"} \
+  ${ADD_DATA_ARGS[@]+"${ADD_DATA_ARGS[@]}"} \
   --hidden-import scipy.spatial \
   --hidden-import scipy._lib.messagestream \
   --hidden-import tkinterdnd2 \
@@ -65,4 +97,3 @@ if [[ ! -d "${APP_PATH}" ]]; then
 fi
 
 echo "Build complete: ${APP_PATH}"
-

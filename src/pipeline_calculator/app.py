@@ -27,21 +27,24 @@ def resolve_entrypoint() -> Callable[[], int]:
         return load_legacy_main()
 
     if impl in ("new", "refactor", "package"):
-        # Future: point this at the refactored app entrypoint.
-        # Keep the fallback so developers can opt-in without getting stuck.
-        raise NotImplementedError("Refactored implementation not wired yet.")
+        from pipeline_calculator.gui.main_window import main as gui_main
+
+        return gui_main
 
     raise ValueError(
         f"Unknown PIPELINE_CALCULATOR_IMPL={impl!r}. "
-        "Use 'legacy' (default) or 'new' (future)."
+        "Use 'legacy' (default) or 'new'."
     )
 
 
 def main() -> int:
     try:
         entrypoint = resolve_entrypoint()
-    except NotImplementedError as e:
-        print(f"[pipeline_calculator] {e} Falling back to legacy implementation.", file=sys.stderr)
+    except (ImportError, NotImplementedError) as e:
+        print(
+            f"[pipeline_calculator] {type(e).__name__}: {e} Falling back to legacy implementation.",
+            file=sys.stderr,
+        )
         from pipeline_calculator.legacy import load_legacy_main
 
         entrypoint = load_legacy_main()
@@ -50,4 +53,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

@@ -4,6 +4,7 @@ set -euo pipefail
 # Pipeline Calculator v3 macOS setup script
 # - Installs Homebrew (if missing)
 # - Installs Python 3.11 via brew
+# - Installs Tk support for brew Python (python-tk@3.11) to avoid macOS Tk 8.5 crashes
 # - Creates repo-local venv at .venv/ and installs requirements
 #
 # Run:
@@ -64,12 +65,51 @@ if ! "${BREW_BIN}" list python@3.11 >/dev/null 2>&1; then
   "${BREW_BIN}" install python@3.11
 fi
 
+# Homebrew's python@3.11 does not bundle _tkinter on some systems; it is provided by python-tk@3.11.
+# Tk 8.5 (Apple CLT Python) aborts on macOS 26 when creating a root window, so enforce Tk 8.6+.
+if ! "${BREW_BIN}" list python-tk@3.11 >/dev/null 2>&1; then
+  echo "Installing python-tk@3.11 (Tcl/Tk bindings)..."
+  "${BREW_BIN}" install python-tk@3.11
+fi
+
 PY_BIN="$("${BREW_BIN}" --prefix python@3.11)/bin/python3.11"
 if [[ ! -x "${PY_BIN}" ]]; then
   echo "python@3.11 not found at ${PY_BIN}."
   exit 1
 fi
 echo "Using Python: ${PY_BIN}"
+
+recreate_venv="false"
+if [[ -d "${VENV_DIR}" ]]; then
+  VENV_PY="${VENV_DIR}/bin/python"
+  if [[ ! -x "${VENV_PY}" ]]; then
+    recreate_venv="true"
+  else
+    VENV_VER="$("${VENV_PY}" - <<'PY' 2>/dev/null || true
+import sys
+print(f"{sys.version_info[0]}.{sys.version_info[1]}")
+PY
+)"
+    if [[ "${VENV_VER}" != "3.11" ]]; then
+      recreate_venv="true"
+    else
+      # Verify tkinter is present and new enough without creating a root window.
+      if ! "${VENV_PY}" - <<'PY' >/dev/null 2>&1; then
+import sys
+import tkinter as tk
+if float(getattr(tk, "TkVersion", 0.0)) < 8.6:
+    raise SystemExit(2)
+PY
+        recreate_venv="true"
+      fi
+    fi
+  fi
+fi
+
+if [[ "${recreate_venv}" == "true" ]]; then
+  echo "Recreating venv at ${VENV_DIR} (wrong Python/Tk detected)..."
+  rm -rf "${VENV_DIR}"
+fi
 
 if [[ ! -d "${VENV_DIR}" ]]; then
   echo "Creating venv at ${VENV_DIR} ..."
@@ -89,7 +129,16 @@ fi
 
 echo "Verifying installs..."
 python --version
-python -c "import tkinter; print('tkinter OK')"
+python - <<'PY'
+import sys
+import tkinter as tk
+ver = float(getattr(tk, "TkVersion", 0.0))
+print(f"tkinter OK (TkVersion={ver})")
+if ver < 8.6:
+    print("ERROR: Tcl/Tk 8.6+ is required on macOS 26. Tk 8.5 aborts when creating a window.", file=sys.stderr)
+    print("Fix: ensure you are using Homebrew python@3.11 + python-tk@3.11, then re-run this script.", file=sys.stderr)
+    raise SystemExit(2)
+PY
 python -c "import customtkinter; print('customtkinter OK')"
 python -c "import tkinterdnd2; print('tkinterdnd2 OK')"
 python -c "import numpy, pandas, scipy, pyproj; print('scientific stack OK')"
