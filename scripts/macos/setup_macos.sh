@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Pipeline Calculator v3 macOS setup script
+# Pipeline Calculator v4 macOS setup script
 # - Installs Homebrew (if missing)
 # - Installs Python 3.11 via brew
 # - Installs Tk support for brew Python (python-tk@3.11) to avoid macOS Tk 8.5 crashes
@@ -22,9 +22,9 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
   exit 1
 fi
 
-if [[ ! -f "${REPO_DIR}/requirements.txt" ]] || [[ ! -f "${REPO_DIR}/src/pipeline_calculator_v3.py" ]]; then
+if [[ ! -f "${REPO_DIR}/requirements.txt" ]] || [[ ! -f "${REPO_DIR}/src/pipeline_calculator_entry.py" ]]; then
   echo "Could not locate repo root from ${SCRIPT_DIR}."
-  echo "Expected: ${REPO_DIR}/requirements.txt and ${REPO_DIR}/src/pipeline_calculator_v3.py"
+  echo "Expected: ${REPO_DIR}/requirements.txt and ${REPO_DIR}/src/pipeline_calculator_entry.py"
   exit 1
 fi
 

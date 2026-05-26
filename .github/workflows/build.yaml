@@ -71,7 +71,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: pipeline-calculator-macos
-        path: dist/Pipeline_Calculator_v3.dmg
+        path: dist/Pipeline_Calculator_v4.dmg
         if-no-files-found: error
 
     - name: Upload macOS app
@@ -106,7 +106,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: windows-exe
-        path: dist/Pipeline_Calculator_v3.exe
+        path: dist/Pipeline_Calculator_v4.exe
 
   create-release:
     needs: [build-macos, build-windows]
@@ -121,8 +121,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          pipeline-calculator-macos/Pipeline_Calculator_v3.dmg
-          windows-exe/Pipeline_Calculator_v3.exe
+          pipeline-calculator-macos/Pipeline_Calculator_v4.dmg
+          windows-exe/Pipeline_Calculator_v4.exe
         draft: false
         prerelease: false
         generate_release_notes: true

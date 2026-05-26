@@ -7,7 +7,7 @@ import numpy as np
 from scipy.spatial import KDTree
 
 from pipeline_calculator.core.angles import bearing_orientation_diff
-from pipeline_calculator.core.segmentation import segment_pipeline
+from pipeline_calculator.core.coordinates import segment_pipeline_paths
 from pipeline_calculator.core.spatial import compute_origin, lonlat_array_to_xy
 
 
@@ -21,7 +21,7 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
         if progress_callback:
             progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
             progress_callback(progress)
-        pipeline["segments"] = segment_pipeline(geod, pipeline["coordinates"], segment_length)
+        pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length)
 
     # Build spatial index
     all_segments = []
@@ -78,6 +78,16 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                                 {
                                     "pipeline_1_segment": segment["segment_index"],
                                     "pipeline_2_segment": near_segment["segment_index"],
+                                    "pipeline_1_path": segment.get("path_index", 0),
+                                    "pipeline_2_path": near_segment.get("path_index", 0),
+                                    "pipeline_1_path_segment": segment.get(
+                                        "path_segment_index",
+                                        segment["segment_index"],
+                                    ),
+                                    "pipeline_2_path_segment": near_segment.get(
+                                        "path_segment_index",
+                                        near_segment["segment_index"],
+                                    ),
                                     "distance": distance,
                                 }
                             )
@@ -86,6 +96,16 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                                 {
                                     "pipeline_1_segment": near_segment["segment_index"],
                                     "pipeline_2_segment": segment["segment_index"],
+                                    "pipeline_1_path": near_segment.get("path_index", 0),
+                                    "pipeline_2_path": segment.get("path_index", 0),
+                                    "pipeline_1_path_segment": near_segment.get(
+                                        "path_segment_index",
+                                        near_segment["segment_index"],
+                                    ),
+                                    "pipeline_2_path_segment": segment.get(
+                                        "path_segment_index",
+                                        segment["segment_index"],
+                                    ),
                                     "distance": distance,
                                 }
                             )
@@ -129,7 +149,14 @@ def calculate_overlap_results(
             print(f"Warning: Invalid pipeline indices {p1_idx}, {p2_idx}")
             continue
 
-        segments.sort(key=lambda x: x["pipeline_1_segment"])
+        segments.sort(
+            key=lambda x: (
+                x.get("pipeline_1_path", 0),
+                x.get("pipeline_1_path_segment", x["pipeline_1_segment"]),
+                x.get("pipeline_2_path", 0),
+                x.get("pipeline_2_path_segment", x["pipeline_2_segment"]),
+            )
+        )
 
         continuous_sections = []
         current_section = []
@@ -139,10 +166,20 @@ def calculate_overlap_results(
                 current_section = [seg]
                 continue
 
-            if (
-                seg["pipeline_1_segment"] - current_section[-1]["pipeline_1_segment"] <= 2
-                and seg["pipeline_2_segment"] - current_section[-1]["pipeline_2_segment"] <= 2
-            ):
+            same_paths = (
+                seg.get("pipeline_1_path", 0) == current_section[-1].get("pipeline_1_path", 0)
+                and seg.get("pipeline_2_path", 0) == current_section[-1].get("pipeline_2_path", 0)
+            )
+            p1_gap = (
+                seg.get("pipeline_1_path_segment", seg["pipeline_1_segment"])
+                - current_section[-1].get("pipeline_1_path_segment", current_section[-1]["pipeline_1_segment"])
+            )
+            p2_gap = (
+                seg.get("pipeline_2_path_segment", seg["pipeline_2_segment"])
+                - current_section[-1].get("pipeline_2_path_segment", current_section[-1]["pipeline_2_segment"])
+            )
+
+            if same_paths and abs(p1_gap) <= 2 and abs(p2_gap) <= 2:
                 current_section.append(seg)
             else:
                 if len(current_section) * segment_length >= min_parallel_length:

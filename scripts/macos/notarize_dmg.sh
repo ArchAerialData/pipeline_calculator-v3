@@ -4,7 +4,7 @@ set -euo pipefail
 # Notarize + staple a signed DMG using an App Store Connect API key.
 #
 # Intended flow:
-# 1) GitHub Actions builds + code-signs `dist/Pipeline_Calculator_v3.dmg`
+# 1) GitHub Actions builds + code-signs `dist/Pipeline_Calculator_v4.dmg`
 # 2) Download the DMG locally
 # 3) Run this script to notarize + staple the DMG
 #
@@ -15,7 +15,7 @@ set -euo pipefail
 #   - `APPLE_API_ISSUER_ID.txt`
 #
 # Usage:
-#   bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v3.dmg
+#   bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v4.dmg
 #
 # Notes:
 # - The DMG/app must already be Developer ID signed for notarization to succeed.
@@ -24,7 +24,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-DMG_PATH="${1:-${REPO_DIR}/dist/Pipeline_Calculator_v3.dmg}"
+DMG_PATH="${1:-${REPO_DIR}/dist/Pipeline_Calculator_v4.dmg}"
 if [[ ! -f "${DMG_PATH}" ]]; then
   echo "DMG not found: ${DMG_PATH}" >&2
   exit 1

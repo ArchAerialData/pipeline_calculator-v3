@@ -1,8 +1,8 @@
-"""Application entrypoint for the refactor-in-progress package.
+"""Application entrypoint for Pipeline Calculator.
 
 Design goals:
-- Keep `src/pipeline_calculator_v3.py` as the stable, legacy implementation.
-- Allow developers/CI to run the new package entrypoint without breaking builds.
+- Keep `src/pipeline_calculator_v3.py` available as a legacy compatibility entrypoint.
+- Default to the modular v4 GUI while retaining an explicit legacy switch.
 - Provide a controlled switch (`PIPELINE_CALCULATOR_IMPL`) with safe fallback to legacy.
 """
 
@@ -14,8 +14,7 @@ from collections.abc import Callable
 
 
 def _impl_from_env() -> str:
-    # "legacy" is the safe default until the refactor is complete.
-    return (os.getenv("PIPELINE_CALCULATOR_IMPL") or "legacy").strip().lower()
+    return (os.getenv("PIPELINE_CALCULATOR_IMPL") or "new").strip().lower()
 
 
 def resolve_entrypoint() -> Callable[[], int]:
@@ -33,7 +32,7 @@ def resolve_entrypoint() -> Callable[[], int]:
 
     raise ValueError(
         f"Unknown PIPELINE_CALCULATOR_IMPL={impl!r}. "
-        "Use 'legacy' (default) or 'new'."
+        "Use 'new' (default) or 'legacy'."
     )
 
 

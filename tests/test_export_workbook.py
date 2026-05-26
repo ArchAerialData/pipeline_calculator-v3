@@ -88,3 +88,27 @@ def test_build_analysis_workbook_header_fills() -> None:
     assert rgb(ws2.cell(row=1, column=1)) == "FFD9D9D9"
     assert rgb(ws2.cell(row=1, column=3)) == "FFFFFF00"
     assert rgb(ws2.cell(row=1, column=4)) == "FF00B050"
+
+
+def test_build_analysis_workbook_includes_diagnostics_sheet() -> None:
+    pytest.importorskip("openpyxl")
+
+    results = {
+        "pipelines": [],
+        "overlap_analysis": None,
+        "diagnostics": [
+            {
+                "level": "warning",
+                "code": "unsupported_geometry",
+                "message": "Skipped non-centerline geometry.",
+                "context": {"source": "doc.kml"},
+            }
+        ],
+    }
+
+    wb = build_analysis_workbook(results)
+
+    assert "Diagnostics" in wb.sheetnames
+    ws = wb["Diagnostics"]
+    assert [c.value for c in ws[1]] == ["Level", "Code", "Message", "Context"]
+    assert ws.cell(row=2, column=2).value == "unsupported_geometry"

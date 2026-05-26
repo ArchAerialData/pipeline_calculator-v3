@@ -1,6 +1,6 @@
 # macOS scripts
 
-These scripts are for engineers building/running Pipeline Calculator v3 from source on macOS, and for producing a self-contained `.app` for distribution.
+These scripts are for engineers building/running Pipeline Calculator v4 from source on macOS, and for producing a self-contained `.app` for distribution.
 
 ## Development (from source)
 - Setup dev machine: `bash scripts/macos/setup_macos.sh`
@@ -14,10 +14,10 @@ These scripts use a repo-local virtualenv at `.venv/`.
 Build a self-contained `.app` with PyInstaller:
 - `bash scripts/macos/build_app.sh`
 
-To build the **refactored/modular GUI** (Phase 6+):
+To build the legacy monolithic GUI instead of the default modular v4 GUI:
 
 ```bash
-PIPELINE_CALCULATOR_BUILD_IMPL=new bash scripts/macos/build_app.sh
+PIPELINE_CALCULATOR_BUILD_IMPL=legacy bash scripts/macos/build_app.sh
 ```
 
 Then package a DMG:
@@ -30,7 +30,7 @@ Note: CI produces **signed but not notarized** DMGs (matches the reference repo 
 If you want to avoid Gatekeeper prompts for pilots, notarize the distribution artifact **after** GitHub produces the signed DMG:
 
 ```bash
-bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v3.dmg
+bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v4.dmg
 ```
 
 This uses App Store Connect API key credentials from env vars or the gitignored `apple_dev/` helper files (see `CODE_SIGNING.md`).

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Pipeline Calculator with Overlap Analysis - KMZ/KML Pipeline Calculator
-Enhanced version with overlap detection and bundling analysis
-Version: 3.0.0 - Fixed
+Compatibility entrypoint for Pipeline Calculator v4
+Version: 4.0.0
 """
 
 import subprocess
@@ -32,7 +32,10 @@ import math
 from xml.sax.saxutils import escape as _xml_escape
 
 # Version info
-__version__ = "3.0.0-fixed"
+try:
+    from pipeline_calculator import __version__ as __version__
+except Exception:
+    __version__ = "4.0.0"
 __author__ = "Pipeline Calculator Team"
 
 # Default analysis parameters

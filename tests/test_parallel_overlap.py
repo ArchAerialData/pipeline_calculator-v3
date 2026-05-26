@@ -37,3 +37,39 @@ def test_find_parallel_segments_and_overlap_results() -> None:
     assert len(poly) >= 5
     assert poly[0] == poly[-1]
 
+
+def test_overlap_continuity_does_not_cross_coordinate_paths() -> None:
+    analyzer = pc.PipelineAnalyzer()
+    analyzer.segment_length = 5.0
+    analyzer.min_parallel_length = 15.0
+    analyzer.detection_range = 5.0
+    analyzer.angular_tolerance = 10.0
+
+    def line_from(start, length_m):
+        end_lon, end_lat, _ = analyzer.geod.fwd(start[0], start[1], 0.0, length_m)
+        return [start, (float(end_lon), float(end_lat))]
+
+    def offset_east(start, meters):
+        lon, lat, _ = analyzer.geod.fwd(start[0], start[1], 90.0, meters)
+        return (float(lon), float(lat))
+
+    start_a1 = (-100.0, 40.0)
+    start_a2 = (-99.0, 41.0)
+    start_b1 = offset_east(start_a1, 2.0)
+    start_b2 = offset_east(start_a2, 2.0)
+
+    paths_a = [line_from(start_a1, 12.0), line_from(start_a2, 12.0)]
+    paths_b = [line_from(start_b1, 12.0), line_from(start_b2, 12.0)]
+    pipelines = [
+        {"name": "A", "coordinates": paths_a[0], "coordinate_paths": paths_a},
+        {"name": "B", "coordinates": paths_b[0], "coordinate_paths": paths_b},
+    ]
+
+    parallel = analyzer.find_parallel_segments(pipelines)
+    assert (0, 1) in parallel
+    assert parallel[(0, 1)]
+
+    overlap = analyzer.calculate_overlap_results(pipelines, parallel)
+
+    assert overlap["bundled_sections"] == []
+

@@ -29,7 +29,7 @@ def test_segment_pipeline_midpoints_have_reasonable_spacing_on_long_edge() -> No
 
     # Expected: floor(total_len / seg_len) full segments.
     _, _, total_m = geod.inv(start[0], start[1], end[0], end[1])
-    expected = int(math.floor(abs(float(total_m)) / seg_len))
+    expected = int(math.floor((abs(float(total_m)) + 1e-9) / seg_len))
     assert len(segments) == expected
 
     mids = [s["midpoint"] for s in segments]

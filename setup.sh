@@ -1,7 +1,7 @@
 #!/bin/bash
-# Setup script for Pipeline Calculator v3.0
+# Setup script for Pipeline Calculator v4.0
 
-echo "Pipeline Calculator v3.0 - Setup Script"
+echo "Pipeline Calculator v4.0 - Setup Script"
 echo "======================================="
 
 # Check Python version
@@ -80,10 +80,10 @@ if [ $? -eq 0 ]; then
     echo "================================"
     echo ""
     echo "To run the application:"
-    echo "  python src/pipeline_calculator_v3.py"
+    echo "  python src/pipeline_calculator_entry.py"
     echo ""
     echo "To build executables locally:"
-    echo "  pyinstaller --onefile --windowed --name Pipeline_Calculator_v3 src/pipeline_calculator_v3.py"
+    echo "  pyinstaller --onefile --windowed --name Pipeline_Calculator_v4 src/pipeline_calculator_entry.py"
     echo ""
     echo "To deactivate virtual environment:"
     echo "  deactivate"

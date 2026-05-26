@@ -25,11 +25,11 @@ from pipeline_calculator.gui.state import AnalysisParameters, AppState
 
 def _legacy_version() -> str:
     try:
-        import pipeline_calculator_v3 as legacy
+        from pipeline_calculator import __version__
 
-        return str(getattr(legacy, "__version__", "3"))
+        return str(__version__)
     except Exception:
-        return "3"
+        return "4.0.0"
 
 
 class PipelineCalculatorGUI:

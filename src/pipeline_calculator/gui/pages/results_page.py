@@ -7,6 +7,7 @@ import customtkinter as ctk
 from pipeline_calculator.gui.tabs.overlap_tab import create as create_overlap_tab
 from pipeline_calculator.gui.tabs.pipelines_tab import create as create_pipelines_tab
 from pipeline_calculator.gui.tabs.placemarks_tab import create as create_placemarks_tab
+from pipeline_calculator.gui.tabs.diagnostics_tab import create as create_diagnostics_tab
 from pipeline_calculator.gui.tabs.summary_tab import create as create_summary_tab
 
 
@@ -66,6 +67,10 @@ def show(
     if current_results.get("placemarks"):
         placemark_tab = tabview.add("Placemarks")
         create_placemarks_tab(placemark_tab, current_results)
+
+    if current_results.get("diagnostics"):
+        diagnostics_tab = tabview.add("Diagnostics")
+        create_diagnostics_tab(diagnostics_tab, current_results)
 
     button_frame = ctk.CTkFrame(root)
     button_frame.pack(fill="x", padx=10, pady=5)

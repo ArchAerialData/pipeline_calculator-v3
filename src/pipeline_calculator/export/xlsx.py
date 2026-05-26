@@ -177,5 +177,38 @@ def build_analysis_workbook(current_results):
     ws2.cell(row=2, column=4).alignment = center
     ws2.cell(row=2, column=4).number_format = '0.000'
 
+    diagnostics = list(current_results.get('diagnostics', []) or [])
+    if diagnostics:
+        ws3 = wb.create_sheet("Diagnostics")
+        ws3.freeze_panes = 'A2'
+        headers_diag = ["Level", "Code", "Message", "Context"]
+        ws3.append(headers_diag)
+
+        for col_idx in range(1, len(headers_diag) + 1):
+            cell = ws3.cell(row=1, column=col_idx)
+            cell.font = header_font
+            cell.alignment = center
+            cell.fill = gray
+
+        widths3 = [14, 32, 90, 120]
+        for i, w in enumerate(widths3, start=1):
+            ws3.column_dimensions[get_column_letter(i)].width = w
+
+        for diag in diagnostics:
+            context = diag.get("context", "")
+            ws3.append(
+                [
+                    diag.get("level", ""),
+                    diag.get("code", ""),
+                    diag.get("message", ""),
+                    str(context),
+                ]
+            )
+
+        for r in range(2, ws3.max_row + 1):
+            for c in range(1, len(headers_diag) + 1):
+                ws3.cell(row=r, column=c).font = body_font
+                ws3.cell(row=r, column=c).alignment = left
+
     return wb
 

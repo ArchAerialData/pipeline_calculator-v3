@@ -29,4 +29,4 @@ if ver < 8.6:
     raise SystemExit(2)
 PY
 
-python "${REPO_DIR}/src/pipeline_calculator_v3.py"
+python "${REPO_DIR}/src/pipeline_calculator_entry.py"

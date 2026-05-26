@@ -9,13 +9,13 @@ VENV_DIR="${REPO_DIR}/.venv"
 
 # Optional overrides:
 #   BUNDLE_ID=com.yourorg.pipelinecalculator
-#   APP_DISPLAY_NAME="Pipeline Calculator v3"
-#   PIPELINE_CALCULATOR_BUILD_IMPL=new|legacy  (default: legacy)
+#   APP_DISPLAY_NAME="Pipeline Calculator v4"
+#   PIPELINE_CALCULATOR_BUILD_IMPL=new|legacy  (default: new)
 # Default to a reverse-DNS style bundle identifier so the generated Info.plist is valid.
 # Override by exporting BUNDLE_ID=... in your environment/CI.
 BUNDLE_ID="${BUNDLE_ID:-com.archaerial.pipelinecalculator}"
-APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v3}"
-BUILD_IMPL="${PIPELINE_CALCULATOR_BUILD_IMPL:-legacy}"
+APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v4}"
+BUILD_IMPL="${PIPELINE_CALCULATOR_BUILD_IMPL:-new}"
 
 if [[ ! -d "${VENV_DIR}" ]]; then
   echo "Missing venv at ${VENV_DIR}."

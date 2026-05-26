@@ -28,6 +28,16 @@ def create(parent, current_results: dict) -> None:
         font=("Arial", 14),
     ).pack()
 
+    diagnostics = current_results.get("diagnostics", []) or []
+    if diagnostics:
+        warning_count = sum(1 for d in diagnostics if d.get("level") != "info")
+        ctk.CTkLabel(
+            original_frame,
+            text=f"Parser Diagnostics: {len(diagnostics)} total, {warning_count} warning(s)",
+            font=("Arial", 14),
+            text_color="#FFD700" if warning_count else "#AAAAAA",
+        ).pack()
+
     ctk.CTkLabel(
         original_frame,
         text=f"Pipeline Count: {len(current_results.get('pipelines', []))}",

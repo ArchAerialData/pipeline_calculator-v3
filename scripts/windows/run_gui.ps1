@@ -7,5 +7,5 @@ $Py = Join-Path $VenvDir "Scripts\python.exe"
 
 if (!(Test-Path $Py)) { throw "Venv not found. Run scripts\\windows\\setup_windows.ps1 first." }
 
-& $Py (Join-Path $RepoDir "src\pipeline_calculator_v3.py")
+& $Py (Join-Path $RepoDir "src\pipeline_calculator_entry.py")
 

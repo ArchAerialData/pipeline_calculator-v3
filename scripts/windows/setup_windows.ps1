@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-# Pipeline Calculator v3 Windows setup script
+# Pipeline Calculator v4 Windows setup script
 # - Creates repo-local venv at .venv\
 # - Installs requirements
 #
@@ -14,7 +14,7 @@ $VenvDir = Join-Path $RepoDir ".venv"
 Write-Host "Repo: $RepoDir"
 
 if (!(Test-Path (Join-Path $RepoDir "requirements.txt"))) { throw "requirements.txt not found at repo root." }
-if (!(Test-Path (Join-Path $RepoDir "src\pipeline_calculator_v3.py"))) { throw "src\pipeline_calculator_v3.py not found." }
+if (!(Test-Path (Join-Path $RepoDir "src\pipeline_calculator_entry.py"))) { throw "src\pipeline_calculator_entry.py not found." }
 
 if (!(Test-Path $VenvDir)) {
   python -m venv $VenvDir

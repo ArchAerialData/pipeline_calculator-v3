@@ -3,7 +3,7 @@
 This repo is configured to produce a **code-signed macOS `.app` inside a `.dmg`** via GitHub Actions (no notarization).
 
 ## What’s signed
-- The workflow signs the built `.app` with a **Developer ID Application** certificate, then packages it into `dist/Pipeline_Calculator_v3.dmg`.
+- The workflow signs the built `.app` with a **Developer ID Application** certificate, then packages it into `dist/Pipeline_Calculator_v4.dmg`.
 - Notarization is **not** performed in GitHub Actions (matches the reference repo setup). Gatekeeper prompts are expected for non-notarized apps.
 
 ## Required GitHub Secrets
@@ -42,7 +42,7 @@ Notes:
 If you want a notarized distribution artifact, notarize after downloading the signed DMG from Actions:
 
 ```bash
-bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v3.dmg
+bash scripts/macos/notarize_dmg.sh dist/Pipeline_Calculator_v4.dmg
 ```
 
 This uses App Store Connect API key credentials (p8/key id/issuer id) provided via env vars or from gitignored `apple_dev/` helper files.

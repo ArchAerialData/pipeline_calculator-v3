@@ -6,7 +6,7 @@ import numpy as np
 from scipy.spatial import KDTree
 
 from pipeline_calculator.core.angles import bearing_orientation_diff
-from pipeline_calculator.core.segmentation import segment_pipeline
+from pipeline_calculator.core.coordinates import segment_pipeline_paths
 from pipeline_calculator.core.spatial import compute_origin, lonlat_array_to_xy
 
 
@@ -27,7 +27,7 @@ def compute_effective_length_by_clusters(
     """
     for pipeline in pipelines:
         if "segments" not in pipeline:
-            pipeline["segments"] = segment_pipeline(geod, pipeline["coordinates"], segment_length)
+            pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length)
 
     all_midpoints = []
     seg_index_map = {}

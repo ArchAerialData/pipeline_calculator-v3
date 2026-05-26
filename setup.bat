@@ -1,7 +1,7 @@
 @echo off
-REM Setup script for Pipeline Calculator v3.0 - Windows
+REM Setup script for Pipeline Calculator v4.0 - Windows
 
-echo Pipeline Calculator v3.0 - Setup Script
+echo Pipeline Calculator v4.0 - Setup Script
 echo ========================================
 
 REM Check Python installation
@@ -62,10 +62,10 @@ if %errorlevel% equ 0 (
     echo ================================
     echo.
     echo To run the application:
-    echo   python src\pipeline_calculator_v3.py
+    echo   python src\pipeline_calculator_entry.py
     echo.
     echo To build executable locally:
-    echo   pyinstaller --onefile --windowed --name Pipeline_Calculator_v3 src\pipeline_calculator_v3.py
+    echo   pyinstaller --onefile --windowed --name Pipeline_Calculator_v4 src\pipeline_calculator_entry.py
     echo.
     echo Virtual environment is activated. To deactivate:
     echo   deactivate

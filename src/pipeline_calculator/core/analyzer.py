@@ -8,10 +8,14 @@ from pipeline_calculator.core.constants import (
     SEGMENT_LENGTH,
     SURVEY_MILE_METERS,
 )
+from pipeline_calculator.core.coordinates import coordinate_paths_for_pipeline
 from pipeline_calculator.core.effective_length import compute_effective_length_by_clusters
 from pipeline_calculator.core.overlap import calculate_overlap_results, find_parallel_segments
 from pipeline_calculator.core.segmentation import segment_pipeline
-from pipeline_calculator.parsers.kml_kmz import extract_features_from_file
+from pipeline_calculator.parsers.kml_kmz import (
+    extract_features_from_file,
+    extract_features_from_file_with_diagnostics,
+)
 
 
 class PipelineAnalyzer:
@@ -49,20 +53,21 @@ class PipelineAnalyzer:
 
         for pipeline in pipelines:
             length_meters = 0.0
-            coords = pipeline["coordinates"]
+            paths = coordinate_paths_for_pipeline(pipeline)
 
-            if len(coords) < 2:
+            if not paths:
                 continue
 
-            for i in range(len(coords) - 1):
-                try:
-                    lon1, lat1 = coords[i]
-                    lon2, lat2 = coords[i + 1]
-                    _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
-                    length_meters += abs(distance)
-                except Exception as e:
-                    print(f"Warning: Error calculating distance for pipeline {pipeline.get('name', '')}: {str(e)}")
-                    continue
+            for coords in paths:
+                for i in range(len(coords) - 1):
+                    try:
+                        lon1, lat1 = coords[i]
+                        lon2, lat2 = coords[i + 1]
+                        _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                        length_meters += abs(distance)
+                    except Exception as e:
+                        print(f"Warning: Error calculating distance for pipeline {pipeline.get('name', '')}: {str(e)}")
+                        continue
 
             length_miles = length_meters / self.survey_mile
 
@@ -120,10 +125,9 @@ class PipelineAnalyzer:
     def analyze_complete(self, file_path, progress_callback=None):
         """Complete analysis of KMZ/KML file."""
         try:
-            pipelines, placemarks = self.extract_features_from_file(file_path, progress_callback)
-
-            if not pipelines and not placemarks:
-                raise ValueError("No valid features found in the file")
+            parsed = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback)
+            pipelines = parsed.pipelines
+            placemarks = parsed.placemarks
 
             pipeline_data, total_meters, total_miles = self.calculate_pipeline_lengths(pipelines)
 
@@ -156,6 +160,8 @@ class PipelineAnalyzer:
                 "total_meters": total_meters,
                 "total_miles": total_miles,
                 "overlap_analysis": overlap_results,
+                "diagnostics": parsed.diagnostics,
+                "parsed_kml_files": parsed.parsed_kml_files,
                 "analysis_parameters": {
                     "detection_range": self.detection_range,
                     "min_parallel_length": self.min_parallel_length,

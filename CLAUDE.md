@@ -4,14 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is Pipeline Calculator v3.0, a Python GUI application for analyzing KMZ/KML pipeline files. The application calculates pipeline lengths, detects overlapping parallel sections for aerial survey optimization, and exports results. Built with CustomTkinter for modern UI, uses geospatial libraries for accurate calculations, and includes GitHub Actions for cross-platform executable builds.
+This is Pipeline Calculator v4.0, a Python GUI application for analyzing KMZ/KML pipeline files. The application calculates pipeline lengths, detects overlapping parallel sections for aerial survey optimization, exports results, and reports parser diagnostics for supported and unsupported KML/KMZ structures.
 
 ## Development Commands
 
 ### Running the Application
 ```bash
 # Run from source
-python src/pipeline_calculator_v3.py
+python src/pipeline_calculator_entry.py
 
 # Run test KML generator
 python tests/tools/generate_test_kml.py
@@ -34,31 +34,31 @@ pip install -r requirements.txt
 ### Building Executables
 ```bash
 # Build standalone executable
-pyinstaller --onefile --windowed --name Pipeline_Calculator_v3 \
+pyinstaller --onefile --windowed --name Pipeline_Calculator_v4 \
   --add-data "README.md:." \
   --hidden-import scipy.spatial \
   --hidden-import scipy._lib.messagestream \
   --hidden-import tkinterdnd2 \
   --hidden-import PIL \
-  src/pipeline_calculator_v3.py
+  src/pipeline_calculator_entry.py
 ```
 
 ### GitHub Actions
 - Builds automatically trigger on pushes to `main` or tagged releases
 - Creates Windows `.exe` and macOS `.dmg` artifacts
-- Tagged releases (e.g., `v3.0.0`) create GitHub releases with binaries
+- Tagged releases (e.g., `v4.0.0`) create GitHub releases with binaries
 
 ## Code Architecture
 
 ### Core Components
 
-**PipelineAnalyzer** (`src/pipeline_calculator_v3.py`):
+**PipelineAnalyzer** (`src/pipeline_calculator/core/analyzer.py`):
 - Main analysis engine combining length calculation and overlap detection
 - Uses pyproj/Geod for geodesic calculations with US Survey Miles (1609.347218694m)
 - Implements spatial indexing via KDTree for efficient overlap detection
 - Segments pipelines into 5m chunks for granular analysis
 
-**PipelineCalculatorGUI** (`src/pipeline_calculator_v3.py`):
+**PipelineCalculatorGUI** (`src/pipeline_calculator/gui/main_window.py`):
 - CustomTkinter-based modern dark theme interface
 - Tabbed layout: Summary, Pipelines, Overlap Analysis, Placemarks
 - Drag-and-drop support via tkinterdnd2
@@ -82,7 +82,7 @@ pyinstaller --onefile --windowed --name Pipeline_Calculator_v3 \
 ### File Structure
 
 ```
-src/pipeline_calculator_v3.py  # Main application (2000+ lines)
+src/pipeline_calculator_entry.py  # Modular packaged application entrypoint
 tests/tools/generate_test_kml.py  # KML test file generator
 requirements.txt               # Python dependencies
 setup.sh / setup.bat          # Environment setup scripts

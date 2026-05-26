@@ -5,7 +5,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 APP_PATH="${1:-${REPO_DIR}/dist/Pipeline_Calculator.app}"
 OUT_DIR="${2:-${REPO_DIR}/dist}"
-VOLNAME="${3:-Pipeline Calculator v3}"
+VOLNAME="${3:-Pipeline Calculator v4}"
 
 if [[ ! -d "${APP_PATH}" ]]; then
   echo "Missing app bundle: ${APP_PATH}"
@@ -21,7 +21,7 @@ mkdir -p "${STAGING_DIR}"
 cp -R "${APP_PATH}" "${STAGING_DIR}/"
 ln -s /Applications "${STAGING_DIR}/Applications"
 
-DMG_PATH="${OUT_DIR}/Pipeline_Calculator_v3.dmg"
+DMG_PATH="${OUT_DIR}/Pipeline_Calculator_v4.dmg"
 rm -f "${DMG_PATH}"
 
 hdiutil create -volname "${VOLNAME}" -srcfolder "${STAGING_DIR}" -ov -format UDZO "${DMG_PATH}"
