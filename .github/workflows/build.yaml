@@ -11,110 +11,102 @@ on:
 
 jobs:
   build-macos:
-    runs-on: macos-latest
+    # Pin a specific runner to avoid surprises when `macos-latest` advances.
+    runs-on: macos-14
+    timeout-minutes: 60
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "13.0"
+      # Reverse-DNS bundle identifier (recommended; required if you later notarize).
+      BUNDLE_ID: "com.archaerial.pipelinecalculator"
+      # Build the modular (refactored) GUI by default in CI.
+      PIPELINE_CALCULATOR_BUILD_IMPL: "new"
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyproj>=3.4.0
-        pip install pandas>=1.5.0
-        pip install numpy==1.24.3
-        pip install scipy
-        pip install customtkinter>=5.0.0
-        pip install Pillow>=9.0.0
-        pip install pyinstaller>=5.0.0
-        pip install tkinterdnd2
-        
-    - name: Create icon file (if not exists)
-      run: |
-        if [ ! -f "icon.icns" ]; then
-          echo "Creating placeholder icon"
-          # Create a simple icon placeholder
-          touch icon.icns
-        fi
-        
-    - name: Build macOS app
-      run: |
-        pyinstaller --onefile \
-          --windowed \
-          --name "Pipeline Calculator v3" \
-          --add-data "README.md:." \
-          --hidden-import scipy.spatial \
-          --hidden-import scipy._lib.messagestream \
-          --hidden-import tkinterdnd2 \
-          --hidden-import PIL \
-          src/pipeline_calculator_v3.py
-        
-        # Rename for cleaner appearance
-        mv "dist/Pipeline Calculator v3.app" "dist/Pipeline_Calculator.app"
+        cache: "pip"
 
-    - name: Create DMG
+    - name: Build app
+      run: bash scripts/ci/macos_build.sh
+
+    - name: Detect signing readiness
+      id: signing_ready
+      shell: bash
+      env:
+        MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+        MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
       run: |
-        hdiutil create -volname "Pipeline Calculator v3" \
-          -srcfolder "dist/Pipeline_Calculator.app" \
-          -ov -format UDZO \
-          "Pipeline_Calculator_v3_macOS.dmg"
-        
+        if [[ -n "${MACOS_CERT_P12}" && -n "${MACOS_CERT_PASSWORD}" ]]; then
+          echo "enabled=true" >> "${GITHUB_OUTPUT}"
+          echo "Code signing enabled."
+        else
+          echo "enabled=false" >> "${GITHUB_OUTPUT}"
+          echo "Code signing disabled: one or more secrets missing."
+        fi
+
+    - name: Enforce code signing on main and tags
+      if: ${{ (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')) && steps.signing_ready.outputs.enabled != 'true' }}
+      run: |
+        echo "::error::Code signing secrets are required for main/tag distribution artifacts."
+        echo "::error::Provide MACOS_CERT_P12 and MACOS_CERT_PASSWORD."
+        exit 1
+
+    - name: Sign + package DMG (optional)
+      if: ${{ steps.signing_ready.outputs.enabled == 'true' }}
+      run: bash scripts/ci/macos_sign_and_package.sh
+      env:
+        MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+        MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+
+    - name: Package DMG (unsigned)
+      if: ${{ steps.signing_ready.outputs.enabled != 'true' && github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/tags/') }}
+      run: bash scripts/ci/macos_package.sh
+
     - name: Upload macOS DMG
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: macos-dmg
-        path: Pipeline_Calculator_v3_macOS.dmg
-        
+        name: pipeline-calculator-macos
+        path: dist/Pipeline_Calculator_v4.dmg
+        if-no-files-found: error
+
     - name: Upload macOS app
+      if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: macos-app
+        name: pipeline-calculator-macos-app
         path: dist/Pipeline_Calculator.app
+        if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
+    env:
+      # Build the modular (refactored) GUI by default in CI.
+      PIPELINE_CALCULATOR_BUILD_IMPL: "new"
     
     steps:
     - uses: actions/checkout@v4
     
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-        
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install pyproj>=3.4.0
-        pip install pandas>=1.5.0
-        pip install numpy==1.24.3
-        pip install scipy
-        pip install customtkinter>=5.0.0
-        pip install Pillow>=9.0.0
-        pip install pyinstaller>=5.0.0
-        pip install tkinterdnd2
-        
+        cache: "pip"
+
     - name: Build Windows executable
+      shell: pwsh
       run: |
-        pyinstaller --onefile `
-          --windowed `
-          --name "Pipeline_Calculator_v3" `
-          --add-data "README.md;." `
-          --hidden-import scipy.spatial `
-          --hidden-import scipy._lib.messagestream `
-          --hidden-import tkinterdnd2 `
-          --hidden-import PIL `
-          src/pipeline_calculator_v3.py
+        ./scripts/ci/windows_build.ps1
         
     - name: Upload Windows executable
       uses: actions/upload-artifact@v4
       with:
         name: windows-exe
-        path: dist/Pipeline_Calculator_v3.exe
+        path: dist/Pipeline_Calculator_v4.exe
 
   create-release:
     needs: [build-macos, build-windows]
@@ -129,8 +121,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          macos-dmg/Pipeline_Calculator_v3_macOS.dmg
-          windows-exe/Pipeline_Calculator_v3.exe
+          pipeline-calculator-macos/Pipeline_Calculator_v4.dmg
+          windows-exe/Pipeline_Calculator_v4.exe
         draft: false
         prerelease: false
         generate_release_notes: true

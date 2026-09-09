@@ -8,6 +8,7 @@ __pycache__/
 # Build directories
 build/
 dist/
+newest_builds/
 
 # Virtual environments
 .venv/
@@ -21,3 +22,6 @@ venv/
 
 # Logs
 *.log
+
+# Code signing material (never commit)
+apple_dev/

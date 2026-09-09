@@ -1,8 +1,13 @@
-# Pipeline Calculator v3.0 - With Overlap Analysis
+# Pipeline Calculator v4.0 - With Overlap Analysis
 
 A comprehensive GUI application for calculating pipeline lengths and analyzing overlaps from KMZ/KML files. Designed for GIS professionals and aerial survey planning to optimize flight paths by identifying bundled pipeline sections.
 
 ## 🚀 Key Features
+
+### New in v4.0
+- **Parser hardening**: Supports multipart LineStrings, local KMZ NetworkLinks, and gx:Track/gx:MultiTrack paths
+- **Diagnostics**: Reports skipped or unsupported KML/KMZ structures that may affect mileage
+- **Centerline-only mileage**: Prevents Polygon/LinearRing outlines from being counted as pipeline centerlines
 
 ### New in v3.0
 - **Overlap Detection**: Automatically identifies parallel pipeline sections that can be surveyed in a single pass
@@ -42,16 +47,16 @@ The overlap analysis feature helps optimize aerial survey planning by:
 
 ### Option 1: Download Pre-built Executables
 Download the latest release from the GitHub releases page:
-- **Windows**: `Pipeline_Calculator_v3.exe`
-- **macOS**: `Pipeline_Calculator_v3_macOS.dmg`
+- **Windows**: `Pipeline_Calculator_v4.exe`
+- **macOS**: `Pipeline_Calculator_v4.dmg`
 
 ### Option 2: Run from Source
 Requires Python 3.8 or higher.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/pipeline-calculator-v3.git
-   cd pipeline-calculator-v3
+   git clone https://github.com/yourusername/pipeline-calculator-v4.git
+   cd pipeline-calculator-v4
    ```
 
 2. Install dependencies:
@@ -61,7 +66,7 @@ Requires Python 3.8 or higher.
 
 3. Run the application:
    ```bash
-   python src/pipeline_calculator_v3.py
+   python src/pipeline_calculator_entry.py
    ```
 
 ## 📝 Usage Guide
@@ -70,7 +75,7 @@ Requires Python 3.8 or higher.
 
 1. **Launch the application**
    - Double-click the executable, or
-   - Run `python src/pipeline_calculator_v3.py`
+   - Run `python src/pipeline_calculator_entry.py`
 
 2. **Configure analysis parameters** (optional)
    - Adjust Detection Range for your survey altitude
@@ -121,12 +126,12 @@ Requires Python 3.8 or higher.
 To set up this project in GitHub for successful builds:
 
 ```
-pipeline-calculator-v3/
+pipeline-calculator-v4/
 ├── .github/
 │   └── workflows/
 │       └── build.yaml          # GitHub Actions workflow
 ├── src/
-│   └── pipeline_calculator_v3.py   # Main application
+│   └── pipeline_calculator_entry.py # Main modular application entrypoint
 ├── requirements.txt             # Python dependencies
 ├── README.md                   # This file
 ├── LICENSE                     # MIT License
@@ -141,9 +146,9 @@ pipeline-calculator-v3/
    ```bash
    git init
    git add .
-   git commit -m "Initial commit - Pipeline Calculator v3.0"
+   git commit -m "Initial commit - Pipeline Calculator v4.0"
    git branch -M main
-   git remote add origin https://github.com/yourusername/pipeline-calculator-v3.git
+   git remote add origin https://github.com/yourusername/pipeline-calculator-v4.git
    git push -u origin main
    ```
 
@@ -153,8 +158,8 @@ pipeline-calculator-v3/
 
 4. **Create a release** to trigger builds:
    ```bash
-   git tag v3.0.0
-   git push origin v3.0.0
+   git tag v4.0.0
+   git push origin v4.0.0
    ```
 
 The GitHub Actions workflow will automatically build executables for Windows and macOS when you push to main or create a tagged release.
@@ -173,7 +178,7 @@ The application uses a sophisticated algorithm to detect overlaps:
 
 ### Data Processing
 
-- **Coordinate System**: WGS84 geodesic calculations
+- **Coordinate System**: GRS80 geodesic calculations
 - **Distance Units**: US Survey Miles (1609.347218694 meters)
 - **Performance**: Optimized for files with 1000+ pipelines
 
@@ -196,7 +201,7 @@ The application uses a sophisticated algorithm to detect overlaps:
 
 4. **Incorrect overlap calculations**
    - Verify Angular Tolerance setting
-   - Check that pipelines are properly formatted LineStrings
+   - Review the Diagnostics tab/export sheet for unsupported or skipped KML/KMZ structures
 
 ## 📊 Parameter Impact Guide
 
@@ -250,6 +255,6 @@ For issues, questions, or suggestions:
 
 ---
 
-**Version**: 3.0.0  
-**Last Updated**: 2024  
+**Version**: 4.0.0
+**Last Updated**: 2026
 **Status**: Production Ready

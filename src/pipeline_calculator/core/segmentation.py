@@ -1,0 +1,128 @@
+from __future__ import annotations
+
+
+def segment_pipeline(geod, coordinates, segment_length):
+    """Break a pipeline polyline into fixed-length analysis segments.
+
+    Args:
+      geod: pyproj.Geod (or compatible) used for geodesic distance/bearing.
+      coordinates: list of (lon, lat)
+      segment_length: segment length in meters (float)
+    """
+    segments: list[dict] = []
+
+    try:
+        seg_len = float(segment_length)
+    except Exception:
+        return segments
+
+    if seg_len <= 0 or len(coordinates) < 2:
+        return segments
+
+    # We produce N full segments of length `seg_len` along the polyline path and
+    # intentionally ignore any trailing remainder (< seg_len). Downstream code
+    # accounts for this via a "tails" correction (see effective_length.py).
+    #
+    # Implementation notes:
+    # - The previous implementation attempted to do this via an "accumulated"
+    #   approach but updated the edge start point without updating the edge
+    #   distance, which clustered many segment points and then created large
+    #   gaps on long edges. This version is correct for arbitrarily long KML
+    #   edges.
+    # - We compute geodesic points along each vertex-to-vertex edge using
+    #   `geod.fwd` from the original edge start with the edge's initial forward
+    #   azimuth, avoiding an expensive `geod.inv` call per generated segment.
+    #
+    # Each segment dict includes:
+    # - midpoint: (lon, lat) point representing the segment (used for indexing)
+    # - bearing: segment forward azimuth in degrees (used for "parallel" checks)
+    # - length: segment length in meters (always `seg_len`)
+    # - segment_index: 0-based sequential index within the pipeline
+    carry_m = 0.0  # meters from last segment boundary to the current vertex
+    prev_boundary = tuple(coordinates[0])
+
+    try:
+        for i in range(len(coordinates) - 1):
+            lon_a, lat_a = coordinates[i]
+            lon_b, lat_b = coordinates[i + 1]
+
+            # Edge geometry (A -> B).
+            az_ab, _, dist_ab = geod.inv(lon_a, lat_a, lon_b, lat_b)
+            az_ab = float(az_ab)
+            dist_ab = float(dist_ab)
+            if dist_ab < 0:
+                dist_ab = -dist_ab
+                az_ab = az_ab + 180.0
+
+            if dist_ab <= 0:
+                continue
+
+            edge_pos_m = 0.0  # distance along the current edge from A
+            rem_m = dist_ab
+
+            # Generate as many full segments as we can on this edge, accounting
+            # for `carry_m` accumulated from previous edges.
+            while carry_m + rem_m >= seg_len - 1e-9:
+                needed_m = seg_len - carry_m
+                if needed_m <= 1e-12:
+                    # Defensive: if floating error yields ~0, snap to a fresh segment.
+                    needed_m = seg_len
+                    carry_m = 0.0
+
+                edge_pos_m += needed_m
+                if edge_pos_m > dist_ab:
+                    edge_pos_m = dist_ab
+
+                # Segment boundary at distance `edge_pos_m` from the vertex A.
+                seg_end_lon, seg_end_lat, _ = geod.fwd(lon_a, lat_a, az_ab, edge_pos_m)
+                seg_end = (float(seg_end_lon), float(seg_end_lat))
+
+                # Segment bearing and midpoint from the segment start boundary.
+                try:
+                    seg_bearing, _, seg_dist = geod.inv(
+                        float(prev_boundary[0]),
+                        float(prev_boundary[1]),
+                        seg_end[0],
+                        seg_end[1],
+                    )
+                    seg_bearing = float(seg_bearing)
+                    seg_dist = abs(float(seg_dist))
+                except Exception:
+                    seg_bearing = az_ab
+                    seg_dist = seg_len
+
+                try:
+                    mid_lon, mid_lat, _ = geod.fwd(
+                        float(prev_boundary[0]),
+                        float(prev_boundary[1]),
+                        seg_bearing,
+                        seg_dist / 2.0,
+                    )
+                    midpoint = (float(mid_lon), float(mid_lat))
+                except Exception:
+                    midpoint = seg_end
+
+                segments.append(
+                    {
+                        "midpoint": midpoint,
+                        "bearing": seg_bearing,
+                        "length": seg_len,
+                        "segment_index": len(segments),
+                    }
+                )
+
+                prev_boundary = seg_end
+                rem_m = dist_ab - edge_pos_m
+                carry_m = 0.0
+
+                if rem_m <= 1e-9:
+                    rem_m = 0.0
+                    break
+
+            # Any remaining edge distance (that didn't complete a segment) is
+            # carried forward to the next vertex-to-vertex edge.
+            carry_m += rem_m
+    except Exception as e:
+        print(f"Warning: Error segmenting pipeline: {str(e)}")
+
+    return segments
