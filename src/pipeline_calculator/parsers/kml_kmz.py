@@ -103,11 +103,14 @@ def _parse_coordinates_text(coords_text: str, state: _ParserState, *, source: st
         _diag(
             state,
             "invalid_coordinate",
-            f"Skipped {invalid_count} invalid coordinate tuple(s).",
+            f"Rejected {geometry} containing {invalid_count} invalid coordinate tuple(s); no connections were inferred across missing vertices.",
+            level="error",
             source=source,
             feature_name=feature_name,
             geometry=geometry,
         )
+
+        return []
 
     return coords
 
@@ -186,11 +189,14 @@ def _extract_track_coordinate_paths(placemark, state: _ParserState, *, source: s
             _diag(
                 state,
                 "invalid_gx_coord",
-                f"Skipped {invalid_count} invalid gx:coord value(s).",
+                f"Rejected gx:Track containing {invalid_count} invalid gx:coord value(s); no connections were inferred across missing vertices.",
+                level="error",
                 source=source,
                 feature_name=feature_name,
                 geometry="gx:Track",
             )
+
+            coords = []
 
         if len(coords) >= 2:
             paths.append(coords)
@@ -365,15 +371,26 @@ def _normalize_archive_name(name: str) -> str:
 
 
 def _resolve_archive_href(source: str, href: str) -> str:
-    href_path = _normalize_archive_name(_href_without_fragment_or_query(href))
-    if not href_path:
+    raw = urlparse((href or "").strip())
+    if raw.scheme or raw.netloc:
         return ""
-    source_parent = PurePosixPath(source).parent
-    if str(source_parent) == ".":
-        resolved = PurePosixPath(href_path)
-    else:
-        resolved = source_parent / href_path
-    return _normalize_archive_name(str(resolved))
+    href_path = _href_without_fragment_or_query(href).replace("\\", "/")
+    if not href_path or href_path.startswith("/"):
+        return ""
+    # Normalize after joining to the referring document, allowing parent steps
+    # inside the archive but rejecting attempts to leave its root. Never extract
+    # archive entries or consult external files while resolving these links.
+    parts = list(PurePosixPath(source).parent.parts)
+    for part in href_path.split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if not parts:
+                return ""
+            parts.pop()
+        else:
+            parts.append(part)
+    return "/".join(parts)
 
 
 def _select_primary_kml(infos: list[zipfile.ZipInfo]) -> zipfile.ZipInfo:

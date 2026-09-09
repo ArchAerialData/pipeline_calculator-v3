@@ -38,6 +38,7 @@ def test_effective_length_clusters_detect_neighbors_high_latitude() -> None:
         segment_length=5.0,
         detection_range=15.0,
         angular_tolerance=15.0,
+        min_parallel_length=10.0,
     )
 
     # Two identical-length, fully-overlapping pipelines should discount by ~2x.

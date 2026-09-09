@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 from pipeline_calculator.core.constants import (
     ANGULAR_TOLERANCE,
     DEFAULT_DETECTION_RANGE,
@@ -64,10 +66,11 @@ class PipelineAnalyzer:
                         lon1, lat1 = coords[i]
                         lon2, lat2 = coords[i + 1]
                         _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
+                        if not math.isfinite(distance):
+                            raise ValueError("Non-finite geodesic length")
                         length_meters += abs(distance)
                     except Exception as e:
-                        print(f"Warning: Error calculating distance for pipeline {pipeline.get('name', '')}: {str(e)}")
-                        continue
+                        raise ValueError(f"Could not calculate length for pipeline {pipeline.get('name', '')}") from e
 
             length_miles = length_meters / self.survey_mile
 
@@ -120,6 +123,7 @@ class PipelineAnalyzer:
             detection_range=self.detection_range,
             angular_tolerance=self.angular_tolerance,
             progress_callback=progress_callback,
+            min_parallel_length=self.min_parallel_length,
         )
 
     def analyze_complete(self, file_path, progress_callback=None):
@@ -136,8 +140,7 @@ class PipelineAnalyzer:
                 try:
                     parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
                     overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
-                    per_pipe_totals = [d["Shape_Length"] for d in pipeline_data]
-                    eff_total_m = self.compute_effective_length_by_clusters(pipelines, per_pipe_totals, progress_callback)
+                    eff_total_m = total_meters - overlap_results["savings_meters"]
 
                     eff_total_m = max(0.0, min(float(total_meters), float(eff_total_m)))
                     total_savings = max(0.0, float(total_meters) - eff_total_m)
@@ -149,9 +152,14 @@ class PipelineAnalyzer:
                     overlap_results["savings_percentage"] = (
                         (total_savings / total_meters * 100) if total_meters > 0 else 0
                     )
-                    overlap_results["computation_method"] = "clustered_segments_v1"
+                    overlap_results["computation_method"] = "qualified_segment_coverage_v2"
                 except Exception as e:
-                    print(f"Warning: Overlap analysis failed: {str(e)}")
+                    parsed.diagnostics.append({
+                        "level": "error",
+                        "code": "overlap_analysis_failed",
+                        "message": "Overlap calculation failed; adjusted mileage and savings are unavailable.",
+                        "context": {"error": str(e)},
+                    })
                     overlap_results = None
 
             return {
@@ -160,6 +168,7 @@ class PipelineAnalyzer:
                 "total_meters": total_meters,
                 "total_miles": total_miles,
                 "overlap_analysis": overlap_results,
+                "analysis_complete": not any(d.get("level") == "error" for d in parsed.diagnostics),
                 "diagnostics": parsed.diagnostics,
                 "parsed_kml_files": parsed.parsed_kml_files,
                 "analysis_parameters": {

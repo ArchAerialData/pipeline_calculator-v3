@@ -172,7 +172,12 @@ def build_analysis_workbook(current_results):
             savings = float(overlap.get('savings_miles', 0.0) or 0.0)
     except Exception:
         savings = 0.0
-    ws2.cell(row=2, column=4).value = round(savings, 3)
+    overlap_failed = any(d.get("code") == "overlap_analysis_failed"
+                         for d in current_results.get("diagnostics", []) or [])
+    ws2.cell(row=2, column=4).value = "Unavailable" if overlap_failed else round(savings, 3)
+    if current_results.get("analysis_complete") is False:
+        ws.cell(row=1, column=4).value = "TOTAL MILEAGE (INCOMPLETE ANALYSIS)"
+        ws2.cell(row=1, column=4).value = "MILEAGE REMOVED (INCOMPLETE ANALYSIS)"
     ws2.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
     ws2.cell(row=2, column=4).alignment = center
     ws2.cell(row=2, column=4).number_format = '0.000'

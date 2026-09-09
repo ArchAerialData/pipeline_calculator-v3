@@ -271,6 +271,26 @@ The application uses a sophisticated algorithm to detect overlaps:
 - **200m**: Conservative bundling (default)
 - **500m**: Only long continuous sections
 
+Only continuous, unique segment coverage meeting this minimum on both pipelines
+qualifies for bundling **and** mileage savings. Separate coordinate paths do not
+combine to meet the minimum. Pairwise bundled rows may describe the same shared
+corridor; their sum is not the project's mileage-removed total.
+
+Calculations use sampled segments. Segment spacing can affect overlap endpoints,
+and trailing partial segments are retained in original mileage without a savings
+discount. Complex multi-pipeline savings remain a neighborhood approximation.
+
+If a LineString or gx:Track contains an invalid coordinate, that geometry is
+rejected rather than connecting across the missing vertex. Other valid geometries
+are retained and the result is marked **incomplete**. Calculation failures likewise
+show an incomplete notice, with unavailable savings rather than a misleading zero.
+Check Diagnostics (also exported to Excel), repair the input, and rerun before
+using incomplete results as project totals. Internal KMZ relative links are
+normalized within the archive; links escaping its root are not followed.
+
+See [calculation fix review and verification](CALCULATION_FIX_REVIEW.md) for the
+regression cases and remaining validation limits.
+
 ### Angular Tolerance
 - **5°**: Strictly parallel pipelines only
 - **15°**: Reasonably parallel (default)

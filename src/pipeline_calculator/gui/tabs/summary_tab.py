@@ -5,11 +5,23 @@ import customtkinter as ctk
 from pipeline_calculator.core.constants import SEGMENT_LENGTH
 
 
+def add_status_notice(parent, current_results: dict) -> None:
+    errors = [d.get("message", "Analysis error") for d in current_results.get("diagnostics", [])
+              if d.get("level") == "error"]
+    if errors:
+        ctk.CTkLabel(
+            parent,
+            text="Analysis incomplete. Totals cover valid geometry only.\n" + "\n".join(dict.fromkeys(errors)),
+            text_color="#FF8080", font=("Arial", 14, "bold"), wraplength=1000,
+        ).pack(fill="x", pady=10)
+
+
 def create(parent, current_results: dict) -> None:
     summary_frame = ctk.CTkScrollableFrame(parent)
     summary_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
     ctk.CTkLabel(summary_frame, text="Analysis Summary", font=("Arial", 20, "bold")).pack(pady=10)
+    add_status_notice(summary_frame, current_results)
 
     original_frame = ctk.CTkFrame(summary_frame)
     original_frame.pack(fill="x", pady=10)
@@ -33,7 +45,7 @@ def create(parent, current_results: dict) -> None:
         warning_count = sum(1 for d in diagnostics if d.get("level") != "info")
         ctk.CTkLabel(
             original_frame,
-            text=f"Parser Diagnostics: {len(diagnostics)} total, {warning_count} warning(s)",
+            text=f"Analysis Diagnostics: {len(diagnostics)} total, {warning_count} warning(s)/error(s)",
             font=("Arial", 14),
             text_color="#FFD700" if warning_count else "#AAAAAA",
         ).pack()

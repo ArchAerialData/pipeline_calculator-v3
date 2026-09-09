@@ -9,6 +9,25 @@ import numpy as np
 M_PER_DEG_LAT = 111_320.0
 
 
+def lonlat_array_to_ecef(points_lonlat, geod):
+    """Ellipsoid-surface Cartesian coordinates for conservative neighbor search.
+
+    The straight chord between surface points cannot exceed their surface
+    geodesic distance. A radius search here therefore retains every geodesic
+    neighbor, including at the dateline and across large latitude spans.
+    Final acceptance must still use geod.inv, not the chord distance.
+    """
+    points = np.asarray(points_lonlat, dtype=float).reshape((-1, 2))
+    if not np.isfinite(points).all():
+        raise ValueError("Non-finite coordinates in overlap analysis")
+    lon, lat = np.radians(points[:, 0]), np.radians(points[:, 1])
+    sin_lat, cos_lat = np.sin(lat), np.cos(lat)
+    radius = float(geod.a) / np.sqrt(1 - float(geod.es) * sin_lat ** 2)
+    return np.column_stack((radius * cos_lat * np.cos(lon),
+                            radius * cos_lat * np.sin(lon),
+                            radius * (1 - float(geod.es)) * sin_lat))
+
+
 def compute_origin(points_lonlat: Sequence[tuple[float, float]]) -> tuple[float, float]:
     """Choose a stable origin (lon0, lat0) for local XY conversions.
 

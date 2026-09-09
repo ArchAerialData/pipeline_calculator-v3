@@ -134,6 +134,7 @@ class PipelineAnalyzer:
             detection_range=self.detection_range,
             angular_tolerance=self.angular_tolerance,
             progress_callback=progress_callback,
+            min_parallel_length=self.min_parallel_length,
         )
     
     def analyze_complete(self, file_path, progress_callback=None):
@@ -537,6 +538,7 @@ class PipelineCalculatorGUI:
     
     def create_summary_tab(self, parent):
         """Create summary tab with key metrics."""
+        from pipeline_calculator.gui.tabs.summary_tab import add_status_notice
         summary_frame = ctk.CTkScrollableFrame(parent)
         summary_frame.pack(fill="both", expand=True, padx=20, pady=20)
         
@@ -545,6 +547,7 @@ class PipelineCalculatorGUI:
                     font=("Arial", 20, "bold")).pack(pady=10)
         
         # Original totals
+        add_status_notice(summary_frame, self.current_results)
         original_frame = ctk.CTkFrame(summary_frame)
         original_frame.pack(fill="x", pady=10)
         

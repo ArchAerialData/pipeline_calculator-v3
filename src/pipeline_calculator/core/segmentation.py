@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import math
+
 
 def segment_pipeline(geod, coordinates, segment_length):
     """Break a pipeline polyline into fixed-length analysis segments.
@@ -13,10 +15,12 @@ def segment_pipeline(geod, coordinates, segment_length):
 
     try:
         seg_len = float(segment_length)
-    except Exception:
-        return segments
+    except (TypeError, ValueError) as exc:
+        raise ValueError("Segment length must be a finite positive number") from exc
 
-    if seg_len <= 0 or len(coordinates) < 2:
+    if not math.isfinite(seg_len) or seg_len <= 0:
+        raise ValueError("Segment length must be a finite positive number")
+    if len(coordinates) < 2:
         return segments
 
     # We produce N full segments of length `seg_len` along the polyline path and
@@ -50,6 +54,8 @@ def segment_pipeline(geod, coordinates, segment_length):
             az_ab, _, dist_ab = geod.inv(lon_a, lat_a, lon_b, lat_b)
             az_ab = float(az_ab)
             dist_ab = float(dist_ab)
+            if not math.isfinite(az_ab) or not math.isfinite(dist_ab):
+                raise ValueError("Invalid geodesic segment geometry")
             if dist_ab < 0:
                 dist_ab = -dist_ab
                 az_ab = az_ab + 180.0
@@ -123,6 +129,6 @@ def segment_pipeline(geod, coordinates, segment_length):
             # carried forward to the next vertex-to-vertex edge.
             carry_m += rem_m
     except Exception as e:
-        print(f"Warning: Error segmenting pipeline: {str(e)}")
+        raise ValueError("Could not segment pipeline; partial segments were discarded") from e
 
     return segments
