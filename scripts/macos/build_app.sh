@@ -14,7 +14,7 @@ VENV_DIR="${REPO_DIR}/.venv"
 # Default to a reverse-DNS style bundle identifier so the generated Info.plist is valid.
 # Override by exporting BUNDLE_ID=... in your environment/CI.
 BUNDLE_ID="${BUNDLE_ID:-com.archaerial.pipelinecalculator}"
-APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v4}"
+
 BUILD_IMPL="${PIPELINE_CALCULATOR_BUILD_IMPL:-new}"
 
 if [[ ! -d "${VENV_DIR}" ]]; then
@@ -85,11 +85,14 @@ if [[ -f "${REPO_DIR}/icon.ico" ]]; then
 fi
 
 rm -rf build dist
+VERSION="$(python src/pipeline_calculator/versioning.py --output build/version.json)"
+APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v${VERSION}}"
 
 # Bash 3.2 (macOS default) + `set -u` errors on empty array expansions.
 # Use the `${arr[@]+"${arr[@]}"} ` pattern so empty arrays expand safely.
 pyinstaller --noconfirm --clean \
   --name "${APP_DISPLAY_NAME}" \
+  --add-data "${REPO_DIR}/build/version.json:pipeline_calculator" \
   --windowed \
   --onedir \
   --specpath "build" \
@@ -116,4 +119,18 @@ if [[ ! -d "${APP_PATH}" ]]; then
   exit 1
 fi
 
+# Stamp numeric bundle fields and retain the full preview version separately.
+python - "${APP_PATH}/Contents/Info.plist" <<'PY'
+import json, plistlib, sys
+from pathlib import Path
+metadata = json.loads(Path("build/version.json").read_text())
+path = Path(sys.argv[1])
+with path.open("rb") as stream:
+    info = plistlib.load(stream)
+info["CFBundleShortVersionString"] = metadata["numeric_version"]
+info["CFBundleVersion"] = metadata["numeric_version"]
+info["PipelineCalculatorVersion"] = metadata["version"]
+with path.open("wb") as stream:
+    plistlib.dump(info, stream)
+PY
 echo "Build complete: ${APP_PATH}"

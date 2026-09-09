@@ -4,6 +4,61 @@ A comprehensive GUI application for calculating pipeline lengths and analyzing o
 
 ## 🚀 Key Features
 
+## Automatic build versions
+
+The app and package filenames share a Git-derived version. No version-bump commit
+is created. Baseline `fc4cc05108dda7ae2f61be4a763eb34f5f1ebb0e` represents **4.0**.
+
+- Each main first-parent commit after the baseline adds one: `4.1`, `4.2`, through
+  `4.9`, then `4.10`. These are version components, not decimal numbers.
+- Normal merge commits and squash merges count once per merged PR. Fast-forward
+  and rebase merges may advance several numbers. Prefer normal merge commits or
+  squash merges for one increment per PR.
+- Pushing alone does not increment anything. Rebuilding a clean main commit gives
+  the same version; pushing several main commits at once can skip build numbers.
+- Branch/PR builds use `4.N-dev.<12-character-commit-hash>`. Their count follows
+  their own first-parent history and does not reserve a future release number.
+  Branches can share numeric prefixes; hashes distinguish commits. PR context
+  always produces a preview, even for a commit also on main. Branches forked before
+  the baseline stay previews; update from main before relying on the count.
+- Uncommitted changes, including untracked files, add `.dirty`. Different dirty
+  edits can share the same version: commit before sharing reproducible builds.
+  CI main/tag builds reject dirty trees.
+- Detached builds get release versions only on `origin/main` first-parent history.
+  Fetch first so this reference is current; other detached commits are previews.
+
+Windows downloads use `Pipeline_Calculator_v4.N.exe`; macOS downloads use
+`Pipeline_Calculator_v4.N.dmg`, including preview suffixes when applicable.
+The macOS bundle remains `Pipeline_Calculator.app`, with updated display name and
+version metadata. DMG packaging reads the actual app's embedded version, preserving
+it even after switching branches. Pass the exact DMG path to notarization.
+
+### Building and publishing safely
+
+1. Run `git fetch origin --prune --tags`. For shallow clones first run
+   `git fetch --unshallow origin`. Builds reject shallow history, missing baselines,
+   or missing required main references. CI now checks out full history.
+2. Inspect the version with `python src/pipeline_calculator/versioning.py`.
+   Build using the provided Windows/macOS scripts, which embed that version.
+3. Review previews, merge into main, and distribute clean main builds. Protect main
+   against force pushes/history rewrites, which can change or reuse version numbers.
+   Do not move the baseline to renumber releases. Deleting merged branches does not
+   affect numbering because main's history remains intact.
+4. Tag the exact clean main commit as `v4.N`, matching the version command's output,
+   then push the tag. CI rejects mismatched tags and tags off main's first-parent
+   history. Never move/reuse published tags. Existing main/PR/tag/manual triggers
+   remain in effect; this does not add CI builds on every feature-branch push.
+
+Major versions remain intentional: to start 5.0, update `MAJOR` and `BASELINE` in
+`src/pipeline_calculator/versioning.py`, along with tests and documentation.
+Generated metadata stays in ignored `build/`; no tracked version file is rewritten.
+Installed apps read bundled metadata and need no Git. Source runs without usable
+Git/history show `4.0-dev.unknown`; packaging fails rather than shipping that fallback.
+For a given clean commit and build context the version is deterministic.
+
+References: [Git first-parent traversal](https://git-scm.com/docs/git-rev-list)
+and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-information.html#using-file).
+
 ### New in v4.0
 - **Parser hardening**: Supports multipart LineStrings, local KMZ NetworkLinks, and gx:Track/gx:MultiTrack paths
 - **Diagnostics**: Reports skipped or unsupported KML/KMZ structures that may affect mileage
@@ -47,8 +102,8 @@ The overlap analysis feature helps optimize aerial survey planning by:
 
 ### Option 1: Download Pre-built Executables
 Download the latest release from the GitHub releases page:
-- **Windows**: `Pipeline_Calculator_v4.exe`
-- **macOS**: `Pipeline_Calculator_v4.dmg`
+- **Windows**: `Pipeline_Calculator_v4.N.exe`
+- **macOS**: `Pipeline_Calculator_v4.N.dmg`
 
 ### Option 2: Run from Source
 Requires Python 3.8 or higher.
@@ -158,8 +213,8 @@ pipeline-calculator-v4/
 
 4. **Create a release** to trigger builds:
    ```bash
-   git tag v4.0.0
-   git push origin v4.0.0
+   git tag v4.N  # Replace N with the generated version; see Automatic build versions
+   git push origin v4.N
    ```
 
 The GitHub Actions workflow will automatically build executables for Windows and macOS when you push to main or create a tagged release.
@@ -255,6 +310,6 @@ For issues, questions, or suggestions:
 
 ---
 
-**Version**: 4.0.0
+**Version**: Git-derived 4.N (see Automatic build versions)
 **Last Updated**: 2026
 **Status**: Production Ready

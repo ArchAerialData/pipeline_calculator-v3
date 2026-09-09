@@ -2,7 +2,7 @@
 """
 Pipeline Calculator with Overlap Analysis - KMZ/KML Pipeline Calculator
 Compatibility entrypoint for Pipeline Calculator v4
-Version: 4.0.0
+Version: derived from Git or embedded build metadata
 """
 
 import subprocess
@@ -35,7 +35,7 @@ from xml.sax.saxutils import escape as _xml_escape
 try:
     from pipeline_calculator import __version__ as __version__
 except Exception:
-    __version__ = "4.0.0"
+    __version__ = "4.0-dev.unknown"
 __author__ = "Pipeline Calculator Team"
 
 # Default analysis parameters
@@ -575,15 +575,16 @@ class PipelineCalculatorGUI:
             
             effective_miles = overlap['effective_total_miles']
             ctk.CTkLabel(adjusted_frame, 
-                        text=f"Effective Survey Length: {effective_miles:.3f} US Survey Miles",
-                        font=("Arial", 14)).pack()
+                        text=f"Effective Survey Length (Adjusted Mileage): {effective_miles:.3f} US Survey Miles",
+                        font=("Arial", 14),
+                        text_color="#90EE90").pack()
             
             savings_miles = overlap['savings_miles']
             savings_pct = overlap['savings_percentage']
             ctk.CTkLabel(adjusted_frame, 
-                        text=f"Survey Savings: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
+                        text=f"Mileage Removed: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
                         font=("Arial", 14), 
-                        text_color="#90EE90").pack()
+                        text_color="white").pack()
             
             # Bundled sections count
             bundle_count = len(overlap['bundled_sections'])

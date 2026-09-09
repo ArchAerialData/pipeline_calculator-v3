@@ -29,13 +29,19 @@ try {
   if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
   if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
 
+  $Version = & $Py src/pipeline_calculator/versioning.py --output build/version.json
+  if ($LASTEXITCODE -ne 0) { throw "Version generation failed" }
+  $ArtifactName = "Pipeline_Calculator_v$Version"
+
   $IconArgs = @()
   if (Test-Path "icon.ico") { $IconArgs = @("--icon", "icon.ico") }
 
   & $Py -m PyInstaller --noconfirm --clean --onefile `
     --windowed `
-    --name "Pipeline_Calculator_v4" `
+    --name $ArtifactName `
     @IconArgs `
+    --paths "src" `
+    --add-data "build/version.json;pipeline_calculator" `
     --add-data "README.md;." `
     --add-data "icon.ico;." `
     --add-data "icon.icns;." `
@@ -47,8 +53,8 @@ try {
     --additional-hooks-dir (Join-Path $RepoDir "scripts\\pyinstaller_hooks") `
     $Entry
 
-  if (!(Test-Path "dist\\Pipeline_Calculator_v4.exe")) { throw "Build failed: dist\\Pipeline_Calculator_v4.exe not found." }
-  Write-Host "Build complete: dist\\Pipeline_Calculator_v4.exe"
+  if (!(Test-Path "dist\\$ArtifactName.exe")) { throw "Build failed: dist\\$ArtifactName.exe not found." }
+  Write-Host "Build complete: dist\\$ArtifactName.exe"
 }
 finally {
   Pop-Location
