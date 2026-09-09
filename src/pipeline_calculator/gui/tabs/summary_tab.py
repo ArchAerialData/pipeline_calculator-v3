@@ -60,17 +60,18 @@ def create(parent, current_results: dict) -> None:
         effective_miles = overlap.get("effective_total_miles", 0.0)
         ctk.CTkLabel(
             adjusted_frame,
-            text=f"Effective Survey Length: {effective_miles:.3f} US Survey Miles",
+            text=f"Effective Survey Length (Adjusted Mileage): {effective_miles:.3f} US Survey Miles",
             font=("Arial", 14),
+            text_color="#90EE90",
         ).pack()
 
         savings_miles = overlap.get("savings_miles", 0.0)
         savings_pct = overlap.get("savings_percentage", 0.0)
         ctk.CTkLabel(
             adjusted_frame,
-            text=f"Survey Savings: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
+            text=f"Mileage Removed: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
             font=("Arial", 14),
-            text_color="#90EE90",
+            text_color="white",
         ).pack()
 
         bundle_count = len(overlap.get("bundled_sections", []))

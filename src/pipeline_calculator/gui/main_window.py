@@ -29,7 +29,7 @@ def _legacy_version() -> str:
 
         return str(__version__)
     except Exception:
-        return "4.0.0"
+        return "4.0-dev.unknown"
 
 
 class PipelineCalculatorGUI:

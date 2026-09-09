@@ -81,6 +81,7 @@ codesign --verify --deep --strict --verbose=2 "${APP_PATH}"
 
 log "Packaging DMG..."
 bash "${REPO_DIR}/scripts/macos/package_dmg.sh" "${APP_PATH}"
-DMG_PATH="${REPO_DIR}/dist/Pipeline_Calculator_v4.dmg"
+VERSION="$(/usr/libexec/PlistBuddy -c 'Print :PipelineCalculatorVersion' "${APP_PATH}/Contents/Info.plist")"
+DMG_PATH="${REPO_DIR}/dist/Pipeline_Calculator_v${VERSION}.dmg"
 
 log "Distribution artifact ready (signed app inside DMG; not notarized): ${DMG_PATH}"
