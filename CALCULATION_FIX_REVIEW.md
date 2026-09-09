@@ -1,5 +1,9 @@
 # Calculation fixes ready for review
 
+Historical record of the first correction pass. The subsequent
+[follow-up audit](FOLLOWUP_AUDIT.md) supersedes the neighborhood-sharing method
+and the dateline-rendering limitation described below; it also expands validation.
+
 Prepared September 9, 2026. Changes are uncommitted on
 `codex/pipeline-ci-signing-setup`; no commits, merges, releases, signing operations,
 or branch deletions were performed. The starting files matched the merged main

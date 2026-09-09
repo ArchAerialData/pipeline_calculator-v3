@@ -58,9 +58,8 @@ class AnalysisParameters:
 
         - Invalid/empty values fall back to defaults and are returned in the
           `corrections` dict so the UI may reset the text field.
-        - Valid numbers are clamped to the same bounds as the legacy GUI, but
-          clamping is not reported as a correction (legacy does not auto-edit
-          the input fields when clamping).
+        - Clamped fields are also corrected so the visible inputs match the
+          parameters actually used for analysis.
         """
 
         base = defaults or cls()
@@ -91,6 +90,15 @@ class AnalysisParameters:
         min_par_clamped = max(10.0, float(min_par))
         seg_clamped = max(1.0, float(seg))
         ang_clamped = max(1.0, min(90.0, float(ang)))
+
+        for field_name, raw, actual in (
+            ("detection_range", det, det_clamped),
+            ("min_parallel_length", min_par, min_par_clamped),
+            ("segment_length", seg, seg_clamped),
+            ("angular_tolerance", ang, ang_clamped),
+        ):
+            if raw != actual:
+                corrections[field_name] = _format_number(actual)
 
         return (
             cls(

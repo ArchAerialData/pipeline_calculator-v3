@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import math
 
+MAX_ANALYSIS_SEGMENTS = 1_000_000
 
 def segment_pipeline(geod, coordinates, segment_length):
     """Break a pipeline polyline into fixed-length analysis segments.
@@ -65,6 +66,8 @@ def segment_pipeline(geod, coordinates, segment_length):
 
             edge_pos_m = 0.0  # distance along the current edge from A
             rem_m = dist_ab
+            if len(segments) + (carry_m + rem_m) / seg_len > MAX_ANALYSIS_SEGMENTS:
+                raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
 
             # Generate as many full segments as we can on this edge, accounting
             # for `carry_m` accumulated from previous edges.
@@ -83,30 +86,13 @@ def segment_pipeline(geod, coordinates, segment_length):
                 seg_end_lon, seg_end_lat, _ = geod.fwd(lon_a, lat_a, az_ab, edge_pos_m)
                 seg_end = (float(seg_end_lon), float(seg_end_lat))
 
-                # Segment bearing and midpoint from the segment start boundary.
-                try:
-                    seg_bearing, _, seg_dist = geod.inv(
-                        float(prev_boundary[0]),
-                        float(prev_boundary[1]),
-                        seg_end[0],
-                        seg_end[1],
-                    )
-                    seg_bearing = float(seg_bearing)
-                    seg_dist = abs(float(seg_dist))
-                except Exception:
-                    seg_bearing = az_ab
-                    seg_dist = seg_len
-
-                try:
-                    mid_lon, mid_lat, _ = geod.fwd(
-                        float(prev_boundary[0]),
-                        float(prev_boundary[1]),
-                        seg_bearing,
-                        seg_dist / 2.0,
-                    )
-                    midpoint = (float(mid_lon), float(mid_lat))
-                except Exception:
-                    midpoint = seg_end
+                # Do not substitute invented geometry if geodesic operations fail.
+                seg_bearing, _, seg_dist = geod.inv(*prev_boundary, *seg_end)
+                seg_bearing, seg_dist = float(seg_bearing), abs(float(seg_dist))
+                mid_lon, mid_lat, _ = geod.fwd(*prev_boundary, seg_bearing, seg_dist / 2)
+                midpoint = (float(mid_lon), float(mid_lat))
+                if not all(math.isfinite(v) for v in (*midpoint, seg_bearing, seg_dist)):
+                    raise ValueError("Non-finite segment geometry")
 
                 segments.append(
                     {
@@ -129,6 +115,6 @@ def segment_pipeline(geod, coordinates, segment_length):
             # carried forward to the next vertex-to-vertex edge.
             carry_m += rem_m
     except Exception as e:
-        raise ValueError("Could not segment pipeline; partial segments were discarded") from e
+        raise ValueError(f"Could not segment pipeline; partial segments were discarded: {e}") from e
 
     return segments

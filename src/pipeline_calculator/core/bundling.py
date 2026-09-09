@@ -68,30 +68,60 @@ def qualifying_sections(pipelines, parallel_groups, segment_length, min_parallel
 
 
 def savings_from_sections(pipelines, sections, segment_length):
-    """Discount only qualified coverage, once per segment and participating pipe.
+    """Build disjoint, mutually compatible survey groups of sampled segments.
 
-    A segment covered by k pipelines contributes 1/k of its covered length.
-    Coverage on the longer side is scaled to the shorter side's common length.
-    Overlapping sections for the same partner use their maximum coverage, never
-    add repeated neighbor matches. Unsegmented tails remain undiscounted.
+    A group contains at most one segment from each pipeline and every pair must
+    belong to a qualified overlap section. Merge nearest candidates first, with
+    geometry-based tie breaking rather than file order. This is a conservative
+    deterministic grouping heuristic, not a minimum-flight-route optimizer.
     """
-    participants = defaultdict(dict)
+    edges = {}
+    keys = {}
+    def node_key(node):
+        if node not in keys:
+            pipe, index = node
+            segment = pipelines[pipe]["segments"][index]
+            keys[node] = (*segment["midpoint"], segment["bearing"] % 180,
+                          str(pipelines[pipe].get("name", "")),
+                          segment.get("path_index", 0), index)
+        return keys[node]
+
     for section in sections:
         p1, p2 = section["pair"]
-        for side, (pipe, partner) in enumerate(((p1, p2), (p2, p1))):
-            fraction = section["length"] / section["lengths"][side]
-            for index in section["segment_ids"][side]:
-                members = participants[(pipe, index)]
-                members[partner] = max(members.get(partner, 0.0), fraction)
+        for match in section["matches"]:
+            a = (p1, match["pipeline_1_segment"])
+            b = (p2, match["pipeline_2_segment"])
+            edge = frozenset((a, b))
+            distance = match.get("midpoint_distance", match["distance"])
+            edges[edge] = min(edges.get(edge, float("inf")), distance)
+    ordered = sorted(edges, key=lambda edge: (edges[edge], sorted(node_key(n) for n in edge)))
+    parent, members = {}, {}
+    def root(node):
+        if node not in parent:
+            parent[node] = node
+            members[node] = {node}
+        while parent[node] != node:
+            parent[node] = parent[parent[node]]
+            node = parent[node]
+        return node
+
+    for edge in ordered:
+        a, b = sorted(edge, key=node_key)
+        ra, rb = root(a), root(b)
+        if ra == rb:
+            continue
+        left, right = members[ra], members[rb]
+        if {p for p, _ in left} & {p for p, _ in right}:
+            continue
+        if not all(frozenset((x, y)) in edges for x in left for y in right):
+            continue
+        parent[rb] = ra
+        members[ra] = left | right
+        del members[rb]
+
     savings = 0.0
-    for (pipe, index), members in participants.items():
-        # Integrate the discount over fractional coverage levels. Equal full
-        # coverage reduces to 1 - 1/k; partial coverage is not discounted twice.
-        previous = 0.0
-        discount = 0.0
-        for level in sorted(set(members.values())):
-            k = 1 + sum(fraction >= level for fraction in members.values())
-            discount += (level - previous) * (1 - 1 / k)
-            previous = level
-        savings += float(pipelines[pipe]["segments"][index].get("length", segment_length)) * discount
+    for group in members.values():
+        lengths = [float(pipelines[p]["segments"][i].get("length", segment_length))
+                   for p, i in group]
+        savings += sum(lengths) - max(lengths)
     return savings

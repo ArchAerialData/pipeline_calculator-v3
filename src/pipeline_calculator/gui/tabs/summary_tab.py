@@ -8,10 +8,14 @@ from pipeline_calculator.core.constants import SEGMENT_LENGTH
 def add_status_notice(parent, current_results: dict) -> None:
     errors = [d.get("message", "Analysis error") for d in current_results.get("diagnostics", [])
               if d.get("level") == "error"]
-    if errors:
+    if errors or current_results.get("analysis_complete") is False:
+        messages = list(dict.fromkeys(errors))
+        detail = "\n".join(messages[:3])
+        if len(messages) > 3:
+            detail += f"\n{len(messages) - 3} more issue(s); see Diagnostics or the exported workbook."
         ctk.CTkLabel(
             parent,
-            text="Analysis incomplete. Totals cover valid geometry only.\n" + "\n".join(dict.fromkeys(errors)),
+            text="Analysis incomplete. Totals cover loaded, valid geometry only.\n" + detail,
             text_color="#FF8080", font=("Arial", 14, "bold"), wraplength=1000,
         ).pack(fill="x", pady=10)
 
@@ -101,12 +105,6 @@ def create(parent, current_results: dict) -> None:
     params = current_results.get("analysis_parameters", {})
     param_text = f"Detection Range: {params.get('detection_range', '')} m\n"
     param_text += f"Min Parallel Length: {params.get('min_parallel_length', '')} m\n"
-    param_text += f"Angular Tolerance: {params.get('angular_tolerance', '')}°"
-
+    param_text += f"Segment Length: {params.get('segment_length', SEGMENT_LENGTH)} m\n"
+    param_text += f"Angular Tolerance: {params.get('angular_tolerance', '')} deg"
     ctk.CTkLabel(params_frame, text=param_text, font=("Arial", 12)).pack()
-
-    params2 = current_results.get("analysis_parameters", {})
-    param_text2 = f"Segment Length: {params2.get('segment_length', SEGMENT_LENGTH)} m\n"
-    param_text2 += f"Angular Tolerance: {params2.get('angular_tolerance', '')} deg"
-    ctk.CTkLabel(params_frame, text=param_text2, font=("Arial", 12), text_color="#AAAAAA").pack()
-

@@ -215,5 +215,14 @@ def build_analysis_workbook(current_results):
                 ws3.cell(row=r, column=c).font = body_font
                 ws3.cell(row=r, column=c).alignment = left
 
+    # Source names/IDs/diagnostics are data, even if they begin with '='.
+    # Preserve only the totals formula that this exporter intentionally creates.
+    totals_formula = ws.cell(row=2, column=4)
+    for sheet in wb:
+        for row in sheet.iter_rows():
+            for cell in row:
+                if cell.data_type == "f" and cell is not totals_formula:
+                    cell.data_type = "s"
+
     return wb
 

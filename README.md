@@ -278,7 +278,18 @@ corridor; their sum is not the project's mileage-removed total.
 
 Calculations use sampled segments. Segment spacing can affect overlap endpoints,
 and trailing partial segments are retained in original mileage without a savings
-discount. Complex multi-pipeline savings remain a neighborhood approximation.
+discount. Savings now use deterministic, mutually compatible groups: every pair
+in a group must satisfy the detection range and qualifying-section rules. A
+segment can belong to only one group. For three 300 m lines spaced at 0, 10, and
+20 m with a 15 m limit, two lines are bundled and the third remains separate:
+approximately 600 m effective mileage from 900 m of pipeline. Group selection is
+a conservative heuristic, not a flight-route optimization.
+
+Nearby finite segment tangents are compared so that offset sampling positions do
+not hide overlaps. Their endpoints must overlap longitudinally; lines merely
+meeting end-to-end are not bundled. Segment length still controls approximation
+at endpoints and bends. Corridor centers and polygons use local geodesic
+coordinates, including across the dateline.
 
 If a LineString or gx:Track contains an invalid coordinate, that geometry is
 rejected rather than connecting across the missing vertex. Other valid geometries
@@ -288,8 +299,24 @@ Check Diagnostics (also exported to Excel), repair the input, and rerun before
 using incomplete results as project totals. Internal KMZ relative links are
 normalized within the archive; links escaping its root are not followed.
 
+Missing, malformed, or unsupported linked documents and empty inputs also mark
+the analysis incomplete. To bound processing, input limits are 64 MiB decompressed
+per KML, 256 MiB total parsed KML, 1,024 linked documents, and 10,000 ZIP entries.
+Analysis allows at most 1,000,000 segments and 5,000,000 candidate inspections.
+Exceeding a limit stops that computation explicitly; split large projects into
+smaller inputs rather than treating failed analysis as zero overlap. Ambiguous
+duplicate KML entry names are rejected. Excel exports preserve source names and
+diagnostics as literal text rather than executable formulas.
+
+The overlap tab displays 20 rows per page with Previous/Next controls, retaining
+access to every section. Its pairwise total is explicitly distinguished from
+mileage removed. Both GUI implementations share the summary and overlap tabs,
+show corrected/clamped parameter values, and prevent simultaneous analysis jobs.
+
 See [calculation fix review and verification](CALCULATION_FIX_REVIEW.md) for the
 regression cases and remaining validation limits.
+See the [follow-up audit](FOLLOWUP_AUDIT.md) for subsequent numerical, input, export,
+and GUI fixes.
 
 ### Angular Tolerance
 - **5°**: Strictly parallel pipelines only

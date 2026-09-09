@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from collections import deque
 from pathlib import Path, PurePosixPath
 import zipfile
 import xml.etree.ElementTree as ET
@@ -9,6 +10,18 @@ from urllib.parse import unquote, urlparse
 
 KML_NS = "http://www.opengis.net/kml/2.2"
 GX_NS = "http://www.google.com/kml/ext/2.2"
+
+# Bound decompressed input and linked-document traversal before parsing XML.
+MAX_KML_BYTES = 64 * 1024 * 1024
+MAX_TOTAL_KML_BYTES = 256 * 1024 * 1024
+MAX_KML_DOCUMENTS = 1024
+MAX_ARCHIVE_ENTRIES = 10000
+INCOMPLETE_CODES = {
+    "linked_kml_parse_error", "unresolved_network_link", "network_link_missing_href",
+    "remote_network_link_skipped", "unsupported_network_link_target",
+    "network_link_outside_base_skipped", "malformed_placemark",
+    "no_supported_features", "short_linestring", "short_gx_track",
+}
 
 
 @dataclass
@@ -27,14 +40,31 @@ class _ParserState:
     parsed_kml_files: list[str] = field(default_factory=list)
     pipeline_count: int = 0
     placemark_count: int = 0
+    bytes_read: int = 0
+    documents_read: int = 0
 
 
 def _diag(state: _ParserState, code: str, message: str, *, level: str = "warning", **context) -> None:
+    if code in INCOMPLETE_CODES:
+        level = "error"
     entry = {"level": level, "code": code, "message": message}
     clean_context = {k: v for k, v in context.items() if v not in (None, "", [])}
     if clean_context:
         entry["context"] = clean_context
     state.diagnostics.append(entry)
+
+
+def _read_document(stream, size, state):
+    if size > MAX_KML_BYTES:
+        raise ValueError(f"KML document exceeds the {MAX_KML_BYTES // (1024 * 1024)} MiB input limit")
+    if state.documents_read >= MAX_KML_DOCUMENTS or state.bytes_read + size > MAX_TOTAL_KML_BYTES:
+        raise ValueError("Linked KML input exceeds the document-count or total-size limit")
+    data = stream.read(MAX_KML_BYTES + 1)
+    if len(data) > MAX_KML_BYTES or state.bytes_read + len(data) > MAX_TOTAL_KML_BYTES:
+        raise ValueError("KML decompressed input exceeds the size limit")
+    state.bytes_read += len(data)
+    state.documents_read += 1
+    return data
 
 
 def _tag_uri(tag: str) -> str:
@@ -412,12 +442,19 @@ def _select_primary_kml(infos: list[zipfile.ZipInfo]) -> zipfile.ZipInfo:
 def _parse_kmz(path: str, state: _ParserState) -> None:
     with zipfile.ZipFile(path, "r") as kmz:
         infos = kmz.infolist()
+        if len(infos) > MAX_ARCHIVE_ENTRIES:
+            raise ValueError("KMZ archive exceeds the entry-count limit")
         primary = _select_primary_kml(infos)
-        entry_names = {
-            _normalize_archive_name(info.filename): info
-            for info in infos
-            if not info.is_dir() and info.filename.lower().endswith(".kml")
-        }
+        entry_names = {}
+        for info in infos:
+            if info.is_dir() or not info.filename.lower().endswith(".kml"):
+                continue
+            name = _normalize_archive_name(info.filename)
+            if not name or info.filename.startswith(("/", "\\")):
+                raise ValueError("KMZ contains an invalid KML entry path")
+            if name in entry_names:
+                raise ValueError(f"KMZ contains ambiguous duplicate KML entries: {name}")
+            entry_names[name] = info
         primary_name = _normalize_archive_name(primary.filename)
         _diag(
             state,
@@ -428,10 +465,11 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
         )
 
         parsed: set[str] = set()
-        queue = [primary_name]
+        queue = deque([primary_name])
+        queued = {primary_name}
 
         while queue:
-            source = queue.pop(0)
+            source = queue.popleft()
             if source in parsed:
                 continue
             info = entry_names.get(source)
@@ -440,7 +478,9 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
                 continue
 
             parsed.add(source)
-            links = _parse_kml_bytes(kmz.read(info), state, source=source, required=(source == primary_name))
+            with kmz.open(info) as stream:
+                data = _read_document(stream, info.file_size, state)
+            links = _parse_kml_bytes(data, state, source=source, required=(source == primary_name))
 
             for link in links:
                 href = link["href"]
@@ -478,7 +518,9 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
                         target=target,
                     )
                     continue
-                queue.append(target)
+                if target not in queued:
+                    queued.add(target)
+                    queue.append(target)
 
         for name in sorted(entry_names):
             if name not in parsed:
@@ -501,11 +543,12 @@ def _is_within(path: Path, root: Path) -> bool:
 def _parse_kml_file(path: str, state: _ParserState) -> None:
     root_path = Path(path).resolve()
     parsed: set[Path] = set()
-    queue = [root_path]
+    queue = deque([root_path])
+    queued = {root_path}
     base_dir = root_path.parent
 
     while queue:
-        current = queue.pop(0).resolve()
+        current = queue.popleft().resolve()
         if current in parsed:
             continue
         if not _is_within(current, base_dir):
@@ -521,7 +564,9 @@ def _parse_kml_file(path: str, state: _ParserState) -> None:
             continue
 
         parsed.add(current)
-        links = _parse_kml_bytes(current.read_bytes(), state, source=str(current), required=(current == root_path))
+        with current.open("rb") as stream:
+            data = _read_document(stream, current.stat().st_size, state)
+        links = _parse_kml_bytes(data, state, source=str(current), required=(current == root_path))
 
         for link in links:
             href = link["href"]
@@ -549,7 +594,9 @@ def _parse_kml_file(path: str, state: _ParserState) -> None:
                     target=str(target),
                 )
                 continue
-            queue.append(target)
+            if target not in queued:
+                queued.add(target)
+                queue.append(target)
 
 
 def extract_features_from_file_with_diagnostics(file_path, progress_callback=None) -> ParseResult:

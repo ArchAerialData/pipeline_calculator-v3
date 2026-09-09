@@ -43,6 +43,7 @@ class PipelineCalculatorGUI:
 
         self.state = AppState()
         self.controller = AnalysisController()
+        self._processing = False
         self._params_dialog: ParamsDialog | None = None
 
         # Keep StringVar for CTkEntry typing behavior (see legacy notes).
@@ -68,6 +69,8 @@ class PipelineCalculatorGUI:
         self.show_file_selection()
 
     def show_file_selection(self) -> None:
+        if self._processing:
+            return
         show_file_select_page(
             self.root,
             title="Pipeline Calculator with Overlap Analysis",
@@ -80,6 +83,8 @@ class PipelineCalculatorGUI:
         )
 
     def browse_file(self) -> None:
+        if self._processing:
+            return
         self.root.withdraw()
         try:
             filetypes = [
@@ -103,7 +108,7 @@ class PipelineCalculatorGUI:
             self.segment_length_var.get(),
             self.angular_tolerance_var.get(),
         )
-        # Only reset fields that were invalid/empty (legacy behavior).
+        # Keep input fields synchronized with corrected and clamped parameters.
         if "detection_range" in corrections:
             self.detection_range_var.set(corrections["detection_range"])
         if "min_parallel_length" in corrections:
@@ -115,7 +120,12 @@ class PipelineCalculatorGUI:
         return params
 
     def process_file(self, file_path: str) -> None:
+        if self._processing:
+            return
+        self._processing = True
+        progress_frame = None
         try:
+            self.state.current_results = None
             self.state.current_file = file_path
             self.state.params = self._get_parameters()
 
@@ -152,6 +162,7 @@ class PipelineCalculatorGUI:
                 except Exception:
                     pass
 
+                self._processing = False
                 if job.error is not None:
                     messagebox.showerror(
                         "Processing Error",
@@ -167,6 +178,9 @@ class PipelineCalculatorGUI:
 
             check_job()
         except Exception as e:
+            self._processing = False
+            if progress_frame is not None:
+                progress_frame.destroy()
             messagebox.showerror("Error", f"Failed to process file: {str(e)}")
             self.show_file_selection()
 
@@ -194,6 +208,8 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 
     def reanalyze(self) -> None:
+        if self._processing:
+            return
         if self._params_dialog is not None:
             try:
                 self._params_dialog.close()
@@ -217,6 +233,8 @@ class PipelineCalculatorGUI:
         self._params_dialog.show()
 
     def export_results(self) -> None:
+        if self._processing:
+            return
         if not self.state.current_results:
             return
         export_with_dialog(self.state.current_results, self.state.current_file)

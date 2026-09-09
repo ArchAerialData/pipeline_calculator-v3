@@ -50,6 +50,8 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
             pass
 
         vsb = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
+        hsb = ttk.Scrollbar(table_frame, orient="horizontal", command=tree.xview)
+        hsb.pack(side="bottom", fill="x")
         tree.configure(yscrollcommand=vsb.set)
 
         tree.heading("Pipeline Pair", text="Pipeline Pair")
@@ -62,22 +64,9 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
         tree.column("Avg Sep (m)", width=120, anchor="center")
         tree.column("Action", width=110, anchor="center")
 
-        sections_to_display = bundled_sections[:20] if len(bundled_sections) > 20 else bundled_sections
-
+        page = 0
+        page_size = 20
         item_map = {}
-        for idx, section in enumerate(sections_to_display, start=1):
-            pair_text = f"{section.get('pipeline_1')} + {section.get('pipeline_2')}"
-            item_id = tree.insert(
-                "",
-                "end",
-                values=(
-                    pair_text,
-                    f"{section.get('bundled_length_miles', 0.0):.3f}",
-                    f"{section.get('average_separation', 0.0):.1f}",
-                    "",
-                ),
-            )
-            item_map[item_id] = (section, idx)
 
         def _open_for_item(item_id):
             try:
@@ -115,6 +104,10 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                             btn.place_forget()
                         continue
                     x, y, w, h = bbox
+                    if x < 0 or x + w > tree.winfo_width():
+                        if btn:
+                            btn.place_forget()
+                        continue
                     if btn is None:
                         section, idx = item_map[item_id]
 
@@ -144,6 +137,10 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                 ensure_buttons_positioned()
 
         tree.configure(yscrollcommand=on_tree_scroll)
+        def on_horizontal_scroll(first, last):
+            hsb.set(first, last)
+            ensure_buttons_positioned()
+        tree.configure(xscrollcommand=on_horizontal_scroll)
         tree.bind("<Configure>", ensure_buttons_positioned)
         tree.bind("<ButtonRelease-1>", ensure_buttons_positioned, add="+")
         tree.bind("<Motion>", lambda e: None)
@@ -155,26 +152,48 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
         tree.pack(side="left", fill="both", expand=True)
         vsb.pack(side="right", fill="y")
 
-        if len(bundled_sections) > 20:
-            ctk.CTkLabel(
-                main_frame,
-                text=(
-                    f"Showing top 20 of {len(bundled_sections)} bundled sections "
-                    "(sorted by length). Double-click a row, or click 'View' in the Action column "
-                    "to open its corridor in Google Earth."
-                ),
-                font=("Arial", 10),
-                text_color="#888888",
-                justify="center",
-                wraplength=1100,
-            ).pack(pady=(4, 6))
+        navigation = ctk.CTkFrame(main_frame)
+        navigation.pack(fill="x", padx=10, pady=5)
+        page_label = ctk.CTkLabel(navigation, text="")
+        page_label.pack(side="left", padx=10)
+
+        def load_page(delta=0):
+            nonlocal page
+            last_page = (len(bundled_sections) - 1) // page_size
+            page = max(0, min(last_page, page + delta))
+            for button in action_buttons.values():
+                button.destroy()
+            action_buttons.clear()
+            item_map.clear()
+            for item_id in tree.get_children(""):
+                tree.delete(item_id)
+            first = page * page_size
+            for index in range(first, min(first + page_size, len(bundled_sections))):
+                section = bundled_sections[index]
+                item_id = tree.insert("", "end", values=(
+                    f"{section.get('pipeline_1')} + {section.get('pipeline_2')}",
+                    f"{section.get('bundled_length_miles', 0.0):.3f}",
+                    f"{section.get('average_separation', 0.0):.1f}", "",
+                ))
+                item_map[item_id] = (section, index + 1)
+            tree.yview_moveto(0)
+            page_label.configure(text=f"Showing {first + 1}-{min(first + page_size, len(bundled_sections))} of {len(bundled_sections)} sections")
+            previous.configure(state="normal" if page else "disabled")
+            next_button.configure(state="normal" if page < last_page else "disabled")
+            tree.after_idle(ensure_buttons_positioned)
+
+        next_button = ctk.CTkButton(navigation, text="Next", width=90, command=lambda: load_page(1))
+        next_button.pack(side="right", padx=5)
+        previous = ctk.CTkButton(navigation, text="Previous", width=90, command=lambda: load_page(-1))
+        previous.pack(side="right", padx=5)
+        load_page()
 
         summary_frame = ctk.CTkFrame(main_frame)
         summary_frame.pack(fill="x", pady=10)
         total_bundled = sum(float(s.get("bundled_length_miles", 0.0)) for s in bundled_sections)
         ctk.CTkLabel(
             summary_frame,
-            text=f"Total Bundled Length: {total_bundled:.3f} miles across {len(bundled_sections)} sections",
+            text=f"Pairwise Bundled Length: {total_bundled:.3f} miles across {len(bundled_sections)} sections (not total mileage removed)",
             font=("Arial", 12, "bold"),
         ).pack()
     else:

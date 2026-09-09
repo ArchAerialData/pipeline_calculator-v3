@@ -115,13 +115,7 @@ class PipelineAnalyzer:
         )
 
     def compute_effective_length_by_clusters(self, pipelines, per_pipeline_total_meters, progress_callback=None):
-        """Compute effective length using per-segment clustering across pipelines.
-
-        For each segment midpoint, find nearby parallel segments on other pipelines
-        within detection range. If k pipelines share that neighborhood, attribute
-        only 1/k of that segment length to the effective total. This avoids
-        double-counting and naturally handles 3+ parallel pipelines.
-        """
+        """Compute effective length from qualified, mutually compatible groups."""
         from pipeline_calculator.core.effective_length import (
             compute_effective_length_by_clusters as _compute_effective_length_by_clusters,
         )
@@ -270,6 +264,8 @@ class PipelineCalculatorGUI:
         self.show_file_selection()
     
     def show_file_selection(self):
+        if getattr(self, "_processing", False):
+            return
         """Display file selection interface."""
         # Clear window
         for widget in self.root.winfo_children():
@@ -326,7 +322,7 @@ class PipelineCalculatorGUI:
         # Angular tolerance
         angular_frame = ctk.CTkFrame(params_frame)
         angular_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
+        ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
         ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var, width=100).pack(side="left")
         ctk.CTkLabel(angular_frame, text="(Max angle difference)", 
                     text_color="#888888").pack(side="left", padx=10)
@@ -352,6 +348,8 @@ class PipelineCalculatorGUI:
         self.root.dnd_bind('<<Drop>>', on_drop)
     
     def browse_file(self):
+        if getattr(self, "_processing", False):
+            return
         """Handle file browsing."""
         self.root.withdraw()  # Hide main window temporarily
         
@@ -373,15 +371,30 @@ class PipelineCalculatorGUI:
     
     def process_file(self, file_path):
         """Process selected file with progress indication."""
+        if getattr(self, "_processing", False):
+            return
+        self._processing = True
+        progress_frame = None
         try:
+            self.current_results = None
             self.current_file = file_path
             
-            # Validate parameter values
-            detection_range = max(1, self._get_float_var(self.detection_range_var, DEFAULT_DETECTION_RANGE))
-            min_parallel = max(10, self._get_float_var(self.min_parallel_var, MIN_PARALLEL_LENGTH))
-            segment_length = max(1, self._get_float_var(self.segment_length_var, SEGMENT_LENGTH))
-            angular_tolerance = max(1, min(90, self._get_float_var(self.angular_tolerance_var, ANGULAR_TOLERANCE)))
-            
+            from pipeline_calculator.gui.state import AnalysisParameters
+            params, corrections = AnalysisParameters.from_strings(
+                self.detection_range_var.get(), self.min_parallel_var.get(),
+                self.segment_length_var.get(), self.angular_tolerance_var.get(),
+            )
+            for name, variable in (("detection_range", self.detection_range_var),
+                                   ("min_parallel_length", self.min_parallel_var),
+                                   ("segment_length", self.segment_length_var),
+                                   ("angular_tolerance", self.angular_tolerance_var)):
+                if name in corrections:
+                    variable.set(corrections[name])
+            detection_range = params.detection_range
+            min_parallel = params.min_parallel_length
+            segment_length = params.segment_length
+            angular_tolerance = params.angular_tolerance
+
             # Update analyzer parameters
             self.analyzer.detection_range = detection_range
             self.analyzer.min_parallel_length = min_parallel
@@ -437,6 +450,7 @@ class PipelineCalculatorGUI:
                     except Exception:
                         pass
                         
+                    self._processing = False
                     if 'error' in result_holder:
                         error_msg = str(result_holder['error'])
                         messagebox.showerror("Processing Error", 
@@ -448,6 +462,9 @@ class PipelineCalculatorGUI:
 
             check_thread()
         except Exception as e:
+            self._processing = False
+            if progress_frame is not None:
+                progress_frame.destroy()
             messagebox.showerror("Error", f"Failed to process file: {str(e)}")
             self.show_file_selection()
     
@@ -537,85 +554,9 @@ class PipelineCalculatorGUI:
             self.show_file_selection()
     
     def create_summary_tab(self, parent):
-        """Create summary tab with key metrics."""
-        from pipeline_calculator.gui.tabs.summary_tab import add_status_notice
-        summary_frame = ctk.CTkScrollableFrame(parent)
-        summary_frame.pack(fill="both", expand=True, padx=20, pady=20)
-        
-        # Title
-        ctk.CTkLabel(summary_frame, text="Analysis Summary", 
-                    font=("Arial", 20, "bold")).pack(pady=10)
-        
-        # Original totals
-        add_status_notice(summary_frame, self.current_results)
-        original_frame = ctk.CTkFrame(summary_frame)
-        original_frame.pack(fill="x", pady=10)
-        
-        ctk.CTkLabel(original_frame, text="Original Pipeline Totals", 
-                    font=("Arial", 16, "bold"), 
-                    text_color="#FFD700").pack()
-        
-        total_miles = self.current_results['total_miles']
-        ctk.CTkLabel(original_frame, 
-                    text=f"Total Length: {total_miles:.3f} US Survey Miles",
-                    font=("Arial", 14)).pack()
-        
-        ctk.CTkLabel(original_frame, 
-                    text=f"Pipeline Count: {len(self.current_results['pipelines'])}",
-                    font=("Arial", 14)).pack()
-        
-        # Overlap analysis results
-        if self.current_results['overlap_analysis']:
-            overlap = self.current_results['overlap_analysis']
-            
-            # Adjusted totals
-            adjusted_frame = ctk.CTkFrame(summary_frame)
-            adjusted_frame.pack(fill="x", pady=10)
-            
-            ctk.CTkLabel(adjusted_frame, text="Adjusted for Overlaps", 
-                        font=("Arial", 16, "bold"), 
-                        text_color="#87CEEB").pack()
-            
-            effective_miles = overlap['effective_total_miles']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Effective Survey Length (Adjusted Mileage): {effective_miles:.3f} US Survey Miles",
-                        font=("Arial", 14),
-                        text_color="#90EE90").pack()
-            
-            savings_miles = overlap['savings_miles']
-            savings_pct = overlap['savings_percentage']
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Mileage Removed: {savings_miles:.3f} miles ({savings_pct:.1f}%)",
-                        font=("Arial", 14), 
-                        text_color="white").pack()
-            
-            # Bundled sections count
-            bundle_count = len(overlap['bundled_sections'])
-            ctk.CTkLabel(adjusted_frame, 
-                        text=f"Bundled Sections: {bundle_count}",
-                        font=("Arial", 14)).pack()
-        
-        # Analysis parameters
-        params_frame = ctk.CTkFrame(summary_frame)
-        params_frame.pack(fill="x", pady=10)
-        
-        ctk.CTkLabel(params_frame, text="Analysis Parameters Used", 
-                    font=("Arial", 16, "bold")).pack()
-        
-        params = self.current_results['analysis_parameters']
-        param_text = f"Detection Range: {params['detection_range']} m\n"
-        param_text += f"Min Parallel Length: {params['min_parallel_length']} m\n"
-        param_text += f"Angular Tolerance: {params['angular_tolerance']}°"
-        
-        ctk.CTkLabel(params_frame, text=param_text, 
-                    font=("Arial", 12)).pack()
-        # Additional parameters for clarity
-        params2 = self.current_results['analysis_parameters']
-        param_text2 = f"Segment Length: {params2.get('segment_length', self.analyzer.segment_length)} m\n"
-        param_text2 += f"Angular Tolerance: {params2['angular_tolerance']} deg"
-        ctk.CTkLabel(params_frame, text=param_text2,
-                    font=("Arial", 12), text_color="#AAAAAA").pack()
-    
+        from pipeline_calculator.gui.tabs.summary_tab import create
+        create(parent, self.current_results)
+
     def create_pipeline_tab(self, parent):
         """Create pipeline details tab."""
         # Create treeview
@@ -682,214 +623,9 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 
     def create_overlap_tab(self, parent):
-        """Create Overlap Analysis tab using a proper table with aligned columns.
+        from pipeline_calculator.gui.tabs.overlap_tab import create
+        create(parent, self.current_results, on_open_corridor=self.view_overlap_kml)
 
-        Replaces the free-form row layout with a ttk.Treeview so that every
-        cell aligns with its column header, similar to a spreadsheet.
-        """
-        overlap = self.current_results['overlap_analysis']
-
-        # Main container
-        main_frame = ctk.CTkFrame(parent)
-        main_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
-        # Title
-        ctk.CTkLabel(
-            main_frame,
-            text="Bundled Pipeline Sections",
-            font=("Arial", 16, "bold"),
-        ).pack(pady=(10, 0))
-
-        if overlap['bundled_sections']:
-            # Frame to host the tree and its scrollbar
-            table_frame = ctk.CTkFrame(main_frame)
-            table_frame.pack(fill="both", expand=True, padx=10, pady=10)
-
-            # Configure a dark style for Treeview to match the app theme
-            style = ttk.Style()
-            try:
-                style.theme_use("default")
-            except Exception:
-                pass
-            style.configure(
-                "Overlap.Treeview",
-                background="#2b2b2b",
-                foreground="white",
-                fieldbackground="#2b2b2b",
-                rowheight=26,
-            )
-            style.configure("Overlap.Treeview.Heading", font=("Arial", 12, "bold"))
-
-            # Define columns
-            columns = ("Pipeline Pair", "Length (miles)", "Avg Sep (m)", "Action")
-            tree = ttk.Treeview(
-                table_frame,
-                columns=columns,
-                show="headings",
-                height=20,
-                style="Overlap.Treeview",
-            )
-            # Ensure the implicit '#0' column has zero width so bbox math lines up
-            try:
-                tree.column('#0', width=0, stretch=False)
-            except Exception:
-                pass
-
-            # Scrollbar
-            vsb = ttk.Scrollbar(table_frame, orient="vertical", command=tree.yview)
-            tree.configure(yscrollcommand=vsb.set)
-
-            # Configure column headings
-            tree.heading("Pipeline Pair", text="Pipeline Pair")
-            tree.heading("Length (miles)", text="Length (miles)")
-            tree.heading("Avg Sep (m)", text="Avg Sep (m)")
-            tree.heading("Action", text="Action")
-
-            # Column widths
-            tree.column("Pipeline Pair", width=700, anchor="w")
-            tree.column("Length (miles)", width=150, anchor="center")
-            tree.column("Avg Sep (m)", width=120, anchor="center")
-            tree.column("Action", width=110, anchor="center")
-
-            # Determine which sections to show (keep previous top-20 behavior)
-            sections_to_display = (
-                overlap['bundled_sections'][:20]
-                if len(overlap['bundled_sections']) > 20
-                else overlap['bundled_sections']
-            )
-
-            # Map of item-id -> (section, index) for event handlers
-            item_map = {}
-            for idx, section in enumerate(sections_to_display, start=1):
-                pair_text = f"{section['pipeline_1']} + {section['pipeline_2']}"
-                item_id = tree.insert(
-                    "",
-                    "end",
-                    values=(
-                        pair_text,
-                        f"{section['bundled_length_miles']:.3f}",
-                        f"{section['average_separation']:.1f}",
-                        "",  # leave cell blank; real button is overlaid
-                    ),
-                )
-                item_map[item_id] = (section, idx)
-
-            # Event handlers for action clicks / double-click anywhere on a row
-            def _open_for_item(item_id):
-                try:
-                    section, idx = item_map[item_id]
-                    self.view_overlap_kml(section, idx)
-                except Exception:
-                    pass
-
-            def on_click(event):
-                # Trigger only when clicking the Action column
-                region = tree.identify("region", event.x, event.y)
-                if region != "cell":
-                    return
-                row_id = tree.identify_row(event.y)
-                col = tree.identify_column(event.x)  # '#1' .. '#n'
-                if row_id and col == "#4":  # Action column
-                    _open_for_item(row_id)
-
-            def on_double_click(event):
-                row_id = tree.identify_row(event.y)
-                if row_id:
-                    _open_for_item(row_id)
-
-            tree.bind("<ButtonRelease-1>", on_click)
-            tree.bind("<Double-1>", on_double_click)
-
-            # Overlay real blue buttons inside the Action column (Treeview doesn't natively support widgets per cell)
-            action_buttons = {}
-
-            def ensure_buttons_positioned(event=None):
-                try:
-                    # Place a button for each visible row
-                    for item_id in tree.get_children(""):
-                        # Use column identifier to avoid off-by-one with hidden '#0'
-                        bbox = tree.bbox(item_id, column="Action")
-                        btn = action_buttons.get(item_id)
-                        if not bbox:
-                            # Item is not visible; hide any existing button
-                            if btn:
-                                btn.place_forget()
-                            continue
-                        x, y, w, h = bbox
-                        if btn is None:
-                            # Create button lazily
-                            section, idx = item_map[item_id]
-                            def make_cmd(s=section, i=idx):
-                                return lambda: self.view_overlap_kml(s, i)
-                            btn = ctk.CTkButton(
-                                table_frame,
-                                text="View Corridor",
-                                width=min(110, max(80, w - 8)),
-                                height=min(26, max(22, h - 6)),
-                                command=make_cmd(),
-                            )
-                            action_buttons[item_id] = btn
-                        # Convert tree-relative bbox to parent coords
-                        btn.place(x=tree.winfo_x() + x + (w // 2),
-                                  y=tree.winfo_y() + y + (h // 2),
-                                  anchor="center")
-                except Exception:
-                    pass
-
-            # Keep buttons aligned on scroll/resize
-            def on_tree_scroll(first, last):
-                try:
-                    vsb.set(first, last)
-                finally:
-                    ensure_buttons_positioned()
-
-            tree.configure(yscrollcommand=on_tree_scroll)
-            tree.bind("<Configure>", ensure_buttons_positioned)
-            tree.bind("<ButtonRelease-1>", ensure_buttons_positioned, add="+")
-            tree.bind("<Motion>", lambda e: None)  # keep events active on Windows
-            try:
-                tree.after(100, ensure_buttons_positioned)
-            except Exception:
-                pass
-
-            # Layout the tree + scrollbar
-            tree.pack(side="left", fill="both", expand=True)
-            vsb.pack(side="right", fill="y")
-
-            # Info if truncated to top 20
-            if len(overlap['bundled_sections']) > 20:
-                ctk.CTkLabel(
-                    main_frame,
-                    text=(
-                        f"Showing top 20 of {len(overlap['bundled_sections'])} bundled sections "
-                        "(sorted by length). Double-click a row, or click 'View' in the Action column "
-                        "to open its corridor in Google Earth."
-                    ),
-                    font=("Arial", 10),
-                    text_color="#888888",
-                    justify="center",
-                    wraplength=1100,
-                ).pack(pady=(4, 6))
-
-            # Summary statistics at bottom
-            summary_frame = ctk.CTkFrame(main_frame)
-            summary_frame.pack(fill="x", pady=10)
-            total_bundled = sum(s['bundled_length_miles'] for s in overlap['bundled_sections'])
-            ctk.CTkLabel(
-                summary_frame,
-                text=(
-                    f"Total Bundled Length: {total_bundled:.3f} miles across "
-                    f"{len(overlap['bundled_sections'])} sections"
-                ),
-                font=("Arial", 12, "bold"),
-            ).pack()
-        else:
-            ctk.CTkLabel(
-                main_frame,
-                text="No bundled sections found with current parameters",
-                font=("Arial", 12),
-            ).pack(pady=20)
-    
     def create_placemark_tab(self, parent):
         """Create placemark details tab."""
         # Create treeview
@@ -916,6 +652,8 @@ class PipelineCalculatorGUI:
         tree.pack(fill="both", expand=True, padx=10, pady=10)
     
     def reanalyze(self):
+        if getattr(self, "_processing", False):
+            return
         """Show in-window parameter editor and reanalyze."""
         try:
             # Clean up any existing parameter frame
@@ -953,7 +691,7 @@ class PipelineCalculatorGUI:
             # Angular tolerance
             angular_frame = ctk.CTkFrame(self.param_frame)
             angular_frame.pack(fill="x", padx=20, pady=10)
-            ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
+            ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
             ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var).pack(side="left")
 
             # Buttons
@@ -985,6 +723,8 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Error", f"Failed to show parameter dialog: {str(e)}")
     
     def export_results(self):
+        if getattr(self, "_processing", False):
+            return
         """Export analysis results.
 
         Creates a single XLSX workbook with two sheets when `.xlsx` is selected:

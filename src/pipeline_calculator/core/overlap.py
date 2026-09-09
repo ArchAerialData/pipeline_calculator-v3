@@ -8,8 +8,11 @@ from scipy.spatial import KDTree
 
 from pipeline_calculator.core.angles import bearing_orientation_diff
 from pipeline_calculator.core.coordinates import segment_pipeline_paths
-from pipeline_calculator.core.spatial import lonlat_array_to_ecef
+from pipeline_calculator.core.spatial import lonlat_array_to_ecef, compute_origin
 from pipeline_calculator.core.bundling import qualifying_sections, savings_from_sections
+
+MAX_ANALYSIS_SEGMENTS = 1_000_000
+MAX_CANDIDATE_CHECKS = 5_000_000
 
 
 def find_parallel_segments(pipelines, geod, segment_length, detection_range, angular_tolerance, progress_callback=None):
@@ -17,12 +20,22 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
 
     Mutates pipelines by adding a `segments` list on each pipeline dict.
     """
+    if not math.isfinite(float(segment_length)) or segment_length <= 0:
+        raise ValueError("Segment length must be a finite positive number")
+    if not all(math.isfinite(float(v)) for v in (detection_range, angular_tolerance)):
+        raise ValueError("Analysis parameters must be finite")
+    if segment_length <= 0 or detection_range <= 0 or not 0 <= angular_tolerance <= 90:
+        raise ValueError("Segment length and detection range must be positive; angle must be between 0 and 90")
     # Segment all pipelines
+    segment_count = 0
     for p_idx, pipeline in enumerate(pipelines):
         if progress_callback:
             progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
             progress_callback(progress)
         pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length)
+        segment_count += len(pipeline["segments"])
+        if segment_count > MAX_ANALYSIS_SEGMENTS:
+            raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
 
     # Build spatial index
     all_segments = []
@@ -45,10 +58,16 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
 
     parallel_groups = defaultdict(list)
     seen_segment_pairs = set()
+    candidate_checks = 0
 
     for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
         try:
-            nearby_indices = tree.query_ball_point(xy[seg_idx], float(detection_range) + 1e-8)
+            nearby_indices = tree.query_ball_point(
+                xy[seg_idx], math.hypot(float(detection_range), float(segment_length)) + 1e-8
+            )
+            candidate_checks += len(nearby_indices)
+            if candidate_checks > MAX_CANDIDATE_CHECKS:
+                raise ValueError("Neighbor-search limit exceeded; split the dataset or reduce detection range")
 
             for near_idx in nearby_indices:
                 if near_idx == seg_idx:
@@ -63,9 +82,20 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                 if bearing_orientation_diff(segment["bearing"], near_segment["bearing"]) <= angular_tolerance:
                     lon1, lat1 = segment["midpoint"]
                     lon2, lat2 = near_segment["midpoint"]
-                    _, _, distance = geod.inv(lon1, lat1, lon2, lat2)
-
-                    if distance <= detection_range:
+                    azimuth, _, midpoint_distance = geod.inv(lon1, lat1, lon2, lat2)
+                    delta1 = math.radians(azimuth - segment["bearing"])
+                    # Back azimuth at the second midpoint handles meridian convergence.
+                    reverse_azimuth, _, _ = geod.inv(lon2, lat2, lon1, lat1)
+                    delta2 = math.radians(reverse_azimuth - near_segment["bearing"])
+                    distance = max(abs(midpoint_distance * math.sin(delta1)),
+                                   abs(midpoint_distance * math.sin(delta2)))
+                    half_extent = (segment["length"] + near_segment["length"]) / 2
+                    along = max(abs(midpoint_distance * math.cos(delta1)),
+                                abs(midpoint_distance * math.cos(delta2)))
+                    # Compare short, finite segment tangents instead of requiring
+                    # their midpoint samples to line up. Touching endpoints alone
+                    # do not constitute longitudinal overlap.
+                    if distance <= detection_range and along < half_extent - 1e-8:
                         pair_id = (min(seg_idx, near_idx), max(seg_idx, near_idx))
                         if pair_id in seen_segment_pairs:
                             continue
@@ -88,6 +118,7 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                                         near_segment["segment_index"],
                                     ),
                                     "distance": distance,
+                                    "midpoint_distance": midpoint_distance,
                                 }
                             )
                         else:
@@ -106,10 +137,11 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                                         segment["segment_index"],
                                     ),
                                     "distance": distance,
+                                    "midpoint_distance": midpoint_distance,
                                 }
                             )
         except Exception as e:
-            raise ValueError(f"Could not analyze segment {seg_idx}") from e
+            raise ValueError(f"Could not analyze segment {seg_idx}: {e}") from e
 
     return parallel_groups
 
@@ -126,6 +158,8 @@ def calculate_overlap_results(
     progress_callback=None,
 ):
     """Calculate bundled lengths and overlap statistics."""
+    if not math.isfinite(float(min_parallel_length)) or min_parallel_length <= 0:
+        raise ValueError("Minimum parallel length must be finite and positive")
     results = {
         "bundled_sections": [],
         "pipeline_overlaps": {},
@@ -168,41 +202,33 @@ def calculate_overlap_results(
             if not all_points:
                 continue
 
-            lons = [p[0] for p in all_points]
+            origin_lon, _ = compute_origin(all_points)
+            # Unwrap around this corridor, not Greenwich, before finding bounds.
+            lons = [origin_lon + (p[0] - origin_lon + 180) % 360 - 180 for p in all_points]
             lats = [p[1] for p in all_points]
-            min_lon, max_lon = min(lons), max(lons)
-            min_lat, max_lat = min(lats), max(lats)
-
-            buffer = 0.001
-            min_lon -= buffer
-            max_lon += buffer
-            min_lat -= buffer
-            max_lat += buffer
-
-            center_lon = float((min_lon + max_lon) / 2)
-            center_lat = float((min_lat + max_lat) / 2)
+            min_lon, max_lon = min(lons) - 0.001, max(lons) + 0.001
+            min_lat, max_lat = max(-90, min(lats) - 0.001), min(90, max(lats) + 0.001)
+            center_lon = ((min_lon + max_lon) / 2 + 180) % 360 - 180
+            center_lat = (min_lat + max_lat) / 2
+            # Wrapped west/east bounds may have west > east at the dateline.
+            min_lon = (min_lon + 180) % 360 - 180
+            max_lon = (max_lon + 180) % 360 - 180
 
             centerline_pts = []
             for mid1, mid2 in pair_midpoints:
-                cl_lon = (mid1[0] + mid2[0]) / 2.0
-                cl_lat = (mid1[1] + mid2[1]) / 2.0
+                bearing, _, distance = geod.inv(*mid1, *mid2)
+                cl_lon, cl_lat, _ = geod.fwd(*mid1, bearing, distance / 2)
                 centerline_pts.append((cl_lon, cl_lat))
 
-            if not centerline_pts and all_points:
-                avg_lon = float(np.mean(lons))
-                avg_lat = float(np.mean(lats))
-                centerline_pts = [(avg_lon, avg_lat), (avg_lon, avg_lat)]
-
-            lat0 = center_lat
-            lon0 = center_lon
-            m_per_deg_y = 111320.0
-            m_per_deg_x = 111320.0 * math.cos(math.radians(lat0))
-
             def to_xy(lon, lat):
-                return ((lon - lon0) * m_per_deg_x, (lat - lat0) * m_per_deg_y)
+                bearing, _, distance = geod.inv(center_lon, center_lat, lon, lat)
+                radians = math.radians(bearing)
+                return distance * math.sin(radians), distance * math.cos(radians)
 
             def to_lonlat(x, y):
-                return (lon0 + (x / m_per_deg_x), lat0 + (y / m_per_deg_y))
+                lon, lat, _ = geod.fwd(center_lon, center_lat,
+                                       math.degrees(math.atan2(x, y)), math.hypot(x, y))
+                return lon, lat
 
             cl_xy = [to_xy(lon, lat) for lon, lat in centerline_pts]
 
