@@ -69,11 +69,10 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
         item_map = {}
 
         def _open_for_item(item_id):
-            try:
-                section, idx = item_map[item_id]
-                on_open_corridor(section, idx)
-            except Exception:
-                pass
+            if item_id not in item_map:
+                return
+            section, idx = item_map[item_id]
+            on_open_corridor(section, idx)
 
         def on_click(event):
             region = tree.identify("region", event.x, event.y)
@@ -196,6 +195,8 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
             text=f"Pairwise Bundled Length: {total_bundled:.3f} miles across {len(bundled_sections)} sections (not total mileage removed)",
             font=("Arial", 12, "bold"),
         ).pack()
+        ctk.CTkLabel(summary_frame, text='Corridors are sampled approximations. KML descriptions identify rectangle fallbacks.',
+                     wraplength=650).pack(pady=5)
     else:
         ctk.CTkLabel(
             main_frame,

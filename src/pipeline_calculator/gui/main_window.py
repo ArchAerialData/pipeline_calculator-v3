@@ -16,6 +16,7 @@ from pipeline_calculator.core.constants import (
 from pipeline_calculator.gui.actions.export_actions import export_with_dialog
 from pipeline_calculator.gui.actions.open_kml_action import open_overlap_corridor
 from pipeline_calculator.gui.controllers.analysis_controller import AnalysisController
+from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
 from pipeline_calculator.gui.dialogs.params_dialog import ParamsDialog
 from pipeline_calculator.gui.pages.file_select_page import show as show_file_select_page
 from pipeline_calculator.gui.pages.results_page import show as show_results_page
@@ -44,6 +45,8 @@ class PipelineCalculatorGUI:
         self.state = AppState()
         self.controller = AnalysisController()
         self._processing = False
+        self._closing = False
+        self._analysis_session = None
         self._params_dialog: ParamsDialog | None = None
 
         # Keep StringVar for CTkEntry typing behavior (see legacy notes).
@@ -52,6 +55,7 @@ class PipelineCalculatorGUI:
         self.segment_length_var = StringVar(value=str(SEGMENT_LENGTH))
         self.angular_tolerance_var = StringVar(value=str(ANGULAR_TOLERANCE))
 
+        self.root.protocol("WM_DELETE_WINDOW", self.close)
         self.setup_gui()
 
     def setup_gui(self) -> None:
@@ -80,6 +84,7 @@ class PipelineCalculatorGUI:
             angular_tolerance_var=self.angular_tolerance_var,
             on_browse=self.browse_file,
             on_file_selected=self.process_file,
+            retry_path=self.state.current_file,
         )
 
     def browse_file(self) -> None:
@@ -120,69 +125,41 @@ class PipelineCalculatorGUI:
         return params
 
     def process_file(self, file_path: str) -> None:
-        if self._processing:
+        if self._processing or getattr(self, '_closing', False):
             return
         self._processing = True
-        progress_frame = None
         try:
             self.state.current_results = None
             self.state.current_file = file_path
             self.state.params = self._get_parameters()
-
-            self.root.focus_force()
-            self.root.update_idletasks()
-
-            progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
-            progress_frame.place(relx=0.5, rely=0.5, anchor="center")
-            progress_frame.lift()
-
-            status_label = ctk.CTkLabel(
-                progress_frame,
-                text="Analyzing pipelines and overlaps...",
-                font=("Arial", 14),
-            )
-            status_label.pack(pady=20, padx=20)
-
-            progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
-            progress_bar.pack(pady=10)
-            progress_bar.start()
-
-            self.root.update()
-
-            job = self.controller.start(file_path, self.state.params)
-
-            def check_job():
-                if not job.done.is_set():
-                    self.root.after(100, check_job)
-                    return
-
-                try:
-                    progress_bar.stop()
-                    progress_frame.destroy()
-                except Exception:
-                    pass
-
-                self._processing = False
-                if job.error is not None:
-                    messagebox.showerror(
-                        "Processing Error",
-                        "Failed to process file:\n\n"
-                        f"{str(job.error)}\n\n"
-                        "Please check that the file is a valid KMZ/KML file.",
-                    )
-                    self.show_file_selection()
-                    return
-
-                self.state.current_results = job.result
-                self.show_results()
-
-            check_job()
+            self._analysis_session = AnalysisSession(self.root, self._analysis_done, self.controller)
+            self._analysis_session.start(file_path, self.state.params)
         except Exception as e:
             self._processing = False
-            if progress_frame is not None:
-                progress_frame.destroy()
-            messagebox.showerror("Error", f"Failed to process file: {str(e)}")
+            if getattr(self, '_analysis_session', None) is not None:
+                self._analysis_session.close()
+            messagebox.showerror("Processing Error", str(e))
             self.show_file_selection()
+
+    def _analysis_done(self, job):
+        if getattr(self, '_closing', False):
+            return
+        if self._analysis_session is None or self._analysis_session.job is not job:
+            return
+        self._processing = False
+        if job.state == 'completed':
+            self.state.current_results = job.result
+            self.show_results()
+        else:
+            if job.error is not None:
+                messagebox.showerror("Processing Error", str(job.error))
+            self.show_file_selection()
+
+    def close(self):
+        self._closing = True
+        if self._analysis_session is not None:
+            self._analysis_session.close()
+        self.root.destroy()
 
     def show_results(self) -> None:
         if not self.state.current_results:
@@ -197,13 +174,14 @@ class PipelineCalculatorGUI:
             on_export=self.export_results,
             on_reanalyze=self.reanalyze,
             on_new_file=self.show_file_selection,
-            on_exit=self.root.quit,
+            on_exit=self.close,
             on_open_corridor=self.view_overlap_corridor,
         )
 
     def view_overlap_corridor(self, section: dict, index: int) -> None:
+        from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
         try:
-            open_overlap_corridor(section, index)
+            CorridorDialog(self.root, section, index)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 

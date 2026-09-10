@@ -79,7 +79,7 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - Tabbed interface for organized data viewing
 - Export results to CSV and JSON formats
 - Dark mode interface for reduced eye strain
-- Progress indicators for large file processing
+- Cooperative cancellation and named processing stages with work counts and elapsed time
 
 ## 📊 Overlap Analysis Capabilities
 
@@ -106,7 +106,7 @@ Download the latest release from the GitHub releases page:
 - **macOS**: `Pipeline_Calculator_v4.N.dmg`
 
 ### Option 2: Run from Source
-Requires Python 3.8 or higher.
+Builds and automated validation use Python 3.11. Use the platform setup scripts to prepare that environment.
 
 1. Clone the repository:
    ```bash
@@ -235,7 +235,7 @@ The application uses a sophisticated algorithm to detect overlaps:
 
 - **Coordinate System**: GRS80 geodesic calculations
 - **Distance Units**: US Survey Miles (1609.347218694 meters)
-- **Performance**: Optimized for files with 1000+ pipelines
+- **Performance**: Bounded processing with reproducible synthetic workload measurements; see [performance evidence](docs/validation/comparison.md)
 
 ## 🐛 Troubleshooting
 
@@ -251,7 +251,7 @@ The application uses a sophisticated algorithm to detect overlaps:
    - Use Browse button if drag-and-drop causes issues
 
 3. **Memory issues with large files**
-   - Files are processed with progress indication
+   - Files show processing stages and can be cancelled cooperatively
    - Consider splitting very large KMZ files (>100MB)
 
 4. **Incorrect overlap calculations**
@@ -312,6 +312,49 @@ The overlap tab displays 20 rows per page with Previous/Next controls, retaining
 access to every section. Its pairwise total is explicitly distinguished from
 mileage removed. Both GUI implementations share the summary and overlap tabs,
 show corrected/clamped parameter values, and prevent simultaneous analysis jobs.
+
+### Cancellation, progress and corridor recovery
+
+Both GUIs show the current stage, available work counts and elapsed time. **Cancel**
+requests a cooperative stop; the app stays busy until the worker acknowledges it.
+A single XML, filesystem or numerical-library call may finish before cancellation
+is observed. Cancelled work never becomes a result or an analysis-error dialog.
+Use **Retry selected file** after cancellation, or browse for another input.
+Results are cleared when starting a new analysis.
+
+Exceptionally large or dense jobs can pause for **Continue anyway** or **Cancel**
+before expensive overlap comparisons. Initial import and source-distance measurement
+run first; density checks also require segmenting/indexing the paths. These checks
+run off the UI thread and can be cancelled. The warning suggests splitting geometry
+into smaller files or simplifying a copy where distance accuracy is preserved.
+Ordinary jobs proceed directly. This is a workload estimate, not a runtime forecast.
+
+Initial advisory thresholds are deliberately high: 750,000 estimated analysis
+segments or 10,000,000 estimated neighbor inspections from up to 256 count-only
+queries. The latter is twice the existing five-million-inspection safety cap.
+Continuing does not override hard limits; source mileage remains available with
+an incomplete-analysis notice if overlap exceeds a limit. Sampling may miss a
+localized hotspot. No automatic geometry simplification changes source distances.
+
+**View Corridor** prepares KML and requests opening without blocking the main window.
+If opening fails, the dialog retains the generated file and offers **Copy Path**,
+**Save As** and **Retry**. An accepted opening request does not confirm that Google
+Earth rendered the file. Temporary files remain available after closing the dialog;
+use Save As for a lasting copy because the operating system may clean temp storage.
+
+Corridors are approximate visualizations of sampled paths, not surveyed boundaries.
+KML descriptions identify rectangle fallbacks and invalid preferred geometry.
+Non-finite, out-of-range, collapsed and unusable rings are rejected. All ring sizes
+receive local-plane topology checks with a bounded edge-inspection budget; a shape
+that exceeds that budget falls back to a disclosed simpler outline. Right-angle,
+hairpin and loop examples can require broad rectangles enclosing the qualified
+samples. End padding helps outlines show the ends of sampled sections. These
+visual changes preserve original pipeline distance and sampled overlap/savings rules.
+
+See [automated improvement verification](docs/validation/automated-improvements.md),
+[subsequent workload/corridor hardening](docs/validation/workload-corridor-hardening.md),
+[implementation status](IMPROVEMENT_ROADMAP.md) and the separate
+[owner/platform follow-up runbook](FOLLOWUP_RUNBOOK.md).
 
 See [calculation fix review and verification](CALCULATION_FIX_REVIEW.md) for the
 regression cases and remaining validation limits.

@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+from pipeline_calculator.core.execution import AnalysisCancelled
+
 import math
 
 MAX_ANALYSIS_SEGMENTS = 1_000_000
 
-def segment_pipeline(geod, coordinates, segment_length):
+def segment_pipeline(geod, coordinates, segment_length, *, context=None):
     """Break a pipeline polyline into fixed-length analysis segments.
 
     Args:
@@ -12,6 +14,8 @@ def segment_pipeline(geod, coordinates, segment_length):
       coordinates: list of (lon, lat)
       segment_length: segment length in meters (float)
     """
+    if context is not None:
+        context.check()
     segments: list[dict] = []
 
     try:
@@ -48,6 +52,8 @@ def segment_pipeline(geod, coordinates, segment_length):
 
     try:
         for i in range(len(coordinates) - 1):
+            if context is not None and i % 256 == 0:
+                context.check()
             lon_a, lat_a = coordinates[i]
             lon_b, lat_b = coordinates[i + 1]
 
@@ -72,6 +78,10 @@ def segment_pipeline(geod, coordinates, segment_length):
             # Generate as many full segments as we can on this edge, accounting
             # for `carry_m` accumulated from previous edges.
             while carry_m + rem_m >= seg_len - 1e-9:
+                if context is not None:
+                    context.checkpoint()
+                if context is not None and len(segments) % 256 == 0:
+                    context.report("Segmenting path", len(segments))
                 needed_m = seg_len - carry_m
                 if needed_m <= 1e-12:
                     # Defensive: if floating error yields ~0, snap to a fresh segment.
@@ -114,6 +124,8 @@ def segment_pipeline(geod, coordinates, segment_length):
             # Any remaining edge distance (that didn't complete a segment) is
             # carried forward to the next vertex-to-vertex edge.
             carry_m += rem_m
+    except AnalysisCancelled:
+        raise
     except Exception as e:
         raise ValueError(f"Could not segment pipeline; partial segments were discarded: {e}") from e
 

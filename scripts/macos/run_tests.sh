@@ -14,10 +14,6 @@ source "${VENV_DIR}/bin/activate"
 
 python -m compileall "${REPO_DIR}/src"
 
-if command -v pytest >/dev/null 2>&1; then
-  pytest
-else
-  echo "pytest not installed (install requirements-dev.txt to run unit tests)."
-fi
+python -m pytest
 
 echo "OK"

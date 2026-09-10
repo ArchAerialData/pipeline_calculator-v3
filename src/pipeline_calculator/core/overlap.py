@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pipeline_calculator.core.execution import AnalysisCancelled
+
 import math
 from collections import defaultdict
 
@@ -10,12 +12,13 @@ from pipeline_calculator.core.angles import bearing_orientation_diff
 from pipeline_calculator.core.coordinates import segment_pipeline_paths
 from pipeline_calculator.core.spatial import lonlat_array_to_ecef, compute_origin
 from pipeline_calculator.core.bundling import qualifying_sections, savings_from_sections
+from pipeline_calculator.core.workload import check_density_workload
 
 MAX_ANALYSIS_SEGMENTS = 1_000_000
 MAX_CANDIDATE_CHECKS = 5_000_000
 
 
-def find_parallel_segments(pipelines, geod, segment_length, detection_range, angular_tolerance, progress_callback=None):
+def find_parallel_segments(pipelines, geod, segment_length, detection_range, angular_tolerance, progress_callback=None, *, context=None):
     """Identify pipeline segments that run parallel within detection range.
 
     Mutates pipelines by adding a `segments` list on each pipeline dict.
@@ -29,20 +32,30 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
     # Segment all pipelines
     segment_count = 0
     for p_idx, pipeline in enumerate(pipelines):
+        if context is not None and p_idx % 256 == 0:
+            context.check()
+        if context is not None:
+            context.report("Segmenting paths", p_idx, len(pipelines))
         if progress_callback:
             progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
             progress_callback(progress)
-        pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length)
+        pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length, context=context)
         segment_count += len(pipeline["segments"])
         if segment_count > MAX_ANALYSIS_SEGMENTS:
             raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
 
+    if context is not None:
+        context.report("Building spatial index", 0, segment_count)
     # Build spatial index
     all_segments = []
     segment_to_pipeline = {}
 
     for p_idx, pipeline in enumerate(pipelines):
-        for seg in pipeline["segments"]:
+        if context is not None and p_idx % 256 == 0:
+            context.check()
+        for segment_position, seg in enumerate(pipeline['segments']):
+            if context is not None and segment_position % 256 == 0:
+                context.check()
             seg_idx = len(all_segments)
             all_segments.append(seg["midpoint"])
             segment_to_pipeline[seg_idx] = (p_idx, seg)
@@ -53,23 +66,33 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
     try:
         xy = lonlat_array_to_ecef(all_segments, geod)
         tree = KDTree(xy)
+    except AnalysisCancelled:
+        raise
     except Exception as e:
         raise ValueError("Could not build overlap spatial index") from e
 
+    radius = math.hypot(float(detection_range), float(segment_length)) + 1e-8
+    check_density_workload(tree, xy, radius, context)
+    if context is not None:
+        context.report("Searching neighbors", 0, len(all_segments))
     parallel_groups = defaultdict(list)
     seen_segment_pairs = set()
     candidate_checks = 0
 
     for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
+        if context is not None and seg_idx % 256 == 0:
+            context.report("Searching neighbors", seg_idx, len(all_segments))
         try:
             nearby_indices = tree.query_ball_point(
-                xy[seg_idx], math.hypot(float(detection_range), float(segment_length)) + 1e-8
+                xy[seg_idx], radius
             )
             candidate_checks += len(nearby_indices)
             if candidate_checks > MAX_CANDIDATE_CHECKS:
                 raise ValueError("Neighbor-search limit exceeded; split the dataset or reduce detection range")
 
-            for near_idx in nearby_indices:
+            for candidate_position, near_idx in enumerate(nearby_indices):
+                if context is not None and candidate_position % 256 == 0:
+                    context.check()
                 if near_idx == seg_idx:
                     continue
                 if near_idx not in segment_to_pipeline:
@@ -140,6 +163,8 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                                     "midpoint_distance": midpoint_distance,
                                 }
                             )
+        except AnalysisCancelled:
+            raise
         except Exception as e:
             raise ValueError(f"Could not analyze segment {seg_idx}: {e}") from e
 
@@ -156,6 +181,7 @@ def calculate_overlap_results(
     detection_range,
     angular_tolerance,
     progress_callback=None,
+    *, context=None,
 ):
     """Calculate bundled lengths and overlap statistics."""
     if not math.isfinite(float(min_parallel_length)) or min_parallel_length <= 0:
@@ -173,8 +199,14 @@ def calculate_overlap_results(
 
     bundled_segments = defaultdict(set)
 
-    sections = qualifying_sections(pipelines, parallel_groups, segment_length, min_parallel_length)
-    for qualified in sections:
+    sections = qualifying_sections(pipelines, parallel_groups, segment_length, min_parallel_length, context=context)
+    if context is not None:
+        context.report("Building corridors", 0, len(sections))
+    for section_index, qualified in enumerate(sections):
+        if context is not None and section_index % 256 == 0:
+            context.check()
+        if context is not None:
+            context.report("Building corridors", section_index, len(sections))
         p1_idx, p2_idx = qualified["pair"]
         section = qualified["representatives"]
         try:
@@ -183,7 +215,9 @@ def calculate_overlap_results(
 
             all_points = []
             pair_midpoints = []
-            for seg in section:
+            for match_position, seg in enumerate(section):
+                if context is not None and match_position % 256 == 0:
+                    context.check()
                 seg1_idx = seg["pipeline_1_segment"]
                 seg2_idx = seg["pipeline_2_segment"]
 
@@ -199,6 +233,14 @@ def calculate_overlap_results(
                 all_points.extend([mid1, mid2])
                 pair_midpoints.append((mid1, mid2))
 
+            # Bounds must include every qualified sample, including partner
+            # samples not chosen for the representative centerline.
+            all_points = []
+            for pipe_index, segment_ids in zip((p1_idx, p2_idx), qualified['segment_ids']):
+                for position, segment_id in enumerate(sorted(segment_ids)):
+                    if context is not None and position % 256 == 0:
+                        context.check()
+                    all_points.append(pipelines[pipe_index]['segments'][segment_id]['midpoint'])
             if not all_points:
                 continue
 
@@ -215,7 +257,9 @@ def calculate_overlap_results(
             max_lon = (max_lon + 180) % 360 - 180
 
             centerline_pts = []
-            for mid1, mid2 in pair_midpoints:
+            for midpoint_position, (mid1, mid2) in enumerate(pair_midpoints):
+                if context is not None and midpoint_position % 256 == 0:
+                    context.check()
                 bearing, _, distance = geod.inv(*mid1, *mid2)
                 cl_lon, cl_lat, _ = geod.fwd(*mid1, bearing, distance / 2)
                 centerline_pts.append((cl_lon, cl_lat))
@@ -248,7 +292,9 @@ def calculate_overlap_results(
 
             t_vals = []
             s_vals = []
-            for x, y in cl_xy:
+            for point_position, (x, y) in enumerate(cl_xy):
+                if context is not None and point_position % 256 == 0:
+                    context.check()
                 t = x * u[0] + y * u[1]
                 s = x * v[0] + y * v[1]
                 t_vals.append(t)
@@ -257,12 +303,12 @@ def calculate_overlap_results(
                 t_vals = [0.0, bundled_length]
                 s_vals = [0.0, 0.0]
 
-            t_min = float(min(t_vals))
-            t_max = float(max(t_vals))
             s_mean = float(np.mean(s_vals))
 
             max_sep_m = 0.0
-            for mid1, mid2 in pair_midpoints:
+            for midpoint_position, (mid1, mid2) in enumerate(pair_midpoints):
+                if context is not None and midpoint_position % 256 == 0:
+                    context.check()
                 x1, y1 = to_xy(mid1[0], mid1[1])
                 x2, y2 = to_xy(mid2[0], mid2[1])
                 sep = math.hypot(x2 - x1, y2 - y1)
@@ -275,14 +321,26 @@ def calculate_overlap_results(
                 width_m = min(width_m, 2.0 * detection_range)
 
             pad_m = max(segment_length * 1.0, 5.0)
-            t1 = t_min - pad_m
-            t2 = t_max + pad_m
+            # A fallback rectangle encloses a bent group, rather than a narrow
+            # strip through its average lateral position. Keep nominal strip
+            # width separate from this rectangle's potentially broader extent.
+            along, across = [], []
+            for position, point in enumerate(all_points):
+                if context is not None and position % 256 == 0:
+                    context.check()
+                x, y = to_xy(*point)
+                along.append(x*u[0] + y*u[1])
+                across.append(x*v[0] + y*v[1])
+            t1 = min(along) - pad_m
+            t2 = max(along) + pad_m
             half_w = width_m / 2.0
+            s1 = min(min(across) - pad_m, s_mean - half_w)
+            s2 = max(max(across) + pad_m, s_mean + half_w)
 
-            A = (u[0] * t1 + v[0] * (s_mean - half_w), u[1] * t1 + v[1] * (s_mean - half_w))
-            B = (u[0] * t2 + v[0] * (s_mean - half_w), u[1] * t2 + v[1] * (s_mean - half_w))
-            C = (u[0] * t2 + v[0] * (s_mean + half_w), u[1] * t2 + v[1] * (s_mean + half_w))
-            D = (u[0] * t1 + v[0] * (s_mean + half_w), u[1] * t1 + v[1] * (s_mean + half_w))
+            A = (u[0] * t1 + v[0] * s1, u[1] * t1 + v[1] * s1)
+            B = (u[0] * t2 + v[0] * s1, u[1] * t2 + v[1] * s1)
+            C = (u[0] * t2 + v[0] * s2, u[1] * t2 + v[1] * s2)
+            D = (u[0] * t1 + v[0] * s2, u[1] * t1 + v[1] * s2)
 
             oriented_polygon = [
                 to_lonlat(A[0], A[1]),
@@ -314,6 +372,8 @@ def calculate_overlap_results(
                 norms = []
                 valid_idx = []
                 for i in range(N - 1):
+                    if context is not None and i % 256 == 0:
+                        context.check()
                     dx = cl_xy[i + 1][0] - cl_xy[i][0]
                     dy = cl_xy[i + 1][1] - cl_xy[i][1]
                     udir = unit((dx, dy))
@@ -331,12 +391,15 @@ def calculate_overlap_results(
                     right_pts = []
 
                     i0 = valid_idx[0]
-                    p0 = cl_xy[i0]
+                    p0 = (cl_xy[i0][0] - dirs[0][0]*pad_m,
+                          cl_xy[i0][1] - dirs[0][1]*pad_m)
                     n0 = norms[0]
                     left_pts.append((p0[0] + n0[0] * half_w, p0[1] + n0[1] * half_w))
                     right_pts.append((p0[0] - n0[0] * half_w, p0[1] - n0[1] * half_w))
 
                     for k in range(1, len(dirs)):
+                        if context is not None and k % 256 == 0:
+                            context.check()
                         i_curr = valid_idx[k]
                         pi = cl_xy[i_curr]
                         d_prev = dirs[k - 1]
@@ -367,7 +430,8 @@ def calculate_overlap_results(
                         right_pts.extend(right_join)
 
                     i_last = valid_idx[-1] + 1
-                    pend = cl_xy[i_last]
+                    pend = (cl_xy[i_last][0] + dirs[-1][0]*pad_m,
+                            cl_xy[i_last][1] + dirs[-1][1]*pad_m)
                     n_last = norms[-1]
                     left_pts.append((pend[0] + n_last[0] * half_w, pend[1] + n_last[1] * half_w))
                     right_pts.append((pend[0] - n_last[0] * half_w, pend[1] - n_last[1] * half_w))
@@ -381,6 +445,8 @@ def calculate_overlap_results(
                                 return False
                             dists = []
                             for i in range(sample):
+                                if context is not None and i % 256 == 0:
+                                    context.check()
                                 x1, y1 = seq[i]
                                 x2, y2 = seq[i + 1]
                                 dists.append(math.hypot(x2 - x1, y2 - y1))
@@ -388,6 +454,8 @@ def calculate_overlap_results(
                                 return False
                             med = float(np.median(dists))
                             return med > 0.5 * width_m and med < 3.0 * width_m
+                        except AnalysisCancelled:
+                            raise
                         except Exception:
                             return False
 
@@ -405,6 +473,7 @@ def calculate_overlap_results(
                 {
                     "pipeline_1": pipelines[p1_idx]["name"],
                     "pipeline_2": pipelines[p2_idx]["name"],
+                    "source_path_indices": list(qualified["paths"]),
                     "bundled_length_meters": bundled_length,
                     "bundled_length_miles": bundled_length / survey_mile_m,
                     "average_separation": avg_distance,
@@ -420,14 +489,20 @@ def calculate_overlap_results(
                     "oriented_polygon": oriented_polygon,
                     "oriented_width_m": width_m,
                     "corridor_polygon": curved_polygon if curved_polygon else oriented_polygon,
+                    "corridor_geometry_kind": "sampled_curve" if curved_polygon else "oriented_rectangle",
+                    "corridor_approximation": "Sampled midpoint visualization; not a surveyed boundary.",
                 }
             )
+        except AnalysisCancelled:
+            raise
         except Exception as e:
             raise ValueError(f"Could not construct bundled section for pipelines {p1_idx}, {p2_idx}") from e
 
     results["bundled_sections"].sort(key=lambda s: s["bundled_length_miles"], reverse=True)
 
     for p_idx, pipeline in enumerate(pipelines):
+        if context is not None and p_idx % 256 == 0:
+            context.check()
         bundled_count = len(bundled_segments[p_idx])
         bundled_length = bundled_count * segment_length
 
@@ -439,7 +514,7 @@ def calculate_overlap_results(
 
     total_bundled = sum(section["bundled_length_meters"] for section in results["bundled_sections"])
     results["total_bundled_length"] = total_bundled
-    results["savings_meters"] = savings_from_sections(pipelines, sections, segment_length)
+    results["savings_meters"] = savings_from_sections(pipelines, sections, segment_length, context=context)
 
     if progress_callback:
         progress_callback(1.0)

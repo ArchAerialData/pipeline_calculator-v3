@@ -1,0 +1,156 @@
+{
+  "environment": {
+    "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+    "dirty": true,
+    "source_sha256": "084561ee8c9c06e0e61d9eb2f88a60bd30a8d1c4d5764fbd8e742e6140303423",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "fixtures": [
+    {
+      "id": "parallel",
+      "expectation_status": "analytic",
+      "sha256": "0caf8418aaf57c095dfdee833e6118a386bee7661d0e94af0ddda5bc4450bc24",
+      "actual": {
+        "complete": true,
+        "pipelines": 2,
+        "original_meters": 599.9999999463078,
+        "savings_meters": 295.0,
+        "sections": 1,
+        "diagnostics": []
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "chain",
+      "expectation_status": "analytic",
+      "sha256": "b21399831123829cdb0abdd62713eb7380e187721b0ce0d73cd04a6c9e01f63c",
+      "actual": {
+        "complete": true,
+        "pipelines": 3,
+        "original_meters": 900.0000000897763,
+        "savings_meters": 300.0,
+        "sections": 2,
+        "diagnostics": []
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "below_minimum",
+      "expectation_status": "analytic",
+      "sha256": "527f9ab8c6d6cb80b22ab7ffa2ddde9f117445c1e94227649319707d1239ddd0",
+      "actual": {
+        "complete": true,
+        "pipelines": 2,
+        "original_meters": 199.99999996919195,
+        "savings_meters": 0.0,
+        "sections": 0,
+        "diagnostics": []
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "linked",
+      "expectation_status": "analytic",
+      "sha256": "ef7f02405fd11f420009b9ff6c2c2ab6230e0ec582ce3eb36e7d0906b0c457ce",
+      "actual": {
+        "complete": true,
+        "pipelines": 2,
+        "original_meters": 199.99999996919195,
+        "savings_meters": 0.0,
+        "sections": 0,
+        "diagnostics": [
+          "selected_primary_kml"
+        ]
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "track",
+      "expectation_status": "analytic",
+      "sha256": "f59f1d2fda21ccb96c2192158498c8eee3a688dce8e390b167f2e3b6424090b5",
+      "actual": {
+        "complete": true,
+        "pipelines": 2,
+        "original_meters": 199.99999996919195,
+        "savings_meters": 0.0,
+        "sections": 0,
+        "diagnostics": []
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "empty",
+      "expectation_status": "analytic",
+      "sha256": "c200e3ef5d9c3dc7b93a8488c8cd0c6b1ea86af9b3c4ba2fa54f7522f10ad562",
+      "actual": {
+        "complete": false,
+        "pipelines": 0,
+        "original_meters": 0.0,
+        "savings_meters": null,
+        "sections": 0,
+        "diagnostics": [
+          "no_supported_features"
+        ]
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "malformed",
+      "expectation_status": "analytic",
+      "sha256": "eedf69b226d2dfa3a20b48b0cec31bff4ddc4531f501a2630d307c3f57de9e40",
+      "status": "passed",
+      "error": "analysis raised ValueError"
+    },
+    {
+      "id": "unsupported",
+      "expectation_status": "analytic",
+      "sha256": "32e810befc67bd4a7771efb01bae20f830a2bf491dea7b5a2cd58a6fa98137bb",
+      "actual": {
+        "complete": false,
+        "pipelines": 0,
+        "original_meters": 0.0,
+        "savings_meters": null,
+        "sections": 0,
+        "diagnostics": [
+          "no_supported_features",
+          "unsupported_geometry"
+        ]
+      },
+      "status": "passed",
+      "failed_fields": []
+    },
+    {
+      "id": "tracked_centerlines",
+      "expectation_status": "unreviewed",
+      "sha256": "2f240c0b680c0afa211e6f0d6d37c1a8ce3bd7386dc00ecbf0166f68a02e7f4f",
+      "actual": {
+        "complete": true,
+        "pipelines": 3,
+        "original_meters": 100035.7094129826,
+        "savings_meters": 0.0,
+        "sections": 0,
+        "diagnostics": [
+          "selected_primary_kml"
+        ]
+      },
+      "status": "unreviewed",
+      "failed_fields": []
+    }
+  ]
+}

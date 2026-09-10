@@ -21,6 +21,7 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 import platform
 import traceback
 import threading
+from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
 import json
 from datetime import datetime
 import warnings
@@ -131,7 +132,7 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
     
-    def analyze_complete(self, file_path, progress_callback=None):
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None):
         """Complete analysis of KMZ/KML file."""
         from pipeline_calculator.core.analyzer import PipelineAnalyzer as _CoreAnalyzer
 
@@ -143,7 +144,7 @@ class PipelineAnalyzer:
             segment_length=self.segment_length,
             angular_tolerance=self.angular_tolerance,
         )
-        return core.analyze_complete(file_path, progress_callback=progress_callback)
+        return core.analyze_complete(file_path, progress_callback=progress_callback, context=context)
 
 
 def build_analysis_workbook(current_results):
@@ -189,6 +190,10 @@ class PipelineCalculatorGUI:
         self.segment_length_var = StringVar(value=str(SEGMENT_LENGTH))
         self.angular_tolerance_var = StringVar(value=str(ANGULAR_TOLERANCE))
         
+        self._processing = False
+        self._closing = False
+        self._analysis_session = None
+        self.root.protocol("WM_DELETE_WINDOW", self.close)
         self.setup_gui()
 
     def _get_float_var(self, var, default):
@@ -327,12 +332,9 @@ class PipelineCalculatorGUI:
         ctk.CTkLabel(angular_frame, text="(Max angle difference)", 
                     text_color="#888888").pack(side="left", padx=10)
         
-        # Browse button
-        browse_button = ctk.CTkButton(main_frame, text="Browse Files", 
-                                     command=self.browse_file, 
-                                     width=200, height=40)
-        browse_button.pack(pady=20)
-        
+        from pipeline_calculator.gui.pages.file_select_page import file_actions
+        file_actions(main_frame, self.browse_file, self.process_file, self.current_file)
+
         # Drag and drop
         def on_drop(event):
             try:
@@ -370,104 +372,52 @@ class PipelineCalculatorGUI:
             self.root.deiconify()  # Show main window again
     
     def process_file(self, file_path):
-        """Process selected file with progress indication."""
-        if getattr(self, "_processing", False):
+        if getattr(self, '_processing', False) or getattr(self, '_closing', False):
             return
         self._processing = True
-        progress_frame = None
         try:
             self.current_results = None
             self.current_file = file_path
-            
             from pipeline_calculator.gui.state import AnalysisParameters
             params, corrections = AnalysisParameters.from_strings(
                 self.detection_range_var.get(), self.min_parallel_var.get(),
-                self.segment_length_var.get(), self.angular_tolerance_var.get(),
-            )
+                self.segment_length_var.get(), self.angular_tolerance_var.get())
             for name, variable in (("detection_range", self.detection_range_var),
                                    ("min_parallel_length", self.min_parallel_var),
                                    ("segment_length", self.segment_length_var),
                                    ("angular_tolerance", self.angular_tolerance_var)):
                 if name in corrections:
                     variable.set(corrections[name])
-            detection_range = params.detection_range
-            min_parallel = params.min_parallel_length
-            segment_length = params.segment_length
-            angular_tolerance = params.angular_tolerance
-
-            # Update analyzer parameters
-            self.analyzer.detection_range = detection_range
-            self.analyzer.min_parallel_length = min_parallel
-            self.analyzer.segment_length = segment_length
-            self.analyzer.angular_tolerance = angular_tolerance
-            
-            # Ensure window is stable and visible
-            self.root.focus_force()
-            self.root.update_idletasks()
-            
-            # Create in-window progress overlay
-            progress_frame = ctk.CTkFrame(self.root, corner_radius=10)
-            progress_frame.place(relx=0.5, rely=0.5, anchor="center")
-            
-            # Ensure overlay is on top
-            progress_frame.lift()
-
-            status_label = ctk.CTkLabel(progress_frame,
-                                       text="Analyzing pipelines and overlaps...",
-                                       font=("Arial", 14))
-            status_label.pack(pady=20, padx=20)
-
-            progress_bar = ctk.CTkProgressBar(progress_frame, width=300, mode="indeterminate")
-            progress_bar.pack(pady=10)
-            progress_bar.start()
-            
-            # Force UI update
-            self.root.update()
-
-            # Worker thread
-            result_holder = {}
-            analysis_complete = threading.Event()
-
-            def worker():
-                try:
-                    result_holder['result'] = self.analyzer.analyze_complete(file_path)
-                except Exception as e:
-                    result_holder['error'] = e
-                finally:
-                    analysis_complete.set()
-
-            thread = threading.Thread(target=worker, daemon=True)
-            thread.start()
-
-            # Check thread completion with better error handling
-            def check_thread():
-                if not analysis_complete.is_set():
-                    self.root.after(100, check_thread)
-                else:
-                    try:
-                        progress_bar.stop()
-                        progress_frame.destroy()
-                    except Exception:
-                        pass
-                        
-                    self._processing = False
-                    if 'error' in result_holder:
-                        error_msg = str(result_holder['error'])
-                        messagebox.showerror("Processing Error", 
-                                           f"Failed to process file:\n\n{error_msg}\n\nPlease check that the file is a valid KMZ/KML file.")
-                        self.show_file_selection()
-                    else:
-                        self.current_results = result_holder['result']
-                        self.show_results()
-
-            check_thread()
+                setattr(self.analyzer, name, getattr(params, name))
+            self._analysis_session = AnalysisSession(self.root, self._analysis_done)
+            self._analysis_session.start(file_path, params)
         except Exception as e:
             self._processing = False
-            if progress_frame is not None:
-                progress_frame.destroy()
-            messagebox.showerror("Error", f"Failed to process file: {str(e)}")
+            if getattr(self, '_analysis_session', None) is not None:
+                self._analysis_session.close()
+            messagebox.showerror("Processing Error", str(e))
             self.show_file_selection()
-    
+
+    def _analysis_done(self, job):
+        if getattr(self, '_closing', False):
+            return
+        if self._analysis_session is None or self._analysis_session.job is not job:
+            return
+        self._processing = False
+        if job.state == 'completed':
+            self.current_results = job.result
+            self.show_results()
+        else:
+            if job.error is not None:
+                messagebox.showerror("Processing Error", str(job.error))
+            self.show_file_selection()
+
+    def close(self):
+        self._closing = True
+        if self._analysis_session is not None:
+            self._analysis_session.close()
+        self.root.destroy()
+
     def show_results(self):
         """Display analysis results."""
         try:
@@ -547,7 +497,7 @@ class PipelineCalculatorGUI:
             
             # Close button
             close_button = ctk.CTkButton(button_frame, text="Exit", 
-                                        command=self.root.quit)
+                                        command=self.close)
             close_button.pack(side="right", padx=5)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to display results: {str(e)}")
@@ -602,23 +552,9 @@ class PipelineCalculatorGUI:
         tree.pack(fill="both", expand=True, padx=10, pady=10)
 
     def view_overlap_kml(self, section, index):
-        """Generate a temporary KML with polygon corridor for the bundled section and open it."""
+        from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
         try:
-            kml = build_overlap_corridor_kml(section, index)
-
-            with tempfile.NamedTemporaryFile('w', suffix=f'_corridor_{index:03d}.kml', delete=False, encoding='utf-8') as tmp:
-                tmp.write(kml)
-                path = tmp.name
-
-            try:
-                if sys.platform.startswith('win'):
-                    os.startfile(path)  # nosec - temporary path
-                elif sys.platform == 'darwin':
-                    subprocess.run(['open', path], check=False)
-                else:
-                    subprocess.run(['xdg-open', path], check=False)
-            except Exception:
-                pass
+            CorridorDialog(self.root, section, index)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 
@@ -774,6 +710,9 @@ class PipelineCalculatorGUI:
 
 def main():
     """Main entry point."""
+    if len(sys.argv) == 3 and sys.argv[1] == '--smoke-test':
+        from pipeline_calculator.smoke import run
+        return run(sys.argv[2], implementation='legacy')
     try:
         print(f"Pipeline Calculator v{__version__}")
         print(f"Running on {platform.system()} {platform.machine()}")
@@ -837,4 +776,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

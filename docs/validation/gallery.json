@@ -1,0 +1,293 @@
+{
+  "environment": {
+    "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+    "dirty": true,
+    "source_sha256": "084561ee8c9c06e0e61d9eb2f88a60bd30a8d1c4d5764fbd8e742e6140303423",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "cases": [
+    {
+      "fixture": "straight",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4500.160698675487,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4500.872614073244,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.183 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 5.003116526998768
+    },
+    {
+      "fixture": "curve",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4576.072389718799,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4576.347079400804,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.190 miles at 1.9m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 10.052685513134724
+    },
+    {
+      "fixture": "right_angle",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4439.166730072909,
+        "self_intersections": 1,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3308.436276126574,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.183 miles at 1.0m average separation, approx width: 15.4 m. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 48.3466505848551
+    },
+    {
+      "fixture": "hairpin",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 6054.387920634482,
+        "self_intersections": 1,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 1949.0151953087511,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.252 miles at 2.0m average separation, approx width: 15.4 m. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 79.83784446555698
+    },
+    {
+      "fixture": "hairpin",
+      "section": 2,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3934.758997382866,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3933.653348377826,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.121 miles at 10.0m average separation, approx width: 20.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 3.997258569343821
+    },
+    {
+      "fixture": "hairpin",
+      "section": 3,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3174.5587562425117,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3175.199110509905,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.121 miles at 6.0m average separation, approx width: 16.7 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 6.495535551703431
+    },
+    {
+      "fixture": "loop",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 5925.769102868135,
+        "self_intersections": 5,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 2063.3804403945287,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.245 miles at 1.0m average separation, approx width: 15.4 m. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 56.41740299070557
+    },
+    {
+      "fixture": "short",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 192.31455949989643,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 192.38790848146684,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.009 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 4.999217140264955
+    },
+    {
+      "fixture": "multipart",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 2192.385981427422,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 2192.679719000901,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.093 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 4.997374147737943
+    },
+    {
+      "fixture": "multipart",
+      "section": 2,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 2153.9230673640554,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 2154.3508543052776,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.090 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 7.498132903577734
+    },
+    {
+      "fixture": "reversed",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4500.1606911871295,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4500.871154279708,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.183 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 4.996562571959646
+    },
+    {
+      "fixture": "dateline",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3539.9999914135724,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3539.989445138914,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.186 miles at 2.0m average separation, approx width: 12.0 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 2.502290960482711
+    },
+    {
+      "fixture": "pole",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3540.0000091754437,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3539.892153515538,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Bundled pipeline survey corridor: 0.186 miles at 2.0m average separation, approx width: 12.0 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 2.5001191304335775
+    }
+  ]
+}

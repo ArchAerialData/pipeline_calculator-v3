@@ -4,6 +4,7 @@ import os
 import subprocess
 import sys
 import tempfile
+from dataclasses import dataclass
 from typing import Any
 
 from pipeline_calculator.export.corridor_kml import build_overlap_corridor_kml
@@ -26,17 +27,43 @@ def open_path(path: str) -> None:
         os.startfile(path)  # nosec - user requested open
         return
     if sys.platform == "darwin":
-        subprocess.run(["open", path], check=False)
+        subprocess.run(["open", path], check=True, capture_output=True, timeout=10)
         return
-    subprocess.run(["xdg-open", path], check=False)
+    subprocess.run(["xdg-open", path], check=True, capture_output=True, timeout=10)
+
+
+@dataclass(frozen=True)
+class LaunchOutcome:
+    path: str
+    status: str
+    error: str | None = None
+
+
+class CorridorLaunchError(OSError):
+    def __init__(self, outcome):
+        self.path = outcome.path
+        super().__init__(f'KML saved to {self.path}, but opening failed: {outcome.error}')
+
+
+def launch_saved_corridor(path: str) -> LaunchOutcome:
+    try:
+        open_path(path)
+    except (OSError, subprocess.SubprocessError) as exc:
+        details = getattr(exc, 'stderr', None)
+        if isinstance(details, bytes):
+            details = details.decode('utf-8', errors='replace')
+        return LaunchOutcome(path, 'failed', str(details or exc)[-1000:])
+    return LaunchOutcome(path, 'requested')
+
+
+def create_and_launch_corridor(section: dict[str, Any], index: int) -> LaunchOutcome:
+    return launch_saved_corridor(write_corridor_kml_tempfile(section, index))
 
 
 def open_overlap_corridor(section: dict[str, Any], index: int) -> str:
-    path = write_corridor_kml_tempfile(section, index)
-    try:
-        open_path(path)
-    except Exception:
-        # Opening is best-effort; writing is the main deliverable.
-        pass
-    return path
+    """Compatibility wrapper: a launch error retains the successfully written path."""
+    outcome = create_and_launch_corridor(section, index)
+    if outcome.status == 'failed':
+        raise CorridorLaunchError(outcome)
+    return outcome.path
 
