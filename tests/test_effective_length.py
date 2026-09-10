@@ -48,6 +48,8 @@ def test_effective_length_clusters_non_overlapping_pipelines_no_discount() -> No
 
 def test_effective_length_clusters_multipart_paths_without_gap_penalty() -> None:
     analyzer = pc.PipelineAnalyzer()
+    # Each 25 m part must independently meet the configured bundling minimum.
+    analyzer.min_parallel_length = 20.0
     analyzer.segment_length = 5.0
     analyzer.detection_range = 5.0
     analyzer.angular_tolerance = 10.0

@@ -16,8 +16,9 @@ def test_analysis_parameters_from_strings_defaults_and_clamps() -> None:
     assert params.segment_length == 1
     assert params.angular_tolerance == 90
 
-    # Only invalid/empty fields are corrected (clamping is not).
-    assert corrections == {"detection_range": "15", "min_parallel_length": "200"}
+    # Visible fields must match the parameters actually used, including clamps.
+    assert corrections == {"detection_range": "15", "min_parallel_length": "200",
+                           "segment_length": "1", "angular_tolerance": "90"}
 
 
 def test_analysis_parameters_parses_commas() -> None:

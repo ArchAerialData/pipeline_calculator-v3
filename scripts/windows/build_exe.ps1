@@ -1,3 +1,4 @@
+param([string]$OutputRoot = "")
 $ErrorActionPreference = "Stop"
 
 # Build a self-contained Windows .exe using PyInstaller.
@@ -7,6 +8,10 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $RepoDir = (Resolve-Path (Join-Path $ScriptDir "..\..")).Path
 $VenvDir = Join-Path $RepoDir ".venv"
 $Py = Join-Path $VenvDir "Scripts\python.exe"
+$ArtifactRoot = if ([string]::IsNullOrWhiteSpace($OutputRoot)) { $RepoDir } else { [IO.Path]::GetFullPath($OutputRoot) }
+$BuildDir = Join-Path $ArtifactRoot "build"
+$DistDir = Join-Path $ArtifactRoot "dist"
+$MetadataPath = Join-Path $BuildDir "version.json"
 
 if (!(Test-Path $Py)) { throw "Venv not found. Run scripts\\windows\\setup_windows.ps1 first." }
 
@@ -20,31 +25,46 @@ switch ($BuildImpl) {
   { $_ -in @("new", "modular", "package") } { $Entry = "src\\pipeline_calculator_entry.py" }
   default { throw "Unknown PIPELINE_CALCULATOR_BUILD_IMPL='$BuildImpl'. Use 'legacy' or 'new'." }
 }
+$Entry = Join-Path $RepoDir $Entry
+$SourceDir = Join-Path $RepoDir "src"
+$ReadmePath = Join-Path $RepoDir "README.md"
+$WindowsIcon = Join-Path $RepoDir "icon.ico"
+$MacIcon = Join-Path $RepoDir "icon.icns"
 
 Write-Host "Build impl: $BuildImpl"
 Write-Host "Entry script: $Entry"
 
 Push-Location $RepoDir
 try {
-  if (Test-Path "build") { Remove-Item -Recurse -Force "build" }
-  if (Test-Path "dist") { Remove-Item -Recurse -Force "dist" }
+  foreach ($TargetDir in @($BuildDir, $DistDir)) {
+    $ResolvedTarget = [IO.Path]::GetFullPath($TargetDir)
+    $ExpectedParent = [IO.Path]::GetFullPath($ArtifactRoot).TrimEnd('\')
+    if ((Split-Path -Parent $ResolvedTarget).TrimEnd('\') -ne $ExpectedParent) { throw "Unsafe build cleanup path: $ResolvedTarget" }
+    if (Test-Path -LiteralPath $ResolvedTarget) {
+      if ((Get-Item -LiteralPath $ResolvedTarget).Attributes -band [IO.FileAttributes]::ReparsePoint) { throw "Refusing to clean linked build directory: $ResolvedTarget" }
+      Remove-Item -LiteralPath $ResolvedTarget -Recurse -Force
+    }
+  }
 
-  $Version = & $Py src/pipeline_calculator/versioning.py --output build/version.json
+  $Version = & $Py src/pipeline_calculator/versioning.py --output $MetadataPath
   if ($LASTEXITCODE -ne 0) { throw "Version generation failed" }
   $ArtifactName = "Pipeline_Calculator_v$Version"
 
   $IconArgs = @()
-  if (Test-Path "icon.ico") { $IconArgs = @("--icon", "icon.ico") }
+  if (Test-Path $WindowsIcon) { $IconArgs = @("--icon", $WindowsIcon) }
 
   & $Py -m PyInstaller --noconfirm --clean --onefile `
     --windowed `
     --name $ArtifactName `
+    --workpath $BuildDir `
+    --distpath $DistDir `
+    --specpath $BuildDir `
     @IconArgs `
-    --paths "src" `
-    --add-data "build/version.json;pipeline_calculator" `
-    --add-data "README.md;." `
-    --add-data "icon.ico;." `
-    --add-data "icon.icns;." `
+    --paths $SourceDir `
+    --add-data "$MetadataPath;pipeline_calculator" `
+    --add-data "$ReadmePath;." `
+    --add-data "$WindowsIcon;." `
+    --add-data "$MacIcon;." `
     --hidden-import "pipeline_calculator_v3" `
     --hidden-import "scipy.spatial" `
     --hidden-import "scipy._lib.messagestream" `
@@ -52,9 +72,11 @@ try {
     --hidden-import "PIL" `
     --additional-hooks-dir (Join-Path $RepoDir "scripts\\pyinstaller_hooks") `
     $Entry
+  if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed ($LASTEXITCODE)" }
 
-  if (!(Test-Path "dist\\$ArtifactName.exe")) { throw "Build failed: dist\\$ArtifactName.exe not found." }
-  Write-Host "Build complete: dist\\$ArtifactName.exe"
+  $ArtifactPath = Join-Path $DistDir "$ArtifactName.exe"
+  if (!(Test-Path -LiteralPath $ArtifactPath)) { throw "Build failed: $ArtifactPath not found." }
+  Write-Host "Build complete: $ArtifactPath"
 }
 finally {
   Pop-Location

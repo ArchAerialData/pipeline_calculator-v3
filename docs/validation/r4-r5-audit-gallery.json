@@ -1,0 +1,293 @@
+{
+  "environment": {
+    "commit": "9583285a7d368690558372ec27fefe3e98587883",
+    "dirty": true,
+    "source_sha256": "9cc51970dc1422e9d7ab43109206aef1902ffb061bac2dec3fd7606c82e73b6a",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "cases": [
+    {
+      "fixture": "straight",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4654.01234651147,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4654.814311543243,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.183 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.0
+    },
+    {
+      "fixture": "curve",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4729.924037284394,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4730.088620545804,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.190 miles at 1.9m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 5.053822242158882
+    },
+    {
+      "fixture": "right_angle",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4593.0183781611395,
+        "self_intersections": 1,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 24286.462363255367,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.183 miles at 1.0m average separation. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 0.44545883502569095
+    },
+    {
+      "fixture": "hairpin",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 6208.23956834987,
+        "self_intersections": 1,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 22397.02204056191,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.252 miles at 2.0m average separation. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 0.0
+    },
+    {
+      "fixture": "hairpin",
+      "section": 2,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4139.162062179118,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4137.8575367417825,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.121 miles at 10.0m average separation, approx width: 20.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.0
+    },
+    {
+      "fixture": "hairpin",
+      "section": 3,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3341.6407962168805,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3342.1976612078324,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.121 miles at 6.0m average separation, approx width: 16.7 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 1.4989770543670407
+    },
+    {
+      "fixture": "loop",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 6079.620750530646,
+        "self_intersections": 5,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 18326.717526173758,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.245 miles at 1.0m average separation. Geometry: oriented_rectangle. Approximate visualization from sampled pipeline segments; not a surveyed boundary. Rectangle approximation may include areas outside the qualified paths. Preferred geometry was invalid: Corridor ring crosses or touches itself.",
+      "max_source_path_endpoint_outside_m": 0.0
+    },
+    {
+      "fixture": "short",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 346.1662071047997,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 346.16154758710024,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.009 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.00265853840550181
+    },
+    {
+      "fixture": "multipart",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 2346.2376291191085,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 2346.444075159841,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.093 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.0008114174291904488
+    },
+    {
+      "fixture": "multipart",
+      "section": 2,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 2307.7747150429495,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 2308.1232207776256,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.090 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 2.501573308525018
+    },
+    {
+      "fixture": "reversed",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 4654.012338363583,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 4654.812801831822,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.183 miles at 2.0m average separation, approx width: 15.4 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 4.086260845224838e-06
+    },
+    {
+      "fixture": "dateline",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3659.9999911267514,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3660.0063126196674,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.186 miles at 2.0m average separation, approx width: 12.0 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.0
+    },
+    {
+      "fixture": "pole",
+      "section": 1,
+      "viewer": "pending",
+      "status": "validated-approximation",
+      "raw": {
+        "closed": true,
+        "area_m2": 3660.000009491396,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "serialized": {
+        "closed": true,
+        "area_m2": 3659.881670754144,
+        "self_intersections": 0,
+        "finite": true
+      },
+      "range_valid": true,
+      "description": "Approximate bundled pipeline area: 0.186 miles at 2.0m average separation, approx width: 12.0 m. Geometry: sampled_curve. Approximate visualization from sampled pipeline segments; not a surveyed boundary.",
+      "max_source_path_endpoint_outside_m": 0.0
+    }
+  ]
+}

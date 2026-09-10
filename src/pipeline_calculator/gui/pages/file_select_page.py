@@ -15,6 +15,7 @@ def show(
     angular_tolerance_var,
     on_browse,
     on_file_selected,
+    retry_path=None,
 ) -> None:
     """Render the file selection screen."""
 
@@ -84,14 +85,7 @@ def show(
         text_color="#888888",
     ).pack(side="left", padx=10)
 
-    browse_button = ctk.CTkButton(
-        main_frame,
-        text="Browse Files",
-        command=on_browse,
-        width=200,
-        height=40,
-    )
-    browse_button.pack(pady=20)
+    file_actions(main_frame, on_browse, on_file_selected, retry_path)
 
     def on_drop(event):
         try:
@@ -109,4 +103,13 @@ def show(
     except Exception:
         # Drag/drop is best-effort; Browse works everywhere.
         pass
+
+
+def file_actions(parent, on_browse, on_file_selected, retry_path=None):
+    frame = ctk.CTkFrame(parent)
+    frame.pack(pady=20)
+    ctk.CTkButton(frame, text='Browse Files', command=on_browse, width=200, height=40).pack(side='left', padx=5)
+    if retry_path:
+        ctk.CTkButton(frame, text='Retry selected file', command=lambda: on_file_selected(retry_path),
+                     width=200, height=40).pack(side='left', padx=5)
 

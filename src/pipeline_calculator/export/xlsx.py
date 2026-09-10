@@ -172,7 +172,12 @@ def build_analysis_workbook(current_results):
             savings = float(overlap.get('savings_miles', 0.0) or 0.0)
     except Exception:
         savings = 0.0
-    ws2.cell(row=2, column=4).value = round(savings, 3)
+    overlap_failed = any(d.get("code") == "overlap_analysis_failed"
+                         for d in current_results.get("diagnostics", []) or [])
+    ws2.cell(row=2, column=4).value = "Unavailable" if overlap_failed else round(savings, 3)
+    if current_results.get("analysis_complete") is False:
+        ws.cell(row=1, column=4).value = "TOTAL MILEAGE (INCOMPLETE ANALYSIS)"
+        ws2.cell(row=1, column=4).value = "MILEAGE REMOVED (INCOMPLETE ANALYSIS)"
     ws2.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
     ws2.cell(row=2, column=4).alignment = center
     ws2.cell(row=2, column=4).number_format = '0.000'
@@ -209,6 +214,15 @@ def build_analysis_workbook(current_results):
             for c in range(1, len(headers_diag) + 1):
                 ws3.cell(row=r, column=c).font = body_font
                 ws3.cell(row=r, column=c).alignment = left
+
+    # Source names/IDs/diagnostics are data, even if they begin with '='.
+    # Preserve only the totals formula that this exporter intentionally creates.
+    totals_formula = ws.cell(row=2, column=4)
+    for sheet in wb:
+        for row in sheet.iter_rows():
+            for cell in row:
+                if cell.data_type == "f" and cell is not totals_formula:
+                    cell.data_type = "s"
 
     return wb
 

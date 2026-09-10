@@ -1,0 +1,48 @@
+{
+  "packages": [
+    {
+      "artifact": "%TEMP%/pipeline-calculator-validation-b058ac0/new/dist/Pipeline_Calculator_v4.3-dev.b058ac08ed08.dirty.exe",
+      "sha256": "f272999b98b970cec0f2d75e09a26ad2faf57276568705d103617b981e0ff123",
+      "bytes": 88848972,
+      "metadata": {
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "numeric_version": "4.3",
+        "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+        "dirty": true
+      },
+      "smoke": {
+        "status": "passed",
+        "implementation": "new",
+        "frozen": true,
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true
+      },
+      "source_sha256": "084561ee8c9c06e0e61d9eb2f88a60bd30a8d1c4d5764fbd8e742e6140303423"
+    },
+    {
+      "artifact": "%TEMP%/pipeline-calculator-validation-b058ac0/legacy/dist/Pipeline_Calculator_v4.3-dev.b058ac08ed08.dirty.exe",
+      "sha256": "e844ca1791e5dd44271c1be8b5e052ea43b452796cc21760b0f3f45f835abeab",
+      "bytes": 88847531,
+      "metadata": {
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "numeric_version": "4.3",
+        "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+        "dirty": true
+      },
+      "smoke": {
+        "status": "passed",
+        "implementation": "legacy",
+        "frozen": true,
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true
+      },
+      "source_sha256": "084561ee8c9c06e0e61d9eb2f88a60bd30a8d1c4d5764fbd8e742e6140303423"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "environment": {
+    "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+    "dirty": true,
+    "source_sha256": "084561ee8c9c06e0e61d9eb2f88a60bd30a8d1c4d5764fbd8e742e6140303423",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "measurements": [
+    {
+      "requested_stage": "Reading documents",
+      "observed_stage": "Reading documents",
+      "seconds": 0.0010541999945417047,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Calculating source lengths",
+      "observed_stage": "Calculating source lengths",
+      "seconds": 5.950000195298344e-05,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Segmenting path",
+      "observed_stage": "Segmenting path",
+      "seconds": 0.00035599998955149204,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Building spatial index",
+      "observed_stage": "Building spatial index",
+      "seconds": 0.004998500007786788,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Searching neighbors",
+      "observed_stage": "Searching neighbors",
+      "seconds": 0.001851300010457635,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Qualifying sections",
+      "observed_stage": "Qualifying sections",
+      "seconds": 0.006795300010708161,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Building corridors",
+      "observed_stage": "Building corridors",
+      "seconds": 0.006727800006046891,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Building group graph",
+      "observed_stage": "Building group graph",
+      "seconds": 0.013635500014061108,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Sorting group candidates",
+      "observed_stage": "Sorting group candidates",
+      "seconds": 0.0934387000015704,
+      "state": "cancelled",
+      "partial_result": false
+    },
+    {
+      "requested_stage": "Calculating savings",
+      "observed_stage": "Calculating savings",
+      "seconds": 0.02031880000140518,
+      "state": "cancelled",
+      "partial_result": false
+    }
+  ],
+  "limit": "Single runs; a requested stage may advance before the UI thread runs. Not a hard upper latency bound."
+}

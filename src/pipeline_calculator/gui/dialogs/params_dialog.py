@@ -44,7 +44,7 @@ class ParamsDialog:
 
         angular_frame = ctk.CTkFrame(self.frame)
         angular_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
+        ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
         ctk.CTkEntry(angular_frame, textvariable=angular_tolerance_var).pack(side="left")
 
         button_frame = ctk.CTkFrame(self.frame)

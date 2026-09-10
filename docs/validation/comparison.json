@@ -1,0 +1,73 @@
+{
+  "cases": [
+    {
+      "fixture": "sparse",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 0.21749100000306498,
+      "final_seconds": 0.23481209999590646,
+      "change_percent": 7.964053681576422,
+      "baseline_peak_rss_bytes": 132440064,
+      "final_peak_rss_bytes": 132718592
+    },
+    {
+      "fixture": "dense",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 1.9600118000089424,
+      "final_seconds": 1.9897749999945518,
+      "change_percent": 1.5185214693847149,
+      "baseline_peak_rss_bytes": 165941248,
+      "final_peak_rss_bytes": 165830656
+    },
+    {
+      "fixture": "chain",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 0.8728771000023698,
+      "final_seconds": 0.8797339000011561,
+      "change_percent": 0.7855401406186235,
+      "baseline_peak_rss_bytes": 132415488,
+      "final_peak_rss_bytes": 132603904
+    },
+    {
+      "fixture": "short_paths",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 0.12006539999856614,
+      "final_seconds": 0.12849160000041593,
+      "change_percent": 7.018008520315111,
+      "baseline_peak_rss_bytes": 132464640,
+      "final_peak_rss_bytes": 132710400
+    },
+    {
+      "fixture": "linked",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 14.256194200002938,
+      "final_seconds": 13.872829200001433,
+      "change_percent": -2.6891117967614786,
+      "baseline_peak_rss_bytes": 559788032,
+      "final_peak_rss_bytes": 559886336
+    },
+    {
+      "fixture": "curved",
+      "same_hash": true,
+      "calculation_equal": true,
+      "baseline_seconds": 0.8325877000024775,
+      "final_seconds": 0.8364918000006583,
+      "change_percent": 0.46891156309047943,
+      "baseline_peak_rss_bytes": 132386816,
+      "final_peak_rss_bytes": 132653056
+    }
+  ],
+  "dense_context_overhead_percent": 2.2992689662578725,
+  "excluded_additive_fields": [
+    "corridor_approximation",
+    "corridor_geometry_kind",
+    "source_path_indices"
+  ],
+  "normalization": "parsed KML source paths compared by filename",
+  "baseline_source_sha256": "c357b8b48bc2a5c9d6333384332b89117989e5bb258b0298d1087b84d5b395a4",
+  "measured_source_sha256": "e417626dff642951bf0685c64176070b2854c6f99f77e81abf1506dac3ceb19c"
+}

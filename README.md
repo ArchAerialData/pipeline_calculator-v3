@@ -79,7 +79,7 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - Tabbed interface for organized data viewing
 - Export results to CSV and JSON formats
 - Dark mode interface for reduced eye strain
-- Progress indicators for large file processing
+- Cooperative cancellation and named processing stages with work counts and elapsed time
 
 ## 📊 Overlap Analysis Capabilities
 
@@ -106,7 +106,7 @@ Download the latest release from the GitHub releases page:
 - **macOS**: `Pipeline_Calculator_v4.N.dmg`
 
 ### Option 2: Run from Source
-Requires Python 3.8 or higher.
+Builds and automated validation use Python 3.11. Use the platform setup scripts to prepare that environment.
 
 1. Clone the repository:
    ```bash
@@ -235,7 +235,7 @@ The application uses a sophisticated algorithm to detect overlaps:
 
 - **Coordinate System**: GRS80 geodesic calculations
 - **Distance Units**: US Survey Miles (1609.347218694 meters)
-- **Performance**: Optimized for files with 1000+ pipelines
+- **Performance**: Bounded processing with reproducible synthetic workload measurements; see [performance evidence](docs/validation/comparison.md)
 
 ## 🐛 Troubleshooting
 
@@ -251,7 +251,7 @@ The application uses a sophisticated algorithm to detect overlaps:
    - Use Browse button if drag-and-drop causes issues
 
 3. **Memory issues with large files**
-   - Files are processed with progress indication
+   - Files show processing stages and can be cancelled cooperatively
    - Consider splitting very large KMZ files (>100MB)
 
 4. **Incorrect overlap calculations**
@@ -270,6 +270,100 @@ The application uses a sophisticated algorithm to detect overlaps:
 - **50m**: Aggressive bundling (may increase false positives)
 - **200m**: Conservative bundling (default)
 - **500m**: Only long continuous sections
+
+Only continuous, unique segment coverage meeting this minimum on both pipelines
+qualifies for bundling **and** mileage savings. Separate coordinate paths do not
+combine to meet the minimum. Pairwise bundled rows may describe the same shared
+corridor; their sum is not the project's mileage-removed total.
+
+Calculations use sampled segments. Segment spacing can affect overlap endpoints,
+and trailing partial segments are retained in original mileage without a savings
+discount. Savings now use deterministic, mutually compatible groups: every pair
+in a group must satisfy the detection range and qualifying-section rules. A
+segment can belong to only one group. For three 300 m lines spaced at 0, 10, and
+20 m with a 15 m limit, two lines are bundled and the third remains separate:
+approximately 600 m effective mileage from 900 m of pipeline. Group selection is
+a conservative heuristic, not a flight-route optimization.
+
+Nearby finite segment tangents are compared so that offset sampling positions do
+not hide overlaps. Their endpoints must overlap longitudinally; lines merely
+meeting end-to-end are not bundled. Segment length still controls approximation
+at endpoints and bends. Corridor centers and polygons use local geodesic
+coordinates, including across the dateline.
+
+If a LineString or gx:Track contains an invalid coordinate, that geometry is
+rejected rather than connecting across the missing vertex. Other valid geometries
+are retained and the result is marked **incomplete**. Calculation failures likewise
+show an incomplete notice, with unavailable savings rather than a misleading zero.
+Check Diagnostics (also exported to Excel), repair the input, and rerun before
+using incomplete results as project totals. Internal KMZ relative links are
+normalized within the archive; links escaping its root are not followed.
+
+Missing, malformed, or unsupported linked documents and empty inputs also mark
+the analysis incomplete. To bound processing, input limits are 64 MiB decompressed
+per KML, 256 MiB total parsed KML, 1,024 linked documents, and 10,000 ZIP entries.
+Analysis allows at most 1,000,000 segments and 5,000,000 candidate inspections.
+Exceeding a limit stops that computation explicitly; split large projects into
+smaller inputs rather than treating failed analysis as zero overlap. Ambiguous
+duplicate KML entry names are rejected. Excel exports preserve source names and
+diagnostics as literal text rather than executable formulas.
+
+The overlap tab displays 20 rows per page with Previous/Next controls, retaining
+access to every section. Its pairwise total is explicitly distinguished from
+mileage removed. Both GUI implementations share the summary and overlap tabs,
+show corrected/clamped parameter values, and prevent simultaneous analysis jobs.
+
+### Cancellation, progress and corridor recovery
+
+Both GUIs show the current stage, available work counts and elapsed time. **Cancel**
+requests a cooperative stop; the app stays busy until the worker acknowledges it.
+A single XML, filesystem or numerical-library call may finish before cancellation
+is observed. Cancelled work never becomes a result or an analysis-error dialog.
+Use **Retry selected file** after cancellation, or browse for another input.
+Results are cleared when starting a new analysis.
+
+Exceptionally large or dense jobs can pause for **Continue anyway** or **Cancel**
+before expensive overlap comparisons. Initial import and source-distance measurement
+run first; density checks also require segmenting/indexing the paths. These checks
+run off the UI thread and can be cancelled. The warning suggests splitting geometry
+into smaller files or simplifying a copy where distance accuracy is preserved.
+Ordinary jobs proceed directly. This is a workload estimate, not a runtime forecast.
+
+Initial advisory thresholds are deliberately high: 750,000 estimated analysis
+segments or 10,000,000 estimated neighbor inspections from up to 256 count-only
+queries. Repeatable stratified sampling avoids regularly spaced blind spots in
+repetitive geometry. The latter threshold is twice the existing five-million-
+inspection safety cap. Warning text scrolls while Continue/Cancel remain accessible.
+Continuing does not override hard limits; source mileage remains available with
+an incomplete-analysis notice if overlap exceeds a limit. Sampling may miss a
+localized hotspot. No automatic geometry simplification changes source distances.
+
+**View Corridor** prepares KML and requests opening without blocking the main window.
+If opening fails, the dialog retains the generated file and offers **Copy Path**,
+**Save As** and **Retry**. An accepted opening request does not confirm that Google
+Earth rendered the file. Temporary files remain available after closing the dialog;
+use Save As for a lasting copy because the operating system may clean temp storage.
+
+Corridors are approximate visualizations of sampled paths, not surveyed boundaries.
+KML descriptions identify rectangle fallbacks and invalid preferred geometry.
+Non-finite, out-of-range, collapsed and unusable rings are rejected. All ring sizes
+receive local-plane topology checks within 100,000 raw points and 250,000 active-edge
+inspections; a shape that exceeds either budget uses a disclosed simpler outline.
+Point limits apply before projection/sorting, including duplicate coordinates. Right-angle,
+hairpin and loop examples can require broad rectangles enclosing the qualified
+samples. End padding helps outlines show the ends of sampled sections. These
+visual changes preserve original pipeline distance and sampled overlap/savings rules.
+
+See [automated improvement verification](docs/validation/automated-improvements.md),
+[subsequent workload/corridor hardening](docs/validation/workload-corridor-hardening.md),
+[R4/R5 audit and final verification](docs/validation/r4-r5-audit.md),
+[implementation status](IMPROVEMENT_ROADMAP.md) and the separate
+[owner/platform follow-up runbook](FOLLOWUP_RUNBOOK.md).
+
+See [calculation fix review and verification](CALCULATION_FIX_REVIEW.md) for the
+regression cases and remaining validation limits.
+See the [follow-up audit](FOLLOWUP_AUDIT.md) for subsequent numerical, input, export,
+and GUI fixes.
 
 ### Angular Tolerance
 - **5°**: Strictly parallel pipelines only

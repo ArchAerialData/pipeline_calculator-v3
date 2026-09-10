@@ -1,0 +1,57 @@
+{
+  "environment": {
+    "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+    "dirty": true,
+    "source_sha256": "bc6670f7618ad10dd31f5d5c02584b413fb51fa174530349aecfd1ca3f2a3a21",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "temp_root": "%TEMP%/pipeline-calculator-hardening-20260910",
+  "artifacts": [
+    {
+      "implementation": "new",
+      "filename": "Pipeline_Calculator_v4.3-dev.b058ac08ed08.dirty.exe",
+      "sha256": "9ca93ee2b2d4e93ee14a82b8cb206502287fde91fea18a8e1ee524690fa121ed",
+      "smoke": {
+        "status": "passed",
+        "implementation": "new",
+        "frozen": true,
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true
+      }
+    },
+    {
+      "implementation": "legacy",
+      "filename": "Pipeline_Calculator_v4.3-dev.b058ac08ed08.dirty.exe",
+      "sha256": "93a89a681f0d4492f8166e697b885e239d27007b06145c60639248625281973b",
+      "smoke": {
+        "status": "passed",
+        "implementation": "legacy",
+        "frozen": true,
+        "version": "4.3-dev.b058ac08ed08.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true
+      }
+    }
+  ],
+  "manual_fixture": {
+    "path": ".validation-output/manual-packet/extreme-density.kmz",
+    "sha256": "9dfc2ddbfe01d89f0cea8201b5fbade178d5e5ccc46b7a0e1c56ae8ac200697a",
+    "warning": "This file appears exceptionally large or densely grouped at the selected settings.\n\nA sample suggests about 16,293,750 nearby-segment checks. This is an estimate, not a predicted completion time.\n\nOverlap analysis may take a very long time, use substantial memory, or appear stalled. Consider splitting the geometry into smaller KML/KMZ files, or simplifying a copy if that preserves the distance accuracy you need.\n\nCancel to stop now, or Continue anyway. Existing safety limits still apply.",
+    "cancel_before_matching": true
+  }
+}

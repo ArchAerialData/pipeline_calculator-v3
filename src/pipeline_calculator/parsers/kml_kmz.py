@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from pipeline_calculator.core.execution import AnalysisCancelled
+
 from dataclasses import dataclass, field
+from collections import deque
 from pathlib import Path, PurePosixPath
 import zipfile
 import xml.etree.ElementTree as ET
@@ -9,6 +12,18 @@ from urllib.parse import unquote, urlparse
 
 KML_NS = "http://www.opengis.net/kml/2.2"
 GX_NS = "http://www.google.com/kml/ext/2.2"
+
+# Bound decompressed input and linked-document traversal before parsing XML.
+MAX_KML_BYTES = 64 * 1024 * 1024
+MAX_TOTAL_KML_BYTES = 256 * 1024 * 1024
+MAX_KML_DOCUMENTS = 1024
+MAX_ARCHIVE_ENTRIES = 10000
+INCOMPLETE_CODES = {
+    "linked_kml_parse_error", "unresolved_network_link", "network_link_missing_href",
+    "remote_network_link_skipped", "unsupported_network_link_target",
+    "network_link_outside_base_skipped", "malformed_placemark",
+    "no_supported_features", "short_linestring", "short_gx_track",
+}
 
 
 @dataclass
@@ -21,20 +36,42 @@ class ParseResult:
 
 @dataclass
 class _ParserState:
+    context: object = None
     pipelines: list[dict] = field(default_factory=list)
     placemarks: list[dict] = field(default_factory=list)
     diagnostics: list[dict] = field(default_factory=list)
     parsed_kml_files: list[str] = field(default_factory=list)
     pipeline_count: int = 0
     placemark_count: int = 0
+    bytes_read: int = 0
+    documents_read: int = 0
 
 
 def _diag(state: _ParserState, code: str, message: str, *, level: str = "warning", **context) -> None:
+    if code in INCOMPLETE_CODES:
+        level = "error"
     entry = {"level": level, "code": code, "message": message}
     clean_context = {k: v for k, v in context.items() if v not in (None, "", [])}
     if clean_context:
         entry["context"] = clean_context
     state.diagnostics.append(entry)
+
+
+def _read_document(stream, size, state):
+    if size > MAX_KML_BYTES:
+        raise ValueError(f"KML document exceeds the {MAX_KML_BYTES // (1024 * 1024)} MiB input limit")
+    if state.documents_read >= MAX_KML_DOCUMENTS or state.bytes_read + size > MAX_TOTAL_KML_BYTES:
+        raise ValueError("Linked KML input exceeds the document-count or total-size limit")
+    if state.context is not None:
+        state.context.report("Reading documents", state.documents_read)
+    data = stream.read(MAX_KML_BYTES + 1)
+    if state.context is not None:
+        state.context.check()
+    if len(data) > MAX_KML_BYTES or state.bytes_read + len(data) > MAX_TOTAL_KML_BYTES:
+        raise ValueError("KML decompressed input exceeds the size limit")
+    state.bytes_read += len(data)
+    state.documents_read += 1
+    return data
 
 
 def _tag_uri(tag: str) -> str:
@@ -52,8 +89,10 @@ def _matches(elem, local_name: str, namespace: str | None = None) -> bool:
     return namespace is None or _tag_uri(elem.tag) == namespace
 
 
-def _iter_desc(elem, local_name: str, namespace: str | None = None):
+def _iter_desc(elem, local_name: str, namespace: str | None = None, *, context=None):
     for child in elem.iter():
+        if context is not None:
+            context.checkpoint()
         if _matches(child, local_name, namespace):
             yield child
 
@@ -85,6 +124,8 @@ def _parse_coordinates_text(coords_text: str, state: _ParserState, *, source: st
     invalid_count = 0
 
     for coord_str in (coords_text or "").replace("\n", " ").replace("\t", " ").split():
+        if state.context is not None:
+            state.context.checkpoint()
         try:
             parts = coord_str.split(",")
             if len(parts) < 2:
@@ -103,11 +144,14 @@ def _parse_coordinates_text(coords_text: str, state: _ParserState, *, source: st
         _diag(
             state,
             "invalid_coordinate",
-            f"Skipped {invalid_count} invalid coordinate tuple(s).",
+            f"Rejected {geometry} containing {invalid_count} invalid coordinate tuple(s); no connections were inferred across missing vertices.",
+            level="error",
             source=source,
             feature_name=feature_name,
             geometry=geometry,
         )
+
+        return []
 
     return coords
 
@@ -123,9 +167,11 @@ def _parse_gx_coord_text(coord_text: str):
     return None
 
 
-def _extract_objectid(placemark) -> str:
+def _extract_objectid(placemark, *, context=None) -> str:
     try:
         for elem in placemark.iter():
+            if context is not None:
+                context.checkpoint()
             if _matches(elem, "Data") and _attr(elem, "name") == "OBJECTID":
                 value_elem = _find_child(elem, "value")
                 value = _text(value_elem)
@@ -135,6 +181,8 @@ def _extract_objectid(placemark) -> str:
                 value = _text(elem)
                 if value:
                     return value
+    except AnalysisCancelled:
+        raise
     except Exception:
         return "N/A"
     return "N/A"
@@ -143,7 +191,9 @@ def _extract_objectid(placemark) -> str:
 def _extract_line_coordinate_paths(placemark, state: _ParserState, *, source: str, feature_name: str):
     paths = []
 
-    for line_elem in _iter_desc(placemark, "LineString"):
+    for line_elem in _iter_desc(placemark, "LineString", context=state.context):
+        if state.context is not None:
+            state.context.checkpoint()
         coords_elem = _find_child(line_elem, "coordinates")
         coords = _parse_coordinates_text(
             _text(coords_elem),
@@ -169,10 +219,14 @@ def _extract_line_coordinate_paths(placemark, state: _ParserState, *, source: st
 def _extract_track_coordinate_paths(placemark, state: _ParserState, *, source: str, feature_name: str):
     paths = []
 
-    for track_elem in _iter_desc(placemark, "Track", GX_NS):
+    for track_elem in _iter_desc(placemark, "Track", GX_NS, context=state.context):
+        if state.context is not None:
+            state.context.checkpoint()
         coords = []
         invalid_count = 0
-        for coord_elem in _iter_desc(track_elem, "coord", GX_NS):
+        for coord_elem in _iter_desc(track_elem, "coord", GX_NS, context=state.context):
+            if state.context is not None:
+                state.context.checkpoint()
             try:
                 coord = _parse_gx_coord_text(_text(coord_elem))
             except (ValueError, IndexError):
@@ -186,11 +240,14 @@ def _extract_track_coordinate_paths(placemark, state: _ParserState, *, source: s
             _diag(
                 state,
                 "invalid_gx_coord",
-                f"Skipped {invalid_count} invalid gx:coord value(s).",
+                f"Rejected gx:Track containing {invalid_count} invalid gx:coord value(s); no connections were inferred across missing vertices.",
+                level="error",
                 source=source,
                 feature_name=feature_name,
                 geometry="gx:Track",
             )
+
+            coords = []
 
         if len(coords) >= 2:
             paths.append(coords)
@@ -207,7 +264,7 @@ def _extract_track_coordinate_paths(placemark, state: _ParserState, *, source: s
 
 
 def _extract_point_coords(placemark, state: _ParserState, *, source: str, feature_name: str):
-    point_elem = next(_iter_desc(placemark, "Point"), None)
+    point_elem = next(_iter_desc(placemark, "Point", context=state.context), None)
     if point_elem is None:
         return []
     coords_elem = _find_child(point_elem, "coordinates")
@@ -220,9 +277,11 @@ def _extract_point_coords(placemark, state: _ParserState, *, source: str, featur
     )
 
 
-def _unsupported_geometry_names(placemark) -> list[str]:
+def _unsupported_geometry_names(placemark, *, context=None) -> list[str]:
     unsupported = set()
     for elem in placemark.iter():
+        if context is not None:
+            context.checkpoint()
         local = _local_name(elem)
         if local in {"Polygon", "LinearRing", "Model"}:
             unsupported.add(local)
@@ -232,10 +291,14 @@ def _unsupported_geometry_names(placemark) -> list[str]:
 def _extract_network_links(root, state: _ParserState, *, source: str):
     links = []
 
-    for link_elem in _iter_desc(root, "NetworkLink"):
+    for link_elem in _iter_desc(root, "NetworkLink", context=state.context):
+        if state.context is not None:
+            state.context.checkpoint()
         name = _text(_find_child(link_elem, "name")) or "NetworkLink"
         href = ""
         for child in list(link_elem):
+            if state.context is not None:
+                state.context.checkpoint()
             if _matches(child, "Link") or _matches(child, "Url"):
                 href = _text(_find_child(child, "href"))
                 break
@@ -255,7 +318,11 @@ def _extract_network_links(root, state: _ParserState, *, source: str):
 
 def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required: bool):
     try:
+        if state.context is not None:
+            state.context.check()
         root = ET.fromstring(data)
+        if state.context is not None:
+            state.context.check()
     except ET.ParseError as e:
         if required:
             raise ValueError(f"Invalid KML data in {source}: {str(e)}") from e
@@ -264,18 +331,20 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
 
     state.parsed_kml_files.append(source)
 
-    for placemark in _iter_desc(root, "Placemark"):
+    for placemark in _iter_desc(root, "Placemark", context=state.context):
+        if state.context is not None:
+            state.context.checkpoint()
         try:
             name = _text(_find_child(placemark, "name"))
             item_index = state.pipeline_count + state.placemark_count + 1
             if not name:
                 name = f"Item_{item_index}"
 
-            objectid = _extract_objectid(placemark)
+            objectid = _extract_objectid(placemark, context=state.context)
             line_paths = _extract_line_coordinate_paths(placemark, state, source=source, feature_name=name)
             track_paths = _extract_track_coordinate_paths(placemark, state, source=source, feature_name=name)
             coordinate_paths = line_paths + track_paths
-            unsupported = _unsupported_geometry_names(placemark)
+            unsupported = _unsupported_geometry_names(placemark, context=state.context)
 
             if coordinate_paths:
                 if unsupported:
@@ -329,6 +398,8 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                     source=source,
                     feature_name=name,
                 )
+        except AnalysisCancelled:
+            raise
         except Exception as e:
             _diag(
                 state,
@@ -365,15 +436,26 @@ def _normalize_archive_name(name: str) -> str:
 
 
 def _resolve_archive_href(source: str, href: str) -> str:
-    href_path = _normalize_archive_name(_href_without_fragment_or_query(href))
-    if not href_path:
+    raw = urlparse((href or "").strip())
+    if raw.scheme or raw.netloc:
         return ""
-    source_parent = PurePosixPath(source).parent
-    if str(source_parent) == ".":
-        resolved = PurePosixPath(href_path)
-    else:
-        resolved = source_parent / href_path
-    return _normalize_archive_name(str(resolved))
+    href_path = _href_without_fragment_or_query(href).replace("\\", "/")
+    if not href_path or href_path.startswith("/"):
+        return ""
+    # Normalize after joining to the referring document, allowing parent steps
+    # inside the archive but rejecting attempts to leave its root. Never extract
+    # archive entries or consult external files while resolving these links.
+    parts = list(PurePosixPath(source).parent.parts)
+    for part in href_path.split("/"):
+        if part in ("", "."):
+            continue
+        if part == "..":
+            if not parts:
+                return ""
+            parts.pop()
+        else:
+            parts.append(part)
+    return "/".join(parts)
 
 
 def _select_primary_kml(infos: list[zipfile.ZipInfo]) -> zipfile.ZipInfo:
@@ -395,12 +477,21 @@ def _select_primary_kml(infos: list[zipfile.ZipInfo]) -> zipfile.ZipInfo:
 def _parse_kmz(path: str, state: _ParserState) -> None:
     with zipfile.ZipFile(path, "r") as kmz:
         infos = kmz.infolist()
+        if len(infos) > MAX_ARCHIVE_ENTRIES:
+            raise ValueError("KMZ archive exceeds the entry-count limit")
         primary = _select_primary_kml(infos)
-        entry_names = {
-            _normalize_archive_name(info.filename): info
-            for info in infos
-            if not info.is_dir() and info.filename.lower().endswith(".kml")
-        }
+        entry_names = {}
+        for info in infos:
+            if state.context is not None:
+                state.context.checkpoint()
+            if info.is_dir() or not info.filename.lower().endswith(".kml"):
+                continue
+            name = _normalize_archive_name(info.filename)
+            if not name or info.filename.startswith(("/", "\\")):
+                raise ValueError("KMZ contains an invalid KML entry path")
+            if name in entry_names:
+                raise ValueError(f"KMZ contains ambiguous duplicate KML entries: {name}")
+            entry_names[name] = info
         primary_name = _normalize_archive_name(primary.filename)
         _diag(
             state,
@@ -411,10 +502,13 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
         )
 
         parsed: set[str] = set()
-        queue = [primary_name]
+        queue = deque([primary_name])
+        queued = {primary_name}
 
         while queue:
-            source = queue.pop(0)
+            if state.context is not None:
+                state.context.checkpoint()
+            source = queue.popleft()
             if source in parsed:
                 continue
             info = entry_names.get(source)
@@ -423,9 +517,13 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
                 continue
 
             parsed.add(source)
-            links = _parse_kml_bytes(kmz.read(info), state, source=source, required=(source == primary_name))
+            with kmz.open(info) as stream:
+                data = _read_document(stream, info.file_size, state)
+            links = _parse_kml_bytes(data, state, source=source, required=(source == primary_name))
 
             for link in links:
+                if state.context is not None:
+                    state.context.checkpoint()
                 href = link["href"]
                 if _is_remote_href(href):
                     _diag(
@@ -461,9 +559,13 @@ def _parse_kmz(path: str, state: _ParserState) -> None:
                         target=target,
                     )
                     continue
-                queue.append(target)
+                if target not in queued:
+                    queued.add(target)
+                    queue.append(target)
 
         for name in sorted(entry_names):
+            if state.context is not None:
+                state.context.checkpoint()
             if name not in parsed:
                 _diag(
                     state,
@@ -484,11 +586,14 @@ def _is_within(path: Path, root: Path) -> bool:
 def _parse_kml_file(path: str, state: _ParserState) -> None:
     root_path = Path(path).resolve()
     parsed: set[Path] = set()
-    queue = [root_path]
+    queue = deque([root_path])
+    queued = {root_path}
     base_dir = root_path.parent
 
     while queue:
-        current = queue.pop(0).resolve()
+        if state.context is not None:
+            state.context.checkpoint()
+        current = queue.popleft().resolve()
         if current in parsed:
             continue
         if not _is_within(current, base_dir):
@@ -504,9 +609,13 @@ def _parse_kml_file(path: str, state: _ParserState) -> None:
             continue
 
         parsed.add(current)
-        links = _parse_kml_bytes(current.read_bytes(), state, source=str(current), required=(current == root_path))
+        with current.open("rb") as stream:
+            data = _read_document(stream, current.stat().st_size, state)
+        links = _parse_kml_bytes(data, state, source=str(current), required=(current == root_path))
 
         for link in links:
+            if state.context is not None:
+                state.context.checkpoint()
             href = link["href"]
             if _is_remote_href(href):
                 _diag(
@@ -532,18 +641,24 @@ def _parse_kml_file(path: str, state: _ParserState) -> None:
                     target=str(target),
                 )
                 continue
-            queue.append(target)
+            if target not in queued:
+                queued.add(target)
+                queue.append(target)
 
 
-def extract_features_from_file_with_diagnostics(file_path, progress_callback=None) -> ParseResult:
+def extract_features_from_file_with_diagnostics(file_path, progress_callback=None, *, context=None) -> ParseResult:
     """Extract pipelines, point placemarks, and parser diagnostics from KMZ/KML."""
-    state = _ParserState()
+    state = _ParserState(context=context)
+    if context is not None:
+        context.report("Reading documents")
 
     try:
         if str(file_path).lower().endswith(".kmz"):
             _parse_kmz(str(file_path), state)
         else:
             _parse_kml_file(str(file_path), state)
+    except AnalysisCancelled:
+        raise
     except Exception as e:
         raise ValueError(f"Error parsing KML data: {str(e)}") from e
 
@@ -562,21 +677,21 @@ def extract_features_from_file_with_diagnostics(file_path, progress_callback=Non
     )
 
 
-def extract_features_from_file(file_path, progress_callback=None):
+def extract_features_from_file(file_path, progress_callback=None, *, context=None):
     """Extract pipelines and point placemarks from a KMZ/KML file.
 
     Returns:
       pipelines: list[dict] with keys {id, objectid, name, coordinates, coordinate_paths}
       placemarks: list[dict] with keys {Placemark_ID, Name, Count}
     """
-    result = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback)
+    result = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=context)
     return result.pipelines, result.placemarks
 
 
-def parse_kml_kmz_with_diagnostics(file_path, progress_callback=None) -> ParseResult:
-    return extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback)
+def parse_kml_kmz_with_diagnostics(file_path, progress_callback=None, *, context=None) -> ParseResult:
+    return extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=context)
 
 
-def parse_kml_kmz(file_path, progress_callback=None):
+def parse_kml_kmz(file_path, progress_callback=None, *, context=None):
     """Alias for extract_features_from_file (preferred name for the refactor)."""
-    return extract_features_from_file(file_path, progress_callback=progress_callback)
+    return extract_features_from_file(file_path, progress_callback=progress_callback, context=context)
