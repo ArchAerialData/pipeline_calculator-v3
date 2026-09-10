@@ -1,0 +1,103 @@
+{
+  "environment": {
+    "commit": "9583285a7d368690558372ec27fefe3e98587883",
+    "dirty": true,
+    "source_sha256": "9cc51970dc1422e9d7ab43109206aef1902ffb061bac2dec3fd7606c82e73b6a",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "baseline_environment": {
+    "commit": "b058ac08ed08ed9e0069d5942328252c69cefb1a",
+    "dirty": true,
+    "source_sha256": "e417626dff642951bf0685c64176070b2854c6f99f77e81abf1506dac3ceb19c",
+    "python": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "1.24.3",
+      "scipy": "1.15.3",
+      "pyproj": "3.7.2",
+      "pytest": "9.1.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.16.0"
+    }
+  },
+  "excluded_visual_fields": [
+    "bbox",
+    "center_lat",
+    "center_lon",
+    "corridor_approximation",
+    "corridor_geometry_kind",
+    "corridor_polygon",
+    "oriented_polygon",
+    "oriented_width_m"
+  ],
+  "normalization": "parsed KML paths compared by filename",
+  "cases": [
+    {
+      "fixture": "sparse",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": false,
+      "warning_matches_expectation": true,
+      "warnings": [],
+      "single_run_seconds": 0.25693479999608826
+    },
+    {
+      "fixture": "dense",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": false,
+      "warning_matches_expectation": true,
+      "warnings": [],
+      "single_run_seconds": 2.442324899995583
+    },
+    {
+      "fixture": "chain",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": false,
+      "warning_matches_expectation": true,
+      "warnings": [],
+      "single_run_seconds": 0.9082138000085251
+    },
+    {
+      "fixture": "short_paths",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": false,
+      "warning_matches_expectation": true,
+      "warnings": [],
+      "single_run_seconds": 0.13169520000519697
+    },
+    {
+      "fixture": "linked",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": true,
+      "warning_matches_expectation": true,
+      "warnings": [
+        "This file appears exceptionally large or densely grouped at the selected settings.\n\nA sample suggests about 20,072,800 nearby-segment checks. This is an estimate, not a predicted completion time.\n\nOverlap analysis may take a very long time, use substantial memory, or appear stalled. Consider splitting the geometry into smaller KML/KMZ files, or simplifying a copy if that preserves the distance accuracy you need.\n\nCancel to stop now, or Continue anyway. Existing safety limits still apply."
+      ],
+      "single_run_seconds": 14.351337699990836
+    },
+    {
+      "fixture": "curved",
+      "same_input_hash": true,
+      "numerical_output_equal": true,
+      "previously_hit_hard_limit": false,
+      "warning_matches_expectation": true,
+      "warnings": [],
+      "single_run_seconds": 0.8897089999954915
+    }
+  ]
+}

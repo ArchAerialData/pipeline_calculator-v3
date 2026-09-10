@@ -6,7 +6,7 @@ import math
 
 MAX_ANALYSIS_SEGMENTS = 1_000_000
 
-def segment_pipeline(geod, coordinates, segment_length, *, context=None):
+def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_segments=None):
     """Break a pipeline polyline into fixed-length analysis segments.
 
     Args:
@@ -17,6 +17,9 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None):
     if context is not None:
         context.check()
     segments: list[dict] = []
+    limit = MAX_ANALYSIS_SEGMENTS if max_segments is None else min(max_segments, MAX_ANALYSIS_SEGMENTS)
+    if not isinstance(limit, int) or isinstance(limit, bool) or limit < 0:
+        raise ValueError('Segment budget must be a nonnegative integer')
 
     try:
         seg_len = float(segment_length)
@@ -72,12 +75,14 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None):
 
             edge_pos_m = 0.0  # distance along the current edge from A
             rem_m = dist_ab
-            if len(segments) + (carry_m + rem_m) / seg_len > MAX_ANALYSIS_SEGMENTS:
+            if carry_m + rem_m + 1e-9 >= (limit - len(segments) + 1) * seg_len:
                 raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
 
             # Generate as many full segments as we can on this edge, accounting
             # for `carry_m` accumulated from previous edges.
             while carry_m + rem_m >= seg_len - 1e-9:
+                if len(segments) >= limit:
+                    raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
                 if context is not None:
                     context.checkpoint()
                 if context is not None and len(segments) % 256 == 0:

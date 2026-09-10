@@ -331,7 +331,9 @@ Ordinary jobs proceed directly. This is a workload estimate, not a runtime forec
 
 Initial advisory thresholds are deliberately high: 750,000 estimated analysis
 segments or 10,000,000 estimated neighbor inspections from up to 256 count-only
-queries. The latter is twice the existing five-million-inspection safety cap.
+queries. Repeatable stratified sampling avoids regularly spaced blind spots in
+repetitive geometry. The latter threshold is twice the existing five-million-
+inspection safety cap. Warning text scrolls while Continue/Cancel remain accessible.
 Continuing does not override hard limits; source mileage remains available with
 an incomplete-analysis notice if overlap exceeds a limit. Sampling may miss a
 localized hotspot. No automatic geometry simplification changes source distances.
@@ -345,14 +347,16 @@ use Save As for a lasting copy because the operating system may clean temp stora
 Corridors are approximate visualizations of sampled paths, not surveyed boundaries.
 KML descriptions identify rectangle fallbacks and invalid preferred geometry.
 Non-finite, out-of-range, collapsed and unusable rings are rejected. All ring sizes
-receive local-plane topology checks with a bounded edge-inspection budget; a shape
-that exceeds that budget falls back to a disclosed simpler outline. Right-angle,
+receive local-plane topology checks within 100,000 raw points and 250,000 active-edge
+inspections; a shape that exceeds either budget uses a disclosed simpler outline.
+Point limits apply before projection/sorting, including duplicate coordinates. Right-angle,
 hairpin and loop examples can require broad rectangles enclosing the qualified
 samples. End padding helps outlines show the ends of sampled sections. These
 visual changes preserve original pipeline distance and sampled overlap/savings rules.
 
 See [automated improvement verification](docs/validation/automated-improvements.md),
 [subsequent workload/corridor hardening](docs/validation/workload-corridor-hardening.md),
+[R4/R5 audit and final verification](docs/validation/r4-r5-audit.md),
 [implementation status](IMPROVEMENT_ROADMAP.md) and the separate
 [owner/platform follow-up runbook](FOLLOWUP_RUNBOOK.md).
 

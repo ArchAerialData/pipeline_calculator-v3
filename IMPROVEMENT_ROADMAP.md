@@ -2,8 +2,13 @@
 
 Reviewed September 10, 2026 at commit `b058ac08ed08ed9e0069d5942328252c69cefb1a`.
 Status: **automated implementation, requested hardening and available preview
-verification complete**, September 10, 2026. Latest checks: 193 tests, six unchanged
+verification complete**, September 10, 2026. Latest source checks: 210 tests, six unchanged
 numerical comparisons, thirteen gallery sections and both refreshed Windows smokes.
+
+R4/R5 audit on `9583285`: seven reproduced gaps fixed, including periodic density
+blind spots, budget enforcement/overflow and polygon preprocessing limits. Full
+source checks and both refreshed artifact checks pass. See the
+[audit report](docs/validation/r4-r5-audit.md) for current evidence and completion.
 
 [Initial verification report](docs/validation/automated-improvements.md): 166 passing tests,
 verified Windows modular/legacy previews, six equivalent-output benchmarks,
@@ -42,6 +47,7 @@ acceptance into one future session. See
 | A6 / A9 | Complete for available environment | Both Windows previews and frozen smoke pass; 166 tests; compile/diff checks pass; macOS native/interactive checks deferred to R3; report and runbook populated |
 | A10 (R4) | Implemented and source-verified | 750,000 segment / 10,000,000 estimated neighbor warning; shared Continue/Cancel; early cap preserves source mileage; successful benchmarks stay quiet |
 | A11 (R5) | Implemented and source-verified | Clipped rectangle/endpoint fixes; resilient fallback selection; bounded large-ring checks; grouping order invariance; 193 tests pass and six numerical comparisons unchanged |
+| A12 (R4/R5 audit) | Complete | Seven reproduced gaps fixed; 17 audit cases added; 210 full-suite tests; 180 order evaluations and 60 independent topology comparisons; both Windows previews rebuilt/smoked; manual review consolidated/deferred |
 
 ### A10/A11 implementation and acceptance
 

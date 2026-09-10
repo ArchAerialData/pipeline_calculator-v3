@@ -13,8 +13,8 @@ from pipeline_calculator.core.coordinates import segment_pipeline_paths
 from pipeline_calculator.core.spatial import lonlat_array_to_ecef, compute_origin
 from pipeline_calculator.core.bundling import qualifying_sections, savings_from_sections
 from pipeline_calculator.core.workload import check_density_workload
+from pipeline_calculator.core.segmentation import MAX_ANALYSIS_SEGMENTS
 
-MAX_ANALYSIS_SEGMENTS = 1_000_000
 MAX_CANDIDATE_CHECKS = 5_000_000
 
 
@@ -39,7 +39,8 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
         if progress_callback:
             progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
             progress_callback(progress)
-        pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length, context=context)
+        pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length, context=context,
+                                                       max_segments=MAX_ANALYSIS_SEGMENTS-segment_count)
         segment_count += len(pipeline["segments"])
         if segment_count > MAX_ANALYSIS_SEGMENTS:
             raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")

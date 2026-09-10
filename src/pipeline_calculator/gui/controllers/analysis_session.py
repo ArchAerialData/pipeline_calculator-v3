@@ -25,23 +25,38 @@ class AnalysisSession:
         if self.closed or self.job is not None:
             raise RuntimeError('Analysis session already started or closed')
         self.frame = ctk.CTkFrame(self.root, corner_radius=10)
-        self.frame.place(relx=0.5, rely=0.5, anchor='center')
+        self.frame.place(relx=0.5, rely=0.5, anchor='center', relwidth=0.9, relheight=0.85)
         self.frame.lift()
-        ctk.CTkLabel(self.frame, text=Path(path).name, wraplength=380).pack(padx=20, pady=(10, 0))
-        self.label = ctk.CTkLabel(self.frame, text='Starting analysis...', wraplength=380)
-        self.label.pack(padx=20, pady=20)
-        self.bar = ctk.CTkProgressBar(self.frame, width=300, mode='indeterminate')
+        # Reserve controls first; long filenames/warnings scroll above them.
+        footer = ctk.CTkFrame(self.frame, fg_color='transparent')
+        footer.pack(side='bottom', fill='x', padx=10, pady=10)
+        self.bar = ctk.CTkProgressBar(footer, width=200, mode='indeterminate')
         self.bar.pack(padx=20, pady=10)
         self.bar.start()
-        self.cancel_button = ctk.CTkButton(self.frame, text='Cancel', command=self.cancel)
-        self.cancel_button.pack(pady=(0, 20))
-        self.continue_button = ctk.CTkButton(self.frame, text='Continue anyway', command=self.continue_workload)
+        self.controls = ctk.CTkFrame(footer, fg_color='transparent')
+        self.controls.pack()
+        self.cancel_button = ctk.CTkButton(self.controls, text='Cancel', command=self.cancel)
+        self.cancel_button.pack(side='left', padx=5)
+        self.continue_button = ctk.CTkButton(self.controls, text='Continue anyway', command=self.continue_workload)
+        content = ctk.CTkScrollableFrame(self.frame, height=160)
+        content.pack(fill='both', expand=True, padx=10, pady=10)
+        self.filename_label = ctk.CTkLabel(content, text=Path(path).name, wraplength=380)
+        self.filename_label.pack(padx=10, pady=(10, 0))
+        self.label = ctk.CTkLabel(content, text='Starting analysis...', wraplength=380)
+        self.label.pack(padx=10, pady=10)
+        content.bind('<Configure>', self._resize_text, add='+')
         try:
             self.job = self.controller.start(path, params)
             self._poll(self.job.job_id)
         except BaseException:
             self.close()
             raise
+
+    def _resize_text(self, event):
+        if not self.closed:
+            width = max(80, min(380, event.width - 20))
+            self.label.configure(wraplength=width)
+            self.filename_label.configure(wraplength=width)
 
     def cancel(self):
         if not self.closed and self.job is not None:
@@ -68,14 +83,15 @@ class AnalysisSession:
             self.closed = True
             self.on_done(job)
             return
+        warning = job.context.workload_warning()
         if job.state == 'cancellation_requested':
             self.label.configure(text='Cancelling... Waiting for the current operation to stop.')
-        elif job.context.workload_warning() is not None:
-            self.label.configure(text=job.context.workload_warning())
+        elif warning is not None:
+            self.label.configure(text=warning)
             if not self.warning_visible:
                 self.warning_visible = True
                 self.bar.stop()
-                self.continue_button.pack(pady=(0, 20))
+                self.continue_button.pack(side='left', padx=5)
         else:
             snapshot = job.context.snapshot()
             if snapshot is not None and snapshot.job_id == job_id and snapshot.sequence >= self.last_sequence:

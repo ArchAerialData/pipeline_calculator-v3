@@ -1,6 +1,6 @@
 # Follow-up runbook: owner input and external validation
 
-Prepared September 10, 2026 against `b058ac08ed08ed9e0069d5942328252c69cefb1a`.
+Updated September 10, 2026 after the R4/R5 audit of `9583285a7d368690558372ec27fefe3e98587883`.
 Status: **automated prerequisites complete; further acceptance testing deferred**.
 Owner clarified priorities and corridor purpose on September 10, 2026. Remaining
 data review, platform/viewer checks and performance acceptance are future work;
@@ -45,16 +45,16 @@ The following evidence is prepared and verified:
 
 | Automated work | Prepared evidence |
 | --- | --- |
-| A0/A9/A10/A11 | [Latest completion report](docs/validation/workload-corridor-hardening.md): 193 passing tests, exact source identity and limitations |
+| A0/A9/A10/A11/A12 | [Latest audit/completion report](docs/validation/r4-r5-audit.md): 210 passing tests, exact source identity and limitations |
 | A5 | [Manifest template](docs/validation/corpus-manifest.md), [final corpus results](docs/validation/corpus-final.json); tracked input explicitly unreviewed |
 | A3 | [Performance/output comparison](docs/validation/comparison.md), [cancellation timings](docs/validation/cancellation.json); raw profiles in `.validation-output/` |
 | A4 | [Reference model](docs/validation/reference-model.md), [error table](docs/validation/reference-results.md), [280 comparisons](docs/validation/reference-results.json) |
-| A7/A11 | [Refreshed gallery](docs/validation/hardening-gallery.md), [geometry evidence](docs/validation/hardening-gallery.json); source/overlay KMLs in `.validation-output/hardening-gallery/` |
-| A6/A10/A11 | [Refreshed preview hashes/versions/smoke](docs/validation/hardening-packages.json); warning fixture hash included |
+| A7/A11/A12 | [Audit gallery](docs/validation/r4-r5-audit-gallery.md), [geometry evidence](docs/validation/r4-r5-audit-gallery.json); source/overlay KMLs in `.validation-output/r4-r5-audit-gallery/` |
+| A6/A10/A11/A12 | [Audit preview hashes/versions/smoke](docs/validation/r4-r5-audit-packages.json); warning fixture hash included |
 | A8 | Recovery, retry, saved-file preservation and platform failures covered by automated tests; actual OS association/viewer review remains below |
 
-Windows previews are under `%TEMP%/pipeline-calculator-hardening-20260910/new/dist`
-and `legacy/dist`. Both report `4.3-dev.b058ac08ed08.dirty`; use the recorded hashes
+Windows previews are under `%TEMP%/pipeline-calculator-r4-r5-audit-9583285/new/dist`
+and `legacy/dist`. Both report `4.4-dev.9583285a7d36.dirty`; use the recorded hashes
 to identify their exact content. The existing repository build/dist artifacts were
 preserved. No macOS executable was built on this Windows host.
 
@@ -63,8 +63,8 @@ preserved. No macOS executable was built on this Windows host.
 | R1 | Deferred: representative real files and any known expected distances, when convenient; no immediate input needed |
 | R2 | Purpose/priority resolved: source mileage first, supplemental grouping, rough visual corridors; numerical acceptance testing deferred |
 | R3 | Deferred to a future task: macOS via existing GitHub Actions runner and native interactive checks; Windows build/smoke evidence retained |
-| R4 | Extreme-workload warning implemented automatically; interaction review joins the consolidated deferred session; performance tuning optional |
-| R5 | Additional autonomous geometry fixes implemented; Google Earth review joins the consolidated deferred session |
+| R4 | Automated audit/fixes complete; source and refreshed Windows smoke pass: stratified sample, allocation/overflow guards, accessible warning controls; manual review deferred |
+| R5 | Automated audit/fixes complete; source and refreshed Windows smoke pass: bounded raw-point preprocessing, unique fallback attempts and grouping/topology regressions; Google Earth review deferred |
 | R6 | No access/signing blocker encountered for local work; release publication remains optional and separately authorized |
 
 Update the disposition table as follow-up evidence arrives. Do not call an unrun

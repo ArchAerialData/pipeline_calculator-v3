@@ -7,6 +7,7 @@ from pyproj import Geod
 
 GEOD = Geod(ellps='GRS80')
 TOPOLOGY_PAIR_BUDGET = 250_000
+MAX_RING_POINTS = 100_000
 
 
 def _check_topology(xy):
@@ -62,7 +63,10 @@ def _intersects(a, b, c, d):
 
 def validated_ring(points):
     cleaned=[]
-    for point in points:
+    for position, point in enumerate(points):
+        # Bound even duplicate/raw input before cleaning, projection and sorting.
+        if position >= MAX_RING_POINTS:
+            raise ValueError('Corridor point limit exceeded')
         p=coordinate(point)
         if not cleaned or p!=cleaned[-1]:
             cleaned.append(p)
@@ -96,7 +100,11 @@ def prepare_geometry(section):
         except (KeyError,TypeError):
             bbox_error = 'Corridor bounding rectangle is incomplete'
     errors=[]
+    attempted = set()
     for kind,points in candidates:
+        if id(points) in attempted:
+            continue
+        attempted.add(id(points))
         try:
             ring,checked=validated_ring(points)
         except (ValueError,TypeError,OverflowError) as exc:

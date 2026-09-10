@@ -1,5 +1,8 @@
 # Workload warning and corridor hardening
 
+Historical implementation record. The later [R4/R5 audit](r4-r5-audit.md) supersedes
+current completion status, sampling details, resource limits and artifact identity.
+
 Completed September 10, 2026 on base `b058ac08ed08ed9e0069d5942328252c69cefb1a`.
 Changes remain local; no release, remote workflow or manual acceptance session was
 started. R1 real project inputs and macOS GitHub Actions follow-up remain deferred.

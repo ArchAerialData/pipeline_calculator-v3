@@ -91,8 +91,16 @@ class PipelineAnalyzer:
                         raise
                     except Exception as e:
                         raise ValueError(f"Could not calculate length for pipeline {pipeline.get('name', '')}") from e
-                if math.isfinite(self.segment_length) and self.segment_length > 0:
-                    self._estimated_segments += math.floor((path_length + 1e-8) / self.segment_length)
+                if path_length > 0 and math.isfinite(self.segment_length) and self.segment_length > 0:
+                    # Only need an exact estimate within the supported budget.
+                    # Avoid overflow for tiny finite steps without losing source
+                    # mileage to an optional overlap-workload calculation.
+                    ceiling = MAX_ANALYSIS_SEGMENTS + 1
+                    if path_length + 1e-8 >= self.segment_length * ceiling:
+                        self._estimated_segments = ceiling
+                    else:
+                        self._estimated_segments = min(ceiling, self._estimated_segments +
+                            math.floor((path_length + 1e-8) / self.segment_length))
 
             length_miles = length_meters / self.survey_mile
 

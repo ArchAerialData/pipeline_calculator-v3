@@ -1,7 +1,8 @@
 """Deliberately high workload advisories, separate from hard processing limits."""
 from __future__ import annotations
 
-import math
+import random
+from pipeline_calculator.core.segmentation import MAX_ANALYSIS_SEGMENTS
 
 # Segment advisory is near the existing 1M cap; sampled density must exceed
 # twice the 5M candidate cap to avoid warning on merely slow successful jobs.
@@ -21,12 +22,15 @@ def warning_text(detail):
 
 def check_segment_workload(estimated_segments, context):
     if context is not None and estimated_segments >= SEGMENT_WARNING_THRESHOLD:
-        context.confirm_workload(warning_text(
-            f"About {estimated_segments:,} analysis segments would be generated."))
+        detail = (f"More than {MAX_ANALYSIS_SEGMENTS:,} analysis segments would be generated; "
+                  "overlap exceeds the supported size. Continuing will retain source mileage "
+                  "with an incomplete-overlap notice." if estimated_segments > MAX_ANALYSIS_SEGMENTS else
+                  f"About {estimated_segments:,} analysis segments would be generated.")
+        context.confirm_workload(warning_text(detail))
 
 
 def check_density_workload(tree, points, radius, context):
-    """Bounded, deterministic sample of neighbor counts; never materialize pairs.
+    """Bounded, repeatable stratified neighbor sample; never materialize pairs.
 
     Counts include self/same-pipeline entries because the existing search budget
     includes them too. A sample can miss a small hotspot; hard limits remain active.
@@ -37,12 +41,16 @@ def check_density_workload(tree, points, radius, context):
         return
     context.report('Checking input density', 0, min(count, DENSITY_SAMPLE_SIZE))
     samples = min(count, DENSITY_SAMPLE_SIZE)
-    total = 0
+    estimate = 0
+    rng = random.Random(0x50495045)
     for i in range(samples):
         context.check()
-        index = i * (count - 1) // max(1, samples - 1)
-        total += int(tree.query_ball_point(points[index], radius, return_length=True))
-    estimate = math.ceil(total * count / samples)
+        # Jitter within each stratum to avoid aliasing repeated pipeline layouts.
+        # Weight by stratum size, including a shorter final stratum.
+        start, stop = i * count // samples, (i + 1) * count // samples
+        index = rng.randrange(start, stop)
+        estimate += int(tree.query_ball_point(points[index], radius, return_length=True)) * (stop-start)
+        context.report('Checking input density', i + 1, samples)
     if estimate >= CANDIDATE_WARNING_THRESHOLD:
         context.confirm_workload(warning_text(
             f"A sample suggests about {estimate:,} nearby-segment checks. "
