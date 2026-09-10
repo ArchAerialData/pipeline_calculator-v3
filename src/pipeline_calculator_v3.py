@@ -175,7 +175,8 @@ class PipelineCalculatorGUI:
     """Main GUI application for pipeline calculator with overlap analysis."""
     
     def __init__(self):
-        self.root = TkinterDnD.Tk()
+        from pipeline_calculator.gui.window import AppWindow
+        self.root = AppWindow()
         self._set_app_icon()
         self.analyzer = PipelineAnalyzer()
         self.current_results = None
@@ -253,101 +254,19 @@ class PipelineCalculatorGUI:
             pass
     
     def setup_gui(self):
-        """Initialize the main GUI."""
-        ctk.set_appearance_mode("dark")
-        ctk.set_default_color_theme("blue")
-        
         self.root.title(f"Pipeline Calculator v{__version__}")
-        self.root.geometry("800x600")
-        
-        # Center window
-        self.root.update_idletasks()
-        x = (self.root.winfo_screenwidth() // 2) - (self.root.winfo_width() // 2)
-        y = (self.root.winfo_screenheight() // 2) - (self.root.winfo_height() // 2)
-        self.root.geometry(f"+{x}+{y}")
-        
         self.show_file_selection()
+        self.root.initialize_size()
+        self.root.deiconify()
     
     def show_file_selection(self):
-        if getattr(self, "_processing", False):
+        if self._processing:
             return
-        """Display file selection interface."""
-        # Clear window
-        for widget in self.root.winfo_children():
-            widget.destroy()
-        
-        # Main frame
-        main_frame = ctk.CTkFrame(self.root)
-        main_frame.pack(expand=True, fill="both", padx=20, pady=20)
-        
-        # Title
-        title_label = ctk.CTkLabel(main_frame, 
-                                  text="Pipeline Calculator with Overlap Analysis", 
-                                  font=("Arial", 24, "bold"))
-        title_label.pack(pady=20)
-        
-        # Instructions
-        instructions = ctk.CTkLabel(main_frame, 
-                                   text="Drag and drop a KMZ or KML file here\n\nOR\n\nClick Browse to select a file",
-                                   font=("Arial", 14),
-                                   justify="center")
-        instructions.pack(pady=20)
-        
-        # Parameters frame
-        params_frame = ctk.CTkFrame(main_frame)
-        params_frame.pack(pady=20, padx=40, fill="x")
-        
-        ctk.CTkLabel(params_frame, text="Analysis Parameters", 
-                    font=("Arial", 16, "bold")).pack(pady=10)
-        
-        # Detection range
-        detection_frame = ctk.CTkFrame(params_frame)
-        detection_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var, width=100).pack(side="left")
-        ctk.CTkLabel(detection_frame, text="(Max centerline separation to bundle)", 
-                    text_color="#888888").pack(side="left", padx=10)
-
-        # Segment length (analysis resolution)
-        seglen_frame = ctk.CTkFrame(params_frame)
-        seglen_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(seglen_frame, textvariable=self.segment_length_var, width=100).pack(side="left")
-        ctk.CTkLabel(seglen_frame, text="(Resolution; smaller = slower, finer)",
-                    text_color="#888888").pack(side="left", padx=10)
-
-        # Min parallel length
-        parallel_frame = ctk.CTkFrame(params_frame)
-        parallel_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var, width=100).pack(side="left")
-        ctk.CTkLabel(parallel_frame, text="(Min bundled section)", 
-                    text_color="#888888").pack(side="left", padx=10)
-        
-        # Angular tolerance
-        angular_frame = ctk.CTkFrame(params_frame)
-        angular_frame.pack(fill="x", padx=20, pady=5)
-        ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
-        ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var, width=100).pack(side="left")
-        ctk.CTkLabel(angular_frame, text="(Max angle difference)", 
-                    text_color="#888888").pack(side="left", padx=10)
-        
-        from pipeline_calculator.gui.pages.file_select_page import file_actions
-        file_actions(main_frame, self.browse_file, self.process_file, self.current_file)
-
-        # Drag and drop
-        def on_drop(event):
-            try:
-                file_path = event.data.strip('{}').strip('"')
-                if file_path.lower().endswith(('.kmz', '.kml')):
-                    self.process_file(file_path)
-                else:
-                    messagebox.showerror("Invalid File", "Please select a KMZ or KML file.")
-            except Exception as e:
-                messagebox.showerror("Error", f"Failed to process dropped file: {str(e)}")
-        
-        self.root.drop_target_register(DND_FILES)
-        self.root.dnd_bind('<<Drop>>', on_drop)
+        from pipeline_calculator.gui.pages.file_select_page import show
+        show(self.root, title="Pipeline Calculator with Overlap Analysis",
+             detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
+             min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
+             on_browse=self.browse_file, on_file_selected=self.process_file, retry_path=self.current_file)
     
     def browse_file(self):
         if getattr(self, "_processing", False):
@@ -419,137 +338,20 @@ class PipelineCalculatorGUI:
         self.root.destroy()
 
     def show_results(self):
-        """Display analysis results."""
-        try:
-            # Ensure window is stable and visible
-            self.root.deiconify()
-            self.root.focus_force()
-            try:
-                self.root.attributes("-alpha", 1.0)
-                self.root.lift()
-                self.root.attributes("-topmost", False)  # Prevent flashing on other monitors
-                # Set a solid background to avoid transparency artifacts
-                self.root.configure(bg=ctk.ThemeManager.theme["CTkFrame"]["fg_color"])
-            except Exception:
-                pass
-            
-            # Force window to stay on current monitor
-            self.root.update_idletasks()
-
-            # Clear window
-            for widget in self.root.winfo_children():
-                widget.destroy()
-
-            self.root.title(f"Pipeline Calculator v{__version__} - Results")
-            self.root.geometry("1200x800")
-            
-            # Header
-            header_frame = ctk.CTkFrame(self.root)
-            header_frame.pack(fill="x", padx=10, pady=5)
-            
-            file_label = ctk.CTkLabel(header_frame, 
-                                     text=f"File: {os.path.basename(self.current_file)}", 
-                                     font=("Arial", 12))
-            file_label.pack()
-            
-            # Create tabbed view
-            tabview = ctk.CTkTabview(self.root)
-            tabview.pack(fill="both", expand=True, padx=10, pady=5)
-            
-            # Summary tab
-            summary_tab = tabview.add("Summary")
-            self.create_summary_tab(summary_tab)
-            
-            # Pipelines tab
-            if self.current_results['pipelines']:
-                pipeline_tab = tabview.add("Pipelines")
-                self.create_pipeline_tab(pipeline_tab)
-            
-            # Overlap Analysis tab
-            if self.current_results['overlap_analysis']:
-                overlap_tab = tabview.add("Overlap Analysis")
-                self.create_overlap_tab(overlap_tab)
-            
-            # Placemarks tab
-            if self.current_results['placemarks']:
-                placemark_tab = tabview.add("Placemarks")
-                self.create_placemark_tab(placemark_tab)
-            
-            # Button frame
-            button_frame = ctk.CTkFrame(self.root)
-            button_frame.pack(fill="x", padx=10, pady=5)
-            
-            # Export button
-            export_button = ctk.CTkButton(button_frame, text="Export Results", 
-                                         command=self.export_results)
-            export_button.pack(side="left", padx=5)
-            
-            # Reanalyze button
-            reanalyze_button = ctk.CTkButton(button_frame, 
-                                            text="Reanalyze with Different Parameters", 
-                                            command=self.reanalyze)
-            reanalyze_button.pack(side="left", padx=5)
-            
-            # New file button
-            new_file_button = ctk.CTkButton(button_frame, text="Import New KMZ", 
-                                           command=self.show_file_selection)
-            new_file_button.pack(side="left", padx=5)
-            
-            # Close button
-            close_button = ctk.CTkButton(button_frame, text="Exit", 
-                                        command=self.close)
-            close_button.pack(side="right", padx=5)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to display results: {str(e)}")
-            self.show_file_selection()
+        if not self.current_results:
+            return self.show_file_selection()
+        from pipeline_calculator.gui.pages.results_page import show
+        show(self.root, version=__version__, current_file=self.current_file, current_results=self.current_results,
+             on_export=self.export_results, on_reanalyze=self.reanalyze, on_new_file=self.show_file_selection,
+             on_exit=self.close, on_open_corridor=self.view_overlap_kml)
     
     def create_summary_tab(self, parent):
         from pipeline_calculator.gui.tabs.summary_tab import create
         create(parent, self.current_results)
 
     def create_pipeline_tab(self, parent):
-        """Create pipeline details tab."""
-        # Create treeview
-        columns = ("OBJECTID", "Name", "Length (m)", "Length (miles)")
-        tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
-        
-        # Configure columns
-        tree.heading("OBJECTID", text="Object ID")
-        tree.heading("Name", text="Name")
-        tree.heading("Length (m)", text="Length (meters)")
-        tree.heading("Length (miles)", text="Length (miles)")
-        
-        tree.column("OBJECTID", width=100)
-        tree.column("Name", width=300)
-        tree.column("Length (m)", width=150)
-        tree.column("Length (miles)", width=150)
-        
-        # Style
-        style = ttk.Style()
-        style.theme_use("default")
-        style.configure("Treeview", 
-                       background="#2b2b2b", 
-                       foreground="white", 
-                       fieldbackground="#2b2b2b")
-        
-        # Populate
-        for pipeline in self.current_results['pipelines']:
-            tree.insert("", "end", values=(
-                pipeline['OBJECTID'],
-                pipeline['Name'],
-                f"{pipeline['Shape_Length']:.3f}",
-                f"{pipeline['pipelinelength']:.6f}"
-            ))
-        
-        # Add total row
-        tree.insert("", "end", values=(
-            "TOTAL",
-            "TOTAL",
-            f"{self.current_results['total_meters']:.3f}",
-            f"{self.current_results['total_miles']:.6f}"
-        ))
-        
-        tree.pack(fill="both", expand=True, padx=10, pady=10)
+        from pipeline_calculator.gui.tabs.pipelines_tab import create
+        create(parent, self.current_results)
 
     def view_overlap_kml(self, section, index):
         from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
@@ -563,100 +365,21 @@ class PipelineCalculatorGUI:
         create(parent, self.current_results, on_open_corridor=self.view_overlap_kml)
 
     def create_placemark_tab(self, parent):
-        """Create placemark details tab."""
-        # Create treeview
-        columns = ("ID", "Name", "Count")
-        tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
-        
-        # Configure columns
-        tree.heading("ID", text="Placemark ID")
-        tree.heading("Name", text="Name")
-        tree.heading("Count", text="Count")
-        
-        tree.column("ID", width=150)
-        tree.column("Name", width=400)
-        tree.column("Count", width=100)
-        
-        # Populate
-        for placemark in self.current_results['placemarks']:
-            tree.insert("", "end", values=(
-                placemark['Placemark_ID'],
-                placemark['Name'],
-                placemark['Count']
-            ))
-        
-        tree.pack(fill="both", expand=True, padx=10, pady=10)
+        from pipeline_calculator.gui.tabs.placemarks_tab import create
+        create(parent, self.current_results)
     
     def reanalyze(self):
-        if getattr(self, "_processing", False):
+        if self._processing:
             return
-        """Show in-window parameter editor and reanalyze."""
-        try:
-            # Clean up any existing parameter frame
-            if hasattr(self, 'param_frame') and self.param_frame is not None:
-                try:
-                    self.param_frame.destroy()
-                    self.param_frame = None
-                except Exception:
-                    pass
-
-            self.param_frame = ctk.CTkFrame(self.root, corner_radius=10)
-            self.param_frame.place(relx=0.5, rely=0.5, anchor="center")
-
-            ctk.CTkLabel(self.param_frame, text="Adjust Analysis Parameters",
-                        font=("Arial", 16, "bold")).pack(pady=10, padx=20)
-
-            # Detection range
-            detection_frame = ctk.CTkFrame(self.param_frame)
-            detection_frame.pack(fill="x", padx=20, pady=10)
-            ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-            ctk.CTkEntry(detection_frame, textvariable=self.detection_range_var).pack(side="left")
-
-            # Segment length
-            seglen_frame = ctk.CTkFrame(self.param_frame)
-            seglen_frame.pack(fill="x", padx=20, pady=10)
-            ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
-            ctk.CTkEntry(seglen_frame, textvariable=self.segment_length_var).pack(side="left")
-
-            # Min parallel
-            parallel_frame = ctk.CTkFrame(self.param_frame)
-            parallel_frame.pack(fill="x", padx=20, pady=10)
-            ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-            ctk.CTkEntry(parallel_frame, textvariable=self.min_parallel_var).pack(side="left")
-
-            # Angular tolerance
-            angular_frame = ctk.CTkFrame(self.param_frame)
-            angular_frame.pack(fill="x", padx=20, pady=10)
-            ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
-            ctk.CTkEntry(angular_frame, textvariable=self.angular_tolerance_var).pack(side="left")
-
-            # Buttons
-            button_frame = ctk.CTkFrame(self.param_frame)
-            button_frame.pack(pady=20)
-
-            def apply_and_analyze():
-                if hasattr(self, 'param_frame') and self.param_frame is not None:
-                    try:
-                        self.param_frame.destroy()
-                        self.param_frame = None
-                    except Exception:
-                        pass
-                self.process_file(self.current_file)
-            
-            def cancel_dialog():
-                if hasattr(self, 'param_frame') and self.param_frame is not None:
-                    try:
-                        self.param_frame.destroy()
-                        self.param_frame = None
-                    except Exception:
-                        pass
-
-            ctk.CTkButton(button_frame, text="Apply & Reanalyze",
-                         command=apply_and_analyze).pack(side="left", padx=5)
-            ctk.CTkButton(button_frame, text="Cancel",
-                         command=cancel_dialog).pack(side="left", padx=5)
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to show parameter dialog: {str(e)}")
+        from pipeline_calculator.gui.dialogs.params_dialog import ParamsDialog
+        previous = getattr(self, '_params_dialog', None)
+        if previous is not None:
+            previous.close()
+        self._params_dialog = ParamsDialog(self.root,
+            detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
+            min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
+            on_apply=lambda: self.process_file(self.current_file) if self.current_file else None)
+        self._params_dialog.show()
     
     def export_results(self):
         if getattr(self, "_processing", False):

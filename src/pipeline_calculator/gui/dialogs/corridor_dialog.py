@@ -7,6 +7,8 @@ import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import customtkinter as ctk
+from pipeline_calculator.gui.layout import WrappedLabel, ActionBar
+from pipeline_calculator.gui.window import fit_window
 
 from pipeline_calculator.gui.actions.open_kml_action import create_and_launch_corridor, launch_saved_corridor
 
@@ -20,16 +22,19 @@ class CorridorDialog:
         self.window = ctk.CTkToplevel(root)
         self.window.title('View Corridor')
         self.window.transient(root)
-        self.label = ctk.CTkLabel(self.window, text='Preparing corridor...', wraplength=480)
-        self.label.pack(padx=20, pady=20)
-        self.path_entry = ctk.CTkEntry(self.window, width=480)
-        self.path_entry.pack(padx=20, pady=5)
-        self.buttons = []
-        for text, command in [('Copy Path', self.copy_path), ('Save As', self.save_as), ('Retry', self.retry)]:
-            button = ctk.CTkButton(self.window, text=text, command=command, state='disabled')
-            button.pack(padx=20, pady=5)
-            self.buttons.append(button)
-        ctk.CTkButton(self.window, text='Close', command=self.close).pack(pady=15)
+        actions = ActionBar(self.window, [('Copy Path', self.copy_path), ('Save As', self.save_as),
+                                         ('Retry', self.retry), ('Close', self.close)])
+        actions.pack(side='bottom', fill='x', padx=10, pady=10)
+        self.buttons = actions.buttons[:3]
+        for button in self.buttons:
+            button.configure(state='disabled')
+        self.path_entry = ctk.CTkEntry(self.window)
+        self.path_entry.pack(side='bottom', fill='x', padx=20, pady=5)
+        body = ctk.CTkScrollableFrame(self.window)
+        body.pack(fill='both', expand=True, padx=10, pady=10)
+        self.label = WrappedLabel(body, text='Preparing corridor...', justify='left')
+        self.label.pack(fill='x', padx=10, pady=10)
+        fit_window(self.window, (560, 400), parent=root)
         self.window.protocol('WM_DELETE_WINDOW', self.close)
         self.window.bind('<Destroy>', self._destroyed, add='+')
         self.retry()

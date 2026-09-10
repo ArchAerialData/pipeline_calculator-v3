@@ -40,10 +40,11 @@ class AnalysisSession:
         self.continue_button = ctk.CTkButton(self.controls, text='Continue anyway', command=self.continue_workload)
         content = ctk.CTkScrollableFrame(self.frame, height=160)
         content.pack(fill='both', expand=True, padx=10, pady=10)
-        self.filename_label = ctk.CTkLabel(content, text=Path(path).name, wraplength=380)
-        self.filename_label.pack(padx=10, pady=(10, 0))
         self.label = ctk.CTkLabel(content, text='Starting analysis...', wraplength=380)
         self.label.pack(padx=10, pady=10)
+        self.filename_label = ctk.CTkLabel(content, text=Path(path).name, wraplength=380,
+                                         text_color='#B8C0CC')
+        self.filename_label.pack(padx=10, pady=(0, 10))
         content.bind('<Configure>', self._resize_text, add='+')
         try:
             self.job = self.controller.start(path, params)
@@ -54,7 +55,8 @@ class AnalysisSession:
 
     def _resize_text(self, event):
         if not self.closed:
-            width = max(80, min(380, event.width - 20))
+            scale = ctk.ScalingTracker.get_widget_scaling(self.label)
+            width = max(60, event.width / scale - 32)
             self.label.configure(wraplength=width)
             self.filename_label.configure(wraplength=width)
 

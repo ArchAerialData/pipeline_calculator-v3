@@ -211,7 +211,7 @@ def test_incomplete_notice_includes_actionable_error(monkeypatch):
             captured.append(kwargs['text'])
         def pack(self, **kwargs):
             pass
-    monkeypatch.setattr(summary_tab.ctk, 'CTkLabel', Label)
+    monkeypatch.setattr(summary_tab, 'WrappedLabel', Label)
     summary_tab.add_status_notice(None, {'diagnostics': [{
         'level': 'error', 'message': 'Adjusted mileage and savings are unavailable.'
     }]})

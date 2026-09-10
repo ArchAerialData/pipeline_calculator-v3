@@ -1,30 +1,11 @@
 from __future__ import annotations
 
-from tkinter import ttk
+from pipeline_calculator.gui.tables import create_table
 
 
 def create(parent, current_results: dict) -> None:
     columns = ("OBJECTID", "Name", "Length (m)", "Length (miles)")
-    tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
-
-    tree.heading("OBJECTID", text="Object ID")
-    tree.heading("Name", text="Name")
-    tree.heading("Length (m)", text="Length (meters)")
-    tree.heading("Length (miles)", text="Length (miles)")
-
-    tree.column("OBJECTID", width=100)
-    tree.column("Name", width=300)
-    tree.column("Length (m)", width=150)
-    tree.column("Length (miles)", width=150)
-
-    style = ttk.Style()
-    style.theme_use("default")
-    style.configure(
-        "Treeview",
-        background="#2b2b2b",
-        foreground="white",
-        fieldbackground="#2b2b2b",
-    )
+    tree = create_table(parent, columns, (100, 300, 150, 150))
 
     for pipeline in current_results.get("pipelines", []):
         tree.insert(
@@ -48,6 +29,3 @@ def create(parent, current_results: dict) -> None:
             f"{current_results.get('total_miles', 0.0):.6f}",
         ),
     )
-
-    tree.pack(fill="both", expand=True, padx=10, pady=10)
-

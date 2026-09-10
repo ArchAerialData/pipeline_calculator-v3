@@ -1,19 +1,11 @@
 from __future__ import annotations
 
-from tkinter import ttk
+from pipeline_calculator.gui.tables import create_table
 
 
 def create(parent, current_results: dict) -> None:
     columns = ("ID", "Name", "Count")
-    tree = ttk.Treeview(parent, columns=columns, show="headings", height=20)
-
-    tree.heading("ID", text="Placemark ID")
-    tree.heading("Name", text="Name")
-    tree.heading("Count", text="Count")
-
-    tree.column("ID", width=150)
-    tree.column("Name", width=400)
-    tree.column("Count", width=100)
+    tree = create_table(parent, columns, (150, 400, 100))
 
     for placemark in current_results.get("placemarks", []):
         tree.insert(
@@ -25,6 +17,3 @@ def create(parent, current_results: dict) -> None:
                 placemark.get("Count"),
             ),
         )
-
-    tree.pack(fill="both", expand=True, padx=10, pady=10)
-

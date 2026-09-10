@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import customtkinter as ctk
+from pipeline_calculator.gui.layout import ActionBar, WrappedLabel, parameter_fields
 
 
 class ParamsDialog:
@@ -21,40 +22,15 @@ class ParamsDialog:
 
         self.frame = ctk.CTkFrame(root, corner_radius=10)
 
-        ctk.CTkLabel(
-            self.frame,
-            text="Adjust Analysis Parameters",
-            font=("Arial", 16, "bold"),
-        ).pack(pady=10, padx=20)
-
-        detection_frame = ctk.CTkFrame(self.frame)
-        detection_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(detection_frame, textvariable=detection_range_var).pack(side="left")
-
-        seglen_frame = ctk.CTkFrame(self.frame)
-        seglen_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(seglen_frame, textvariable=segment_length_var).pack(side="left")
-
-        parallel_frame = ctk.CTkFrame(self.frame)
-        parallel_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-        ctk.CTkEntry(parallel_frame, textvariable=min_parallel_var).pack(side="left")
-
-        angular_frame = ctk.CTkFrame(self.frame)
-        angular_frame.pack(fill="x", padx=20, pady=10)
-        ctk.CTkLabel(angular_frame, text="Angular Tolerance (deg):").pack(side="left", padx=10)
-        ctk.CTkEntry(angular_frame, textvariable=angular_tolerance_var).pack(side="left")
-
-        button_frame = ctk.CTkFrame(self.frame)
-        button_frame.pack(pady=20)
-
-        ctk.CTkButton(button_frame, text="Apply & Reanalyze", command=self._apply).pack(side="left", padx=5)
-        ctk.CTkButton(button_frame, text="Cancel", command=self._cancel).pack(side="left", padx=5)
+        ActionBar(self.frame, [("Apply & Reanalyze", self._apply), ("Cancel", self._cancel)]).pack(
+            side="bottom", fill="x", padx=8, pady=8)
+        body = ctk.CTkScrollableFrame(self.frame)
+        body.pack(fill="both", expand=True, padx=8, pady=8)
+        WrappedLabel(body, text="Adjust Analysis Parameters", font=("Arial", 16, "bold")).pack(fill="x", pady=10)
+        parameter_fields(body, (detection_range_var, segment_length_var, min_parallel_var, angular_tolerance_var))
 
     def show(self) -> None:
-        self.frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.94, relheight=0.9)
 
     def close(self) -> None:
         try:

@@ -5,7 +5,7 @@ import sys
 
 import customtkinter as ctk
 from tkinter import filedialog, messagebox, StringVar
-from tkinterdnd2 import TkinterDnD
+from pipeline_calculator.gui.window import AppWindow
 
 from pipeline_calculator.core.constants import (
     ANGULAR_TOLERANCE,
@@ -39,7 +39,7 @@ class PipelineCalculatorGUI:
     def __init__(self) -> None:
         self.version = _legacy_version()
 
-        self.root = TkinterDnD.Tk()
+        self.root = AppWindow()
         set_window_icon(self.root)
 
         self.state = AppState()
@@ -63,14 +63,9 @@ class PipelineCalculatorGUI:
         ctk.set_default_color_theme("blue")
 
         self.root.title(f"Pipeline Calculator v{self.version}")
-        self.root.geometry("800x600")
-
-        self.root.update_idletasks()
-        x = (self.root.winfo_screenwidth() // 2) - (self.root.winfo_width() // 2)
-        y = (self.root.winfo_screenheight() // 2) - (self.root.winfo_height() // 2)
-        self.root.geometry(f"+{x}+{y}")
-
         self.show_file_selection()
+        self.root.initialize_size()
+        self.root.deiconify()
 
     def show_file_selection(self) -> None:
         if self._processing:

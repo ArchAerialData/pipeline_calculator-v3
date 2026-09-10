@@ -383,3 +383,20 @@ evidence | date | remaining action`. A decision can retain the current behavior.
 Record unavailable checks and uncertainty explicitly. New fixes should carry their
 own source revision and affected revalidation list rather than silently changing
 an already-reviewed artifact.
+
+
+## Visual polish acceptance (deferred hardware/platform checks)
+
+Automated dark-mode/DPI/layout work is implemented; see
+[the verification report](docs/validation/visual-polish.md). No immediate owner input
+is required for these changes. In the consolidated manual testing session:
+
+- Launch the refreshed Windows EXE and check its native dark title bar, import screen,
+  results selector, long filenames, parameter editing and all table scrollbars.
+- Move the app between physical monitors with different scaling; maximize/restore,
+  reconnect a dock or RDP session, and verify the window remains reachable with the
+  taskbar visible. These physical transitions were not simulated by changing OS settings.
+- Check any nonstandard accessibility text-size settings and unusually small desktop
+  work areas. Report resolution, scale and affected screen if clipping remains.
+- Keep macOS rendering/build acceptance on the existing deferred GitHub Actions task.
+  Native OS file pickers and message boxes follow OS appearance settings.
