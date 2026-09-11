@@ -78,7 +78,10 @@ def run(scale, width, height, capture=None, legacy=False):
                 if label is not None:
                     assert label.winfo_reqwidth() <= widget.winfo_width()-8*scale, (page, widget.cget('text'), 'text clipped')
             if isinstance(widget, ttk.Treeview):
-                assert widget.winfo_height() >= 42*scale, (page, 'table unusable', widget.winfo_height())
+                assert widget.winfo_height() >= 42*scale, (page, 'table unusable', widget.winfo_height(),
+                    'root', root.winfo_width(), root.winfo_height(), 'scale', scale,
+                    'ancestors', [(str(w), w.winfo_width(), w.winfo_height()) for w in
+                                  (widget.master, widget.master.master, target)])
                 assert widget.cget('xscrollcommand') and widget.cget('yscrollcommand')
                 assert ttk.Style(widget).lookup(widget.cget('style'), 'background') == '#242424'
         if capture:

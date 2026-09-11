@@ -170,6 +170,18 @@ def test_extreme_finite_segment_size_cannot_break_source_mileage(tmp_path):
     assert result['total_meters'] == 0 and result['analysis_complete']
 
 
+def test_identical_endpoints_do_not_depend_on_geodesic_roundoff():
+    from pipeline_calculator.core.segmentation import segment_pipeline
+    def unexpected(*args):
+        pytest.fail('Coincident endpoints must not call the geodesic backend')
+    analyzer = PipelineAnalyzer(segment_length=1e-320)
+    analyzer.geod = SimpleNamespace(inv=unexpected)
+    coordinates = [(-100.0, 40.0), (-100.0, 40.0)]
+    _, meters, _ = analyzer.calculate_pipeline_lengths([{'coordinates': coordinates}])
+    assert meters == 0
+    assert segment_pipeline(analyzer.geod, coordinates, 1e-320) == []
+
+
 @pytest.mark.parametrize('size', ['800x400', '400x400'])
 @pytest.mark.native_gui
 def test_warning_controls_fit_small_windows_with_long_names(size):

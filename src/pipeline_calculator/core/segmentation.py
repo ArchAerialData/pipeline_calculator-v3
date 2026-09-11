@@ -59,6 +59,8 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
                 context.check()
             lon_a, lat_a = coordinates[i]
             lon_b, lat_b = coordinates[i + 1]
+            if lon_a == lon_b and lat_a == lat_b:
+                continue
 
             # Edge geometry (A -> B).
             az_ab, _, dist_ab = geod.inv(lon_a, lat_a, lon_b, lat_b)

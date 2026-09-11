@@ -82,6 +82,8 @@ class PipelineAnalyzer:
                     try:
                         lon1, lat1 = coords[i]
                         lon2, lat2 = coords[i + 1]
+                        if lon1 == lon2 and lat1 == lat2:
+                            continue
                         _, _, distance = self.geod.inv(lon1, lat1, lon2, lat2)
                         if not math.isfinite(distance):
                             raise ValueError("Non-finite geodesic length")

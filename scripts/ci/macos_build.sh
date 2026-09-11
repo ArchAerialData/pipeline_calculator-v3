@@ -42,6 +42,7 @@ print(f"Tk OK (TkVersion={ver})")
 PY
 
 # Basic sanity check without launching the GUI.
+python scripts/ci/check_tk.py
 python -m py_compile src/pipeline_calculator_v3.py
 if [[ -f "src/pipeline_calculator_entry.py" ]]; then
   python -m py_compile src/pipeline_calculator_entry.py
