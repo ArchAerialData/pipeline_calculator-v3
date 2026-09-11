@@ -165,6 +165,7 @@ def test_multiple_mutually_compatible_groups(offsets, expected):
     assert result['savings_meters'] == pytest.approx(expected, abs=10)
 
 
+@pytest.mark.native_gui
 def test_overlap_pagination_native_widgets():
     import sys
     if sys.platform != 'win32':

@@ -46,7 +46,7 @@ python -m py_compile src/pipeline_calculator_v3.py
 if [[ -f "src/pipeline_calculator_entry.py" ]]; then
   python -m py_compile src/pipeline_calculator_entry.py
 fi
-python -m pytest
+python -m pytest -vv -rA --tb=short -o faulthandler_timeout=30
 
 # Delegate actual PyInstaller invocation to the user-facing scripts.
 bash scripts/macos/build_app.sh

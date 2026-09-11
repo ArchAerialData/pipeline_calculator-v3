@@ -171,6 +171,7 @@ def test_extreme_finite_segment_size_cannot_break_source_mileage(tmp_path):
 
 
 @pytest.mark.parametrize('size', ['800x400', '400x400'])
+@pytest.mark.native_gui
 def test_warning_controls_fit_small_windows_with_long_names(size):
     import customtkinter as ctk
     from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession

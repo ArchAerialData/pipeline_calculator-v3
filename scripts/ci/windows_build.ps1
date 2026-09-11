@@ -29,7 +29,7 @@ if (Test-Path (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")) {
   & $Py -m py_compile (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")
   if ($LASTEXITCODE -ne 0) { throw "Entrypoint compilation failed ($LASTEXITCODE)" }
 }
-& $Py -m pytest
+& $Py -m pytest -vv -rA --tb=short -o faulthandler_timeout=30
 if ($LASTEXITCODE -ne 0) { throw "Tests failed ($LASTEXITCODE)" }
 
 powershell -ExecutionPolicy Bypass -File (Join-Path $RepoDir "scripts\\windows\\build_exe.ps1")
