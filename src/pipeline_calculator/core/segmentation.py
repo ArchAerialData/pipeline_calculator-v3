@@ -59,7 +59,8 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
                 context.check()
             lon_a, lat_a = coordinates[i]
             lon_b, lat_b = coordinates[i + 1]
-            if lon_a == lon_b and lat_a == lat_b:
+            if (lon_a == lon_b and lat_a == lat_b
+                    and math.isfinite(lon_a) and -90 <= lat_a <= 90):
                 continue
 
             # Edge geometry (A -> B).

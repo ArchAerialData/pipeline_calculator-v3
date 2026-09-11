@@ -182,6 +182,17 @@ def test_identical_endpoints_do_not_depend_on_geodesic_roundoff():
     assert segment_pipeline(analyzer.geod, coordinates, 1e-320) == []
 
 
+@pytest.mark.parametrize('point', [(float('inf'), 40), (0, 91), (0, float('nan'))])
+def test_identical_invalid_endpoints_are_not_treated_as_zero(point):
+    from pipeline_calculator.core.segmentation import segment_pipeline
+    analyzer = PipelineAnalyzer()
+    coordinates = [point, point]
+    with pytest.raises(ValueError):
+        analyzer.calculate_pipeline_lengths([{'coordinates': coordinates}])
+    with pytest.raises(ValueError):
+        segment_pipeline(analyzer.geod, coordinates, 5)
+
+
 @pytest.mark.parametrize('size', ['800x400', '400x400'])
 @pytest.mark.native_gui
 def test_warning_controls_fit_small_windows_with_long_names(size):
