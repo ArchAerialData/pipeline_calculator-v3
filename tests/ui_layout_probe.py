@@ -52,6 +52,15 @@ def run(scale, width, height, capture=None, legacy=False):
     def check(page, target=None):
         target = target or root
         settle()
+        if page in ('import', 'return-import'):
+            from pipeline_calculator.gui.settings_panel import SettingsPanel
+            panel = next(w for w in descendants(root) if isinstance(w, SettingsPanel))
+            viewport = panel._parent_canvas
+            overflow = panel.winfo_reqheight() > viewport.winfo_height() + 1
+            assert bool(panel._scrollbar.winfo_manager()) == overflow, 'Scrollbar must match overflow'
+            if not overflow:
+                assert viewport.winfo_height() - panel.winfo_reqheight() <= 2*scale, 'Excess settings gap'
+            assert panel._parent_frame.winfo_width() == panel._parent_frame.master.winfo_width(), [(str(w), w.winfo_width(), w.winfo_height()) for w in panel._parent_frame.master.winfo_children()]
         if page in ('Pipelines', 'Overlap Analysis', 'Placemarks', 'Diagnostics'):
             selected = next(w for w in root.winfo_children() if isinstance(w, ResultPages)).pages[page]
             tree = next(w for w in descendants(selected) if isinstance(w, ttk.Treeview))

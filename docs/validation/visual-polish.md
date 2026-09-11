@@ -24,7 +24,7 @@ September 10, 2026. **Implementation, regression checks and Windows packaging va
 Reproduce with `.venv/Scripts/python.exe -m pytest -q`. For local visual captures run `.venv/Scripts/python.exe tests/ui_layout_probe.py 2 480 320 .validation-output/visual-polish` on Windows.
 
 Source commit: `ccdc1f12ba3bc4a26a9f8a15175810c31ed6243d` plus working-tree changes.
-Python source fingerprint: `0ae551da6222f8a362ccfd82c9f8fb62cdacb91724f2fd22cb73487d4eac5e08`.
+Python source fingerprint: `473c5752897165bdd3a3bc219b40d526506c40843067686fb62cb4b7c5f04787`.
 
 ## Scope and deferred checks
 
@@ -48,7 +48,7 @@ under `dist/archive/` with its SHA-256 prefix. Copied artifact hashes match the 
 build. Local records: `.validation-output/visual-polish-build.json`,
 `.validation-output/visual-polish-source.json`, `.validation-output/visual-polish-tests.txt`.
 
-Executable SHA-256: `8902CA671CDAB533EC171E5EB64FC0F140BB931F936D8E57BA6C209668B4CB83`.
+Executable SHA-256: `4AA141FFB0237934B741A6AADE41C470087EA3C258BBC554A1192ED40240CC21`.
 
 
 ## Normal-startup correction (September 10, 2026)
@@ -95,3 +95,62 @@ The rebuilt Windows EXE passed the ordinary-launch visibility check and replaced
 matches the tested build. Evidence: `.validation-output/import-layout-build.json`,
 `import-layout-final-tests.txt`, `import-layout-startup.json`, and captures in
 `.validation-output/import-layout/`.
+
+
+## Bottom-anchored settings (September 10, 2026)
+
+Moved the compact settings panel to the bottom of the import screen, with a
+240-logical-pixel preferred height. Extra vertical space now sits between the
+file drop area and settings. Small windows retain the settings scrollbar.
+The visual capture and browser preview were refreshed. Native layout/startup
+checks were repeated, and the rebuilt Windows executable passed the sustained
+normal-launch check before replacing the v4 alias. The previous build is archived.
+Evidence is recorded in `.validation-output/bottom-settings-build.json`,
+`bottom-settings-tests.txt`, and `bottom-settings-startup.json`.
+
+
+## Separate middle drop field (September 10, 2026)
+
+Kept Browse at the top with file-picker instructions and placed a dedicated,
+outlined drag-and-drop field in the middle space. Its own centered instructions
+explain supported files and that dropping starts analysis. Settings remain below.
+The actual drop registration now targets the middle field. The refreshed capture
+matches this layout, and the local browser preview was updated. All 28 focused
+layout/startup checks passed; the rebuilt EXE passed normal-launch verification
+and replaced the v4 alias, with matching hashes and the old build archived.
+Evidence: `.validation-output/middle-drop-build.json`, `middle-drop-tests.txt`,
+`middle-drop-startup.json`, and captures in `.validation-output/middle-drop/`.
+
+
+## Gray dotted drop field (September 10, 2026)
+
+Updated only the middle drag-and-drop field: lighter gray (#3A3A3A) interior,
+clean rectangular edge, and dotted blue (#5FA5D5) outline. The outline scales
+with DPI and follows resizing. Its canvas is registered as a file drop target;
+existing instructions and drop handling remain. Browse and settings styling are
+unchanged. Inspected the rendered capture, passed 28 layout/startup tests and
+verified the rebuilt EXE stays visible on normal launch. Updated the v4 alias
+and browser preview; archived the prior build. Evidence is in
+`.validation-output/gray-drop-build.json`, `gray-drop-tests.txt`,
+`gray-drop-startup.json`, and `.validation-output/gray-drop/`.
+
+
+## Settings edges, spacing and automatic scrollbar (September 10, 2026)
+
+The bottom settings panel now spans its parent edge to edge with no exterior
+bottom padding. Its viewport fits the content up to a 240-logical-pixel cap,
+removing the empty band below the cards. The scrollbar is removed when content
+fits and restored for overflow; resizing and content layout changes update it.
+The CTk viewport/scrollbar integration is isolated in `gui/settings_panel.py`.
+Very short windows collapse redundant Browse headings so settings remain
+reachable, including after returning from results. Browse itself stays available.
+
+Passed all 28 layout/startup checks, including new assertions for scrollbar
+visibility matching overflow, full settings width and absence of extra viewport
+height. Inspected large and compact native captures. The startup probe now allows
+CTk's transient initial titlebar redraw but still requires a visible settled
+mainloop; the packaged check requires sustained visible ordinary startup.
+The rebuilt EXE passed that check, replaced the v4 alias with a matching hash,
+and the prior version was archived. Browser preview refreshed. Evidence:
+`.validation-output/settings-fit-build.json`, `settings-fit-tests.txt`,
+`settings-fit-startup.json` and captures in `settings-fit/` and `settings-fit-small/`.
