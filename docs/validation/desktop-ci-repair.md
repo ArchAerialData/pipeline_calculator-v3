@@ -16,6 +16,10 @@
   received only 56 physical pixels. Redundant vertical margins around its table
   and navigation are removed. An additional locally constrained 1280x720 physical
   window reproduces the failure before the fix and passes afterward.
+- Once the overlap check passed, CI exposed a collapsed settings viewport when
+  returning to import. The footer is now reserved before the expanding drop zone,
+  with a height budget and compact header on short windows. Regression probes
+  constrain physical windows to 1020x720 and 1280x720 at 250% scaling.
 - App shutdown cancels pending Tk callbacks before destroying the window.
 - CI now performs a bounded real Tk initialization preflight, prints Python/Tcl/Tk
   locations and screen dimensions, emits individual test results and stack dumps,
@@ -24,14 +28,20 @@
 
 ## Validation
 
-- Local full suite after calculation/layout/shutdown fixes: **240 passed**.
+- Local full suite on `8b7b021`: **244 passed in 62.32 seconds**.
 - [Diagnostic run](https://github.com/ArchAerialData/pipeline_calculator-v3/actions/runs/34641345171)
   proved the macOS hang was removed and exposed the identical-endpoint assertion.
 - [macOS packaging verification](https://github.com/ArchAerialData/pipeline_calculator-v3/actions/runs/34641553010):
   macOS passed tests, built and signed the app, and uploaded the app and DMG.
   Windows still failed its layout check in this intermediate run; the spacing fix
   is subsequent to it.
-- Final cross-platform build verification: pending the next run.
+- [Final application build verification](https://github.com/ArchAerialData/pipeline_calculator-v3/actions/runs/34642239763)
+  on `8b7b021`: **Windows 244 passed**, EXE uploaded; **macOS 229 passed,
+  15 platform-specific skips**, app signed and verified with codesign, app and DMG
+  uploaded. Both build jobs succeeded. Release creation was intentionally skipped.
+- JUnit reports were initially placed under `build`, which packaging clears.
+  Their destination is now `.validation-output/ci-test-results.xml`, outside
+  packaging cleanup. Verification of persistent report uploads is pending.
 
 ## Remaining acceptance
 

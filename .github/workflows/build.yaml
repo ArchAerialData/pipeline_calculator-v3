@@ -40,7 +40,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results-macos
-        path: build/test-results.xml
+        path: .validation-output/ci-test-results.xml
         if-no-files-found: warn
 
     - name: Detect signing readiness
@@ -125,7 +125,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-results-windows
-        path: build/test-results.xml
+        path: .validation-output/ci-test-results.xml
         if-no-files-found: warn
 
   create-release:
