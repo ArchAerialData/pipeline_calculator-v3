@@ -3,7 +3,9 @@
 September 11 CI repair: GUI test isolation, exact coincident-endpoint handling,
 constrained-screen overlap spacing, and CI diagnostics implemented. See
 [desktop CI repair](docs/validation/desktop-ci-repair.md) for runner evidence and
-final build status. Local full suite: 244 passed.
+final build status. **Both final GitHub Actions build jobs pass**, with Windows
+EXE, signed macOS app/DMG, and test reports uploaded. Local/Windows full suite:
+244 passed. Changes are on `codex/fix-desktop-ci`, awaiting merge to main.
 
 Latest follow-up: **dark-mode/DPI visual polish implemented**, September 10, 2026.
 See [visual polish validation](docs/validation/visual-polish.md) for the layout matrix,

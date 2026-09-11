@@ -1,5 +1,8 @@
 # Desktop CI repair — September 11, 2026
 
+Status: **complete and verified on GitHub Actions**, on branch
+`codex/fix-desktop-ci`; not merged to main.
+
 ## Verified causes and changes
 
 - Native Tk tests previously shared an interpreter with worker-thread tests. The
@@ -41,7 +44,13 @@
   uploaded. Both build jobs succeeded. Release creation was intentionally skipped.
 - JUnit reports were initially placed under `build`, which packaging clears.
   Their destination is now `.validation-output/ci-test-results.xml`, outside
-  packaging cleanup. Verification of persistent report uploads is pending.
+  packaging cleanup. The upload action includes only that explicitly selected
+  hidden-path file.
+- [Final CI/report verification](https://github.com/ArchAerialData/pipeline_calculator-v3/actions/runs/34642656453)
+  on `9daab29`: both jobs succeeded; Windows EXE, signed macOS app/DMG, and both
+  platform JUnit reports are available as artifacts. Windows: **244 passed**;
+  macOS: **229 passed, 15 platform-specific skips**. No tests were disabled to
+  obtain a passing build. Later documentation-only commits do not change tested code.
 
 ## Remaining acceptance
 
