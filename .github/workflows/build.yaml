@@ -41,6 +41,7 @@ jobs:
       with:
         name: test-results-macos
         path: .validation-output/ci-test-results.xml
+        include-hidden-files: true
         if-no-files-found: warn
 
     - name: Detect signing readiness
@@ -126,6 +127,7 @@ jobs:
       with:
         name: test-results-windows
         path: .validation-output/ci-test-results.xml
+        include-hidden-files: true
         if-no-files-found: warn
 
   create-release:
