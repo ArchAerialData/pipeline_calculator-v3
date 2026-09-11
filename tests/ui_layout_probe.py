@@ -31,6 +31,10 @@ def run(scale, width, height, capture=None, legacy=False):
     root = app.root
     errors = []
     root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args)))
+    if (scale, width, height) == (2.5, 512, 288):
+        # Simulate a 1280x720 physical desktop even on a larger developer monitor.
+        root.minsize(1, 1)
+        root.maxsize(width, height)
     root.geometry(f'{width}x{height}+{50 if capture else -8000}+100')
     # Keep validation windows offscreen instead of refitting them onto the desktop.
     root._display_changed = lambda event: None

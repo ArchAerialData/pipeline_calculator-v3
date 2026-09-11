@@ -10,14 +10,14 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
     overlap = current_results.get("overlap_analysis") or {}
 
     main_frame = ctk.CTkFrame(parent)
-    main_frame.pack(fill="both", expand=True, padx=4, pady=4)
+    main_frame.pack(fill="both", expand=True, padx=4)
 
     bundled_sections = overlap.get("bundled_sections") or []
     if bundled_sections:
         navigation = ctk.CTkFrame(main_frame)
-        navigation.pack(side="bottom", fill="x", padx=6, pady=4)
+        navigation.pack(side="bottom", fill="x", padx=6)
         tree = create_table(main_frame, ("Pipeline Pair", "Length (miles)", "Avg Sep (m)", "Action"),
-                            (420, 150, 120, 140))
+                            (420, 150, 120, 140), vertical_padding=0)
 
         page = 0
         page_size = 20
@@ -79,7 +79,7 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                 tree.focus(children[0])
 
         actions = ctk.CTkFrame(navigation, fg_color="transparent")
-        actions.pack(fill="x", padx=4, pady=4)
+        actions.pack(fill="x", padx=4)
         actions.grid_columnconfigure(2, weight=1)
         previous = ctk.CTkButton(actions, text="Previous", width=72, command=lambda: load_page(-1))
         next_button = ctk.CTkButton(actions, text="Next", width=64, command=lambda: load_page(1))

@@ -1,5 +1,10 @@
 # Verified improvement implementation plan
 
+September 11 CI repair: GUI test isolation, exact coincident-endpoint handling,
+constrained-screen overlap spacing, and CI diagnostics implemented. See
+[desktop CI repair](docs/validation/desktop-ci-repair.md) for runner evidence and
+final build status. Local full suite: 240 passed.
+
 Latest follow-up: **dark-mode/DPI visual polish implemented**, September 10, 2026.
 See [visual polish validation](docs/validation/visual-polish.md) for the layout matrix,
 238 passing tests and corrected Windows startup verification. This follow-up changes presentation,

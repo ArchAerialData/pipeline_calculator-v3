@@ -20,7 +20,8 @@ def test_startup_fits_work_area(area, scale):
 @pytest.mark.skipif(sys.platform != 'win32', reason='Native Windows layout verification')
 @pytest.mark.parametrize('scale,width,height,impl', [
     (1, 440, 340, 'new'), (1.25, 640, 480, 'new'), (1.5, 800, 600, 'new'),
-    (2, 480, 320, 'new'), (2.5, 1000, 720, 'new'), (1.25, 640, 480, 'legacy')])
+    (2, 480, 320, 'new'), (2.5, 1000, 720, 'new'), (2.5, 512, 288, 'new'),
+    (1.25, 640, 480, 'legacy')])
 def test_native_layout(scale, width, height, impl):
     result = subprocess.run([sys.executable, str(Path(__file__).with_name('ui_layout_probe.py')),
                              str(scale), str(width), str(height), '-', impl],

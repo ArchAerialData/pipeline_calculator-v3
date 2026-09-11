@@ -1,5 +1,10 @@
 # Follow-up runbook: owner input and external validation
 
+September 11 update: macOS GitHub Actions investigation and automated packaging
+were resumed with owner authorization. See [desktop CI repair](docs/validation/desktop-ci-repair.md).
+Interactive macOS acceptance and real-project testing remain deferred; CI access
+does not require the owner to provide a Mac.
+
 Updated September 10, 2026 after the R4/R5 audit of `9583285a7d368690558372ec27fefe3e98587883`.
 Status: **automated prerequisites complete; further acceptance testing deferred**.
 Owner clarified priorities and corridor purpose on September 10, 2026. Remaining
