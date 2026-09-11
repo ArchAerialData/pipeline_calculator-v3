@@ -31,8 +31,8 @@ def run(scale, width, height, capture=None, legacy=False):
     root = app.root
     errors = []
     root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args)))
-    if (scale, width, height) == (2.5, 512, 288):
-        # Simulate a 1280x720 physical desktop even on a larger developer monitor.
+    if scale == 2.5 and height == 288 and width in (408, 512):
+        # Simulate 1020/1280x720 physical windows on larger developer monitors.
         root.minsize(1, 1)
         root.maxsize(width, height)
     root.geometry(f'{width}x{height}+{50 if capture else -8000}+100')
