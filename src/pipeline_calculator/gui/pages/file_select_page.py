@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import customtkinter as ctk
-from tkinter import messagebox
+from tkinter import Canvas, messagebox
 from tkinterdnd2 import DND_FILES
+from pipeline_calculator.gui.layout import ActionBar, WrappedLabel, parameter_fields
+from pipeline_calculator.gui.settings_panel import SettingsPanel
 
 
 def show(
@@ -25,71 +27,73 @@ def show(
     main_frame = ctk.CTkFrame(root)
     main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-    title_label = ctk.CTkLabel(
-        main_frame,
-        text=title,
-        font=("Arial", 24, "bold"),
-    )
-    title_label.pack(pady=20)
+    WrappedLabel(main_frame, text=title, font=("Arial", 22, "bold")).pack(fill="x", padx=12, pady=(12, 4))
+    browse_area = ctk.CTkFrame(main_frame, fg_color="#202D38", border_color="#4B91C2", border_width=2)
+    browse_area.pack(fill="x", padx=12, pady=10)
+    WrappedLabel(browse_area, text="Choose a KMZ or KML file", font=("Arial", 18, "bold")).pack(
+        fill="x", padx=12, pady=(14, 0))
+    WrappedLabel(browse_area, text="Use Browse Files to select a file from your computer.",
+                 text_color="#B8C0CC").pack(fill="x", padx=12, pady=2)
+    file_actions(browse_area, on_browse, on_file_selected, retry_path)
 
-    instructions = ctk.CTkLabel(
-        main_frame,
-        text="Drag and drop a KMZ or KML file here\n\nOR\n\nClick Browse to select a file",
-        font=("Arial", 14),
-        justify="center",
-    )
-    instructions.pack(pady=20)
+    # Reserve a usable drop target before settings; extra height goes here.
+    drop_zone = ctk.CTkFrame(main_frame, height=80, fg_color="#3A3A3A",
+                            corner_radius=0, border_width=0)
+    drop_zone.pack(fill="both", expand=True, padx=12, pady=(0, 10))
+    drop_zone.pack_propagate(False)
+    # Native canvas supplies a dotted outline; CTk frames only support solid borders.
+    drop_border = Canvas(drop_zone, background="#3A3A3A", highlightthickness=0, borderwidth=0)
+    drop_border.place(x=0, y=0, relwidth=1, relheight=1)
+    outline = drop_border.create_rectangle(0, 0, 1, 1, outline="#5FA5D5")
 
-    params_frame = ctk.CTkFrame(main_frame)
-    params_frame.pack(pady=20, padx=40, fill="x")
+    def resize_border(event):
+        scale = ctk.ScalingTracker.get_widget_scaling(drop_zone)
+        inset = max(2, round(3 * scale))
+        drop_border.coords(outline, inset, inset, max(inset, event.width - inset),
+                           max(inset, event.height - inset))
+        drop_border.itemconfigure(outline, width=max(1, round(2 * scale)),
+                                  dash=(max(1, round(2 * scale)), max(2, round(4 * scale))))
 
-    ctk.CTkLabel(params_frame, text="Analysis Parameters", font=("Arial", 16, "bold")).pack(pady=10)
+    drop_border.bind("<Configure>", resize_border)
+    instructions = ctk.CTkFrame(drop_zone, fg_color="transparent", height=64)
+    instructions.pack(expand=True, fill="x", padx=8)
+    WrappedLabel(instructions, text="Drag and drop your file here", font=("Arial", 18, "bold")).pack(fill="x")
+    WrappedLabel(instructions, text="Drop one KMZ or KML file into this area to start analysis.",
+                 text_color="#B8C0CC").pack(fill="x")
 
-    detection_frame = ctk.CTkFrame(params_frame)
-    detection_frame.pack(fill="x", padx=20, pady=5)
-    ctk.CTkLabel(detection_frame, text="Detection Range (m):").pack(side="left", padx=10)
-    ctk.CTkEntry(detection_frame, textvariable=detection_range_var, width=100).pack(side="left")
-    ctk.CTkLabel(
-        detection_frame,
-        text="(Max centerline separation to bundle)",
-        text_color="#888888",
-    ).pack(side="left", padx=10)
+    body = SettingsPanel(main_frame)
+    body.pack(side="bottom", fill="x")
+    WrappedLabel(body, text="Analysis Settings", font=("Arial", 16, "bold"), anchor="w").pack(
+        fill="x", padx=12, pady=(8, 2))
+    parameter_fields(body, (detection_range_var, segment_length_var, min_parallel_var, angular_tolerance_var),
+                     compact=True)
 
-    seglen_frame = ctk.CTkFrame(params_frame)
-    seglen_frame.pack(fill="x", padx=20, pady=5)
-    ctk.CTkLabel(seglen_frame, text="Segment Length (m):").pack(side="left", padx=10)
-    ctk.CTkEntry(seglen_frame, textvariable=segment_length_var, width=100).pack(side="left")
-    ctk.CTkLabel(
-        seglen_frame,
-        text="(Resolution; smaller = slower, finer)",
-        text_color="#888888",
-    ).pack(side="left", padx=10)
+    browse_labels = [child for child in browse_area.winfo_children() if isinstance(child, WrappedLabel)]
+    browse_actions = next(child for child in browse_area.winfo_children() if isinstance(child, ActionBar))
+    compact = [False]
 
-    parallel_frame = ctk.CTkFrame(params_frame)
-    parallel_frame.pack(fill="x", padx=20, pady=5)
-    ctk.CTkLabel(parallel_frame, text="Min Parallel Length (m):").pack(side="left", padx=10)
-    ctk.CTkEntry(parallel_frame, textvariable=min_parallel_var, width=100).pack(side="left")
-    ctk.CTkLabel(
-        parallel_frame,
-        text="(Min bundled section)",
-        text_color="#888888",
-    ).pack(side="left", padx=10)
+    def fit_short_window(event=None):
+        height = event.height if event else main_frame.winfo_height()
+        short = height / ctk.ScalingTracker.get_widget_scaling(main_frame) < 440
+        if short == compact[0]:
+            return
+        compact[0] = short
+        for index, label in enumerate(browse_labels):
+            if short:
+                label.pack_forget()
+            else:
+                label.pack(fill="x", padx=12, pady=(14, 0) if index == 0 else 2, before=browse_actions)
 
-    angular_frame = ctk.CTkFrame(params_frame)
-    angular_frame.pack(fill="x", padx=20, pady=5)
-    ctk.CTkLabel(angular_frame, text="Angular Tolerance (°):").pack(side="left", padx=10)
-    ctk.CTkEntry(angular_frame, textvariable=angular_tolerance_var, width=100).pack(side="left")
-    ctk.CTkLabel(
-        angular_frame,
-        text="(Max angle difference)",
-        text_color="#888888",
-    ).pack(side="left", padx=10)
-
-    file_actions(main_frame, on_browse, on_file_selected, retry_path)
+    main_frame.bind("<Configure>", fit_short_window, add="+")
+    fit_short_window()
 
     def on_drop(event):
         try:
-            file_path = event.data.strip("{}").strip('"')
+            paths = root.tk.splitlist(event.data)
+            if len(paths) != 1:
+                messagebox.showerror("Select One File", "Please drop one KMZ or KML file at a time.", parent=root)
+                return
+            file_path = paths[0]
             if file_path.lower().endswith((".kmz", ".kml")):
                 on_file_selected(file_path)
             else:
@@ -100,16 +104,18 @@ def show(
     try:
         root.drop_target_register(DND_FILES)
         root.dnd_bind("<<Drop>>", on_drop)
+        drop_zone.drop_target_register(DND_FILES)
+        drop_zone.dnd_bind("<<Drop>>", on_drop)
+        drop_border.drop_target_register(DND_FILES)
+        drop_border.dnd_bind("<<Drop>>", on_drop)
     except Exception:
         # Drag/drop is best-effort; Browse works everywhere.
         pass
 
 
 def file_actions(parent, on_browse, on_file_selected, retry_path=None):
-    frame = ctk.CTkFrame(parent)
-    frame.pack(pady=20)
-    ctk.CTkButton(frame, text='Browse Files', command=on_browse, width=200, height=40).pack(side='left', padx=5)
+    actions = [('Browse Files', on_browse)]
     if retry_path:
-        ctk.CTkButton(frame, text='Retry selected file', command=lambda: on_file_selected(retry_path),
-                     width=200, height=40).pack(side='left', padx=5)
-
+        actions.append(('Retry selected file', lambda: on_file_selected(retry_path)))
+    frame = ActionBar(parent, actions)
+    frame.pack(side='bottom', fill='x', padx=8, pady=8)

@@ -1,5 +1,11 @@
 # Verified improvement implementation plan
 
+Latest follow-up: **dark-mode/DPI visual polish implemented**, September 10, 2026.
+See [visual polish validation](docs/validation/visual-polish.md) for the layout matrix,
+238 passing tests and corrected Windows startup verification. This follow-up changes presentation,
+not pipeline distance or corridor geometry calculations.
+
+
 Reviewed September 10, 2026 at commit `b058ac08ed08ed9e0069d5942328252c69cefb1a`.
 Status: **automated implementation, requested hardening and available preview
 verification complete**, September 10, 2026. Latest source checks: 210 tests, six unchanged
