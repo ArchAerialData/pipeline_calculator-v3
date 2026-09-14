@@ -5,6 +5,7 @@ from dataclasses import dataclass
 import threading
 import time
 from uuid import uuid4
+from pipeline_calculator.core.progress import WorkProgress, RuntimeProjection
 
 
 class AnalysisCancelled(Exception):
@@ -19,6 +20,7 @@ class ProgressSnapshot:
     completed: int
     total: int | None
     elapsed_seconds: float
+    fraction: float = 0.0
 
 
 class ExecutionContext:
@@ -27,7 +29,13 @@ class ExecutionContext:
         self.cancel_event = threading.Event()
         self._lock = threading.Lock()
         self._clock = clock
-        self.started_at = clock()
+        self.started_at = None
+        self.finished_at = None
+        self._paused_at = None
+        self._paused_seconds = 0.0
+        self.progress = WorkProgress()
+        self.runtime_projection = RuntimeProjection()
+        self.estimated_segments = None
         self._last_emit = float('-inf')
         self._snapshot = None
         self._ticks = 0
@@ -35,6 +43,21 @@ class ExecutionContext:
         self.workload_accepted = False
         self._workload_warning = None
         self._workload_decision = threading.Event()
+
+    def begin(self):
+        if self.started_at is None:
+            self.started_at = self._clock()
+
+    def elapsed_seconds(self):
+        if self.started_at is None:
+            return 0.0
+        end = self.finished_at if self.finished_at is not None else (
+            self._paused_at if self._paused_at is not None else self._clock())
+        return max(0.0, end-self.started_at-self._paused_seconds)
+
+    def finish(self):
+        self.report('Complete', 1, 1)
+        self.finished_at = self._clock()
 
     def cancel(self):
         self.cancel_event.set()
@@ -61,6 +84,7 @@ class ExecutionContext:
         with self._lock:
             self._workload_decision.clear()
             self._workload_warning = message
+            self._paused_at = self._clock()
         try:
             while not self._workload_decision.wait(0.1):
                 self.check()
@@ -68,6 +92,9 @@ class ExecutionContext:
         finally:
             with self._lock:
                 self._workload_warning = None
+                if self._paused_at is not None:
+                    self._paused_seconds += self._clock()-self._paused_at
+                    self._paused_at = None
 
     def check(self):
         if self.cancel_event.is_set():
@@ -81,14 +108,22 @@ class ExecutionContext:
 
     def report(self, stage, completed=0, total=None):
         self.check()
+        self.begin()
         now = self._clock()
+        elapsed = self.elapsed_seconds()
         with self._lock:
             old = self._snapshot
             if old is not None and old.stage == stage and now - self._last_emit < 0.1:
                 return
             self._snapshot = ProgressSnapshot(self.job_id, 1 if old is None else old.sequence + 1,
-                                              stage, completed, total, now - self.started_at)
+                                              stage, completed, total, elapsed,
+                                              self.progress.update(stage, completed, total))
             self._last_emit = now
+        if self.interactive and not self.workload_accepted:
+            estimate = self.runtime_projection.observe(stage, completed, total, elapsed)
+            if estimate is not None:
+                from pipeline_calculator.core.workload import runtime_warning
+                self.confirm_workload(runtime_warning(estimate, elapsed))
 
     def snapshot(self):
         with self._lock:

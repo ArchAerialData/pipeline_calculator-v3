@@ -174,9 +174,9 @@ class PipelineCalculatorGUI:
         )
 
     def view_overlap_corridor(self, section: dict, index: int) -> None:
-        from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
+        from pipeline_calculator.gui.actions.corridor_launch import launch_corridor
         try:
-            CorridorDialog(self.root, section, index)
+            launch_corridor(self.root, section, index)
         except Exception as e:
             messagebox.showerror("Error", f"Failed to open KML file: {str(e)}")
 

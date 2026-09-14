@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import customtkinter as ctk
 from pipeline_calculator.gui.layout import ActionBar, WrappedLabel, parameter_fields
+from pipeline_calculator.gui.modal import ModalSurface, ModalBody, TEXT
 
 
 class ParamsDialog:
@@ -20,21 +21,23 @@ class ParamsDialog:
         self._on_apply = on_apply
         self._on_cancel = on_cancel
 
-        self.frame = ctk.CTkFrame(root, corner_radius=10)
+        self.surface = ModalSurface(root)
+        self.frame = self.surface.card
 
         ActionBar(self.frame, [("Apply & Reanalyze", self._apply), ("Cancel", self._cancel)]).pack(
             side="bottom", fill="x", padx=8, pady=8)
-        body = ctk.CTkScrollableFrame(self.frame)
-        body.pack(fill="both", expand=True, padx=8, pady=8)
-        WrappedLabel(body, text="Adjust Analysis Parameters", font=("Arial", 16, "bold")).pack(fill="x", pady=10)
+        body = ModalBody(self.frame)
+        body.pack(fill="both", expand=True, padx=20, pady=20)
+        WrappedLabel(body, text="Adjust analysis parameters", text_color=TEXT, anchor='w', justify='left',
+                     font=ctk.CTkFont(size=22, weight='bold')).pack(fill="x", padx=12, pady=(4, 14))
         parameter_fields(body, (detection_range_var, segment_length_var, min_parallel_var, angular_tolerance_var))
 
     def show(self) -> None:
-        self.frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.94, relheight=0.9)
+        self.surface.show(preferred_size=(760, 560))
 
     def close(self) -> None:
         try:
-            self.frame.destroy()
+            self.surface.destroy()
         except Exception:
             pass
 

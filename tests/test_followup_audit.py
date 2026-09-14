@@ -108,6 +108,30 @@ def test_analysis_size_and_neighbor_budgets(monkeypatch):
         calculate(analyzer, pipes(analyzer, [0, 2]))
 
 
+def test_sparse_paths_do_not_spend_cross_pipeline_budget(monkeypatch):
+    from pipeline_calculator.core import overlap
+    monkeypatch.setattr(overlap, 'MAX_CANDIDATE_CHECKS', 1)
+    analyzer = PipelineAnalyzer()
+    # Hundreds of same-path neighbor visits, but no cross-pipeline candidates.
+    result = calculate(analyzer, pipes(analyzer, [0, 100]))
+    assert result['savings_meters'] == 0
+
+
+def test_cross_pipeline_budget_counts_each_pair_once(monkeypatch):
+    from pipeline_calculator.core import overlap
+    analyzer = PipelineAnalyzer(segment_length=300, min_parallel_length=200)
+    monkeypatch.setattr(overlap, 'MAX_CANDIDATE_CHECKS', 1)
+    result = calculate(analyzer, pipes(analyzer, [0, 2]))
+    assert result['savings_meters'] == pytest.approx(300)
+
+
+def test_raw_neighbor_visits_still_have_a_hard_limit(monkeypatch):
+    from pipeline_calculator.core import overlap
+    monkeypatch.setattr(overlap, 'MAX_NEIGHBOR_VISITS', 1)
+    with pytest.raises(ValueError, match='Neighbor-search limit'):
+        calculate(PipelineAnalyzer(), pipes(PipelineAnalyzer(), [0, 100]))
+
+
 def test_geodesic_failure_cannot_substitute_invented_midpoint():
     from pipeline_calculator.core.segmentation import segment_pipeline
     analyzer = PipelineAnalyzer()
@@ -207,12 +231,13 @@ def test_exported_source_text_cannot_become_an_excel_formula(tmp_path):
     from openpyxl import load_workbook
     from pipeline_calculator.export.xlsx import build_analysis_workbook
     workbook = build_analysis_workbook({
-        'pipelines': [{'Name': '=1+1', 'OBJECTID': '=2+2', 'pipelinelength': 1.0}],
+        'pipelines': [{'Name': '=1+1', 'Placemark_ID': '=2+2', 'pipelinelength': 1.0}],
         'diagnostics': [{'level': 'warning', 'message': '=3+3'}],
     })
     path = tmp_path / 'literal-values.xlsx'
     workbook.save(path)
     saved = load_workbook(path)
+    assert saved['Pipeline Length Analysis']['A2'].value == '=2+2'
     assert saved['Pipeline Length Analysis']['A2'].data_type == 's'
     assert saved['Pipeline Length Analysis']['B2'].value == '=1+1'
     assert saved['Pipeline Length Analysis']['B2'].data_type == 's'

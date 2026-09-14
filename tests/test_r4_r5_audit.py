@@ -31,8 +31,9 @@ def test_periodic_sparse_samples_do_not_hide_massively_dense_input():
     points = np.zeros((255*64+1, 3))
     points[::64, 0] = np.arange(1, 257)*1000
     context = RecordingContext()
-    workload.check_density_workload(KDTree(points), points, 16, context)
-    assert len(context.warnings) == 1
+    estimate = workload.check_density_workload(KDTree(points), points, 16, context)
+    assert estimate > .95*len(points)**2
+    assert not context.warnings, 'Density alone is not a runtime forecast'
 
 
 def test_trailing_remainder_does_not_consume_full_segment_budget(monkeypatch):

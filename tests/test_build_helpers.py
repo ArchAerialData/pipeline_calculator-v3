@@ -4,6 +4,7 @@ import subprocess
 import sys
 
 import pytest
+from scripts.validation.gui_process import run_gui
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -29,7 +30,7 @@ def test_source_smoke_entrypoints(tmp_path):
     import json
     for entry,implementation in [('pipeline_calculator_entry.py','new'),('pipeline_calculator_v3.py','legacy')]:
         output=tmp_path/f'{implementation}.json'
-        process=subprocess.run([sys.executable,str(ROOT/'src'/entry),'--smoke-test',str(output)],capture_output=True,text=True,timeout=30)
+        process=run_gui([sys.executable,str(ROOT/'src'/entry),'--smoke-test',str(output)],timeout=30)
         assert process.returncode==0,process.stderr
         report=json.loads(output.read_text())
         assert report['status']=='passed' and report['implementation']==implementation

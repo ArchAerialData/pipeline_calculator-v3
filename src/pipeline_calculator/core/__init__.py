@@ -1,6 +1,5 @@
 """Core (refactor-in-progress)."""
 
-from pipeline_calculator.core.analyzer import PipelineAnalyzer
 from pipeline_calculator.core.constants import (
     ANGULAR_TOLERANCE,
     DEFAULT_DETECTION_RANGE,
@@ -24,3 +23,12 @@ __all__ = [
     "calculate_overlap_results",
     "compute_effective_length_by_clusters",
 ]
+
+
+def __getattr__(name):
+    # The parser imports core.execution. Loading the analyzer here eagerly would
+    # re-enter that parser before its functions exist in a fresh interpreter.
+    if name == 'PipelineAnalyzer':
+        from pipeline_calculator.core.analyzer import PipelineAnalyzer
+        return PipelineAnalyzer
+    raise AttributeError(name)

@@ -77,7 +77,9 @@ class AnalysisJob:
         result = error = None
         try:
             self.context.check()
+            self.context.begin()
             result = analyze_file(*self._request, context=self.context)
+            self.context.finish()
         except AnalysisCancelled:
             self.context.cancel()
         except BaseException as e:  # noqa: BLE001 - report to UI

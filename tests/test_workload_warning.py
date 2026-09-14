@@ -33,10 +33,10 @@ def wait_for_warning(job):
 @pytest.mark.parametrize('continue_run', [False, True])
 @pytest.mark.parametrize('warning_stage', ['segments', 'density'])
 def test_real_job_pauses_before_overlap_and_cancels_or_continues(tmp_path, monkeypatch, continue_run, warning_stage):
-    if warning_stage == 'segments':
-        monkeypatch.setattr(workload, 'SEGMENT_WARNING_THRESHOLD', 1)
-    else:
-        monkeypatch.setattr(workload, 'CANDIDATE_WARNING_THRESHOLD', 1)
+    from pipeline_calculator.core.progress import RuntimeProjection
+    target = 'Segmenting paths' if warning_stage == 'segments' else 'Checking input density'
+    monkeypatch.setattr(workload, 'DENSITY_SAMPLE_MIN_WORK', 1)
+    monkeypatch.setattr(RuntimeProjection, 'observe', lambda self, stage, *args: 61 if stage == target else None)
     path = input_file(tmp_path)
     baseline = PipelineAnalyzer().analyze_complete(path)
     job = AnalysisController().start(str(path), AnalysisParameters())
@@ -74,17 +74,17 @@ def test_high_thresholds_and_small_or_sparse_workloads_are_quiet():
     points = np.column_stack((np.arange(5000)*100, np.zeros(5000), np.zeros(5000)))
     workload.check_density_workload(KDTree(points), points, 16, context)
     assert not context.warnings
-    workload.check_segment_workload(750_000, context)
-    assert len(context.warnings) == 1
-    assert '750,000' in context.warnings[0]
+    workload.check_segment_workload(754_586, context)
+    assert context.estimated_segments == 754_586
+    assert not context.warnings, 'Count alone must not interrupt a fast run'
 
 
 def test_extreme_density_warns_without_materializing_neighbor_lists():
     context = RecordingContext()
     points = np.zeros((3163, 3))
-    workload.check_density_workload(KDTree(points), points, 16, context)
-    assert len(context.warnings) == 1
-    assert '10,004,569' in context.warnings[0]
+    estimate = workload.check_density_workload(KDTree(points), points, 16, context)
+    assert estimate == 10_004_569
+    assert not context.warnings
 
 
 def test_density_check_is_bounded_and_cancellable():
@@ -120,7 +120,8 @@ def test_hard_limit_preserves_source_mileage_without_allocating_segments(tmp_pat
 @pytest.mark.native_gui
 def test_native_warning_controls(tmp_path, monkeypatch, action):
     import customtkinter as ctk
-    monkeypatch.setattr(workload, 'SEGMENT_WARNING_THRESHOLD', 1)
+    from pipeline_calculator.core.progress import RuntimeProjection
+    monkeypatch.setattr(RuntimeProjection, 'observe', lambda self, stage, *args: 61 if stage == 'Segmenting paths' else None)
     root = ctk.CTk()
     root.withdraw()
     session = AnalysisSession(root, lambda job: None)
@@ -134,7 +135,7 @@ def test_native_warning_controls(tmp_path, monkeypatch, action):
             root.update()
             assert time.monotonic() < deadline
             session.job.done.wait(.01)
-        assert 'exceptionally large' in session.label.cget('text')
+        assert 'longer than one minute' in session.label.cget('text')
         assert session.continue_button.winfo_manager() == 'pack'
         if action == 'continue':
             session.continue_button.invoke()

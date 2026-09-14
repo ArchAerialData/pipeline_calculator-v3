@@ -3,7 +3,8 @@ import customtkinter as ctk
 
 
 class WrappedLabel(ctk.CTkLabel):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, *, wrap_padding=32, **kwargs):
+        self._wrap_padding = wrap_padding
         kwargs.setdefault('width', 1)
         kwargs.setdefault('wraplength', 380)
         super().__init__(master, **kwargs)
@@ -14,7 +15,7 @@ class WrappedLabel(ctk.CTkLabel):
     def _wrap(self, event):
         if self.winfo_exists():
             scale = ctk.ScalingTracker.get_widget_scaling(self)
-            width = max(40, event.width / scale - 32)
+            width = max(40, event.width / scale - self._wrap_padding)
             if self._wrap_width == width:
                 return
             self._wrap_width = width
@@ -97,12 +98,20 @@ def parameter_fields(parent, variables, *, compact=False):
 
 
 class ResultPages(ctk.CTkFrame):
-    """Keep all result sections accessible without a wide fixed tab strip."""
+    """Show tabs when their measured labels fit; use a menu on narrow windows."""
     def __init__(self, master):
         super().__init__(master, height=100)
         self.pages = {}
-        self.selector = ctk.CTkOptionMenu(self, values=["Summary"], command=self.set, width=200)
-        self.selector.pack(pady=8)
+        self._navigation_id = None
+        self.navigation = ctk.CTkFrame(self, fg_color='transparent')
+        self.navigation.pack(fill='x', pady=8)
+        self.tab_font = ctk.CTkFont(size=14)
+        self.tabs = ctk.CTkSegmentedButton(self.navigation, values=[], command=self.set,
+                                          font=self.tab_font, height=34)
+        self.selector = ctk.CTkOptionMenu(self.navigation, values=["Summary"], command=self.set, width=200,
+                                         font=self.tab_font, height=34)
+        self.selector.pack()
+        self.navigation.bind('<Configure>', self._arrange_navigation, add='+')
         self.content = ctk.CTkFrame(self, fg_color="transparent", height=1, width=1)
         self.content.pack(fill="both", expand=True)
         self.content.pack_propagate(False)
@@ -111,12 +120,41 @@ class ResultPages(ctk.CTkFrame):
         page = ctk.CTkFrame(self.content, height=1, width=1)
         self.pages[name] = page
         self.selector.configure(values=list(self.pages))
+        self.tabs.configure(values=list(self.pages))
         if len(self.pages) == 1:
             self.set(name)
+        else:
+            self.tabs.set(self.selector.get())
+        self._arrange_navigation()
+        # CTk recreates its tab buttons when values change. Measure them once
+        # Tk has calculated their requested sizes, including DPI/font scaling.
+        if self._navigation_id is not None:
+            self.after_cancel(self._navigation_id)
+        self._navigation_id = self.after(20, self._refresh_navigation)
         return page
+
+    def _refresh_navigation(self):
+        self._navigation_id = None
+        self._arrange_navigation()
+
+    def _arrange_navigation(self, event=None):
+        scale = ctk.ScalingTracker.get_widget_scaling(self)
+        width = self.navigation.winfo_width() / scale
+        required = self.tabs.winfo_reqwidth() / scale + 24
+        show_tabs = bool(self.pages) and width >= required
+        visible, hidden = (self.tabs, self.selector) if show_tabs else (self.selector, self.tabs)
+        hidden.pack_forget()
+        if not visible.winfo_manager():
+            visible.pack()
 
     def set(self, name):
         for page in self.pages.values():
             page.pack_forget()
         self.pages[name].pack(fill="both", expand=True)
         self.selector.set(name)
+        self.tabs.set(name)
+
+    def destroy(self):
+        if self._navigation_id is not None:
+            self.after_cancel(self._navigation_id)
+        super().destroy()

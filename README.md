@@ -315,28 +315,35 @@ show corrected/clamped parameter values, and prevent simultaneous analysis jobs.
 
 ### Cancellation, progress and corridor recovery
 
-Both GUIs show the current stage, available work counts and elapsed time. **Cancel**
+The Pipelines table and its spreadsheet export show **Placemark ID**, taken directly
+from each source KML `<Placemark id="…">` attribute. Missing or blank attributes
+display `N/A`; OBJECTID, geometry IDs and generated numbers are not substituted.
+These source identifiers stay attached to their pipelines when sorting and do not
+replace the internal indices used for overlap calculations.
+
+Both GUIs show the current stage, available work counts and elapsed processing time.
+A green percentage bar advances from completed work within each processing stage;
+the stages have fixed shares of the overall workflow, so this is not a time-remaining
+estimate. The clock starts in the processing worker, excludes time waiting for a
+warning decision, and resets with the bar for each new analysis. The yellow **Cancel**
+button below the bar
 requests a cooperative stop; the app stays busy until the worker acknowledges it.
 A single XML, filesystem or numerical-library call may finish before cancellation
 is observed. Cancelled work never becomes a result or an analysis-error dialog.
 Use **Retry selected file** after cancellation, or browse for another input.
 Results are cleared when starting a new analysis.
 
-Exceptionally large or dense jobs can pause for **Continue anyway** or **Cancel**
-before expensive overlap comparisons. Initial import and source-distance measurement
-run first; density checks also require segmenting/indexing the paths. These checks
-run off the UI thread and can be cancelled. The warning suggests splitting geometry
-into smaller files or simplifying a copy where distance accuracy is preserved.
-Ordinary jobs proceed directly. This is a workload estimate, not a runtime forecast.
-
-Initial advisory thresholds are deliberately high: 750,000 estimated analysis
-segments or 10,000,000 estimated neighbor inspections from up to 256 count-only
-queries. Repeatable stratified sampling avoids regularly spaced blind spots in
-repetitive geometry. The latter threshold is twice the existing five-million-
-inspection safety cap. Warning text scrolls while Continue/Cancel remain accessible.
-Continuing does not override hard limits; source mileage remains available with
-an incomplete-analysis notice if overlap exceeds a limit. Sampling may miss a
-localized hotspot. No automatic geometry simplification changes source distances.
+Jobs can pause for **Continue anyway** or **Cancel** when measured throughput projects
+total processing beyond **60 seconds**, or processing has already exceeded that time.
+The projection includes elapsed time plus unfinished work in the current stage.
+It needs at least three seconds of stage measurements and a sustained estimate
+over one second with advancing work counts; segment count alone does not trigger
+the warning. The warning can appear during processing, since speeds for later
+stages cannot be known in advance. It is an estimate, not a completion-time promise.
+Accepting it suppresses further runtime warnings for that run. Warning text scrolls
+while Continue/Cancel remain accessible. Continuing does not override hard limits;
+source mileage remains available with an incomplete-analysis notice if overlap
+exceeds a limit. No automatic geometry simplification changes source distances.
 
 **View Corridor** prepares KML and requests opening without blocking the main window.
 If opening fails, the dialog retains the generated file and offers **Copy Path**,

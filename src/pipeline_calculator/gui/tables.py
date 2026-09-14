@@ -13,7 +13,17 @@ def create_table(parent, columns, widths, *, vertical_padding=8):
     name = f'Pipeline{id(frame)}.Treeview'
     style.configure(name, background='#242424', foreground='#EEEEEE', fieldbackground='#242424',
                     borderwidth=0, lightcolor='#242424', darkcolor='#242424')
-    style.configure(name+'.Heading', background='#343434', foreground='#EEEEEE', relief='flat')
+    style.configure(name+'.Heading', background='#343434', foreground='#EEEEEE', relief='solid',
+                    borderwidth=1, bordercolor='#535B65', lightcolor='#535B65', darkcolor='#535B65')
+    style.layout(name+'.Heading', [
+        ('Treeheading.cell', {'sticky': 'nswe'}),
+        ('Treeheading.border', {'sticky': 'nswe', 'children': [
+            ('Treeheading.padding', {'sticky': 'nswe', 'children': [
+                ('Treeheading.image', {'side': 'right', 'sticky': 'e'}),
+                ('Treeheading.text', {'sticky': 'we'}),
+            ]}),
+        ]}),
+    ])
     style.map(name, background=[('selected', '#1F538D')], foreground=[('selected', '#FFFFFF')])
     style.map(name+'.Heading', background=[('active', '#404040')])
     scroll_style = f'Pipeline{id(frame)}'
@@ -39,7 +49,8 @@ def create_table(parent, columns, widths, *, vertical_padding=8):
         for direction in ('Vertical', 'Horizontal'):
             style.configure(scroll_style+'.'+direction+'.TScrollbar', arrowsize=round(14*factor))
         style.configure(name, rowheight=round(32*factor), font=('Arial', -round(13*factor)))
-        style.configure(name+'.Heading', font=('Arial', -round(13*factor), 'bold'))
+        style.configure(name+'.Heading', font=('Arial', -round(13*factor), 'bold'),
+                        padding=(round(8*factor), round(5*factor)))
         for column, width in zip(columns, widths):
             tree.column(column, width=round(width*factor), minwidth=round(width*factor), stretch=True)
     frame.bind('<Configure>', scale_table, add='+')

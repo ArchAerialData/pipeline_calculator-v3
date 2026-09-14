@@ -96,3 +96,56 @@ def test_native_recovery_retry_save_copy_and_close(tmp_path, monkeypatch):
         root.update_idletasks()
         root.destroy()
     assert path.exists()
+
+
+@pytest.mark.native_gui
+def test_backend_toggle_direct_open_failure_and_shutdown(monkeypatch):
+    import customtkinter as ctk
+    import threading
+    import time
+    from pipeline_calculator.gui import config
+    from pipeline_calculator.gui.actions import corridor_launch as launcher
+    from pipeline_calculator.gui.dialogs import corridor_dialog
+    assert config.SHOW_CORRIDOR_LAUNCH_DIALOG is False
+    root = ctk.CTk()
+    root.withdraw()
+    calls, errors = [], []
+    monkeypatch.setattr(launcher.messagebox, 'showerror', lambda *a, **k: errors.append(a))
+    monkeypatch.setattr(action, 'create_and_launch_corridor', lambda s, i: calls.append((s, i)) or action.LaunchOutcome('corridor.kml', 'requested'))
+    before = root.winfo_children()
+    root_destroyed = False
+    try:
+        job = launcher.launch_corridor(root, {'name': 'chosen'}, 42)
+        assert job.done.wait(3)
+        until = time.monotonic()+.2
+        while time.monotonic() < until:
+            root.update()
+            time.sleep(.005)
+        assert calls == [({'name': 'chosen'}, 42)] and not errors
+        assert root.winfo_children() == before and job.closed
+        monkeypatch.setattr(config, 'SHOW_CORRIDOR_LAUNCH_DIALOG', True)
+        monkeypatch.setattr(corridor_dialog, 'CorridorDialog', lambda *a: calls.append(a) or 'dialog')
+        assert launcher.launch_corridor(root, {}, 3) == 'dialog'
+        monkeypatch.setattr(config, 'SHOW_CORRIDOR_LAUNCH_DIALOG', False)
+        monkeypatch.setattr(action, 'create_and_launch_corridor', lambda *a: action.LaunchOutcome('saved.kml', 'failed', 'No KML handler'))
+        job = launcher.launch_corridor(root, {}, 4)
+        assert job.done.wait(3)
+        until = time.monotonic()+.2
+        while time.monotonic() < until:
+            root.update()
+            time.sleep(.005)
+        assert len(errors) == 1 and 'saved.kml' in errors[0][1]
+        release = threading.Event()
+        def delayed_launch(*args):
+            release.wait(3)
+            return action.LaunchOutcome('late.kml', 'requested')
+        monkeypatch.setattr(action, 'create_and_launch_corridor', delayed_launch)
+        job = launcher.launch_corridor(root, {}, 5)
+        root.destroy()
+        root_destroyed = True
+        assert job.closed and job.poll_id is None
+        release.set()
+        assert job.done.wait(3)
+    finally:
+        if not root_destroyed:
+            root.destroy()

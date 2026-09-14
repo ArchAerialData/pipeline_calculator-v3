@@ -94,7 +94,7 @@ def savings_from_sections(pipelines, sections, segment_length, *, context=None):
     deterministic grouping heuristic, not a minimum-flight-route optimizer.
     """
     if context is not None:
-        context.report("Building group graph")
+        context.report("Building group graph", 0, len(sections))
     edges = {}
     keys = {}
     def node_key(node):
@@ -107,8 +107,8 @@ def savings_from_sections(pipelines, sections, segment_length, *, context=None):
         return keys[node]
 
     for section_position, section in enumerate(sections):
-        if context is not None and section_position % 256 == 0:
-            context.check()
+        if context is not None:
+            context.report("Building group graph", section_position, len(sections))
         p1, p2 = section["pair"]
         for match_position, match in enumerate(section['matches']):
             if context is not None and match_position % 256 == 0:

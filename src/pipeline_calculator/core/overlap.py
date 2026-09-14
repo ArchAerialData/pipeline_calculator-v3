@@ -9,13 +9,18 @@ import numpy as np
 from scipy.spatial import KDTree
 
 from pipeline_calculator.core.angles import bearing_orientation_diff
-from pipeline_calculator.core.coordinates import segment_pipeline_paths
+from pipeline_calculator.core.coordinates import segment_pipeline_paths, coordinate_paths_for_pipeline
+from pipeline_calculator.core.corridor_coverage import MeasuredPath, covers_paths
 from pipeline_calculator.core.spatial import lonlat_array_to_ecef, compute_origin
 from pipeline_calculator.core.bundling import qualifying_sections, savings_from_sections
 from pipeline_calculator.core.workload import check_density_workload
 from pipeline_calculator.core.segmentation import MAX_ANALYSIS_SEGMENTS
 
 MAX_CANDIDATE_CHECKS = 5_000_000
+# Bound cheap index visits separately from unique cross-pipeline comparisons.
+# A straight path alone contributes roughly seven hits per 5 m segment at
+# the default radius, even when there is no other pipeline nearby.
+MAX_NEIGHBOR_VISITS = 20_000_000
 
 
 def find_parallel_segments(pipelines, geod, segment_length, detection_range, angular_tolerance, progress_callback=None, *, context=None):
@@ -35,12 +40,14 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
         if context is not None and p_idx % 256 == 0:
             context.check()
         if context is not None:
-            context.report("Segmenting paths", p_idx, len(pipelines))
+            context.report("Segmenting paths", segment_count, context.estimated_segments)
         if progress_callback:
             progress = 0.5 + (p_idx / max(len(pipelines), 1)) * 0.25  # 50-75% progress
             progress_callback(progress)
         pipeline["segments"] = segment_pipeline_paths(geod, pipeline, segment_length, context=context,
-                                                       max_segments=MAX_ANALYSIS_SEGMENTS-segment_count)
+                                                       max_segments=MAX_ANALYSIS_SEGMENTS-segment_count,
+                                                       progress_offset=segment_count,
+                                                       progress_total=context.estimated_segments if context else None)
         segment_count += len(pipeline["segments"])
         if segment_count > MAX_ANALYSIS_SEGMENTS:
             raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
@@ -56,7 +63,7 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
             context.check()
         for segment_position, seg in enumerate(pipeline['segments']):
             if context is not None and segment_position % 256 == 0:
-                context.check()
+                context.report("Building spatial index", len(all_segments), segment_count)
             seg_idx = len(all_segments)
             all_segments.append(seg["midpoint"])
             segment_to_pipeline[seg_idx] = (p_idx, seg)
@@ -77,8 +84,8 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
     if context is not None:
         context.report("Searching neighbors", 0, len(all_segments))
     parallel_groups = defaultdict(list)
-    seen_segment_pairs = set()
     candidate_checks = 0
+    neighbor_visits = 0
 
     for seg_idx, (p_idx, segment) in segment_to_pipeline.items():
         if context is not None and seg_idx % 256 == 0:
@@ -87,21 +94,24 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
             nearby_indices = tree.query_ball_point(
                 xy[seg_idx], radius
             )
-            candidate_checks += len(nearby_indices)
-            if candidate_checks > MAX_CANDIDATE_CHECKS:
+            neighbor_visits += len(nearby_indices)
+            if neighbor_visits > MAX_NEIGHBOR_VISITS:
                 raise ValueError("Neighbor-search limit exceeded; split the dataset or reduce detection range")
 
             for candidate_position, near_idx in enumerate(nearby_indices):
                 if context is not None and candidate_position % 256 == 0:
                     context.check()
-                if near_idx == seg_idx:
-                    continue
-                if near_idx not in segment_to_pipeline:
+                # Each unordered pair needs one comparison. This also excludes
+                # self hits before they consume the cross-pipeline budget.
+                if near_idx <= seg_idx:
                     continue
 
                 near_p_idx, near_segment = segment_to_pipeline[near_idx]
                 if p_idx == near_p_idx:
                     continue
+                candidate_checks += 1
+                if candidate_checks > MAX_CANDIDATE_CHECKS:
+                    raise ValueError("Neighbor-search limit exceeded; split the dataset or reduce detection range")
 
                 if bearing_orientation_diff(segment["bearing"], near_segment["bearing"]) <= angular_tolerance:
                     lon1, lat1 = segment["midpoint"]
@@ -120,11 +130,6 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
                     # their midpoint samples to line up. Touching endpoints alone
                     # do not constitute longitudinal overlap.
                     if distance <= detection_range and along < half_extent - 1e-8:
-                        pair_id = (min(seg_idx, near_idx), max(seg_idx, near_idx))
-                        if pair_id in seen_segment_pairs:
-                            continue
-                        seen_segment_pairs.add(pair_id)
-
                         key = tuple(sorted([p_idx, near_p_idx]))
                         if key[0] == p_idx:
                             parallel_groups[key].append(
@@ -199,6 +204,7 @@ def calculate_overlap_results(
     }
 
     bundled_segments = defaultdict(set)
+    measured_paths = {}
 
     sections = qualifying_sections(pipelines, parallel_groups, segment_length, min_parallel_length, context=context)
     if context is not None:
@@ -244,6 +250,20 @@ def calculate_overlap_results(
                     all_points.append(pipelines[pipe_index]['segments'][segment_id]['midpoint'])
             if not all_points:
                 continue
+            # Retain original vertices and true section endpoints. Representative
+            # midpoint pairs may omit a partner's last matched segment, and a
+            # chord between samples may cut across an original bend.
+            source_paths = []
+            for pipe_index, path_index, segment_ids in zip(
+                    (p1_idx, p2_idx), qualified['paths'], qualified['segment_ids']):
+                key = (pipe_index, path_index)
+                if key not in measured_paths:
+                    coords = coordinate_paths_for_pipeline(pipelines[pipe_index], context=context)[path_index]
+                    measured_paths[key] = MeasuredPath(geod, coords, context=context)
+                path_ids = [pipelines[pipe_index]['segments'][i]['path_segment_index'] for i in segment_ids]
+                points = measured_paths[key].span(min(path_ids)*segment_length, (max(path_ids)+1)*segment_length)
+                source_paths.append(points)
+                all_points.extend(points)
 
             origin_lon, _ = compute_origin(all_points)
             # Unwrap around this corridor, not Greenwich, before finding bounds.
@@ -276,6 +296,7 @@ def calculate_overlap_results(
                 return lon, lat
 
             cl_xy = [to_xy(lon, lat) for lon, lat in centerline_pts]
+            source_xy = [[to_xy(*point) for point in path] for path in source_paths]
 
             if len(cl_xy) >= 2:
                 x0, y0 = cl_xy[0]
@@ -321,7 +342,7 @@ def calculate_overlap_results(
             if detection_range > 0:
                 width_m = min(width_m, 2.0 * detection_range)
 
-            pad_m = max(segment_length * 1.0, 5.0)
+            pad_m = max(segment_length * 1.5, 5.0)
             # A fallback rectangle encloses a bent group, rather than a narrow
             # strip through its average lateral position. Keep nominal strip
             # width separate from this rectangle's potentially broader extent.
@@ -392,8 +413,12 @@ def calculate_overlap_results(
                     right_pts = []
 
                     i0 = valid_idx[0]
-                    p0 = (cl_xy[i0][0] - dirs[0][0]*pad_m,
-                          cl_xy[i0][1] - dirs[0][1]*pad_m)
+                    start_caps = [min((path[0], path[-1]), key=lambda p: math.dist(p, cl_xy[i0])) for path in source_xy]
+                    start_pad = max(pad_m, max(
+                        (cl_xy[i0][0]-p[0])*dirs[0][0] + (cl_xy[i0][1]-p[1])*dirs[0][1]
+                        for p in start_caps) + 1.0)
+                    p0 = (cl_xy[i0][0] - dirs[0][0]*start_pad,
+                          cl_xy[i0][1] - dirs[0][1]*start_pad)
                     n0 = norms[0]
                     left_pts.append((p0[0] + n0[0] * half_w, p0[1] + n0[1] * half_w))
                     right_pts.append((p0[0] - n0[0] * half_w, p0[1] - n0[1] * half_w))
@@ -431,41 +456,25 @@ def calculate_overlap_results(
                         right_pts.extend(right_join)
 
                     i_last = valid_idx[-1] + 1
-                    pend = (cl_xy[i_last][0] + dirs[-1][0]*pad_m,
-                            cl_xy[i_last][1] + dirs[-1][1]*pad_m)
+                    end_caps = [min((path[0], path[-1]), key=lambda p: math.dist(p, cl_xy[i_last])) for path in source_xy]
+                    end_pad = max(pad_m, max(
+                        (p[0]-cl_xy[i_last][0])*dirs[-1][0] + (p[1]-cl_xy[i_last][1])*dirs[-1][1]
+                        for p in end_caps) + 1.0)
+                    pend = (cl_xy[i_last][0] + dirs[-1][0]*end_pad,
+                            cl_xy[i_last][1] + dirs[-1][1]*end_pad)
                     n_last = norms[-1]
                     left_pts.append((pend[0] + n_last[0] * half_w, pend[1] + n_last[1] * half_w))
                     right_pts.append((pend[0] - n_last[0] * half_w, pend[1] - n_last[1] * half_w))
 
                     ring_xy = list(left_pts) + list(reversed(right_pts))
 
-                    def looks_zigzag(seq):
-                        try:
-                            sample = min(20, len(seq) - 1)
-                            if sample < 4:
-                                return False
-                            dists = []
-                            for i in range(sample):
-                                if context is not None and i % 256 == 0:
-                                    context.check()
-                                x1, y1 = seq[i]
-                                x2, y2 = seq[i + 1]
-                                dists.append(math.hypot(x2 - x1, y2 - y1))
-                            if not dists:
-                                return False
-                            med = float(np.median(dists))
-                            return med > 0.5 * width_m and med < 3.0 * width_m
-                        except AnalysisCancelled:
-                            raise
-                        except Exception:
-                            return False
-
-                    if looks_zigzag(ring_xy):
-                        curved_polygon = None
-                    else:
-                        if ring_xy[0] != ring_xy[-1]:
-                            ring_xy.append(ring_xy[0])
-                        curved_polygon = [to_lonlat(px, py) for (px, py) in ring_xy]
+                    if ring_xy[0] != ring_xy[-1]:
+                        ring_xy.append(ring_xy[0])
+                    # Sample spacing alone is not evidence of a zigzag. Keep
+                    # valid curves even with coarse analysis steps. Use the
+                    # enclosing rectangle if the strip cuts across either path.
+                    if covers_paths(ring_xy, source_xy, context=context):
+                        curved_polygon = [to_lonlat(px, py) for px, py in ring_xy]
 
             bundled_segments[p1_idx].update(qualified["segment_ids"][0])
             bundled_segments[p2_idx].update(qualified["segment_ids"][1])
