@@ -10,6 +10,15 @@ def build_overlap_corridor_kml(section, index):
     Separated from GUI side-effects (tempfile + open) so it can be unit-tested
     and reused by both the legacy monolith and the refactored package modules.
     """
+    if "clipped_polygons" in section:
+        from xml.etree import ElementTree as ET
+        from pipeline_calculator.export.geography_kmz import append_corridor, document
+        if not section["clipped_polygons"]:
+            raise ValueError("No usable clipped corridor geometry is available")
+        root, doc = document("State overlap corridor", "Approximate overlap geometry clipped to the selected state.")
+        append_corridor(doc, section, index, require_clipped=True)
+        return ET.tostring(root, encoding="unicode", xml_declaration=True)
+
     coords_list, center, geometry_kind, approximation = prepare_geometry(section)
 
     label = (

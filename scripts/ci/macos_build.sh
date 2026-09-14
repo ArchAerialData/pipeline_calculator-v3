@@ -51,3 +51,7 @@ python -m pytest -vv -rA --tb=short -o faulthandler_timeout=30 --junitxml=.valid
 
 # Delegate actual PyInstaller invocation to the user-facing scripts.
 bash scripts/macos/build_app.sh
+
+# Resolve the versioned inner executable through the built app's Info.plist.
+python scripts/validation/check_packaged_smoke.py "dist/Pipeline_Calculator.app" \
+  --output-directory ".validation-output/packaged-smoke"

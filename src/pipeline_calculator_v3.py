@@ -132,7 +132,7 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
     
-    def analyze_complete(self, file_path, progress_callback=None, *, context=None):
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None):
         """Complete analysis of KMZ/KML file."""
         from pipeline_calculator.core.analyzer import PipelineAnalyzer as _CoreAnalyzer
 
@@ -144,7 +144,8 @@ class PipelineAnalyzer:
             segment_length=self.segment_length,
             angular_tolerance=self.angular_tolerance,
         )
-        return core.analyze_complete(file_path, progress_callback=progress_callback, context=context)
+        kwargs = {'options': options} if options is not None else {}
+        return core.analyze_complete(file_path, progress_callback=progress_callback, context=context, **kwargs)
 
 
 def build_analysis_workbook(current_results):
@@ -181,6 +182,8 @@ class PipelineCalculatorGUI:
         self.analyzer = PipelineAnalyzer()
         self.current_results = None
         self.current_file = None
+        from pipeline_calculator.gui.preferences import StateBreakdownPreference
+        self.state_preference = StateBreakdownPreference(self.root)
         
         # Analysis parameter variables
         # NOTE: CTkEntry's internal textvariable trace calls `.get()` while the user is typing.
@@ -266,7 +269,8 @@ class PipelineCalculatorGUI:
         show(self.root, title="Pipeline Calculator with Overlap Analysis",
              detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
              min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
-             on_browse=self.browse_file, on_file_selected=self.process_file, retry_path=self.current_file)
+             on_browse=self.browse_file, on_file_selected=self.process_file, retry_path=self.current_file,
+             state_preference=self.state_preference)
     
     def browse_file(self):
         if getattr(self, "_processing", False):
@@ -294,6 +298,9 @@ class PipelineCalculatorGUI:
         if getattr(self, '_processing', False) or getattr(self, '_closing', False):
             return
         self._processing = True
+        preference = getattr(self, 'state_preference', None)
+        if preference is not None:
+            preference.set_busy(True)
         try:
             self.current_results = None
             self.current_file = file_path
@@ -309,9 +316,13 @@ class PipelineCalculatorGUI:
                     variable.set(corrections[name])
                 setattr(self.analyzer, name, getattr(params, name))
             self._analysis_session = AnalysisSession(self.root, self._analysis_done)
-            self._analysis_session.start(file_path, params)
+            options = preference.snapshot() if preference is not None else None
+            kwargs = {'options': options} if options is not None and options.state_breakdown else {}
+            self._analysis_session.start(file_path, params, **kwargs)
         except Exception as e:
             self._processing = False
+            if preference is not None:
+                preference.set_busy(False)
             if getattr(self, '_analysis_session', None) is not None:
                 self._analysis_session.close()
             messagebox.showerror("Processing Error", str(e))
@@ -323,6 +334,8 @@ class PipelineCalculatorGUI:
         if self._analysis_session is None or self._analysis_session.job is not job:
             return
         self._processing = False
+        if getattr(self, 'state_preference', None) is not None:
+            self.state_preference.set_busy(False)
         if job.state == 'completed':
             self.current_results = job.result
             self.show_results()
@@ -343,7 +356,7 @@ class PipelineCalculatorGUI:
         from pipeline_calculator.gui.pages.results_page import show
         show(self.root, version=__version__, current_file=self.current_file, current_results=self.current_results,
              on_export=self.export_results, on_reanalyze=self.reanalyze, on_new_file=self.show_file_selection,
-             on_exit=self.close, on_open_corridor=self.view_overlap_kml)
+             on_exit=self.close, on_open_corridor=self.view_overlap_kml, state_preference=self.state_preference)
     
     def create_summary_tab(self, parent):
         from pipeline_calculator.gui.tabs.summary_tab import create
@@ -378,50 +391,15 @@ class PipelineCalculatorGUI:
         self._params_dialog = ParamsDialog(self.root,
             detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
             min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
+            state_preference=self.state_preference,
             on_apply=lambda: self.process_file(self.current_file) if self.current_file else None)
         self._params_dialog.show()
     
     def export_results(self):
-        if getattr(self, "_processing", False):
+        if getattr(self, "_processing", False) or not self.current_results:
             return
-        """Export analysis results.
-
-        Creates a single XLSX workbook with two sheets when `.xlsx` is selected:
-        - Pipeline Length Analysis
-        - Pipeline Overlap Analysis
-
-        JSON export remains available as an alternative.
-        """
-        try:
-            base_name = os.path.splitext(os.path.basename(self.current_file))[0]
-            
-            # Ask for save location
-            save_path = filedialog.asksaveasfilename(
-                defaultextension='.xlsx',
-                initialfile=f"{base_name}_analysis.xlsx",
-                filetypes=[('Excel Workbook', '*.xlsx'), ('JSON files', '*.json')]
-            )
-            
-            if not save_path:
-                return
-            
-            if save_path.endswith('.json'):
-                # Export as JSON
-                with open(save_path, 'w') as f:
-                    json.dump(self.current_results, f, indent=2, default=str)
-            else:
-                # Export as XLSX workbook with two sheets
-                try:
-                    wb = build_analysis_workbook(self.current_results)
-                except Exception as ex:
-                    messagebox.showerror("Export Error", str(ex))
-                    return
-                wb.save(save_path)
-            
-            messagebox.showinfo("Export Complete", f"Results exported to:\n{save_path}")
-            
-        except Exception as e:
-            messagebox.showerror("Export Error", f"Failed to export: {str(e)}")
+        from pipeline_calculator.gui.actions.export_actions import export_with_dialog
+        export_with_dialog(self.current_results, self.current_file)
     
     def run(self):
         """Start the application."""

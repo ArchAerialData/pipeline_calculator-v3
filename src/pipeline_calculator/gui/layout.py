@@ -157,4 +157,9 @@ class ResultPages(ctk.CTkFrame):
     def destroy(self):
         if self._navigation_id is not None:
             self.after_cancel(self._navigation_id)
+        # CTk 5.2's DropdownMenu.destroy omits its scaling registration cleanup.
+        # State switches replace this view; a later DPI change must not address
+        # any destroyed native menus. remove_widget is safe if already removed.
+        menu = self.selector._dropdown_menu
+        ctk.ScalingTracker.remove_widget(menu._set_scaling, menu)
         super().destroy()

@@ -2,9 +2,13 @@ from __future__ import annotations
 
 from pipeline_calculator.gui.tables import create_table
 from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
+from pipeline_calculator.gui.tabs.summary_tab import number
+from pipeline_calculator.core.constants import SURVEY_MILE_METERS
 
 
 def create(parent, current_results: dict) -> None:
+    if current_results.get('state_code'):
+        return create_state_pipelines(parent, current_results)
     columns = ("Placemark ID", "Name", "Length (m)", "Length (miles)")
     tree = create_table(parent, columns, (150, 300, 150, 150))
     records = []
@@ -36,6 +40,29 @@ def create(parent, current_results: dict) -> None:
     def sort(column, descending):
         ordered = sort_records(records, lambda row: row[1].get(fields[column]),
                                numeric=column in ('Length (m)', 'Length (miles)'), descending=descending)
+        for position, (item, _) in enumerate(ordered):
+            tree.move(item, '', position)
+        tree.move(total, '', 'end')
+        tree.yview_moveto(0)
+    tree.sorter = HeaderSorter(tree, columns, sort)
+
+
+def create_state_pipelines(parent, current_results):
+    columns = ('Placemark ID', 'Name', 'Interior (mi)', 'Shared allocation (mi)', 'Attributed (mi)')
+    tree = create_table(parent, columns, (150, 260, 150, 180, 150))
+    fields = dict(zip(columns, ('Placemark_ID', 'Name', 'interior_meters', 'shared_allocation_meters', 'Shape_Length')))
+    records = []
+    for pipeline in current_results.get('pipelines') or []:
+        item = tree.insert('', 'end', values=(pipeline.get('Placemark_ID') or 'N/A', pipeline.get('Name'),
+            *(number(pipeline.get(key, 0) / SURVEY_MILE_METERS) for key in
+              ('interior_meters', 'shared_allocation_meters', 'Shape_Length'))))
+        records.append((item, pipeline))
+    total = tree.insert('', 'end', values=('TOTAL', 'TOTAL',
+        *(number(current_results.get(key, 0) / SURVEY_MILE_METERS) for key in
+          ('interior_meters', 'shared_allocation_meters', 'total_meters'))))
+    def sort(column, descending):
+        ordered = sort_records(records, lambda row: row[1].get(fields[column]),
+                               numeric=column not in ('Placemark ID', 'Name'), descending=descending)
         for position, (item, _) in enumerate(ordered):
             tree.move(item, '', position)
         tree.move(total, '', 'end')

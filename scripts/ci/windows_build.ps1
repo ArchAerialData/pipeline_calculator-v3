@@ -36,3 +36,10 @@ if ($LASTEXITCODE -ne 0) { throw "Tests failed ($LASTEXITCODE)" }
 
 powershell -ExecutionPolicy Bypass -File (Join-Path $RepoDir "scripts\\windows\\build_exe.ps1")
 if ($LASTEXITCODE -ne 0) { throw "Windows build failed ($LASTEXITCODE)" }
+
+$BuildMetadata = Get-Content -LiteralPath (Join-Path $RepoDir "build/version.json") -Raw | ConvertFrom-Json
+$ArtifactPath = Join-Path $RepoDir "dist/Pipeline_Calculator_v$($BuildMetadata.version).exe"
+& $Py (Join-Path $RepoDir "scripts/validation/check_packaged_smoke.py") $ArtifactPath `
+  --expected-version $BuildMetadata.version `
+  --output-directory (Join-Path $RepoDir ".validation-output/packaged-smoke")
+if ($LASTEXITCODE -ne 0) { throw "Frozen Windows smoke failed ($LASTEXITCODE)" }

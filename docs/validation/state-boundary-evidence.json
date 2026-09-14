@@ -1,0 +1,94 @@
+{
+  "date": "2026-09-14",
+  "platform": "Windows 10",
+  "python": "3.11.9",
+  "artifacts": {
+    "boundary_resource": {
+      "path": "src/pipeline_calculator/data/states_2025.zip",
+      "sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+      "bytes": 10002484
+    },
+    "windows_executable": {
+      "path": ".validation-output/state_boundary_build/dist/Pipeline_Calculator_v4.16-dev.212d0d767c0d.dirty.exe",
+      "sha256": "7426559ec07e25bda79d0622dcf138dd297421581e1d94451b8ebef9d1946d5c",
+      "bytes": 102454126
+    },
+    "sample_workbook": {
+      "path": ".validation-output/state-boundary-export-review/Texas-Oklahoma_analysis_20260914_153637/analysis.xlsx",
+      "sha256": "4e3913daf6d0262e5620ac3b293d9ce5716a0767ea7d70c21105bb5646ae8617",
+      "bytes": 18914
+    },
+    "sample_json": {
+      "path": ".validation-output/state-boundary-export-review/Texas-Oklahoma_analysis_20260914_153637/analysis.json",
+      "sha256": "6fadb7763c67677c82740565cc660488d9d938cc5e7a0b69edee71c0d811f45b",
+      "bytes": 132825
+    }
+  },
+  "test_runs": [
+    {
+      "report": ".validation-output/state-boundary-tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "331",
+      "time": "143.798",
+      "timestamp": "2026-09-14T15:39:11.862679-05:00"
+    },
+    {
+      "report": ".validation-output/state-boundary-final-focused.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "38",
+      "time": "18.117",
+      "timestamp": "2026-09-14T15:42:59.618455-05:00"
+    },
+    {
+      "report": ".validation-output/state-boundary-final-tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "352",
+      "time": "143.901",
+      "timestamp": "2026-09-14T15:48:07.634416-05:00"
+    }
+  ],
+  "macos_native_validation": "pending",
+  "normal_windows_startup": {
+    "status": "passed",
+    "exe": ".validation-output/state_boundary_build/dist/Pipeline_Calculator_v4.16-dev.212d0d767c0d.dirty.exe",
+    "visible_seconds": 5,
+    "observations": 50,
+    "title": "Pipeline Calculator v4.16-dev.212d0d767c0d.dirty"
+  },
+  "packaged_smoke": {
+    "status": "passed",
+    "executable": ".validation-output/state_boundary_build/dist/Pipeline_Calculator_v4.16-dev.212d0d767c0d.dirty.exe",
+    "proj_network": "OFF",
+    "implementations": [
+      {
+        "implementation": "new",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "implementation": "legacy",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ]
+  },
+  "final_test_report": {
+    "report": ".validation-output/state-boundary-final-tests.xml",
+    "name": "pytest",
+    "errors": "0",
+    "failures": "0",
+    "skipped": "0",
+    "tests": "352",
+    "time": "143.901",
+    "timestamp": "2026-09-14T15:48:07.634416-05:00"
+  }
+}

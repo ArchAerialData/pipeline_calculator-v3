@@ -93,6 +93,7 @@ APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v${VERSION}}"
 pyinstaller --noconfirm --clean \
   --name "${APP_DISPLAY_NAME}" \
   --add-data "${REPO_DIR}/build/version.json:pipeline_calculator" \
+  --add-data "${REPO_DIR}/src/pipeline_calculator/data:pipeline_calculator/data" \
   --windowed \
   --onedir \
   --specpath "build" \
@@ -105,6 +106,7 @@ pyinstaller --noconfirm --clean \
   --hidden-import scipy._lib.messagestream \
   --hidden-import tkinterdnd2 \
   --hidden-import PIL \
+  --collect-all shapely \
   --additional-hooks-dir "${REPO_DIR}/scripts/pyinstaller_hooks" \
   "${ENTRY_SCRIPT}"
 

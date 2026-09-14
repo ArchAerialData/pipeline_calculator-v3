@@ -18,6 +18,7 @@ def show(
     on_browse,
     on_file_selected,
     retry_path=None,
+    state_preference=None,
 ) -> None:
     """Render the file selection screen."""
 
@@ -67,6 +68,8 @@ def show(
     body.pack(side="bottom", fill="x", before=drop_zone)
     WrappedLabel(body, text="Analysis Settings", font=("Arial", 16, "bold"), anchor="w").pack(
         fill="x", padx=12, pady=(8, 2))
+    if state_preference is not None:
+        state_preference.add_control(body)
     parameter_fields(body, (detection_range_var, segment_length_var, min_parallel_var, angular_tolerance_var),
                      compact=True)
 
@@ -93,7 +96,8 @@ def show(
         # viewport accessible. Normal windows retain the content-sized footer.
         reserved = (browse_actions.winfo_reqheight() / scale + 16 if short
                     else browse_area.winfo_reqheight() / scale + title_label.winfo_reqheight() / scale + 16)
-        body.maximum_height = max(48, min(240, height - reserved - 110))
+        body.maximum_height = max(48, min(320 if state_preference is not None else 240,
+                                          height - reserved - 110))
         body._schedule_refresh()
 
     main_frame.bind("<Configure>", fit_short_window, add="+")

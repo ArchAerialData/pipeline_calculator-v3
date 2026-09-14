@@ -62,6 +62,7 @@ try {
     @IconArgs `
     --paths $SourceDir `
     --add-data "$MetadataPath;pipeline_calculator" `
+    --add-data "$SourceDir\pipeline_calculator\data;pipeline_calculator/data" `
     --add-data "$ReadmePath;." `
     --add-data "$WindowsIcon;." `
     --add-data "$MacIcon;." `
@@ -70,6 +71,7 @@ try {
     --hidden-import "scipy._lib.messagestream" `
     --hidden-import "tkinterdnd2" `
     --hidden-import "PIL" `
+    --collect-all "shapely" `
     --additional-hooks-dir (Join-Path $RepoDir "scripts\\pyinstaller_hooks") `
     $Entry
   if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed ($LASTEXITCODE)" }

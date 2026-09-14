@@ -8,22 +8,26 @@ from uuid import uuid4
 from pipeline_calculator.core.analyzer import PipelineAnalyzer
 from pipeline_calculator.gui.state import AnalysisParameters
 from pipeline_calculator.core.execution import AnalysisCancelled, ExecutionContext
+from pipeline_calculator.core.options import AnalysisOptions
 
 
-def analyze_file(file_path: str, params: AnalysisParameters, *, context=None) -> dict[str, Any]:
+def analyze_file(file_path: str, params: AnalysisParameters, *, context=None,
+                 options: AnalysisOptions | None = None) -> dict[str, Any]:
     analyzer = PipelineAnalyzer(
         detection_range=params.detection_range,
         min_parallel_length=params.min_parallel_length,
         segment_length=params.segment_length,
         angular_tolerance=params.angular_tolerance,
     )
-    return analyzer.analyze_complete(file_path, context=context)
+    kwargs = {'options': options} if options is not None and options.state_breakdown else {}
+    return analyzer.analyze_complete(file_path, context=context, **kwargs)
 
 
 @dataclass
 class AnalysisJob:
     file_path: str
     params: AnalysisParameters
+    options: AnalysisOptions = field(default_factory=AnalysisOptions)
     done: threading.Event = field(default_factory=threading.Event, init=False)
     result: dict[str, Any] | None = field(default=None, init=False)
     error: BaseException | None = field(default=None, init=False)
@@ -35,6 +39,7 @@ class AnalysisJob:
 
     def __post_init__(self):
         self._request = (self.file_path, self.params)
+        self._options = self.options
         self.context = ExecutionContext(self.job_id, interactive=True)
 
     @property
@@ -78,7 +83,8 @@ class AnalysisJob:
         try:
             self.context.check()
             self.context.begin()
-            result = analyze_file(*self._request, context=self.context)
+            kwargs = {'options': self._options} if self._options.state_breakdown else {}
+            result = analyze_file(*self._request, context=self.context, **kwargs)
             self.context.finish()
         except AnalysisCancelled:
             self.context.cancel()
@@ -98,8 +104,9 @@ class AnalysisJob:
 class AnalysisController:
     """Runs analysis off the UI thread."""
 
-    def start(self, file_path: str, params: AnalysisParameters) -> AnalysisJob:
-        job = AnalysisJob(file_path=file_path, params=params)
+    def start(self, file_path: str, params: AnalysisParameters, *,
+              options: AnalysisOptions | None = None) -> AnalysisJob:
+        job = AnalysisJob(file_path=file_path, params=params, options=options or AnalysisOptions())
         job.start()
         return job
 

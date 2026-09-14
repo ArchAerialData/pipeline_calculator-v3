@@ -195,6 +195,7 @@ def calculate_overlap_results(
     results = {
         "bundled_sections": [],
         "pipeline_overlaps": {},
+        "pipeline_overlaps_by_id": {},
         "total_bundled_length": 0,
         "effective_total_length": 0,
         "savings_meters": 0,
@@ -483,6 +484,8 @@ def calculate_overlap_results(
                 {
                     "pipeline_1": pipelines[p1_idx]["name"],
                     "pipeline_2": pipelines[p2_idx]["name"],
+                    "pipeline_1_id": pipelines[p1_idx].get("id", p1_idx),
+                    "pipeline_2_id": pipelines[p2_idx].get("id", p2_idx),
                     "source_path_indices": list(qualified["paths"]),
                     "bundled_length_meters": bundled_length,
                     "bundled_length_miles": bundled_length / survey_mile_m,
@@ -516,11 +519,15 @@ def calculate_overlap_results(
         bundled_count = len(bundled_segments[p_idx])
         bundled_length = bundled_count * segment_length
 
-        results["pipeline_overlaps"][pipeline["name"]] = {
+        detail = {
             "bundled_segments": bundled_count,
             "bundled_length_meters": bundled_length,
             "bundled_length_miles": bundled_length / survey_mile_m,
         }
+        results["pipeline_overlaps"][pipeline["name"]] = detail
+        source_id = pipeline.get("id", p_idx)
+        results["pipeline_overlaps_by_id"][str(source_id)] = dict(
+            detail, source_id=source_id, source_name=pipeline["name"])
 
     total_bundled = sum(section["bundled_length_meters"] for section in results["bundled_sections"])
     results["total_bundled_length"] = total_bundled

@@ -22,6 +22,7 @@ from pipeline_calculator.gui.pages.file_select_page import show as show_file_sel
 from pipeline_calculator.gui.pages.results_page import show as show_results_page
 from pipeline_calculator.gui.resources import set_window_icon
 from pipeline_calculator.gui.state import AnalysisParameters, AppState
+from pipeline_calculator.gui.preferences import StateBreakdownPreference
 
 
 def _legacy_version() -> str:
@@ -43,6 +44,7 @@ class PipelineCalculatorGUI:
         set_window_icon(self.root)
 
         self.state = AppState()
+        self.state_preference = StateBreakdownPreference(self.root)
         self.controller = AnalysisController()
         self._processing = False
         self._closing = False
@@ -80,6 +82,7 @@ class PipelineCalculatorGUI:
             on_browse=self.browse_file,
             on_file_selected=self.process_file,
             retry_path=self.state.current_file,
+            state_preference=self.state_preference,
         )
 
     def browse_file(self) -> None:
@@ -123,14 +126,21 @@ class PipelineCalculatorGUI:
         if self._processing or getattr(self, '_closing', False):
             return
         self._processing = True
+        preference = getattr(self, 'state_preference', None)
+        if preference is not None:
+            preference.set_busy(True)
         try:
             self.state.current_results = None
             self.state.current_file = file_path
             self.state.params = self._get_parameters()
             self._analysis_session = AnalysisSession(self.root, self._analysis_done, self.controller)
-            self._analysis_session.start(file_path, self.state.params)
+            options = preference.snapshot() if preference is not None else None
+            kwargs = {'options': options} if options is not None and options.state_breakdown else {}
+            self._analysis_session.start(file_path, self.state.params, **kwargs)
         except Exception as e:
             self._processing = False
+            if preference is not None:
+                preference.set_busy(False)
             if getattr(self, '_analysis_session', None) is not None:
                 self._analysis_session.close()
             messagebox.showerror("Processing Error", str(e))
@@ -142,6 +152,8 @@ class PipelineCalculatorGUI:
         if self._analysis_session is None or self._analysis_session.job is not job:
             return
         self._processing = False
+        if getattr(self, 'state_preference', None) is not None:
+            self.state_preference.set_busy(False)
         if job.state == 'completed':
             self.state.current_results = job.result
             self.show_results()
@@ -171,6 +183,7 @@ class PipelineCalculatorGUI:
             on_new_file=self.show_file_selection,
             on_exit=self.close,
             on_open_corridor=self.view_overlap_corridor,
+            state_preference=self.state_preference,
         )
 
     def view_overlap_corridor(self, section: dict, index: int) -> None:
@@ -202,6 +215,7 @@ class PipelineCalculatorGUI:
             min_parallel_var=self.min_parallel_var,
             angular_tolerance_var=self.angular_tolerance_var,
             on_apply=apply_and_analyze,
+            state_preference=self.state_preference,
         )
         self._params_dialog.show()
 

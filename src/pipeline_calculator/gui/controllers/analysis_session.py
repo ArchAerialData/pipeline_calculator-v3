@@ -28,7 +28,7 @@ class AnalysisSession:
         self.surface = None
         self.presented_warning = None
 
-    def start(self, path, params):
+    def start(self, path, params, *, options=None):
         if self.closed or self.job is not None:
             raise RuntimeError('Analysis session already started or closed')
         self.surface = ModalSurface(self.root)
@@ -105,7 +105,8 @@ class AnalysisSession:
         self.resize_binding = self.root.bind('<Configure>', self._queue_resize, add='+')
         self._resize_panel()
         try:
-            self.job = self.controller.start(path, params)
+            kwargs = {'options': options} if options is not None and options.state_breakdown else {}
+            self.job = self.controller.start(path, params, **kwargs)
             self._poll(self.job.job_id)
         except BaseException:
             self.close()

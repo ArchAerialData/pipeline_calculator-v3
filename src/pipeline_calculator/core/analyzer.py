@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from pipeline_calculator.core.execution import AnalysisCancelled
+from pipeline_calculator.core.execution import AnalysisCancelled, ScopedExecutionContext
+from pipeline_calculator.core.options import AnalysisOptions
 
 import math
 
@@ -163,15 +164,43 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
 
-    def analyze_complete(self, file_path, progress_callback=None, *, context=None):
-        """Complete analysis; an optional per-call context supports cooperative control."""
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None):
+        """Parse once, retaining the ordinary result and optional state breakdown."""
+        options = options or AnalysisOptions()
+        if not isinstance(options, AnalysisOptions):
+            raise TypeError('options must be AnalysisOptions')
+        try:
+            parse_context = (ScopedExecutionContext(context, 0, .03)
+                             if context is not None and options.state_breakdown else context)
+            parsed = extract_features_from_file_with_diagnostics(
+                file_path, progress_callback=progress_callback, context=parse_context)
+            combined_context = (ScopedExecutionContext(context, .03, .43, 'Combined')
+                                if context is not None and options.state_breakdown else context)
+            combined = self.analyze_features(
+                parsed.pipelines, parsed.placemarks, diagnostics=parsed.diagnostics,
+                parsed_kml_files=parsed.parsed_kml_files, progress_callback=progress_callback,
+                context=combined_context)
+            if options.state_breakdown:
+                # These samples belong to the completed combined pass. State
+                # runs produce their own; retaining both doubles peak memory.
+                for pipeline in parsed.pipelines:
+                    pipeline.pop('segments', None)
+                from pipeline_calculator.core.state_analysis import build_state_breakdown
+                combined['geography'] = build_state_breakdown(
+                    self, parsed.pipelines, combined, context=context)
+            return combined
+        except AnalysisCancelled:
+            raise
+        except Exception as exc:
+            raise ValueError(f'Analysis failed: {exc}') from exc
+
+    def analyze_features(self, pipelines, placemarks=None, *, diagnostics=None,
+                         parsed_kml_files=None, progress_callback=None, context=None):
+        """Analyze normalized features without XML round trips or identity changes."""
         previous_context = self._context
         self._context = context
+        diagnostics = list(diagnostics or [])
         try:
-            parsed = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=self._context)
-            pipelines = parsed.pipelines
-            placemarks = parsed.placemarks
-
             pipeline_data, total_meters, total_miles = self.calculate_pipeline_lengths(pipelines)
 
             overlap_results = None
@@ -198,7 +227,7 @@ class PipelineAnalyzer:
                 except AnalysisCancelled:
                     raise
                 except Exception as e:
-                    parsed.diagnostics.append({
+                    diagnostics.append({
                         "level": "error",
                         "code": "overlap_analysis_failed",
                         "message": "Overlap calculation failed; adjusted mileage and savings are unavailable.",
@@ -210,13 +239,13 @@ class PipelineAnalyzer:
                 context.report("Finalizing results")
             return {
                 "pipelines": pipeline_data,
-                "placemarks": placemarks,
+                "placemarks": list(placemarks or []),
                 "total_meters": total_meters,
                 "total_miles": total_miles,
                 "overlap_analysis": overlap_results,
-                "analysis_complete": not any(d.get("level") == "error" for d in parsed.diagnostics),
-                "diagnostics": parsed.diagnostics,
-                "parsed_kml_files": parsed.parsed_kml_files,
+                "analysis_complete": not any(d.get("level") == "error" for d in diagnostics),
+                "diagnostics": diagnostics,
+                "parsed_kml_files": list(parsed_kml_files or []),
                 "analysis_parameters": {
                     "detection_range": self.detection_range,
                     "min_parallel_length": self.min_parallel_length,

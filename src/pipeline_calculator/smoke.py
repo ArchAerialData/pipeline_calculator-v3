@@ -48,6 +48,43 @@ def _check_live_results(result):
         app.close()
 
 
+def _check_geography_packaging(directory):
+    """Exercise real bundled boundaries, native geometry and map roundtrips offline."""
+    from pipeline_calculator.core.analyzer import PipelineAnalyzer
+    from pipeline_calculator.core.geography import load_boundaries
+    from pipeline_calculator.core.options import AnalysisOptions
+    from pipeline_calculator.export.package import export_analysis_package
+
+    boundaries = load_boundaries()
+    assert len(boundaries.geometries) == 51
+    for longitude, latitude, state in [(-157.8583, 21.3069, "HI"), (-149.9003, 61.2181, "AK"),
+                                       (-97.7431, 30.2672, "TX"), (-77.0365, 38.8977, "DC")]:
+        assert boundaries.states_at(longitude, latitude) == [state]
+    fixture = Path(directory) / "state-crossing.kml"
+    fixture.write_text(
+        '<kml><Placemark><name>State crossing</name><LineString><coordinates>'
+        '-101,36.49 -101,36.51</coordinates></LineString></Placemark></kml>', encoding="utf-8")
+    analyzer = PipelineAnalyzer()
+    result = analyzer.analyze_complete(fixture, options=AnalysisOptions(state_breakdown=True))
+    geography = result["geography"]
+    assert geography["status"] == "complete", geography.get("diagnostics")
+    assert {state["state_code"] for state in geography["states"]} == {"TX", "OK"}
+    assert geography["reconciliation"]["passed"]
+    output = export_analysis_package(result, directory, fixture, include_json=True)
+    combined = analyzer.analyze_complete(output / "Combined/analysis.kmz")
+    assert abs(combined["total_meters"] - result["total_meters"]) <= .001
+    for state in geography["states"]:
+        mapped = analyzer.analyze_complete(output / f"States/{state['state_name']}/analysis.kmz")
+        assert abs(mapped["total_meters"] - state["interior_meters"]) <= .001
+    return {
+        "boundary_jurisdictions": len(boundaries.geometries),
+        "state_codes": sorted(state["state_code"] for state in geography["states"]),
+        "boundary_vintage": boundaries.boundary_source.get("vintage"),
+        "reconciliation_passed": True,
+        "package_map_roundtrips": True,
+    }
+
+
 def run(output_path, *, implementation='new'):
     from pipeline_calculator.versioning import get_version
     from pipeline_calculator.gui.resources import icon_path, resource_root
@@ -87,6 +124,7 @@ def run(output_path, *, implementation='new'):
             assert [sheet.cell(i+2, 1).value for i in range(len(result['pipelines']))] == [
                 p['Placemark_ID'] for p in result['pipelines']]
             workbook.save(Path(directory)/'result.xlsx')
+            geography_report = _check_geography_packaging(directory)
         if implementation == 'new':
             _check_live_results(result)
         icon=icon_path()
@@ -98,6 +136,7 @@ def run(output_path, *, implementation='new'):
                 'live_results': implementation == 'new', 'pipeline_count': len(result['pipelines']),
                 'placemark_ids': [p['Placemark_ID'] for p in result['pipelines']],
                 'original_miles': result['total_miles'],
+                'geography': geography_report,
                 'adjusted_miles': (result.get('overlap_analysis') or {}).get('effective_total_miles')}
     except Exception as exc:
         report={'status':'failed','implementation':implementation,'error':str(exc)}

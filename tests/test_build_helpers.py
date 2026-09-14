@@ -34,6 +34,10 @@ def test_source_smoke_entrypoints(tmp_path):
         assert process.returncode==0,process.stderr
         report=json.loads(output.read_text())
         assert report['status']=='passed' and report['implementation']==implementation
+        assert report['geography']['boundary_jurisdictions'] == 51
+        assert report['geography']['state_codes'] == ['OK', 'TX']
+        assert report['geography']['reconciliation_passed']
+        assert report['geography']['package_map_roundtrips']
 
 
 @pytest.mark.skipif(sys.platform!='win32',reason='Native Windows build helper')

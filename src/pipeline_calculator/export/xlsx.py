@@ -215,6 +215,10 @@ def build_analysis_workbook(current_results):
                 ws3.cell(row=r, column=c).font = body_font
                 ws3.cell(row=r, column=c).alignment = left
 
+    if isinstance(current_results.get("geography"), dict):
+        from pipeline_calculator.export.geography_xlsx import add_geography_sheets
+        add_geography_sheets(wb, current_results)
+
     # Source names/IDs/diagnostics are data, even if they begin with '='.
     # Preserve only the totals formula that this exporter intentionally creates.
     totals_formula = ws.cell(row=2, column=4)

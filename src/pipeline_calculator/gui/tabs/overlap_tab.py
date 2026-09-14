@@ -6,6 +6,7 @@ import customtkinter as ctk
 from pipeline_calculator.gui.tables import create_table
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
+from pipeline_calculator.gui.tabs.summary_tab import number
 
 
 class CorridorTable(ctk.CTkFrame):
@@ -67,7 +68,8 @@ class CorridorTable(ctk.CTkFrame):
     def _open(self, item):
         if item in self.item_map:
             section, index = self.item_map[item]
-            self.on_open_corridor(section, index)
+            if section.get('clipped_polygons') != []:
+                self.on_open_corridor(section, index)
 
     def _double_click(self, event):
         if self.tree.identify_region(event.x, event.y) == 'cell':
@@ -92,11 +94,14 @@ class CorridorTable(ctk.CTkFrame):
             index, section = self.ordered_sections[position]
             item = self.tree.insert('', 'end', values=(
                 f"{section.get('pipeline_1')} + {section.get('pipeline_2')}",
-                f"{section.get('bundled_length_miles', 0):.3f}",
+                number(section.get('bundled_length_miles', 0)),
                 f"{section.get('average_separation', 0):.1f}", ''))
             self.item_map[item] = (section, index)
-            button = ttk.Button(self.tree, text='View Corridor', style=self.button_style,
+            omitted = section.get('clipped_polygons') == []
+            button = ttk.Button(self.tree, text='Map unavailable' if omitted else 'View Corridor', style=self.button_style,
                                 command=lambda item=item: self._open(item), takefocus=True)
+            if omitted:
+                button.configure(state='disabled')
             button.bind('<Return>', lambda event, item=item: self._activate_button(item))
             self.row_buttons[item] = button
         self.tree.yview_moveto(0)
@@ -149,9 +154,14 @@ class CorridorTable(ctk.CTkFrame):
 
 
 def create(parent, current_results: dict, *, on_open_corridor) -> None:
+    if current_results.get('state_code') and current_results.get('shared_allocation_meters', 0) > 0:
+        WrappedLabel(parent, text='Shared-border overlap: Not calculated. Only interior geometry is analyzed here.',
+                     text_color='#B6C0CE').pack(fill='x', padx=12, pady=8)
     sections = (current_results.get('overlap_analysis') or {}).get('bundled_sections') or []
     if sections:
         CorridorTable(parent, sections, on_open_corridor).pack(fill='both', expand=True, padx=4)
     else:
-        WrappedLabel(parent, text='No bundled sections found with current parameters',
+        failed = current_results.get('state_code') and current_results.get('adjusted_total_meters') is None
+        WrappedLabel(parent, text=('State overlap analysis is unavailable. See Diagnostics for details.' if failed else
+                                  'No bundled sections found with current parameters'),
                      font=('Arial', 14)).pack(pady=20)

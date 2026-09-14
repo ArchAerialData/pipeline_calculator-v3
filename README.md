@@ -81,6 +81,47 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - Dark mode interface for reduced eye strain
 - Cooperative cancellation and named processing stages with work counts and elapsed time
 
+### State breakdown
+
+Enable **State breakdown** in Analysis Settings before browsing or dropping a
+KML/KMZ. The switch starts off and remembers your choice across app sessions.
+**Adjust Parameters** also lets you change it before reanalysis.
+
+The app retains its combined analysis, clips pipeline paths at state boundaries,
+and independently analyzes each state's interior geometry. **View: Combined**
+switches the existing cards, pipeline table, overlaps and corridor previews to an
+encountered state. The Combined summary compares all states without adding a card
+for each one. Point placemarks remain available in the Combined view.
+
+Original state mileage reconciles to the original input mileage. Positive-length
+lines following a verified shared border are stored once and their mileage is
+allocated equally to adjoining states, with no state overlap discount. Outside
+coverage and unresolved mileage are shown separately. Short genuine crossings are
+preserved. State savings can differ from combined savings because overlap minimum
+lengths apply independently inside each state; the boundary split can make a
+previously qualifying overlap too short.
+
+Exports create one named package containing `analysis.xlsx`, optional JSON and
+optional `Combined/analysis.kmz` plus `States/<State>/analysis.kmz`. Maps are
+selected by default. State maps contain exclusive interior geometry, while shared
+border geometry appears once in the Combined map. Therefore state map line mileage
+matches the workbook's **Interior mileage**, while **Original attributed mileage**
+also includes any shared allocation. Export always includes the whole result,
+regardless of the selected state view.
+
+The bundled [2025 Census TIGER/Line state data](https://www2.census.gov/geo/tiger/TIGER2025/STATE/)
+covers the 50 states and Washington, DC without network access. Boundary provenance,
+datum operations and checksums appear in the export. Numerical clipping precision
+is separate from the source data's positional accuracy. Thirteen remote Alaska/
+Hawaii components outside the published datum-operation areas use explicitly
+approximate coordinate equivalence with unknown positional accuracy, recorded
+per component; results do not establish surveyed ownership. Boundary updates
+require a reviewed resource rebuild using `scripts/data/prepare_state_boundaries.py`
+and the original source archive; no runtime downloads occur.
+
+See the [approved specification](STATE_BOUNDARY_ANALYSIS_PLAN.md) and
+[implementation validation](docs/validation/state-boundary-analysis.md).
+
 ## 📊 Overlap Analysis Capabilities
 
 The overlap analysis feature helps optimize aerial survey planning by:
