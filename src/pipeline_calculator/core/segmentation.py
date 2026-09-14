@@ -6,7 +6,7 @@ import math
 
 MAX_ANALYSIS_SEGMENTS = 1_000_000
 
-def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_segments=None):
+def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_segments=None, progress_offset=0, progress_total=None):
     """Break a pipeline polyline into fixed-length analysis segments.
 
     Args:
@@ -89,7 +89,7 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
                 if context is not None:
                     context.checkpoint()
                 if context is not None and len(segments) % 256 == 0:
-                    context.report("Segmenting path", len(segments))
+                    context.report("Segmenting path", progress_offset+len(segments), progress_total)
                 needed_m = seg_len - carry_m
                 if needed_m <= 1e-12:
                     # Defensive: if floating error yields ~0, snap to a fresh segment.

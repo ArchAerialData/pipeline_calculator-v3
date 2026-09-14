@@ -9,6 +9,7 @@ from ctypes import wintypes
 import json
 from pathlib import Path
 import subprocess
+import sys
 import time
 
 
@@ -77,6 +78,9 @@ def check(exe):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+    from scripts.validation.gui_process import isolate_probe
+    isolate_probe(timeout=45)
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('exe', type=Path)
     parser.add_argument('--output', type=Path, required=True)

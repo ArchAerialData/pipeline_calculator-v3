@@ -1,5 +1,9 @@
 # Verified improvement implementation plan
 
+September 14: [macOS notarization follow-up plan](MACOS_NOTARIZATION_FOLLOWUP_PLAN.md)
+created with dated findings, completion statuses, and a deferred implementation
+checklist. No signing credentials or build code changed for this planning task.
+
 September 11 CI repair: GUI test isolation, exact coincident-endpoint handling,
 constrained-screen overlap spacing, and CI diagnostics implemented. See
 [desktop CI repair](docs/validation/desktop-ci-repair.md) for runner evidence and

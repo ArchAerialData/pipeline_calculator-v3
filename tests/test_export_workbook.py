@@ -45,7 +45,7 @@ def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
 
     ws = wb["Pipeline Length Analysis"]
     assert [c.value for c in ws[1]] == [
-        "Object ID (if available)",
+        "Placemark ID",
         "Polyline Name (if available)",
         "Pipeline Lengths (US Survey)",
         "TOTAL MILEAGE",
@@ -69,7 +69,7 @@ def test_build_analysis_workbook_header_fills() -> None:
 
     # Minimal results, no overlap rows required for style validation.
     results = {
-        "pipelines": [{"OBJECTID": "1", "Name": "A", "pipelinelength": 1.234}],
+        "pipelines": [{"Placemark_ID": "1", "Name": "A", "pipelinelength": 1.234}],
         "overlap_analysis": {"bundled_sections": [], "savings_miles": 0.0},
     }
 

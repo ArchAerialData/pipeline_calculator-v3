@@ -24,7 +24,7 @@ def build_analysis_workbook(current_results):
     ws.freeze_panes = 'A2'
 
     headers_pla = [
-        "Object ID (if available)",
+        "Placemark ID",
         "Polyline Name (if available)",
         "Pipeline Lengths (US Survey)",
         "TOTAL MILEAGE",
@@ -52,10 +52,10 @@ def build_analysis_workbook(current_results):
         ws.column_dimensions[get_column_letter(i)].width = w
 
     for p in list(current_results.get('pipelines', []) or []):
-        obj_id = p.get('OBJECTID') if p.get('OBJECTID') not in (None, "") else "N/A"
+        placemark_id = p.get('Placemark_ID') or "N/A"
         name = p.get('Name', '')
         miles = float(p.get('pipelinelength', 0.0)) if p.get('pipelinelength') is not None else 0.0
-        ws.append([obj_id, name, miles, None])
+        ws.append([placemark_id, name, miles, None])
 
     max_row = ws.max_row
     for r in range(2, max_row + 1):

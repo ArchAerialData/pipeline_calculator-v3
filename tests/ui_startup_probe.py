@@ -2,6 +2,10 @@
 from pathlib import Path
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.validation.gui_process import isolate_probe
+isolate_probe(timeout=15)
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 if len(sys.argv) > 1 and sys.argv[1] == 'legacy':
     from pipeline_calculator_v3 import PipelineCalculatorGUI

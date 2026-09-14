@@ -360,6 +360,7 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                 state.pipelines.append(
                     {
                         "id": state.pipeline_count - 1,
+                        "placemark_id": (placemark.get("id") or "").strip() or "N/A",
                         "objectid": objectid,
                         "name": name,
                         "coordinates": coordinate_paths[0],
@@ -681,7 +682,9 @@ def extract_features_from_file(file_path, progress_callback=None, *, context=Non
     """Extract pipelines and point placemarks from a KMZ/KML file.
 
     Returns:
-      pipelines: list[dict] with keys {id, objectid, name, coordinates, coordinate_paths}
+      pipelines: list[dict] with keys {id, placemark_id, objectid, name, coordinates, coordinate_paths}
+        id is the internal analysis index; placemark_id is the source Placemark's
+        id attribute, or N/A when absent. Other identifiers are not substituted.
       placemarks: list[dict] with keys {Placemark_ID, Name, Count}
     """
     result = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=context)

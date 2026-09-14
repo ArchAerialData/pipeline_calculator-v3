@@ -1,6 +1,9 @@
 """Verify the installed Tcl/Tk runtime in an isolated, bounded process."""
-import subprocess
+from pathlib import Path
 import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+from scripts.validation.gui_process import run_gui
 
 
 def main():
@@ -16,7 +19,10 @@ print('Screen:', root.winfo_screenwidth(), root.winfo_screenheight(), flush=True
 root.update_idletasks()
 root.destroy()
 """
-    subprocess.run([sys.executable, '-u', '-c', probe], check=True, timeout=20)
+    result = run_gui([sys.executable, '-u', '-c', probe], timeout=20)
+    print(result.stdout, end='')
+    print(result.stderr, end='', file=sys.stderr)
+    result.check_returncode()
 
 
 if __name__ == '__main__':

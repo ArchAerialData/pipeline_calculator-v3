@@ -1,5 +1,9 @@
 # Follow-up runbook: owner input and external validation
 
+September 14 deferred follow-up: [macOS notarization and credential reuse plan](MACOS_NOTARIZATION_FOLLOWUP_PLAN.md).
+Investigation and planning are complete; credential availability needs input,
+and implementation plus Dropbox installation acceptance remain deferred.
+
 September 11 update: macOS GitHub Actions investigation and automated packaging
 were resumed with owner authorization. See [desktop CI repair](docs/validation/desktop-ci-repair.md).
 Interactive macOS acceptance and real-project testing remain deferred; CI access

@@ -109,6 +109,7 @@ class PipelineAnalyzer:
 
             pipeline_data.append(
                 {
+                    "Placemark_ID": pipeline.get("placemark_id") or "N/A",
                     "OBJECTID": pipeline.get("objectid", "N/A"),
                     "Name": pipeline.get("name", ""),
                     "Shape_Length": length_meters,

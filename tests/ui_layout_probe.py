@@ -104,12 +104,15 @@ def run(scale, width, height, capture=None, legacy=False):
         assert dark.value == 1, 'native titlebar is not dark'
         assert root.TkdndVersion
         check('import')
-        data = {'total_miles': 153.716, 'total_meters': 247000,
-                'pipelines': [{'OBJECTID': i, 'Name': 'Long pipeline name ' * 15,
+        data = {'total_miles': 153.716, 'total_meters': 247000, 'analysis_complete': True,
+                'analysis_parameters': {'detection_range': 15.0, 'min_parallel_length': 200.0,
+                                        'segment_length': 5.0, 'angular_tolerance': 15.0},
+                'pipelines': [{'Placemark_ID': i, 'Name': 'Long pipeline name ' * 15,
                                'Shape_Length': 100, 'pipelinelength': 1} for i in range(50)],
                 'placemarks': [{'Placemark_ID': '1', 'Name': 'Long name '*20, 'Count': 1}],
                 'diagnostics': [{'level': 'warning', 'code': 'EXAMPLE', 'message': 'Long diagnostic '*50}],
-                'overlap_analysis': {'effective_total_miles': 150, 'bundled_sections': [
+                'overlap_analysis': {'effective_total_miles': 150, 'savings_miles': 3.716,
+                                     'savings_percentage': 3.716/153.716*100, 'bundled_sections': [
                     {'pipeline_1': f'Pipeline {i}', 'pipeline_2': 'B', 'bundled_length_miles': 1,
                      'average_separation': 2} for i in range(45)]}}
         if legacy:
@@ -123,16 +126,74 @@ def run(scale, width, height, capture=None, legacy=False):
             app.view_overlap_corridor = lambda section, index: opened.append(index)
         app.show_results()
         pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+        settle()
+        # Navigation must adapt without changing the active page.
+        if width >= 800:
+            assert pages.tabs.winfo_viewable(), 'Tabs should fit at desktop widths'
+        elif width <= 408:
+            assert pages.selector.winfo_viewable(), 'Narrow windows need the menu'
+        if scale == 1 and width == 1800:
+            pages.set('Diagnostics')
+            root.geometry('408x600')
+            settle()
+            assert pages.selector.winfo_viewable() and not pages.tabs.winfo_viewable()
+            assert pages.pages['Diagnostics'].winfo_viewable()
+            pages.selector.cget('command')('Summary')
+            root.geometry(f'{width}x{height}')
+            settle()
+            assert pages.tabs.winfo_viewable() and not pages.selector.winfo_viewable()
+            assert pages.pages['Summary'].winfo_viewable()
         for name in pages.pages:
             pages.set(name)
+            assert pages.tabs.get() == pages.selector.get() == name
             check(name)
+            if name == 'Summary':
+                from pipeline_calculator.gui.tabs.summary_tab import SummaryView
+                summary = next(w for w in descendants(pages.pages[name]) if isinstance(w, SummaryView))
+                assert not summary.expanded and not summary.details.winfo_manager()
+                if width >= 1280:
+                    assert summary.original.grid_info()['row'] == summary.adjusted.grid_info()['row']
+                elif width <= 640:
+                    assert summary.original.grid_info()['row'] != summary.adjusted.grid_info()['row']
+                    assert abs(summary.original.winfo_width() - summary.cards.winfo_width()) <= 2
+                summary.toggle.invoke()
+                settle()
+                assert summary.details.winfo_manager() == 'pack'
+                assert bool(summary._scrollbar.winfo_manager()) == (summary.winfo_reqheight() > summary._parent_canvas.winfo_height()+1)
+                check('Summary-expanded')
+                pages.set('Diagnostics')
+                pages.set('Summary')
+                assert summary.expanded, 'Tab switches must retain the disclosure state'
+                summary.toggle.focus_force()
+                settle()
+                toggle_y = summary.toggle.winfo_rooty() - summary._parent_canvas.winfo_rooty()
+                toggle_height, viewport_height = summary.toggle.winfo_height(), summary._parent_canvas.winfo_height()
+                visible_height = min(toggle_y + toggle_height, viewport_height) - max(0, toggle_y)
+                assert visible_height >= min(toggle_height, viewport_height)-2, (toggle_y, toggle_height, viewport_height)
+                summary.toggle.event_generate('<Return>')
+                settle()
+                assert not summary.expanded, 'Return must toggle the disclosure'
+                summary.toggle.event_generate('<KeyPress-space>')
+                summary.toggle.event_generate('<KeyRelease-space>')
+                settle()
+                assert summary.expanded, 'Space must activate the disclosure'
+                summary.toggle.invoke()
+                summary._parent_canvas.yview_moveto(1)
+                settle()
+                # Check the real label boxes, including content below the fold.
+                for label in descendants(summary):
+                    if isinstance(label, ctk.CTkLabel) and label.winfo_viewable():
+                        assert label._label.winfo_reqwidth() <= label.winfo_width()+2, ('Summary text clipped', label.cget('text'))
             if name == 'Overlap Analysis':
-                buttons = {w.cget('text'): w for w in descendants(pages.pages[name]) if isinstance(w, ctk.CTkButton)}
-                buttons['Next'].invoke()
-                buttons['View Corridor'].invoke()
+                from pipeline_calculator.gui.tabs.overlap_tab import CorridorTable
+                corridors = next(w for w in descendants(pages.pages[name]) if isinstance(w, CorridorTable))
+                corridors.next_button.invoke()
+                settle()
+                next(iter(corridors.row_buttons.values())).invoke()
                 assert opened == [21]
-                buttons['Next'].invoke()
-                buttons['View Corridor'].invoke()
+                corridors.next_button.invoke()
+                settle()
+                next(iter(corridors.row_buttons.values())).invoke()
                 assert opened == [21, 41]
         app.reanalyze()
         check('parameters')
@@ -152,14 +213,41 @@ def run(scale, width, height, capture=None, legacy=False):
         from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
         from pipeline_calculator.gui.state import AnalysisParameters
         import threading
-        context = SimpleNamespace(workload_warning=lambda: 'Exceptionally dense geometry. ' * 80,
+        from pipeline_calculator.core.workload import warning_text
+        context = SimpleNamespace(workload_warning=lambda: warning_text('About 754,586 analysis segments would be generated.'),
                                   snapshot=lambda: None)
         job = SimpleNamespace(job_id='layout', done=threading.Event(), state='waiting', context=context,
                               cancel=lambda: None)
         session = AnalysisSession(root, lambda job: None, SimpleNamespace(start=lambda *args: job))
-        session.start('Extremely long input filename ' * 30 + '.kmz', AnalysisParameters())
+        session.start('Q3 - WWM Pipelines.kmz', AnalysisParameters())
         check('caution')
         assert session.continue_button.winfo_viewable()
+        assert not session.bar.winfo_viewable(), 'No progress animation while waiting for a decision'
+        if width >= 800 and height >= 600:
+            assert session.frame.winfo_width() <= 842*scale
+            # The structured notice includes separate guidance sections. It
+            # should fit its content, while reserving the actions on short screens.
+            assert session.frame.winfo_height() <= height*scale*.9+2
+        if scale == 1 and width == 1800:
+            from PIL import ImageGrab, ImageColor
+            from pipeline_calculator.gui.modal import BACKDROP, SURFACE
+            shot = ImageGrab.grab(window=user.GetParent(root.winfo_id())).convert('RGB')
+            # Real pixels, not just configured colors: formerly these corners
+            # showed the root's black background over a different sibling panel.
+            for widget, background in [(session.frame, BACKDROP),
+                                       (session.cancel_button, SURFACE),
+                                       (session.continue_button, SURFACE)]:
+                x = widget.winfo_rootx()-root.winfo_rootx()
+                y = widget.winfo_rooty()-root.winfo_rooty()
+                w, h = widget.winfo_width(), widget.winfo_height()
+                for dx, dy in [(0, 0), (w-1, 0), (0, h-1), (w-1, h-1)]:
+                    assert shot.getpixel((x+dx, y+dy)) == ImageColor.getrgb(background), (widget, dx, dy)
+            assert not session.content._scrollbar.winfo_manager(), 'No scrollbar when the notice fits'
+        # An unusually long warning and filename must still leave actions visible.
+        context.workload_warning = lambda: 'Exceptionally dense geometry. ' * 80
+        session.filename_label.configure(text='Extremely long input filename ' * 30 + '.kmz')
+        settle()
+        check('caution-long')
         session.close()
         return {'scale': scale, 'logical_size': [width, height], 'legacy': legacy, 'status': 'passed'}
     finally:
@@ -167,6 +255,9 @@ def run(scale, width, height, capture=None, legacy=False):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from scripts.validation.gui_process import isolate_probe
+    isolate_probe()
     print(json.dumps(run(float(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]),
                          sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] != '-' else None,
                          len(sys.argv) > 5 and sys.argv[5] == 'legacy')))

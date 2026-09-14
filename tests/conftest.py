@@ -12,6 +12,10 @@ SRC_DIR = REPO_ROOT / "src"
 
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from scripts.validation.gui_process import run_gui
 
 
 @pytest.hookimpl(tryfirst=True)
@@ -25,9 +29,9 @@ def pytest_pyfunc_call(pyfuncitem):
         return None
     env = dict(os.environ, PIPELINE_GUI_TEST_CHILD='1')
     try:
-        result = subprocess.run(
+        result = run_gui(
             [sys.executable, '-m', 'pytest', '-vv', '-s', '-o', 'faulthandler_timeout=20', pyfuncitem.nodeid],
-            cwd=REPO_ROOT, env=env, capture_output=True, text=True, timeout=45,
+            cwd=REPO_ROOT, env=env, timeout=45,
         )
     except subprocess.TimeoutExpired as exc:
         pytest.fail(f'Native GUI test exceeded 45 seconds:\n{exc.stdout}\n{exc.stderr}', pytrace=False)

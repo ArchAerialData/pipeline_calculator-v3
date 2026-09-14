@@ -101,5 +101,8 @@ class AppWindow(ctk.CTk, TkinterDnD.DnDWrapper):
         # CTk also schedules titlebar/scaling callbacks without retaining their
         # handles. They must not outlive this interpreter's widgets.
         for callback in self.tk.splitlist(self.tk.call('after', 'info')):
-            self.after_cancel(callback)
+            # Cancel execution only. The command belongs to whichever child
+            # registered it; that child's destroy() must remove the command.
+            # Calling root.after_cancel for a child's timer deletes it twice.
+            self.tk.call('after', 'cancel', callback)
         super().destroy()
