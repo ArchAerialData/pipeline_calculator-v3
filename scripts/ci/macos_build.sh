@@ -42,11 +42,12 @@ print(f"Tk OK (TkVersion={ver})")
 PY
 
 # Basic sanity check without launching the GUI.
+python scripts/ci/check_tk.py
 python -m py_compile src/pipeline_calculator_v3.py
 if [[ -f "src/pipeline_calculator_entry.py" ]]; then
   python -m py_compile src/pipeline_calculator_entry.py
 fi
-python -m pytest
+python -m pytest -vv -rA --tb=short -o faulthandler_timeout=30 --junitxml=.validation-output/ci-test-results.xml
 
 # Delegate actual PyInstaller invocation to the user-facing scripts.
 bash scripts/macos/build_app.sh

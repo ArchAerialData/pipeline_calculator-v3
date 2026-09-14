@@ -27,7 +27,8 @@ def show(
     main_frame = ctk.CTkFrame(root)
     main_frame.pack(expand=True, fill="both", padx=20, pady=20)
 
-    WrappedLabel(main_frame, text=title, font=("Arial", 22, "bold")).pack(fill="x", padx=12, pady=(12, 4))
+    title_label = WrappedLabel(main_frame, text=title, font=("Arial", 22, "bold"))
+    title_label.pack(fill="x", padx=12, pady=(12, 4))
     browse_area = ctk.CTkFrame(main_frame, fg_color="#202D38", border_color="#4B91C2", border_width=2)
     browse_area.pack(fill="x", padx=12, pady=10)
     WrappedLabel(browse_area, text="Choose a KMZ or KML file", font=("Arial", 18, "bold")).pack(
@@ -62,7 +63,8 @@ def show(
                  text_color="#B8C0CC").pack(fill="x")
 
     body = SettingsPanel(main_frame)
-    body.pack(side="bottom", fill="x")
+    # Reserve settings before the expanding drop target can consume the cavity.
+    body.pack(side="bottom", fill="x", before=drop_zone)
     WrappedLabel(body, text="Analysis Settings", font=("Arial", 16, "bold"), anchor="w").pack(
         fill="x", padx=12, pady=(8, 2))
     parameter_fields(body, (detection_range_var, segment_length_var, min_parallel_var, angular_tolerance_var),
@@ -73,18 +75,29 @@ def show(
     compact = [False]
 
     def fit_short_window(event=None):
-        height = event.height if event else main_frame.winfo_height()
-        short = height / ctk.ScalingTracker.get_widget_scaling(main_frame) < 440
-        if short == compact[0]:
-            return
-        compact[0] = short
-        for index, label in enumerate(browse_labels):
+        scale = ctk.ScalingTracker.get_widget_scaling(main_frame)
+        height = main_frame.winfo_height() / scale
+        short = height < 440
+        if short != compact[0]:
+            compact[0] = short
             if short:
-                label.pack_forget()
+                title_label.pack_forget()
             else:
-                label.pack(fill="x", padx=12, pady=(14, 0) if index == 0 else 2, before=browse_actions)
+                title_label.pack(fill="x", padx=12, pady=(12, 4), before=browse_area)
+            for index, label in enumerate(browse_labels):
+                if short:
+                    label.pack_forget()
+                else:
+                    label.pack(fill="x", padx=12, pady=(14, 0) if index == 0 else 2, before=browse_actions)
+        # Short windows keep Browse, the drop target, and a scrollable settings
+        # viewport accessible. Normal windows retain the content-sized footer.
+        reserved = (browse_actions.winfo_reqheight() / scale + 16 if short
+                    else browse_area.winfo_reqheight() / scale + title_label.winfo_reqheight() / scale + 16)
+        body.maximum_height = max(48, min(240, height - reserved - 110))
+        body._schedule_refresh()
 
     main_frame.bind("<Configure>", fit_short_window, add="+")
+    browse_area.bind("<Configure>", fit_short_window, add="+")
     fit_short_window()
 
     def on_drop(event):

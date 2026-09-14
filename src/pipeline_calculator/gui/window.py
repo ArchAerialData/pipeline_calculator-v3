@@ -98,4 +98,8 @@ class AppWindow(ctk.CTk, TkinterDnD.DnDWrapper):
         if self._fit_id is not None:
             self.after_cancel(self._fit_id)
             self._fit_id = None
+        # CTk also schedules titlebar/scaling callbacks without retaining their
+        # handles. They must not outlive this interpreter's widgets.
+        for callback in self.tk.splitlist(self.tk.call('after', 'info')):
+            self.after_cancel(callback)
         super().destroy()

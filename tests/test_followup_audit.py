@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import itertools
+import sys
 import zipfile
 from types import SimpleNamespace
 
@@ -165,10 +166,9 @@ def test_multiple_mutually_compatible_groups(offsets, expected):
     assert result['savings_meters'] == pytest.approx(expected, abs=10)
 
 
+@pytest.mark.native_gui
+@pytest.mark.skipif(sys.platform != 'win32', reason='Native Windows widget smoke test')
 def test_overlap_pagination_native_widgets():
-    import sys
-    if sys.platform != 'win32':
-        pytest.skip('Native Windows widget smoke test; headless GUI-state tests run everywhere')
     import customtkinter as ctk
     from tkinter import ttk
     from pipeline_calculator.gui.tabs.overlap_tab import create

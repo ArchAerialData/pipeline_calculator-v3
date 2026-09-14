@@ -117,6 +117,7 @@ def test_hard_limit_preserves_source_mileage_without_allocating_segments(tmp_pat
 
 
 @pytest.mark.parametrize('action', ['continue', 'cancel', 'close'])
+@pytest.mark.native_gui
 def test_native_warning_controls(tmp_path, monkeypatch, action):
     import customtkinter as ctk
     monkeypatch.setattr(workload, 'SEGMENT_WARNING_THRESHOLD', 1)

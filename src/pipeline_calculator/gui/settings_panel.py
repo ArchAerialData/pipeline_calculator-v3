@@ -11,6 +11,7 @@ class SettingsPanel(ctk.CTkScrollableFrame):
     def __init__(self, master):
         super().__init__(master, fg_color='#202020', height=240, corner_radius=0)
         self._refresh_id = None
+        self.maximum_height = 240
         self.bind('<Configure>', self._schedule_refresh, add='+')
         self._parent_canvas.bind('<Configure>', self._schedule_refresh, add='+')
 
@@ -22,7 +23,7 @@ class SettingsPanel(ctk.CTkScrollableFrame):
     def _refresh(self):
         self._refresh_id = None
         scale = ctk.ScalingTracker.get_widget_scaling(self)
-        height = min(240, max(1, math.ceil(self.winfo_reqheight() / scale)))
+        height = min(self.maximum_height, max(1, math.ceil(self.winfo_reqheight() / scale)))
         if self.cget('height') != height:
             self.configure(height=height)
         overflow = self.winfo_reqheight() > self._parent_canvas.winfo_height() + 1

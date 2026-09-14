@@ -47,6 +47,7 @@ def test_compatibility_wrapper_retains_file_and_write_failure():
         opened.assert_not_called()
 
 
+@pytest.mark.native_gui
 def test_native_recovery_retry_save_copy_and_close(tmp_path, monkeypatch):
     import customtkinter as ctk
     from pipeline_calculator.gui.dialogs import corridor_dialog as ui

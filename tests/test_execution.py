@@ -148,6 +148,7 @@ def test_gui_rejects_stale_job_completion(legacy):
     assert gui._processing
 
 
+@pytest.mark.native_gui
 def test_native_session_controls_and_close(tmp_path):
     import customtkinter as ctk
     root = ctk.CTk()

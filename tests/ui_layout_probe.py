@@ -31,6 +31,10 @@ def run(scale, width, height, capture=None, legacy=False):
     root = app.root
     errors = []
     root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args)))
+    if scale == 2.5 and height == 288 and width in (408, 512):
+        # Simulate 1020/1280x720 physical windows on larger developer monitors.
+        root.minsize(1, 1)
+        root.maxsize(width, height)
     root.geometry(f'{width}x{height}+{50 if capture else -8000}+100')
     # Keep validation windows offscreen instead of refitting them onto the desktop.
     root._display_changed = lambda event: None
@@ -78,7 +82,10 @@ def run(scale, width, height, capture=None, legacy=False):
                 if label is not None:
                     assert label.winfo_reqwidth() <= widget.winfo_width()-8*scale, (page, widget.cget('text'), 'text clipped')
             if isinstance(widget, ttk.Treeview):
-                assert widget.winfo_height() >= 42*scale, (page, 'table unusable', widget.winfo_height())
+                assert widget.winfo_height() >= 42*scale, (page, 'table unusable', widget.winfo_height(),
+                    'root', root.winfo_width(), root.winfo_height(), 'scale', scale,
+                    'ancestors', [(str(w), w.winfo_width(), w.winfo_height()) for w in
+                                  (widget.master, widget.master.master, target)])
                 assert widget.cget('xscrollcommand') and widget.cget('yscrollcommand')
                 assert ttk.Style(widget).lookup(widget.cget('style'), 'background') == '#242424'
         if capture:

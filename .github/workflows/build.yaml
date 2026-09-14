@@ -35,6 +35,15 @@ jobs:
     - name: Build app
       run: bash scripts/ci/macos_build.sh
 
+    - name: Upload macOS test report
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-macos
+        path: .validation-output/ci-test-results.xml
+        include-hidden-files: true
+        if-no-files-found: warn
+
     - name: Detect signing readiness
       id: signing_ready
       shell: bash
@@ -69,7 +78,7 @@ jobs:
       run: bash scripts/ci/macos_package.sh
 
     - name: Upload macOS DMG
-      if: ${{ always() }}
+      if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
         name: pipeline-calculator-macos
@@ -77,7 +86,7 @@ jobs:
         if-no-files-found: error
 
     - name: Upload macOS app
-      if: ${{ always() }}
+      if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
         name: pipeline-calculator-macos-app
@@ -111,6 +120,15 @@ jobs:
       with:
         name: windows-exe
         path: dist/Pipeline_Calculator_v*.exe
+
+    - name: Upload Windows test report
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-windows
+        path: .validation-output/ci-test-results.xml
+        include-hidden-files: true
+        if-no-files-found: warn
 
   create-release:
     needs: [build-macos, build-windows]

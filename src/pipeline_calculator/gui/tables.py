@@ -3,9 +3,9 @@ from tkinter import ttk
 import customtkinter as ctk
 
 
-def create_table(parent, columns, widths):
+def create_table(parent, columns, widths, *, vertical_padding=8):
     frame = ctk.CTkFrame(parent)
-    frame.pack(fill='both', expand=True, padx=8, pady=8)
+    frame.pack(fill='both', expand=True, padx=8, pady=vertical_padding)
     frame.grid_rowconfigure(0, weight=1)
     frame.grid_columnconfigure(0, weight=1)
     style = ttk.Style(parent)
