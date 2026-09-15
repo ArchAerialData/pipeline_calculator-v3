@@ -1,80 +1,4 @@
 {
-  "adversarial_tests": {
-    "counts_by_module": {
-      "test_application_contract.py": 22,
-      "test_geometry_reference.py": 14,
-      "test_sampled_contract.py": 26,
-      "test_stress_contract.py": 13,
-      "test_suite_validation.py": 29
-    },
-    "passed": true,
-    "test_count": 104
-  },
-  "application": {
-    "check_count": 10175,
-    "fixtures": [
-      {
-        "check_count": 2609,
-        "defect_id": null,
-        "fixture": "01_three_state_disconnected_networks.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 1310,
-        "defect_id": null,
-        "fixture": "02_three_state_transverse_crossings.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 1490,
-        "defect_id": null,
-        "fixture": "03_parallel_corridors_crossing_borders.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 719,
-        "defect_id": null,
-        "fixture": "04_shared_border_and_near_border.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 2609,
-        "defect_id": null,
-        "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 719,
-        "defect_id": null,
-        "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      },
-      {
-        "check_count": 719,
-        "defect_id": null,
-        "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
-        "mismatch_count": 0,
-        "status": "passed",
-        "unexpected_assertions": []
-      }
-    ],
-    "fully_passing": true,
-    "known_defect_ids": [],
-    "known_failure_fixture_count": 0,
-    "unexpected_failure_fixture_count": 0
-  },
   "application_source_sha256": {
     "src/pipeline_calculator/__init__.py": "fc835191b7c828a2e508f6a95323b722bfffa9260a16eeec8fe6dea978123408",
     "src/pipeline_calculator/__main__.py": "9169c6b50c33eaf0af60a2737724fe0b2994e29fe83bf453fb7fa63d8f0a27de",
@@ -153,66 +77,169 @@
     "src/pipeline_calculator_entry.py": "1af56557971dae5c8d55f9d2e6a69eefc830a0484361714db81edd16d0fc7959",
     "src/pipeline_calculator_v3.py": "b590c95ecce144c5f7127d08325431cb138fa213f19602554af8a86da0b02637"
   },
-  "application_sources_unchanged": true,
-  "artifacts_unchanged": true,
-  "classification_schema_version": 1,
-  "elapsed_seconds": 54.46304089995101,
-  "evidence_sha256": {
-    "application_comparison.json": "69b3d8946e17fe5cae8a7832b94e60d31f8f30c1d93f9de2b8088ae5860c9aaf",
-    "reference_report.json": "f0c1bdfc0f06545f7273d76b2f10f4a6f9d3b22dc9ac066cc4fb8c8c34279f3b"
+  "application_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 468,
+    "skipped_optional_modules": [
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_application_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_geometry_reference",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_sampled_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_stress_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_suite_validation"
+    ]
   },
-  "implementation_sha256": {
-    "__init__.py": "76c2ca40a0f97c0e8f8488b5ecba74f7c7d47bec51feddec40bd192dbf7b4bfb",
-    "generator/__init__.py": "fcf267a53b0a30eda300e766937249bdd30d41735997ef842aa0a626397237e5",
-    "generator/generate.py": "a922c6891036e41a87bfb99c43d5f5d2153f3270934c96025040f912e804a06c",
-    "reference/__init__.py": "93f3497b7454e1bbcd3654fd7cc7a6ef514b7d358faa3ba2aeaab76161770ee7",
-    "reference/geometry.py": "aea04c6790113c45cf15f09e235518edf1935ae2a29b9fd9a6ea0890b92588a8",
-    "reference/sampled.py": "007970bbedce8381afef14acf0b4a9cba1f52585f51bd38240e170feaf733ee6",
-    "suite.py": "b08bb765b15475a0bf5c5b8a1e1eff369ea55fd658ff451fb35cd903cbc3e843",
-    "validation/__init__.py": "bf7ded9a2f134c6ead4d0695761d16a3eda395b4de1307a62d9ae0e5eda7eb1b",
-    "validation/application_contract.py": "05b0b47bb410d629b9b5ec583e7b55cf312a258e7c0d7af0c591b9db1ef33e23",
-    "validation/compare_application.py": "26a99d341d66d29181bb95ca5036e09579ec1f9ddd1c041baad3d91754bfa9e5",
-    "validation/coverage_checks.py": "a4e190de9782b5d72374a40cd83b584cbfd60e35133141e540330982802700d9",
-    "validation/known_application_failures.py": "188f70b6f10f58a5eade0ff8cbc3ebd0714e2f5e0230a7bfcf9d83e2b8e85521",
-    "validation/render_reports.py": "2c0fbd2569538071543c8faab1426ce398237bfbe96ccda58a293d63d282b641",
-    "validation/reproduce_export_precision.py": "5b0345c9a9ceba663af5301bcee630a8b3e8ec8fdc96066b6b84f0aa58b91db4",
-    "validation/reproduce_polygon_residual.py": "aa4c2e67d9e732add94617f0283123c37b1acb2b85545f5eeccb5dcf8411e16e",
-    "validation/reproductions/reproduce.py": "77aae9c6b1ca6e3b6bf07c11fe132fcff765b85174346dabc63068c95df3f9f0",
-    "validation/run_audit.py": "42817043e2f7e70bf5b06d2d6f4870483c568fcf33a86de45bf8262dd88251e5",
-    "validation/run_stress.py": "a8b6ae55c316af48544a91038db44a93bc4c0e7880d1a67d1c3bd5e805d9f494",
-    "validation/test_application_contract.py": "aae6136bb49b954c2a084fb86ba37847e6b57ae8bb5558ebe2014ddb646bf753",
-    "validation/test_geometry_reference.py": "f0588ef6f93cfe085867e1c95b5af64ab1d63d019dc38309c9936ff498de340a",
-    "validation/test_sampled_contract.py": "1699bc43fd278a1d9ed84406ccc8a80f9fa2823c5eb29d16a56d1746dc90d68e",
-    "validation/test_stress_contract.py": "ba68c86a5d5125e9462287b35359b60defe121742461ce688aa25acd01c25f21",
-    "validation/test_suite_validation.py": "0555ddc37add5010fc6d187ff7ac8f67f8fdbaefdfc5c08b98f29db79a6e0a13"
-  },
-  "known_defect_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
-  "meaning": "No unexpected regressions; known application defects are reported separately.",
-  "passed": true,
-  "reference_verification": {
-    "fixture_count": 7,
-    "hand_worked_control_count": 9,
-    "intent_assertion_count": 383,
-    "passed": true,
-    "stress_reference": {
-      "deterministic_archive_checked": true,
-      "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
+  "audit": {
+    "adversarial_tests": {
+      "counts_by_module": {
+        "test_application_contract.py": 22,
+        "test_geometry_reference.py": 14,
+        "test_sampled_contract.py": 26,
+        "test_stress_contract.py": 13,
+        "test_suite_validation.py": 29
+      },
       "passed": true,
+      "test_count": 104
+    },
+    "application": {
+      "check_count": 10175,
+      "fixtures": [
+        {
+          "check_count": 2609,
+          "defect_id": null,
+          "fixture": "01_three_state_disconnected_networks.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 1310,
+          "defect_id": null,
+          "fixture": "02_three_state_transverse_crossings.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 1490,
+          "defect_id": null,
+          "fixture": "03_parallel_corridors_crossing_borders.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "04_shared_border_and_near_border.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 2609,
+          "defect_id": null,
+          "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        }
+      ],
+      "fully_passing": true,
+      "known_defect_ids": [],
+      "known_failure_fixture_count": 0,
+      "unexpected_failure_fixture_count": 0
+    },
+    "elapsed_seconds": 54.46304089995101,
+    "reference_verification": {
+      "fixture_count": 7,
+      "hand_worked_control_count": 9,
+      "intent_assertion_count": 383,
+      "passed": true,
+      "stress_reference": {
+        "deterministic_archive_checked": true,
+        "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
+        "passed": true,
+        "sample_count": 27120,
+        "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+        "source_count": 96,
+        "status": "reference-verified"
+      }
+    },
+    "stress_application": {
+      "application_runtime_seconds": 7.179869499988854,
+      "check_count": 2050,
+      "passed": true,
+      "report_sha256": "7ea45ac6d42b572bc665121bf9e2f1e64343cfdcf8d4dfb17c0b5f001c097b4f",
       "sample_count": 27120,
-      "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
-      "source_count": 96,
-      "status": "reference-verified"
+      "source_count": 96
     }
   },
-  "schema_version": "1.0.0",
-  "started_at_utc": "2026-09-15T21:42:40.088409+00:00",
-  "status": "complete",
-  "stress_application": {
-    "application_runtime_seconds": 7.179869499988854,
-    "check_count": 2050,
-    "passed": true,
-    "report_sha256": "7ea45ac6d42b572bc665121bf9e2f1e64343cfdcf8d4dfb17c0b5f001c097b4f",
-    "sample_count": 27120,
-    "source_count": 96
-  }
+  "date": "2026-09-15",
+  "evidence_sha256": {
+    ".validation-output/state-fixture-review/final-audit.log": "a920f36a34e1b4bac8722098246b27e1d1b352447893f0c0a5128f37cd8b7144",
+    ".validation-output/state-fixture-review/full-suite.xml": "f413eb8595a938b71153cd0eb3c1835e578684f9175ba47c179df355b78b631f",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/application_comparison.json": "69b3d8946e17fe5cae8a7832b94e60d31f8f30c1d93f9de2b8088ae5860c9aaf",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/audit/audit_report.json": "b7621225eb9e1b812efd88a0c2fc9b511c5edc021f39c531110d0a6c4b6330ca",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/reference_report.json": "f0c1bdfc0f06545f7273d76b2f10f4a6f9d3b22dc9ac066cc4fb8c8c34279f3b",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/stress_report.json": "7ea45ac6d42b572bc665121bf9e2f1e64343cfdcf8d4dfb17c0b5f001c097b4f"
+  },
+  "frozen_asset_count": 37,
+  "frozen_assets_changed": [],
+  "git_base": "26d585c06f1faa39f730a3fba2ccf81e4c9092eb",
+  "limitations": [
+    "The ordinary Python 3.11 run skips five optional reference test modules; all 104 audit tests run without skips in the pinned Python 3.13 environment.",
+    "Two near-tangent Hawaii endpoint cases are uncertified by the independent reference and are not counted as passing.",
+    "This pass does not certify new packaged builds, native macOS, arbitrary boundary topologies or all workload sizes."
+  ],
+  "native_endpoint_followup": {
+    "case_count": 100,
+    "limitations": "Only selected native vertices and four long dateline traversals were sampled. The bundled AK/HI components require no ring longitude unwrapping; this does not establish arbitrary synthetic wrapped-ring endpoint identity.",
+    "mismatches": 0,
+    "native_geometry": [
+      {
+        "components_requiring_longitude_unwrap": [],
+        "invented_vertices": 0,
+        "missing_native_vertices": 0,
+        "parts": 50,
+        "state": "AK",
+        "unique_native_vertices": 15282
+      },
+      {
+        "components_requiring_longitude_unwrap": [],
+        "invented_vertices": 0,
+        "missing_native_vertices": 0,
+        "parts": 17,
+        "state": "HI",
+        "unique_native_vertices": 3502
+      }
+    ],
+    "passed": 98,
+    "reference_uncertified": 2
+  },
+  "production_fixes": [
+    "Preserve native boundary vertices during degree-based unwrapping",
+    "Retain exact canonical endpoint stations without discarding short positive crossings"
+  ],
+  "schema_version": 1,
+  "validator_fixes": [
+    "Independent corridor section extent and one-to-one correspondence checks",
+    "Require valid coordinate paths before interval geometry can pass"
+  ]
 }

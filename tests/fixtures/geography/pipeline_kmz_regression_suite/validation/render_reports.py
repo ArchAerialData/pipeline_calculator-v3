@@ -7,7 +7,7 @@ import sys
 
 SUITE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SUITE.parent))
-from pipeline_kmz_regression_suite.suite import BASELINE, BOUNDARY_SHA256, digest, read_json, select_fixtures, verify_report_freshness
+from pipeline_kmz_regression_suite.suite import BASELINE, BOUNDARY_SHA256, REPO, digest, read_json, select_fixtures, verify_report_freshness
 
 
 def read(path):
@@ -20,6 +20,25 @@ def main():
     mains = [e for e in expected if '/' not in e['fixture']]
     report = read(SUITE / 'validation/reference_report.json')
     verify_report_freshness(report, SUITE)
+    comparison = read(SUITE / 'validation/application_comparison.json')
+    current_comparison = (
+        comparison.get('status') == 'complete' and comparison.get('selection') is None
+        and comparison.get('export_checks_enabled') is True
+        and comparison.get('application_source_sha256') == {
+            path.relative_to(REPO).as_posix(): digest(path) for path in sorted((REPO / 'src').rglob('*.py'))}
+        and len(comparison.get('fixtures', [])) == len(select_fixtures(SUITE))
+        and all(row.get('sha256') == digest(SUITE / 'fixtures' / row['fixture'])
+                and row.get('expectation_sha256') == digest(
+                    SUITE / 'expected' / f'{Path(row["fixture"]).stem}.expected.json')
+                for row in comparison.get('fixtures', []))
+    )
+    if current_comparison:
+        check_count = sum(len(row['checks']) for row in comparison['fixtures'])
+        failed_count = sum(len(row['mismatches']) for row in comparison['fixtures'])
+        application_summary = (f'Latest comparison against the fingerprinted application sources: '
+                               f'**{check_count:,} checks, {failed_count:,} mismatches**, including exports.')
+    else:
+        application_summary = 'No complete application comparison matches the current source and fixture fingerprints; rerun `suite.py compare`.'
     matrix = ['# Numerical coverage matrix', '',
               'Generated from the fixed independent expectations. Every row is an executed assertion;',
               'full section/sample sets and unrounded evidence remain in the linked JSON. Application',
@@ -52,7 +71,8 @@ def main():
             '**Four main KMZs and three variations are reference-verified.** They contain real synthetic',
             'pipeline inputs, an offline deterministic generator, two independent references, expected',
             'results, interval/overlap/crossing ledgers, preview maps and executable intent checks.',
-            'Application comparisons are recorded separately; see the known discrepancies below.', '',
+            'Application comparisons are recorded separately from the independent references.',
+            application_summary, '',
             '## Run', '', 'Run these commands from the repository root with CPython 3.13.3:', '',
             '```powershell',
             'python -m pip install -r tests/fixtures/geography/pipeline_kmz_regression_suite/requirements.txt',
@@ -153,14 +173,16 @@ def main():
              '## Application comparison and exports', '',
              'The [application report](validation/application_comparison.json) is produced only after',
              'independent expectations are fixed. All original/state mileage and exact savings comparisons',
-             'agree within their stated bounds. Two baseline defect classes remain visible:', '',
-             '1. **02 canonical boundary precision:** The application round-trips native coordinates',
+             'are checked within their stated bounds. ' + application_summary, '',
+             'The initial application baseline exposed two defect classes. The retained reproductions',
+             'document that history; the current receipt above determines whether they still occur:', '',
+             '1. **02 canonical boundary precision:** The baseline application round-tripped native coordinates',
              '   through radians/degrees during longitude unwrapping. At the exact touch vertex this',
-             '   moves the boundary one floating-point unit west, creating a spurious TX attribution',
+             '   moved the boundary one floating-point unit west, creating a spurious TX attribution',
              '   and reporting 10 crossing events where the unchanged native resource establishes 9.',
              '2. **04 endpoint arithmetic:** A 4 m exclusive TX line ending exactly on the TX/NM border',
-             '   produces a spurious `8.881784197001252e-16 m` unresolved fragment in one direction.',
-             '   That fragment causes an incomplete state analysis; reversal is complete. The reference',
+             '   produced a spurious `8.881784197001252e-16 m` unresolved fragment in one direction.',
+             '   That fragment caused an incomplete state analysis; reversal was complete. The reference',
              '   proves an endpoint touch and zero unresolved mileage.', '',
              'The audit corrected overstrict export checks: ordinary boundary rounding is evaluated against',
              'explicit local floating-point bounds. The historical [polygon residual](validation/reproductions/polygon_residual.json)',
@@ -170,7 +192,8 @@ def main():
              '[polygon residual evidence](validation/reproductions/polygon_residual.json). A draft 02',
              'touch was independently found to be slightly across an oblique boundary and was corrected',
              'to an exact native vertex. That reference/construction correction is documented separately;',
-             'expectations were not tuned to an application result. No application code was changed.', '',
+             'expectations were not tuned to an application result. Fixture creation did not modify',
+             'application code; subsequent application repairs are tracked separately.', '',
              '`suite.py compare` intentionally exits nonzero while the recorded discrepancies persist.',
              'A fixture can be reference-verified while exposing an application failure. Incomplete app',
              'analysis is a failed comparison, never a zero-savings pass.', '',
@@ -185,8 +208,9 @@ def main():
              'Endpoints must match within the 1 cm cut target; each exported vertex must lie within 10 µm',
              'of its original source geodesic. Source identities, exact qualifying sample ranges, public',
              'attribution, positive interval lengths, coverage and conservation are checked independently.',
-             'Corridor polygons must have the expected source-pair identities and cover qualifying sample',
-             'midpoints. Containment retains holes and permits only a local 64-coordinate-ULP boundary strip',
+             'Corridor polygons must match their expected source-pair sections, cover qualifying sample',
+             'midpoints, and stay within independently bounded section extents. Containment retains holes',
+             'and permits only a local 64-coordinate-ULP boundary strip',
              'with its corresponding perimeter-based area bound. Foreign polygons fail even when tiny.',
              'Shared geometry must occur once Combined and never in state maps. The no-empty-map rule',
              'for allocation-only states is documented but not exercised by these main cases.', '',

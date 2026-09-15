@@ -50,10 +50,13 @@
   "baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
   "boundary_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
   "contract_provenance": {
-    "baseline_contract_unchanged": true,
-    "changed_contract_files": [],
+    "baseline_contract_unchanged": false,
+    "changed_contract_files": [
+      "src/pipeline_calculator/core/geography/boundaries.py",
+      "src/pipeline_calculator/core/geography/partition.py"
+    ],
     "contract_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
-    "working_commit": "71da499d5756648ae395660f0a241ea00edbea4f"
+    "working_commit": "26d585c06f1faa39f730a3fba2ccf81e4c9092eb"
   },
   "contract_source_sha256": {
     "analyzer.py": "13bff29580161959d32a51ae1fa7ff90e348beedb8f1a9671e35495961b06cea",
@@ -61,8 +64,8 @@
     "bundling.py": "5573b2ac187aa0aa1ee18c726531ecfb429b26d927ea97c47660780adc31f7c1",
     "constants.py": "2d811258d93dc7405cbe0448d777b8f51b5dfd8e43b0d0fdaffa0453a7a19f0d",
     "coordinates.py": "8ae867b2fa7eb72154f07f48acac2bd75f53b2d402792ffd237256296701120d",
-    "geography/boundaries.py": "e73ebf1e854ed30d5454af39165d4124c39723f60d6e59699c752c3fb5c44509",
-    "geography/partition.py": "a9b81614a4bc0110ea125a01f5100ca98b9aef33a02dc81adf165205df091b3c",
+    "geography/boundaries.py": "f150b3abd67fb1107e69a7d9e965f069b63fb8f0310ffd43b9be6ed7072bfe4d",
+    "geography/partition.py": "df6ee63debdfa934d52a0b7477dd486a80f651dbfc83339951856e97895234db",
     "overlap.py": "2eef0586eab343e956ce0118e8ecbdb903397263e45d0ede1f214af49ca69795",
     "segmentation.py": "9ee7027a4fb94ecf74a085667b1cdacde684a892dbdec27f12c40c5db443a598",
     "state_analysis.py": "511025f6a6e7bf86021b8415557585bcc3d14d594ea5e37cdd162f0019e52794"
@@ -135,7 +138,7 @@
       "fixture": "01_three_state_disconnected_networks.kmz",
       "original_meters": 46211.085106293314,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.8391688000410795,
+      "runtime_seconds": 0.8430639000143856,
       "sample_count": 9207,
       "sha256": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
       "source_count": 48
@@ -146,7 +149,7 @@
       "fixture": "02_three_state_transverse_crossings.kmz",
       "original_meters": 50359.47031512054,
       "reference_status": "reference-verified",
-      "runtime_seconds": 1.0082841999828815,
+      "runtime_seconds": 0.9824955000076443,
       "sample_count": 10058,
       "sha256": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
       "source_count": 20
@@ -157,7 +160,7 @@
       "fixture": "03_parallel_corridors_crossing_borders.kmz",
       "original_meters": 29873.95286459448,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.5800587000558153,
+      "runtime_seconds": 0.5549918999895453,
       "sample_count": 5965,
       "sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
       "source_count": 20
@@ -168,7 +171,7 @@
       "fixture": "04_shared_border_and_near_border.kmz",
       "original_meters": 3771.3499999982546,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.04001939995214343,
+      "runtime_seconds": 0.039734399993903935,
       "sample_count": 751,
       "sha256": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
       "source_count": 11
@@ -179,7 +182,7 @@
       "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
       "original_meters": 46211.085106293314,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.7888096999377012,
+      "runtime_seconds": 0.7790612999815494,
       "sample_count": 9207,
       "sha256": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2",
       "source_count": 48
@@ -190,7 +193,7 @@
       "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
       "original_meters": 3771.350000003886,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.11002889997325838,
+      "runtime_seconds": 0.10913890006486326,
       "sample_count": 751,
       "sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
       "source_count": 11
@@ -201,7 +204,7 @@
       "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
       "original_meters": 3771.3499999982546,
       "reference_status": "reference-verified",
-      "runtime_seconds": 0.03984660003334284,
+      "runtime_seconds": 0.038625899935141206,
       "sample_count": 751,
       "sha256": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd",
       "source_count": 11
@@ -324,7 +327,7 @@
     }
   ],
   "passed": true,
-  "runtime_seconds": 17.178557900013402,
+  "runtime_seconds": 17.191971700056456,
   "schema_version": "1.0.0",
   "selection": "all_core",
   "status": "complete",

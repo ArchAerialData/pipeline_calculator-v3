@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import math
 from collections import defaultdict
+from fractions import Fraction
 
 from scipy.optimize import brentq, minimize_scalar
 from shapely.geometry import LineString, box
@@ -61,6 +62,22 @@ def _longitude_near(lon, center):
     return lon + 360 * round((center-lon) / 360)
 
 
+def _point_on_boundary_edge(point, a, b):
+    """Prove endpoint identity against the exact binary boundary coordinates.
+
+    This predicate is deliberately tolerance-free. Near-border endpoints must
+    retain their genuine short visits; only a point on the native edge gets a
+    canonical source station. Cheap bounds/axis checks avoid rational arithmetic
+    for the usual cases.
+    """
+    if not all(min(a[i], b[i]) <= point[i] <= max(a[i], b[i]) for i in (0, 1)):
+        return False
+    if a[0] == b[0] or a[1] == b[1]:
+        return True
+    px, py, ax, ay, bx, by = map(Fraction, (*point, *a, *b))
+    return (bx-ax)*(py-ay) == (by-ay)*(px-ax)
+
+
 def _shared_stations(start, finish, a, b, length, geod):
     """Prove coincidence and retain exact endpoint identities, without snapping.
 
@@ -106,6 +123,10 @@ def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget)
     # latitude extremum only when endpoint bearings prove one exists; normal
     # short vertex-dense inputs need neither optimization nor a projection.
     def source_point(distance):
+        if distance == 0:
+            return start
+        if distance == length:
+            return _longitude_near(finish[0], start[0]), finish[1]
         lon, lat, _ = geod.fwd(*start, azimuth, distance)
         return _longitude_near(lon, start[0]), lat
 
@@ -159,11 +180,31 @@ def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget)
                     if not math.isfinite(radial_error) or radial_error > ROOT_DISTANCE_METERS:
                         raise _NumericalClippingError("Local projection failed its source-geodesic accuracy check")
 
+            # Insert proven source endpoints into the boundary's parameter
+            # sequence before solving roots. Reprojecting an exact endpoint can
+            # otherwise place its root an ULP before its canonical chainage and
+            # manufacture an unresolved sliver. The native edge (not its
+            # interpolated query-box clipping endpoints) establishes identity.
+            native_a, native_b = [(float(p[0])+360*zone, float(p[1])) for p in edge]
+            endpoint_stations = {}
+            axis = 0 if abs(b[0]-a[0]) >= abs(b[1]-a[1]) else 1
+            for point, station in ((source_point(0), 0.0), (source_point(length), length)):
+                if _point_on_boundary_edge(point, native_a, native_b):
+                    parameter = (point[axis]-a[axis])/(b[axis]-a[axis])
+                    if not 0 <= parameter <= 1:
+                        raise _NumericalClippingError("Canonical endpoint lies outside its boundary query segment")
+                    if parameter in endpoint_stations and endpoint_stations[parameter] != station:
+                        raise _NumericalClippingError("Distinct canonical endpoints have indistinguishable boundary parameters")
+                    endpoint_stations[parameter] = station
+
             def projected(t):
+                if t in endpoint_stations:
+                    return endpoint_stations[t], 0.0
                 x, y = transformer.transform(a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1]))
                 return x*along[0]+y*along[1], x*normal[0]+y*normal[1]
 
-            samples = [(i/4, projected(i/4)) for i in range(5)]
+            parameters = sorted({i/4 for i in range(5)} | endpoint_stations.keys())
+            samples = [(t, projected(t)) for t in parameters]
             coincidence = _shared_stations(start, finish, a, b, length, geod)
             if coincidence is not None:
                 if not all(abs(p[1]) <= COINCIDENCE_ROUNDOFF_METERS for _, p in samples):

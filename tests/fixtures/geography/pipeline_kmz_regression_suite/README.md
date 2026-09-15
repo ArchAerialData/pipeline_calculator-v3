@@ -3,7 +3,8 @@
 **Four main KMZs and three variations are reference-verified.** They contain real synthetic
 pipeline inputs, an offline deterministic generator, two independent references, expected
 results, interval/overlap/crossing ledgers, preview maps and executable intent checks.
-Application comparisons are recorded separately; see the known discrepancies below.
+Application comparisons are recorded separately from the independent references.
+Latest comparison against the fingerprinted application sources: **10,175 checks, 0 mismatches**, including exports.
 
 ## Run
 
@@ -161,15 +162,18 @@ remain understandable. No finite collection proves universal correctness.
 
 The [application report](validation/application_comparison.json) is produced only after
 independent expectations are fixed. All original/state mileage and exact savings comparisons
-agree within their stated bounds. Two baseline defect classes remain visible:
+are checked within their stated bounds. Latest comparison against the fingerprinted application sources: **10,175 checks, 0 mismatches**, including exports.
 
-1. **02 canonical boundary precision:** The application round-trips native coordinates
+The initial application baseline exposed two defect classes. The retained reproductions
+document that history; the current receipt above determines whether they still occur:
+
+1. **02 canonical boundary precision:** The baseline application round-tripped native coordinates
    through radians/degrees during longitude unwrapping. At the exact touch vertex this
-   moves the boundary one floating-point unit west, creating a spurious TX attribution
+   moved the boundary one floating-point unit west, creating a spurious TX attribution
    and reporting 10 crossing events where the unchanged native resource establishes 9.
 2. **04 endpoint arithmetic:** A 4 m exclusive TX line ending exactly on the TX/NM border
-   produces a spurious `8.881784197001252e-16 m` unresolved fragment in one direction.
-   That fragment causes an incomplete state analysis; reversal is complete. The reference
+   produced a spurious `8.881784197001252e-16 m` unresolved fragment in one direction.
+   That fragment caused an incomplete state analysis; reversal was complete. The reference
    proves an endpoint touch and zero unresolved mileage.
 
 The audit corrected overstrict export checks: ordinary boundary rounding is evaluated against
@@ -181,7 +185,8 @@ See [minimal boundary/endpoint reproductions](validation/reproductions/README.md
 [polygon residual evidence](validation/reproductions/polygon_residual.json). A draft 02
 touch was independently found to be slightly across an oblique boundary and was corrected
 to an exact native vertex. That reference/construction correction is documented separately;
-expectations were not tuned to an application result. No application code was changed.
+expectations were not tuned to an application result. Fixture creation did not modify
+application code; subsequent application repairs are tracked separately.
 
 `suite.py compare` intentionally exits nonzero while the recorded discrepancies persist.
 A fixture can be reference-verified while exposing an application failure. Incomplete app
@@ -199,8 +204,9 @@ pipeline geometry, and compare every fragment to independent source/path ownersh
 Endpoints must match within the 1 cm cut target; each exported vertex must lie within 10 µm
 of its original source geodesic. Source identities, exact qualifying sample ranges, public
 attribution, positive interval lengths, coverage and conservation are checked independently.
-Corridor polygons must have the expected source-pair identities and cover qualifying sample
-midpoints. Containment retains holes and permits only a local 64-coordinate-ULP boundary strip
+Corridor polygons must match their expected source-pair sections, cover qualifying sample
+midpoints, and stay within independently bounded section extents. Containment retains holes
+and permits only a local 64-coordinate-ULP boundary strip
 with its corresponding perimeter-based area bound. Foreign polygons fail even when tiny.
 Shared geometry must occur once Combined and never in state maps. The no-empty-map rule
 for allocation-only states is documented but not exercised by these main cases.
@@ -210,7 +216,7 @@ for allocation-only states is documented but not exercised by these main cases.
 The saved 24-group profile contains **96 sources, 27,120 samples,
 135.895 km and 96 qualifying sections**.
 It saves 74,640 m and completed application analysis in
-7.09 s on the recorded host, including profiling overhead.
+7.18 s on the recorded host, including profiling overhead.
 The [stress report](validation/stress_report.json) records actual candidate/neighbor counts,
 hardware, process peak memory, runtime and independent/application agreement. These values
 are machine-specific observations, not a performance guarantee.

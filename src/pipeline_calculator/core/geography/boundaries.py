@@ -28,7 +28,10 @@ def polygon_parts(geometry):
 
 def _unwrap_ring(ring, center=None):
     arr = np.asarray(ring.coords, dtype=float)[:, :2].copy()
-    arr[:, 0] = np.degrees(np.unwrap(np.radians(arr[:, 0])))
+    # Unwrap in the resource's own unit. A radians/degrees round trip moves
+    # otherwise canonical vertices by an ULP and can turn an exact boundary
+    # endpoint into a real (but invented) positive-length state visit.
+    arr[:, 0] = np.unwrap(arr[:, 0], period=360)
     if center is not None:
         arr[:, 0] += 360 * round((center - float(np.mean(arr[:, 0]))) / 360)
     return arr

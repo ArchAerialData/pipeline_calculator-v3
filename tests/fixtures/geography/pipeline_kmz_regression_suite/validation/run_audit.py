@@ -109,6 +109,7 @@ def main():
         before = artifact_fingerprints()
         application_before = {path.relative_to(REPO).as_posix(): digest(path)
                               for path in sorted((REPO / 'src').rglob('*.py'))}
+        report['application_source_sha256'] = application_before
         report['adversarial_tests'] = run_tests()
         subprocess.run([sys.executable, str(SUITE / 'suite.py'), 'validate'], cwd=REPO, check=True)
         reference = read_json(SUITE / 'validation/reference_report.json')

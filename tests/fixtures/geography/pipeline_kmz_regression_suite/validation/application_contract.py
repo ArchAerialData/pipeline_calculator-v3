@@ -11,6 +11,7 @@ import json
 import math
 
 from geographiclib.geodesic import Geodesic
+from shapely.affinity import translate
 from shapely.geometry import Point, box
 from shapely.ops import unary_union
 
@@ -132,6 +133,13 @@ def geometry_span_error(actual_coordinates, expected_coordinates):
     return max(error, abs(actual.chainage[-1]-expected.chainage[-1]))
 
 
+def _valid_coordinate_path(coordinates):
+    return (isinstance(coordinates, (list, tuple)) and len(coordinates) >= 2 and
+            all(isinstance(point, (list, tuple)) and len(point) == 2 and
+                all(type(value) in (float, int) and math.isfinite(value) for value in point) and
+                -180 <= point[0] <= 180 and -90 <= point[1] <= 90 for point in coordinates))
+
+
 def compare_interval_ledger(check, label, fragments, expected_intervals, id_to_key, *, export=False, originals=None):
     """Compare disjoint ordered spans per stable source/path and their geometry."""
     actual, expected = defaultdict(list), defaultdict(list)
@@ -180,10 +188,13 @@ def compare_interval_ledger(check, label, fragments, expected_intervals, id_to_k
             check(f'{name}: measured length', float(row['length_meters']), gold['length_meters'], 2*bound)
             coordinates = row.get('coordinates')
             if export:
-                paths = row['paths']
-                check(f'{name}: independent path count', len(paths), 1)
-                coordinates = paths[0] if len(paths) == 1 else None
-            if coordinates is not None:
+                paths = row.get('paths')
+                path_count = len(paths) if isinstance(paths, (list, tuple)) else None
+                check(f'{name}: independent path count', path_count, 1)
+                coordinates = paths[0] if path_count == 1 else None
+            valid_coordinates = _valid_coordinate_path(coordinates)
+            check(f'{name}: source span has valid coordinates', valid_coordinates, True)
+            if valid_coordinates:
                 check(f'{name}: follows independent source span', geometry_span_error(coordinates, gold['coordinates']), 0.0, 2*bound)
                 if originals is not None and key[0] in originals:
                     source = MeasuredLine(originals[key[0]]['paths'][key[1]])
@@ -220,8 +231,91 @@ def polygon_containment(polygons, boundary):
     return rows
 
 
+def _section_corridor_evidence(section, inputs, lines, profile):
+    """Bound every supported visualization using independent source geometry.
+
+    This is a conservative extent certificate, not a golden corridor polygon.
+    A curve may use 6-half-width miters and endpoint caps; a rotated rectangle
+    may enclose a bent section; the last-resort geographic box adds .001 degree.
+    None licenses geometry arbitrarily far from the *individual* section.
+    Derive one enclosing box for all three choices without constructing any of
+    the production candidates or reading the exported shape's claimed bounds.
+    """
+    sample = profile.get('segment_meters', 5.0)
+    detection = profile.get('detection_meters', 15.0)
+    support, midpoints = [], []
+    for key, path, ranges in zip(section['source_keys'], section['path_indices'], section['coverage_ranges']):
+        identity = key, path
+        if identity not in lines:
+            lines[identity] = MeasuredLine(inputs[key]['paths'][path])
+        line = lines[identity]
+        for start, end in ranges:
+            lower, upper = start * sample, end * sample
+            support.extend(line.point(station) for station in line.chainage if lower < station < upper)
+            support.extend(line.point(index * sample) for index in range(start, end + 1))
+            for index in range(start, end):
+                a, b = line.point(index * sample), line.point((index + 1) * sample)
+                inverse = GEOD.Inverse(a[1], a[0], b[1], b[0])
+                chord = GEOD.Direct(a[1], a[0], inverse['azi1'], inverse['s12'] / 2)
+                support.append((chord['lon2'], chord['lat2']))
+                midpoints.append(line.point((index + .5) * sample))
+    anchor = support[0][0]
+    support = [(lon + 360 * round((anchor - lon) / 360), lat) for lon, lat in support]
+    midpoints = [(lon + 360 * round((anchor - lon) / 360), lat) for lon, lat in midpoints]
+    west, east = min(p[0] for p in support), max(p[0] for p in support)
+    south, north = min(p[1] for p in support), max(p[1] for p in support)
+    center = ((west + east) / 2, (south + north) / 2)
+    # 5 cm covers the 1 cm cut criterion plus 7-decimal visualization rounding.
+    # This margin affects the extent guard only, never state containment/mileage.
+    radius = max(_distance(center, point) for point in support) + .05
+    midpoint_radius = radius + math.hypot(detection, sample) / 2
+    pad = max(1.5 * sample, 5.0)
+    # Representative pair midpoints lie within midpoint_radius. Endpoint caps
+    # extend by at most R + midpoint_radius + 1; miters by 6 * half_width.
+    extent = max(midpoint_radius + max(pad, radius + midpoint_radius + 1) + detection,
+                 midpoint_radius + 6 * detection,
+                 math.sqrt(2) * max(radius + pad, midpoint_radius + detection))
+    # Minimum GRS80 curvature radius is greater than 6,330,000 m. These angular
+    # bounds therefore enclose the entire radial disk, including high latitudes.
+    latitude_pad = math.degrees(extent / 6_330_000.0)
+    latitude_limit = abs(center[1]) + latitude_pad
+    if latitude_limit >= 85:
+        raise ValueError('Corridor extent certification exceeds the reference nonpolar domain')
+    longitude_pad = latitude_pad / math.cos(math.radians(latitude_limit))
+    epsilon = 1e-7  # one visualization coordinate unit, including box rounding
+    envelope = box(min(west - .001, center[0] - longitude_pad) - epsilon,
+                   min(south - .001, center[1] - latitude_pad) - epsilon,
+                   max(east + .001, center[0] + longitude_pad) + epsilon,
+                   max(north + .001, center[1] + latitude_pad) + epsilon)
+    return envelope, midpoints, anchor
+
+
+def _distinct_section_assignment(candidates, section_count):
+    """Bipartite augmenting paths: every map must match a distinct section."""
+    assigned = {}
+
+    def assign(corridor, visited):
+        for section in candidates[corridor]:
+            if section in visited:
+                continue
+            visited.add(section)
+            if section not in assigned or assign(assigned[section], visited):
+                assigned[section] = corridor
+                return True
+        return False
+
+    return (len(candidates) == section_count and
+            all(assign(corridor, set()) for corridor in range(len(candidates))))
+
+
 def compare_export_corridors(check, label, corridors, expected, sources, id_to_key):
-    """Each expected section needs an exported area covering its sampled paths."""
+    """Each section needs its own bounded exported area covering its samples.
+
+    A union across every section of a source pair is insufficient: a duplicated
+    map could cover another section, or append a remote island, yet pass totals.
+    Match whole corridor placemarks one-to-one to independent section evidence.
+    Multipart clipped polygons and holes remain supported.
+    """
     from collections import Counter
     actual_pairs = []
     by_pair = defaultdict(list)
@@ -229,26 +323,49 @@ def compare_export_corridors(check, label, corridors, expected, sources, id_to_k
         pair = tuple(sorted(id_to_key.get(int(corridor['metadata'].get(f'pipeline_{i}_id', -1)), '<unknown>')
                             for i in (1, 2)))
         actual_pairs.append(pair)
-        by_pair[pair].extend(corridor['polygons'])
+        by_pair[pair].append(corridor['polygons'])
     sections = expected_section_records(expected)
     check(f'{label}: exported corridor section identities', sorted(Counter(actual_pairs).items()),
           sorted(Counter(tuple(s['source_keys']) for s in sections).items()))
     inputs = {source['key']: source for source in sources}
-    lines, unions = {}, {pair: unary_union(polygons) for pair, polygons in by_pair.items()}
-    missing = 0
+    lines = {}
+    evidence = defaultdict(list)
     for section in sections:
-        shape = unions.get(tuple(section['source_keys']))
-        if shape is None:
-            missing += sum(section['coverage_sample_counts'])
-            continue
-        epsilon = 64 * max(math.ulp(value) for value in shape.bounds)
-        shape = shape.buffer(epsilon)
-        for key, path, ranges in zip(section['source_keys'], section['path_indices'], section['coverage_ranges']):
-            line_key = key, path
-            if line_key not in lines:
-                lines[line_key] = MeasuredLine(inputs[key]['paths'][path])
-            for start, end in ranges:
-                for sample in range(start, end):
-                    midpoint = lines[line_key].point((sample+.5)*5.0)
-                    missing += not shape.covers(Point(midpoint))
+        evidence[tuple(section['source_keys'])].append(
+            _section_corridor_evidence(section, inputs, lines, expected.get('profile', {})))
+    valid = all(polygons and all(not p.is_empty and p.is_valid and
+                                all(math.isfinite(value) for value in p.bounds) for p in polygons)
+                for maps in by_pair.values() for polygons in maps)
+    check(f'{label}: exported corridor polygons valid', valid, True)
+    missing = 0
+    bounded, matched = True, True
+    for pair in sorted(set(by_pair) | set(evidence)):
+        candidates = []
+        targets = evidence[pair]
+        best_missing = [len(midpoints) for _, midpoints, _ in targets]
+        for polygons in by_pair[pair]:
+            eligible, has_bound = [], False
+            if not polygons or any(p.is_empty or not p.is_valid for p in polygons):
+                candidates.append(eligible)
+                bounded = False
+                continue
+            for index, (envelope, midpoints, anchor) in enumerate(targets):
+                # Map exports split dateline components; integer shifts preserve
+                # their native coordinates while comparing one local section.
+                shifted = [translate(p, xoff=360 * round((anchor - p.centroid.x) / 360)) for p in polygons]
+                contained = all(envelope.covers(p) for p in shifted)
+                has_bound |= contained
+                shape = unary_union(shifted)
+                epsilon = 64 * max(math.ulp(value) for value in shape.bounds)
+                shape = shape.buffer(epsilon)
+                absent = sum(not shape.covers(Point(point)) for point in midpoints)
+                best_missing[index] = min(best_missing[index], absent)
+                if contained and not absent:
+                    eligible.append(index)
+            bounded &= has_bound
+            candidates.append(eligible)
+        missing += sum(best_missing)
+        matched &= _distinct_section_assignment(candidates, len(targets))
     check(f'{label}: exported corridors cover qualified path samples', missing, 0)
+    check(f'{label}: exported corridors stay within independent section bounds', bounded, True)
+    check(f'{label}: exported corridors match independent sections one-to-one', matched, True)

@@ -252,6 +252,9 @@ def main():
             boundaries = {s['code']: from_wkb(z.read(s['file'])) for s in manifest['states']}
         report.update({'environment': environment(),
                   'application_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=REPO, text=True).strip(),
+                  'application_source_sha256': {
+                      source.relative_to(REPO).as_posix(): digest(source)
+                      for source in sorted((REPO / 'src').rglob('*.py'))},
                   'expectations_fixed_before_application_run': True})
         for path, expected in frozen:
             print(f'Application comparison: {path.name}', flush=True)

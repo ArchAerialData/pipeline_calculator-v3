@@ -8,7 +8,7 @@
   ],
   "application_complete": true,
   "application_original_meters": 135895.15892252495,
-  "application_runtime_seconds": 7.089870800031349,
+  "application_runtime_seconds": 7.179869499988854,
   "application_savings_meters": 74640.0,
   "checks": [
     {
@@ -11454,6 +11454,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_000_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_000_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -11539,6 +11546,13 @@
       "expected": 1563.8051268917666,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_000_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -11628,6 +11642,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_000_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_000_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -11713,6 +11734,13 @@
       "expected": 970.8829077521191,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_000_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -11802,6 +11830,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_001_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_001_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -11887,6 +11922,13 @@
       "expected": 1563.805126894426,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_001_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -11976,6 +12018,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_001_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_001_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12061,6 +12110,13 @@
       "expected": 970.8829077523463,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_001_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -12150,6 +12206,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_002_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_002_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12235,6 +12298,13 @@
       "expected": 1563.8051268946358,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_002_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -12324,6 +12394,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_002_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_002_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12409,6 +12486,13 @@
       "expected": 970.8829077526759,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_002_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -12498,6 +12582,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_003_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_003_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12583,6 +12674,13 @@
       "expected": 1563.805126893807,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_003_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -12672,6 +12770,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_003_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_003_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12757,6 +12862,13 @@
       "expected": 970.8829077524007,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_003_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -12846,6 +12958,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_004_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_004_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -12931,6 +13050,13 @@
       "expected": 1563.80512689265,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_004_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13020,6 +13146,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_004_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_004_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13105,6 +13238,13 @@
       "expected": 970.8829077532869,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_004_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13194,6 +13334,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_005_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_005_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13279,6 +13426,13 @@
       "expected": 1563.8051268929275,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_005_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13368,6 +13522,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_005_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_005_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13453,6 +13614,13 @@
       "expected": 970.882907752866,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_005_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13542,6 +13710,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_006_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_006_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13627,6 +13802,13 @@
       "expected": 1563.8051268925774,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_006_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13716,6 +13898,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_006_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_006_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13801,6 +13990,13 @@
       "expected": 970.8829077537166,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_006_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -13890,6 +14086,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_007_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_007_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -13975,6 +14178,13 @@
       "expected": 1563.8051268943786,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_007_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14064,6 +14274,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_007_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_007_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -14149,6 +14366,13 @@
       "expected": 970.8829077527919,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_007_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14238,6 +14462,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_008_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_008_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -14323,6 +14554,13 @@
       "expected": 1563.805126893782,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_008_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14412,6 +14650,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_008_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_008_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -14497,6 +14742,13 @@
       "expected": 970.8829077546044,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_008_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14586,6 +14838,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_009_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_009_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -14671,6 +14930,13 @@
       "expected": 1563.805126893964,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_009_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14760,6 +15026,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_009_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_009_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -14845,6 +15118,13 @@
       "expected": 970.8829077542122,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_009_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -14934,6 +15214,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_010_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_010_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15019,6 +15306,13 @@
       "expected": 1563.8051268952795,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_010_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15108,6 +15402,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_010_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_010_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15193,6 +15494,13 @@
       "expected": 970.8829077544442,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_010_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15282,6 +15590,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_011_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_011_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15367,6 +15682,13 @@
       "expected": 1563.8051268924291,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_011_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15456,6 +15778,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_011_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_011_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15541,6 +15870,13 @@
       "expected": 970.8829077528235,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_011_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15630,6 +15966,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_012_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_012_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15715,6 +16058,13 @@
       "expected": 1563.8051268954262,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_012_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15804,6 +16154,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_012_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_012_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -15889,6 +16246,13 @@
       "expected": 970.8829077543752,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_012_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -15978,6 +16342,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_013_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_013_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16063,6 +16434,13 @@
       "expected": 1563.805126893546,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_013_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -16152,6 +16530,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_013_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_013_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16237,6 +16622,13 @@
       "expected": 970.8829077522967,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_013_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -16326,6 +16718,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_014_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_014_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16411,6 +16810,13 @@
       "expected": 1563.8051268931993,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_014_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -16500,6 +16906,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_014_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_014_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16585,6 +16998,13 @@
       "expected": 970.8829077534754,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_014_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -16674,6 +17094,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_015_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_015_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16759,6 +17186,13 @@
       "expected": 1563.8051268940396,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_015_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -16848,6 +17282,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_015_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_015_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -16933,6 +17374,13 @@
       "expected": 970.8829077540281,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_015_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17022,6 +17470,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_016_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_016_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17107,6 +17562,13 @@
       "expected": 1563.8051268946492,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_016_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17196,6 +17658,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_016_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_016_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17281,6 +17750,13 @@
       "expected": 970.8829077536011,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_016_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17370,6 +17846,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_017_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_017_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17455,6 +17938,13 @@
       "expected": 1563.805126893971,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_017_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17544,6 +18034,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_017_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_017_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17629,6 +18126,13 @@
       "expected": 970.8829077550206,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_017_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17718,6 +18222,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_018_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_018_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17803,6 +18314,13 @@
       "expected": 1563.8051268938862,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_018_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -17892,6 +18410,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_018_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_018_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -17977,6 +18502,13 @@
       "expected": 970.8829077543207,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_018_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18066,6 +18598,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_019_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_019_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -18151,6 +18690,13 @@
       "expected": 1563.805126893621,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_019_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18240,6 +18786,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_019_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_019_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -18325,6 +18878,13 @@
       "expected": 970.8829077532056,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_019_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18414,6 +18974,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_020_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_020_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -18499,6 +19066,13 @@
       "expected": 1563.8051268949412,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_020_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18588,6 +19162,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_020_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_020_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -18673,6 +19254,13 @@
       "expected": 970.8829077530442,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_020_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18762,6 +19350,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_021_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_021_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -18847,6 +19442,13 @@
       "expected": 1563.805126895025,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_021_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -18936,6 +19538,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_021_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_021_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -19021,6 +19630,13 @@
       "expected": 970.8829077531279,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_021_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -19110,6 +19726,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_022_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_022_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -19195,6 +19818,13 @@
       "expected": 1563.8051268949284,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_022_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -19284,6 +19914,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_022_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_022_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -19369,6 +20006,13 @@
       "expected": 970.8829077509827,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_022_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -19458,6 +20102,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_023_0/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_023_0/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -19543,6 +20194,13 @@
       "expected": 1563.805126895011,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_023_1/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -19632,6 +20290,13 @@
       "tolerance": 0.02
     },
     {
+      "actual": true,
+      "assertion": "Partition/stress_023_2/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
+    },
+    {
       "actual": 0.0,
       "assertion": "Partition/stress_023_2/path0/interval0: follows independent source span",
       "expected": 0.0,
@@ -19717,6 +20382,13 @@
       "expected": 970.8829077533253,
       "passed": true,
       "tolerance": 0.02
+    },
+    {
+      "actual": true,
+      "assertion": "Partition/stress_023_branch/path0/interval0: source span has valid coordinates",
+      "expected": true,
+      "passed": true,
+      "tolerance": 0
     },
     {
       "actual": 0.0,
@@ -45514,10 +46186,13 @@
     }
   ],
   "contract_provenance": {
-    "baseline_contract_unchanged": true,
-    "changed_contract_files": [],
+    "baseline_contract_unchanged": false,
+    "changed_contract_files": [
+      "src/pipeline_calculator/core/geography/boundaries.py",
+      "src/pipeline_calculator/core/geography/partition.py"
+    ],
     "contract_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
-    "working_commit": "71da499d5756648ae395660f0a241ea00edbea4f"
+    "working_commit": "26d585c06f1faa39f730a3fba2ccf81e4c9092eb"
   },
   "diagnostics": [
     {
@@ -45562,17 +46237,17 @@
   "measurement_note": "Application time includes sys.setprofile return-counter instrumentation and map preparation; excludes independent reference validation and post-run sample checks. Memory is process-wide.",
   "memory_bytes": {
     "nonpaged_pool": 55600,
-    "num_page_faults": 1031178,
+    "num_page_faults": 1069900,
     "paged_pool": 398600,
-    "pagefile": 1699598336,
+    "pagefile": 1699311616,
     "peak_nonpaged_pool": 56280,
     "peak_paged_pool": 399880,
-    "peak_pagefile": 1710460928,
-    "peak_wset": 188895232,
-    "private": 1699598336,
-    "rss": 177844224,
-    "vms": 1699598336,
-    "wset": 177844224
+    "peak_pagefile": 1708744704,
+    "peak_wset": 187777024,
+    "private": 1699311616,
+    "rss": 178155520,
+    "vms": 1699311616,
+    "wset": 178155520
   },
   "mode": "validate-existing",
   "passed": true,
@@ -45585,7 +46260,7 @@
     "positive_savings_in_every_group": true,
     "state_inputs_equal_complete_paths": true
   },
-  "reference_runtime_seconds": 5.915039700106718,
+  "reference_runtime_seconds": 5.946881800075062,
   "reference_verification": {
     "deterministic_archive_checked": true,
     "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
@@ -45595,7 +46270,7 @@
     "source_count": 96,
     "status": "reference-verified"
   },
-  "sample_and_partition_verification_seconds": 1.5281526999315247,
+  "sample_and_partition_verification_seconds": 1.5030330999288708,
   "sample_contract_checked": true,
   "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
   "source_count": 96,
