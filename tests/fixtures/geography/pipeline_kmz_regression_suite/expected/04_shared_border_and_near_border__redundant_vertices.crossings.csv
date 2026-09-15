@@ -1,0 +1,3 @@
+source_key,path_index,chainage_meters,longitude,latitude,from_states,to_states,angle_degrees,via_shared_interval,cut_error_bound_meters
+04_interior_shared_interior,0,480.0000000011181,-103.064732,32.74755134069854,NM,TX,89.999999997933,True,2e-06
+04_tiny_crossing,0,0.040000057266357365,-103.0647319999994,32.7486063453601,NM,TX,89.99999982683454,False,2.0953674317502594e-06

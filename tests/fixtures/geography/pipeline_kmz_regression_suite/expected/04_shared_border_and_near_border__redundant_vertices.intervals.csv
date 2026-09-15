@@ -1,0 +1,17 @@
+id,key,path_index,start_m,end_m,kind,state_codes,length_meters,start_error_bound_meters,end_error_bound_meters,cut_error_bound_meters
+04_interior_shared_interior:p0:i0,04_interior_shared_interior,0,0.0,160.0000000004885,interior,NM,160.00000000048848,0.0,2e-06,2e-06
+04_interior_shared_interior:p0:i1,04_interior_shared_interior,0,160.0000000004885,480.0000000011181,shared,NM|TX,320.00000000062965,2e-06,2e-06,2e-06
+04_interior_shared_interior:p0:i2,04_interior_shared_interior,0,480.0000000011181,640.0000000023074,interior,TX,160.00000000118916,2e-06,0.0,2e-06
+04_shared_long:p0:i0,04_shared_long,0,0.0,429.9999999994827,shared,NM|TX,429.9999999994827,2e-06,2e-06,2e-06
+04_near_east:p0:i0,04_near_east,0,0.0,429.9999999977144,interior,TX,429.9999999977144,0.0,0.0,0.0
+04_near_west:p0:i0,04_near_west,0,0.0,429.9999999977144,interior,NM,429.9999999977144,0.0,0.0,0.0
+04_centimeter_east:p0:i0,04_centimeter_east,0,0.0,430.0000000023015,interior,TX,430.0000000023015,0.0,0.0,0.0
+04_centimeter_west:p0:i0,04_centimeter_west,0,0.0,430.0000000023015,interior,NM,430.0000000023015,0.0,0.0,0.0
+04_shared_qualification_route:p0:i0,04_shared_qualification_route,0,0.0,63.9999999987898,interior,TX,63.9999999987898,0.0,2e-06,2e-06
+04_shared_qualification_route:p0:i1,04_shared_qualification_route,0,63.99999999878979,323.99999999853816,shared,NM|TX,259.99999999974835,2e-06,2e-06,2e-06
+04_shared_qualification_route:p0:i2,04_shared_qualification_route,0,323.99999999853816,387.99999999842294,interior,TX,63.99999999988475,2e-06,0.0,2e-06
+04_shared_qualification_partner:p0:i0,04_shared_qualification_partner,0,0.0,380.0000000014843,interior,TX,380.00000000148435,0.0,0.0,0.0
+04_shared_short:p0:i0,04_shared_short,0,0.0,123.25000000000983,shared,NM|TX,123.2500000000098,2e-06,2e-06,2e-06
+04_tiny_crossing:p0:i0,04_tiny_crossing,0,0.0,0.040000057266357365,interior,NM,0.040000057266357365,0.0,2.0953674317502594e-06,2.0953674317502594e-06
+04_tiny_crossing:p0:i1,04_tiny_crossing,0,0.040000057266357365,0.10000000011474579,interior,TX,0.05999994284838842,2.0953674317502594e-06,0.0,2.0953674317502594e-06
+04_endpoint_touch:p0:i0,04_endpoint_touch,0,0.0,90.00000000203272,interior,NM,90.00000000203272,0.0,2e-06,2e-06

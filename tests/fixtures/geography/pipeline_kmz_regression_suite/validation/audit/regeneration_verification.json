@@ -1,0 +1,107 @@
+{
+  "schema_version": "1.0.0",
+  "command": "python tests/fixtures/geography/pipeline_kmz_regression_suite/suite.py regenerate",
+  "passed": true,
+  "file_count": 45,
+  "archives_csv_previews_manifest_and_stress_bytes_unchanged": true,
+  "numerical_and_descriptive_expected_content_unchanged": true,
+  "json_serialization_change": "Seven core expectation JSON files changed only from Windows CRLF to platform-independent LF. Restoring CRLF reproduces every pre-audit SHA-256.",
+  "normalization": [
+    {
+      "file": "expected/01_three_state_disconnected_networks.expected.json",
+      "previous_sha256": "94b667b2a8b38a2857600dbffb1b48ec2a4d688f35451d906aa33267eda384c8",
+      "current_sha256": "a144d15f67316f1bf6ada75c5a358a3389d7e2ba7b20f441dc17d792e50eacf7",
+      "reconstructed_crlf_sha256": "94b667b2a8b38a2857600dbffb1b48ec2a4d688f35451d906aa33267eda384c8",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/01_three_state_disconnected_networks__source_order.expected.json",
+      "previous_sha256": "52f4c1a0ae9f50983c3d82cabc7daf668c459a46c889ca392c6e0dd8437168fe",
+      "current_sha256": "ecc7f3f0db96acf207d2a2865bf4ff4b37c85d8d8e1a6a72b0d3f43039c2b226",
+      "reconstructed_crlf_sha256": "52f4c1a0ae9f50983c3d82cabc7daf668c459a46c889ca392c6e0dd8437168fe",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/02_three_state_transverse_crossings.expected.json",
+      "previous_sha256": "329af36c334202da68ddf58d4380d91460da136d2262b16074d1b5e232106b37",
+      "current_sha256": "aea9d5b4e549ed2d706b64df6b02abea9be5514c6310767c695ac81353b164ee",
+      "reconstructed_crlf_sha256": "329af36c334202da68ddf58d4380d91460da136d2262b16074d1b5e232106b37",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/03_parallel_corridors_crossing_borders.expected.json",
+      "previous_sha256": "55e224f13650684bafc292b7b5c0fe31e1987ed38c7744940fc6acf3b97363c3",
+      "current_sha256": "27529122fac1dbc351689c7eb0041300078ab0f2ef179dc7e0f5b19d8c71be9f",
+      "reconstructed_crlf_sha256": "55e224f13650684bafc292b7b5c0fe31e1987ed38c7744940fc6acf3b97363c3",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/04_shared_border_and_near_border.expected.json",
+      "previous_sha256": "fb3c715d15f119d8a884b4eeaa4e07899012edc3c9e98966699fa3a5b312a9ea",
+      "current_sha256": "e7a328d12e11b98ae9896798e93b2ee5df659c25c7a9ff7879c56958da1c7ce1",
+      "reconstructed_crlf_sha256": "fb3c715d15f119d8a884b4eeaa4e07899012edc3c9e98966699fa3a5b312a9ea",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/04_shared_border_and_near_border__redundant_vertices.expected.json",
+      "previous_sha256": "114d89e0144eadf4e5a2fd3d4d2e6178565ac077f5919b3cb3c4693983764090",
+      "current_sha256": "b5269a5513dcfec30fd111bf83e91558237eb06d6da772f069a7eb54b5f3bc33",
+      "reconstructed_crlf_sha256": "114d89e0144eadf4e5a2fd3d4d2e6178565ac077f5919b3cb3c4693983764090",
+      "only_change_is_crlf_to_lf": true
+    },
+    {
+      "file": "expected/04_shared_border_and_near_border__reversed.expected.json",
+      "previous_sha256": "91de6335dce6fcc4e8859639dd1006a9d97aa2d13d3dcdb177bfa78ecd9763d8",
+      "current_sha256": "8debe87afdd4203945049644e8f268e790ddb8d4c6d31a21e46bb0e8a74bc3d2",
+      "reconstructed_crlf_sha256": "91de6335dce6fcc4e8859639dd1006a9d97aa2d13d3dcdb177bfa78ecd9763d8",
+      "only_change_is_crlf_to_lf": true
+    }
+  ],
+  "artifact_sha256": {
+    "expected/01_three_state_disconnected_networks.crossings.csv": "52e3a5ca99aee35080d28f04b939faf151e430c5b279203ea7345bcabe40a433",
+    "expected/01_three_state_disconnected_networks.expected.json": "a144d15f67316f1bf6ada75c5a358a3389d7e2ba7b20f441dc17d792e50eacf7",
+    "expected/01_three_state_disconnected_networks.intervals.csv": "cbb2f27f2606ec668fe9a76cff92d7e7256735e373d1c739f7e5ae1f9d558e75",
+    "expected/01_three_state_disconnected_networks.overlaps.csv": "a8041fc5bec63a1efa9a1ca0da9d0f0cfb510a610d846954f0c1572ed299b0e4",
+    "expected/01_three_state_disconnected_networks__source_order.crossings.csv": "52e3a5ca99aee35080d28f04b939faf151e430c5b279203ea7345bcabe40a433",
+    "expected/01_three_state_disconnected_networks__source_order.expected.json": "ecc7f3f0db96acf207d2a2865bf4ff4b37c85d8d8e1a6a72b0d3f43039c2b226",
+    "expected/01_three_state_disconnected_networks__source_order.intervals.csv": "1317881d76a4fc98abc78940c75a60cc5b5cddbc35ed6a634f092d08a5f48c26",
+    "expected/01_three_state_disconnected_networks__source_order.overlaps.csv": "a8041fc5bec63a1efa9a1ca0da9d0f0cfb510a610d846954f0c1572ed299b0e4",
+    "expected/02_three_state_transverse_crossings.crossings.csv": "fbadbeb0fa949e57fc7678d77d179d89e3d1a3501d3d2dc34ba57f935ef178e5",
+    "expected/02_three_state_transverse_crossings.expected.json": "aea9d5b4e549ed2d706b64df6b02abea9be5514c6310767c695ac81353b164ee",
+    "expected/02_three_state_transverse_crossings.intervals.csv": "e58dc02b56da7325e6e0aaeb203ecb83d85189123d142dd8d94b1480963d3d5b",
+    "expected/02_three_state_transverse_crossings.overlaps.csv": "08e7da6d61035bd43da9ff40796c0e1625f6eb56a09c8474084cf6868001394b",
+    "expected/03_parallel_corridors_crossing_borders.crossings.csv": "872a3b918ef93e477dccfed1ef9fe6c2031e421731eccf2533182810a4b1f926",
+    "expected/03_parallel_corridors_crossing_borders.expected.json": "27529122fac1dbc351689c7eb0041300078ab0f2ef179dc7e0f5b19d8c71be9f",
+    "expected/03_parallel_corridors_crossing_borders.intervals.csv": "b58a3125d8641c19f1d370223cbd43133f315fe07a453e810f0a56248a1af489",
+    "expected/03_parallel_corridors_crossing_borders.overlaps.csv": "62a90a8da615c400ec96d0158baf07d62c57613d3c1491e918bf2adb3890b77b",
+    "expected/04_shared_border_and_near_border.crossings.csv": "1f9011a719bfc1f2a1461f76b69ab84789f7ef744cf1e251630654c1517b9f0a",
+    "expected/04_shared_border_and_near_border.expected.json": "e7a328d12e11b98ae9896798e93b2ee5df659c25c7a9ff7879c56958da1c7ce1",
+    "expected/04_shared_border_and_near_border.intervals.csv": "8a6df73023c2dea264daaf45a7a38a29ef30259f7802c73cdb672c1a770a4ebd",
+    "expected/04_shared_border_and_near_border.overlaps.csv": "4845fc7cb0133662452d7cf086406e4f2382809cbac4e038c19b9ebe05818d2e",
+    "expected/04_shared_border_and_near_border__redundant_vertices.crossings.csv": "e1d25da1905422968ab3cef604712e034224e5af6d88b8a178bbf0cfbdb74035",
+    "expected/04_shared_border_and_near_border__redundant_vertices.expected.json": "b5269a5513dcfec30fd111bf83e91558237eb06d6da772f069a7eb54b5f3bc33",
+    "expected/04_shared_border_and_near_border__redundant_vertices.intervals.csv": "83efb26b10458187f85885b64ca4aa411808131aab7eb8cc1b23bddebb8ebc25",
+    "expected/04_shared_border_and_near_border__redundant_vertices.overlaps.csv": "adaf7272bff946d4c61e04d041d26e98f7a4c718c0e122e99991a3c7bae81ac9",
+    "expected/04_shared_border_and_near_border__reversed.crossings.csv": "17729f27641c4d6ff2d670a4af60e571dd029168a46cabb909cdeab297aa1a06",
+    "expected/04_shared_border_and_near_border__reversed.expected.json": "8debe87afdd4203945049644e8f268e790ddb8d4c6d31a21e46bb0e8a74bc3d2",
+    "expected/04_shared_border_and_near_border__reversed.intervals.csv": "70d3033e7bd14e57e463faf36ed1b1521e6ec683a3fd381fd59f8a4e335c66b5",
+    "expected/04_shared_border_and_near_border__reversed.overlaps.csv": "0e2c5c5cf65d54325dda2edf4553cdb3f63fa7f30148f6339e6249356d98960a",
+    "expected/stress/stress_branching_network.expected.json": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
+    "fixtures/01_three_state_disconnected_networks.kmz": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
+    "fixtures/02_three_state_transverse_crossings.kmz": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
+    "fixtures/03_parallel_corridors_crossing_borders.kmz": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+    "fixtures/04_shared_border_and_near_border.kmz": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
+    "fixtures/stress/stress_branching_network.kmz": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+    "fixtures/variants/01_three_state_disconnected_networks__source_order.kmz": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2",
+    "fixtures/variants/04_shared_border_and_near_border__redundant_vertices.kmz": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
+    "fixtures/variants/04_shared_border_and_near_border__reversed.kmz": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd",
+    "previews/01_three_state_disconnected_networks.png": "b8e1158b66e31b0f88307b3f04c18039c8a07cd0e86f6fabcfbba109d60a01ae",
+    "previews/02_three_state_transverse_crossings.png": "82c28b2cdcbe85470fd48ae03fd92a280cd330099832fa51461a28612a5aa700",
+    "previews/03_parallel_corridors_crossing_borders.png": "edce4f40d2634c24be3db91c51c261fef6689cfc670fbe22eb9fa7f4d71b0ae6",
+    "previews/04_shared_border_and_near_border.png": "9fbef573d9c2244065c05dad8560d6d5a7073d574df185d9515b27f372573942",
+    "previews/details/01_control_details.png": "90ce3770cae52e2fb8bc0ccc37310f1b558755974204c5f2039ee4eb677fc34f",
+    "previews/details/03_control_details.png": "3c220aa6dcc1ad6f0a869b986d1a1df37603727d3782ca8f5e204ae47362330d",
+    "previews/details/04_control_details.png": "576e1722daff325e5d363aba4abf808942fd5da04775044fcf0985c8288e0f9f",
+    "validation/design_manifest.json": "cc0ba96b528d22095e41e80b7bb1b4d4e267a62e5147829cdeca3074986c49af"
+  }
+}

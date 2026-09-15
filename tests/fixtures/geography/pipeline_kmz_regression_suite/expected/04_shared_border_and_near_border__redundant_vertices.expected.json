@@ -1,0 +1,6232 @@
+{
+  "analyses": {
+    "Combined": {
+      "adjusted_meters": 1906.350000006967,
+      "adjusted_survey_miles": 1.184548603224348,
+      "diagnostics": [],
+      "grouping": {
+        "accepted_merges": 373,
+        "group_count": 223,
+        "group_size_counts": {
+          "1": 85,
+          "2": 52,
+          "3": 1,
+          "4": 21,
+          "5": 64
+        },
+        "mutual_compatibility_and_disjointness_checked": true,
+        "nontrivial_groups_sha256": "1e8997c97fbe584151658c7034832751adaaffaf5c80426c0e45212b819383fe",
+        "rejected_nonclique_merges": 319,
+        "rejected_shared_source_merges": 51,
+        "savings_by_source_set": [
+          {
+            "savings_meters": 1280.0,
+            "source_keys": [
+              "04_centimeter_east",
+              "04_centimeter_west",
+              "04_interior_shared_interior",
+              "04_near_west",
+              "04_shared_long"
+            ]
+          },
+          {
+            "savings_meters": 315.0,
+            "source_keys": [
+              "04_centimeter_east",
+              "04_centimeter_west",
+              "04_near_west",
+              "04_shared_long"
+            ]
+          },
+          {
+            "savings_meters": 10.0,
+            "source_keys": [
+              "04_centimeter_east",
+              "04_centimeter_west",
+              "04_shared_long"
+            ]
+          },
+          {
+            "savings_meters": 260.0,
+            "source_keys": [
+              "04_shared_qualification_partner",
+              "04_shared_qualification_route"
+            ]
+          }
+        ]
+      },
+      "motif_savings": {
+        "centimeter_exclusive+interior_shared_interior+near_parallel+shared_long": 1280.0,
+        "centimeter_exclusive+near_parallel+shared_long": 315.0,
+        "centimeter_exclusive+shared_long": 10.0,
+        "near_parallel": 0.0,
+        "shared_cannot_qualify_state": 260.0
+      },
+      "original_meters": 3771.350000006967,
+      "original_survey_miles": 2.3434035590327436,
+      "profile": {
+        "angular_tolerance_degrees": 15.0,
+        "detection_meters": 15.0,
+        "ellipsoid": "GRS80",
+        "minimum_qualifying_meters": 200.0,
+        "segment_meters": 5.0,
+        "survey_mile_meters": 1609.347218694
+      },
+      "qualifying_pairwise_meters": 5700.0,
+      "qualifying_section_count": 15,
+      "reference_version": "sampled-contract-1",
+      "rejected_section_count": 2,
+      "sample_count": 751,
+      "sampled_meters": 3755.0,
+      "savings_meters": 1865.0,
+      "savings_survey_miles": 1.1588549558083958,
+      "sections": [
+        {
+          "coverage_meters": [
+            430.0,
+            430.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                86
+              ]
+            ],
+            [
+              [
+                0,
+                86
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            86,
+            86
+          ],
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
+          "maximum_longitudinal_meters": 1.0478307754379796e-11,
+          "maximum_transverse_meters": 0.06000000201570826,
+          "minimum_transverse_meters": 0.05999999745833482,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_centimeter_west"
+          ]
+        },
+        {
+          "coverage_meters": [
+            320.0,
+            320.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                6,
+                70
+              ]
+            ],
+            [
+              [
+                32,
+                96
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            64,
+            64
+          ],
+          "eligible_match_count": 64,
+          "length_meters": 320.0,
+          "maximum_longitudinal_meters": 3.842817092150436e-09,
+          "maximum_transverse_meters": 0.030000000693591843,
+          "minimum_transverse_meters": 0.02999999877743189,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_interior_shared_interior"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.447906309881032e-09,
+          "maximum_transverse_meters": 7.970000006219196,
+          "minimum_transverse_meters": 7.969999999565869,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_near_east"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.453960096144023e-09,
+          "maximum_transverse_meters": 8.030000005542346,
+          "minimum_transverse_meters": 8.029999999090585,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_near_west"
+          ]
+        },
+        {
+          "coverage_meters": [
+            430.0,
+            430.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                86
+              ]
+            ],
+            [
+              [
+                0,
+                86
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            86,
+            86
+          ],
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
+          "maximum_longitudinal_meters": 5.255686157261355e-09,
+          "maximum_transverse_meters": 0.03000000100785413,
+          "minimum_transverse_meters": 0.02999999872916741,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_shared_long"
+          ]
+        },
+        {
+          "coverage_meters": [
+            320.0,
+            320.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                6,
+                70
+              ]
+            ],
+            [
+              [
+                32,
+                96
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            64,
+            64
+          ],
+          "eligible_match_count": 64,
+          "length_meters": 320.0,
+          "maximum_longitudinal_meters": 3.842817092150436e-09,
+          "maximum_transverse_meters": 0.030000000693591843,
+          "minimum_transverse_meters": 0.02999999781163093,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_west",
+            "04_interior_shared_interior"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.453960096144023e-09,
+          "maximum_transverse_meters": 8.030000005542346,
+          "minimum_transverse_meters": 8.029999999090585,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_west",
+            "04_near_east"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.447906309881032e-09,
+          "maximum_transverse_meters": 7.970000006219196,
+          "minimum_transverse_meters": 7.969999999565869,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_west",
+            "04_near_west"
+          ]
+        },
+        {
+          "coverage_meters": [
+            430.0,
+            430.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                86
+              ]
+            ],
+            [
+              [
+                0,
+                86
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            86,
+            86
+          ],
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
+          "maximum_longitudinal_meters": 5.255686157261355e-09,
+          "maximum_transverse_meters": 0.03000000100785413,
+          "minimum_transverse_meters": 0.02999999872916741,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_west",
+            "04_shared_long"
+          ]
+        },
+        {
+          "coverage_meters": [
+            320.0,
+            320.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                32,
+                96
+              ]
+            ],
+            [
+              [
+                6,
+                70
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            64,
+            64
+          ],
+          "eligible_match_count": 64,
+          "length_meters": 320.0,
+          "maximum_longitudinal_meters": 3.641232604876014e-09,
+          "maximum_transverse_meters": 8.000000006556222,
+          "minimum_transverse_meters": 8.000000000928896,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_interior_shared_interior",
+            "04_near_east"
+          ]
+        },
+        {
+          "coverage_meters": [
+            320.0,
+            320.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                32,
+                96
+              ]
+            ],
+            [
+              [
+                6,
+                70
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            64,
+            64
+          ],
+          "eligible_match_count": 64,
+          "length_meters": 320.0,
+          "maximum_longitudinal_meters": 3.641232604876014e-09,
+          "maximum_transverse_meters": 8.000000006556222,
+          "minimum_transverse_meters": 7.999999999792112,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_interior_shared_interior",
+            "04_near_west"
+          ]
+        },
+        {
+          "coverage_meters": [
+            320.0,
+            320.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                32,
+                96
+              ]
+            ],
+            [
+              [
+                6,
+                70
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            64,
+            64
+          ],
+          "eligible_match_count": 64,
+          "length_meters": 320.0,
+          "maximum_longitudinal_meters": 2.1194058744900334e-09,
+          "maximum_transverse_meters": 1.3318617953493662e-09,
+          "minimum_transverse_meters": 0.0,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_interior_shared_interior",
+            "04_shared_long"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 3.818802562475937e-09,
+          "maximum_transverse_meters": 8.000000005626822,
+          "minimum_transverse_meters": 7.999999999858611,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_near_east",
+            "04_shared_long"
+          ]
+        },
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 3.818802562475937e-09,
+          "maximum_transverse_meters": 8.000000005626822,
+          "minimum_transverse_meters": 7.999999999858611,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_near_west",
+            "04_shared_long"
+          ]
+        },
+        {
+          "coverage_meters": [
+            60.0,
+            60.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                12
+              ]
+            ],
+            [
+              [
+                0,
+                12
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            12,
+            12
+          ],
+          "eligible_match_count": 12,
+          "length_meters": 60.0,
+          "maximum_longitudinal_meters": 1.9441545696743035e-09,
+          "maximum_transverse_meters": 8.000000002484265,
+          "minimum_transverse_meters": 8.000000000610758,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": false,
+          "source_keys": [
+            "04_shared_qualification_partner",
+            "04_shared_qualification_route"
+          ]
+        },
+        {
+          "coverage_meters": [
+            260.0,
+            260.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                12,
+                64
+              ]
+            ],
+            [
+              [
+                13,
+                65
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            52,
+            52
+          ],
+          "eligible_match_count": 103,
+          "length_meters": 260.0,
+          "maximum_longitudinal_meters": 4.000000002454731,
+          "maximum_transverse_meters": 12.000000006551591,
+          "minimum_transverse_meters": 11.500000002099032,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_shared_qualification_partner",
+            "04_shared_qualification_route"
+          ]
+        },
+        {
+          "coverage_meters": [
+            60.0,
+            55.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                64,
+                76
+              ]
+            ],
+            [
+              [
+                66,
+                77
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            12,
+            11
+          ],
+          "eligible_match_count": 22,
+          "length_meters": 55.0,
+          "maximum_longitudinal_meters": 3.0000000005086913,
+          "maximum_transverse_meters": 8.000000004690328,
+          "minimum_transverse_meters": 8.000000000116987,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": false,
+          "source_keys": [
+            "04_shared_qualification_partner",
+            "04_shared_qualification_route"
+          ]
+        }
+      ],
+      "source_count": 11,
+      "source_coverage": {
+        "04_centimeter_east": {
+          "original_meters": 430.00000000301384,
+          "original_survey_miles": 0.2671890782847736,
+          "path_original_meters": [
+            430.00000000301384
+          ],
+          "path_original_survey_miles": [
+            0.2671890782847736
+          ],
+          "path_sample_counts": [
+            86
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                86
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": 3.013838068000041e-09
+        },
+        "04_centimeter_west": {
+          "original_meters": 430.00000000301384,
+          "original_survey_miles": 0.2671890782847736,
+          "path_original_meters": [
+            430.00000000301384
+          ],
+          "path_original_survey_miles": [
+            0.2671890782847736
+          ],
+          "path_sample_counts": [
+            86
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                86
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": 3.013838068000041e-09
+        },
+        "04_endpoint_touch": {
+          "original_meters": 90.00000000203272,
+          "original_survey_miles": 0.055923295455823724,
+          "path_original_meters": [
+            90.00000000203272
+          ],
+          "path_original_survey_miles": [
+            0.055923295455823724
+          ],
+          "path_sample_counts": [
+            18
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 18,
+          "sampled_meters": 90.0,
+          "unsampled_tail_meters": 2.0327206584624946e-09
+        },
+        "04_interior_shared_interior": {
+          "original_meters": 640.0000000021942,
+          "original_survey_miles": 0.3976767676782391,
+          "path_original_meters": [
+            640.0000000021942
+          ],
+          "path_original_survey_miles": [
+            0.3976767676782391
+          ],
+          "path_sample_counts": [
+            128
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                32,
+                96
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 320.0,
+          "qualifying_covered_sample_count": 64,
+          "sample_count": 128,
+          "sampled_meters": 640.0,
+          "unsampled_tail_meters": 2.1941559680271894e-09
+        },
+        "04_near_east": {
+          "original_meters": 429.9999999966561,
+          "original_survey_miles": 0.26718907828082306,
+          "path_original_meters": [
+            429.9999999966561
+          ],
+          "path_original_survey_miles": [
+            0.26718907828082306
+          ],
+          "path_sample_counts": [
+            85
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 85,
+          "sampled_meters": 425.0,
+          "unsampled_tail_meters": 4.999999996656072
+        },
+        "04_near_west": {
+          "original_meters": 429.9999999966561,
+          "original_survey_miles": 0.26718907828082306,
+          "path_original_meters": [
+            429.9999999966561
+          ],
+          "path_original_survey_miles": [
+            0.26718907828082306
+          ],
+          "path_sample_counts": [
+            85
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 85,
+          "sampled_meters": 425.0,
+          "unsampled_tail_meters": 4.999999996656072
+        },
+        "04_shared_long": {
+          "original_meters": 430.00000000018963,
+          "original_survey_miles": 0.26718907828301874,
+          "path_original_meters": [
+            430.00000000018963
+          ],
+          "path_original_survey_miles": [
+            0.26718907828301874
+          ],
+          "path_sample_counts": [
+            86
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                86
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": 1.8962964531965554e-10
+        },
+        "04_shared_qualification_partner": {
+          "original_meters": 380.0000000032489,
+          "original_survey_miles": 0.23612058081016374,
+          "path_original_meters": [
+            380.0000000032489
+          ],
+          "path_original_survey_miles": [
+            0.23612058081016374
+          ],
+          "path_sample_counts": [
+            76
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                12,
+                64
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 260.0,
+          "qualifying_covered_sample_count": 52,
+          "sample_count": 76,
+          "sampled_meters": 380.0,
+          "unsampled_tail_meters": 3.248885604989482e-09
+        },
+        "04_shared_qualification_route": {
+          "original_meters": 387.999999999484,
+          "original_survey_miles": 0.24109154040378528,
+          "path_original_meters": [
+            387.999999999484
+          ],
+          "path_original_survey_miles": [
+            0.24109154040378528
+          ],
+          "path_sample_counts": [
+            77
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                13,
+                65
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 260.0,
+          "qualifying_covered_sample_count": 52,
+          "sample_count": 77,
+          "sampled_meters": 385.0,
+          "unsampled_tail_meters": 2.9999999994839754
+        },
+        "04_shared_short": {
+          "original_meters": 123.25000000036329,
+          "original_survey_miles": 0.07658384627549908,
+          "path_original_meters": [
+            123.25000000036329
+          ],
+          "path_original_survey_miles": [
+            0.07658384627549908
+          ],
+          "path_sample_counts": [
+            24
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 24,
+          "sampled_meters": 120.0,
+          "unsampled_tail_meters": 3.2500000003632863
+        },
+        "04_tiny_crossing": {
+          "original_meters": 0.10000000011474579,
+          "original_survey_miles": 6.213699502081142e-05,
+          "path_original_meters": [
+            0.10000000011474579
+          ],
+          "path_original_survey_miles": [
+            6.213699502081142e-05
+          ],
+          "path_sample_counts": [
+            0
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 0,
+          "sampled_meters": 0.0,
+          "unsampled_tail_meters": 0.10000000011474579
+        }
+      },
+      "status": "complete",
+      "workload": {
+        "eligible_sample_pair_count": 1225,
+        "exhaustive_sample_pair_visits": 249187,
+        "geodesic_sample_pair_tests": 6609,
+        "spherical_screen_survivors": 6779
+      }
+    },
+    "NM": {
+      "adjusted_meters": 1251.6650000597388,
+      "adjusted_survey_miles": 0.7777470178719272,
+      "attributed_original_meters": 1676.6650000597388,
+      "attributed_original_survey_miles": 1.0418292464073524,
+      "diagnostics": [],
+      "fragment_references": {
+        "04_centimeter_west": [
+          {
+            "end_m": 430.0000000023015,
+            "interval_id": "04_centimeter_west:p0:i0",
+            "interval_ids": [
+              "04_centimeter_west:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_endpoint_touch": [
+          {
+            "end_m": 90.00000000203272,
+            "interval_id": "04_endpoint_touch:p0:i0",
+            "interval_ids": [
+              "04_endpoint_touch:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_interior_shared_interior": [
+          {
+            "end_m": 160.0000000004885,
+            "interval_id": "04_interior_shared_interior:p0:i0",
+            "interval_ids": [
+              "04_interior_shared_interior:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_near_west": [
+          {
+            "end_m": 429.9999999977144,
+            "interval_id": "04_near_west:p0:i0",
+            "interval_ids": [
+              "04_near_west:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_tiny_crossing": [
+          {
+            "end_m": 0.040000057266357365,
+            "interval_id": "04_tiny_crossing:p0:i0",
+            "interval_ids": [
+              "04_tiny_crossing:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ]
+      },
+      "grouping": {
+        "accepted_merges": 85,
+        "group_count": 85,
+        "group_size_counts": {
+          "2": 85
+        },
+        "mutual_compatibility_and_disjointness_checked": true,
+        "nontrivial_groups_sha256": "13195eff5dc4836ba50404b9dc997ce40dc396aeb8e00ed19212ff98e24396e0",
+        "rejected_nonclique_merges": 0,
+        "rejected_shared_source_merges": 0,
+        "savings_by_source_set": [
+          {
+            "savings_meters": 425.0,
+            "source_keys": [
+              "04_centimeter_west",
+              "04_near_west"
+            ]
+          }
+        ]
+      },
+      "interior_meters": 1110.0400000598033,
+      "motif_savings": {
+        "centimeter_exclusive+near_parallel": 425.0
+      },
+      "original_meters": 1110.0400000599943,
+      "original_survey_miles": 0.6897454987748398,
+      "profile": {
+        "angular_tolerance_degrees": 15.0,
+        "detection_meters": 15.0,
+        "ellipsoid": "GRS80",
+        "minimum_qualifying_meters": 200.0,
+        "segment_meters": 5.0,
+        "survey_mile_meters": 1609.347218694
+      },
+      "qualifying_pairwise_meters": 425.0,
+      "qualifying_section_count": 1,
+      "reference_version": "sampled-contract-1",
+      "rejected_section_count": 0,
+      "sample_count": 221,
+      "sampled_meters": 1105.0,
+      "savings_meters": 425.0,
+      "savings_survey_miles": 0.2640822285354253,
+      "sections": [
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.447906309881032e-09,
+          "maximum_transverse_meters": 7.970000006219196,
+          "minimum_transverse_meters": 7.969999999565869,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_west",
+            "04_near_west"
+          ]
+        }
+      ],
+      "shared_allocation_meters": 566.6249999999353,
+      "source_count": 5,
+      "source_coverage": {
+        "04_centimeter_west": {
+          "original_meters": 430.00000000301384,
+          "original_survey_miles": 0.2671890782847736,
+          "path_original_meters": [
+            430.00000000301384
+          ],
+          "path_original_survey_miles": [
+            0.2671890782847736
+          ],
+          "path_sample_counts": [
+            86
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": 3.013838068000041e-09
+        },
+        "04_endpoint_touch": {
+          "original_meters": 90.00000000203272,
+          "original_survey_miles": 0.055923295455823724,
+          "path_original_meters": [
+            90.00000000203272
+          ],
+          "path_original_survey_miles": [
+            0.055923295455823724
+          ],
+          "path_sample_counts": [
+            18
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 18,
+          "sampled_meters": 90.0,
+          "unsampled_tail_meters": 2.0327206584624946e-09
+        },
+        "04_interior_shared_interior": {
+          "original_meters": 160.0000000007119,
+          "original_survey_miles": 0.0994191919196613,
+          "path_original_meters": [
+            160.0000000007119
+          ],
+          "path_original_survey_miles": [
+            0.0994191919196613
+          ],
+          "path_sample_counts": [
+            32
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 32,
+          "sampled_meters": 160.0,
+          "unsampled_tail_meters": 7.119069778127596e-10
+        },
+        "04_near_west": {
+          "original_meters": 429.9999999966561,
+          "original_survey_miles": 0.26718907828082306,
+          "path_original_meters": [
+            429.9999999966561
+          ],
+          "path_original_survey_miles": [
+            0.26718907828082306
+          ],
+          "path_sample_counts": [
+            85
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 85,
+          "sampled_meters": 425.0,
+          "unsampled_tail_meters": 4.999999996656072
+        },
+        "04_tiny_crossing": {
+          "original_meters": 0.04000005757980954,
+          "original_survey_miles": 2.485483375816808e-05,
+          "path_original_meters": [
+            0.04000005757980954
+          ],
+          "path_original_survey_miles": [
+            2.485483375816808e-05
+          ],
+          "path_sample_counts": [
+            0
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 0,
+          "sampled_meters": 0.0,
+          "unsampled_tail_meters": 0.04000005757980954
+        }
+      },
+      "status": "complete",
+      "workload": {
+        "eligible_sample_pair_count": 85,
+        "exhaustive_sample_pair_visits": 16436,
+        "geodesic_sample_pair_tests": 421,
+        "spherical_screen_survivors": 463
+      }
+    },
+    "TX": {
+      "adjusted_meters": 1669.6849999441474,
+      "adjusted_survey_miles": 1.0374920840880515,
+      "attributed_original_meters": 2094.6849999441474,
+      "attributed_original_survey_miles": 1.301574312623477,
+      "diagnostics": [],
+      "fragment_references": {
+        "04_centimeter_east": [
+          {
+            "end_m": 430.0000000023015,
+            "interval_id": "04_centimeter_east:p0:i0",
+            "interval_ids": [
+              "04_centimeter_east:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_interior_shared_interior": [
+          {
+            "end_m": 640.0000000023074,
+            "interval_id": "04_interior_shared_interior:p0:i2",
+            "interval_ids": [
+              "04_interior_shared_interior:p0:i2"
+            ],
+            "path_index": 0,
+            "start_m": 480.0000000011181
+          }
+        ],
+        "04_near_east": [
+          {
+            "end_m": 429.9999999977144,
+            "interval_id": "04_near_east:p0:i0",
+            "interval_ids": [
+              "04_near_east:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_shared_qualification_partner": [
+          {
+            "end_m": 380.0000000014843,
+            "interval_id": "04_shared_qualification_partner:p0:i0",
+            "interval_ids": [
+              "04_shared_qualification_partner:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_shared_qualification_route": [
+          {
+            "end_m": 63.9999999987898,
+            "interval_id": "04_shared_qualification_route:p0:i0",
+            "interval_ids": [
+              "04_shared_qualification_route:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          },
+          {
+            "end_m": 387.99999999842294,
+            "interval_id": "04_shared_qualification_route:p0:i2",
+            "interval_ids": [
+              "04_shared_qualification_route:p0:i2"
+            ],
+            "path_index": 0,
+            "start_m": 323.99999999853816
+          }
+        ],
+        "04_tiny_crossing": [
+          {
+            "end_m": 0.10000000011474579,
+            "interval_id": "04_tiny_crossing:p0:i1",
+            "interval_ids": [
+              "04_tiny_crossing:p0:i1"
+            ],
+            "path_index": 0,
+            "start_m": 0.040000057266357365
+          }
+        ]
+      },
+      "grouping": {
+        "accepted_merges": 85,
+        "group_count": 85,
+        "group_size_counts": {
+          "2": 85
+        },
+        "mutual_compatibility_and_disjointness_checked": true,
+        "nontrivial_groups_sha256": "a698fc29f8ec07f0e67fdeeb54962831129b6449aee2e3563dcfa39d468d8a44",
+        "rejected_nonclique_merges": 0,
+        "rejected_shared_source_merges": 0,
+        "savings_by_source_set": [
+          {
+            "savings_meters": 425.0,
+            "source_keys": [
+              "04_centimeter_east",
+              "04_near_east"
+            ]
+          }
+        ]
+      },
+      "interior_meters": 1528.0599999442122,
+      "motif_savings": {
+        "centimeter_exclusive+near_parallel": 425.0
+      },
+      "original_meters": 1528.059999945337,
+      "original_survey_miles": 0.9494905649915446,
+      "profile": {
+        "angular_tolerance_degrees": 15.0,
+        "detection_meters": 15.0,
+        "ellipsoid": "GRS80",
+        "minimum_qualifying_meters": 200.0,
+        "segment_meters": 5.0,
+        "survey_mile_meters": 1609.347218694
+      },
+      "qualifying_pairwise_meters": 425.0,
+      "qualifying_section_count": 1,
+      "reference_version": "sampled-contract-1",
+      "rejected_section_count": 2,
+      "sample_count": 303,
+      "sampled_meters": 1515.0,
+      "savings_meters": 425.0,
+      "savings_survey_miles": 0.2640822285354253,
+      "sections": [
+        {
+          "coverage_meters": [
+            425.0,
+            425.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                85
+              ]
+            ],
+            [
+              [
+                0,
+                85
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            85,
+            85
+          ],
+          "eligible_match_count": 85,
+          "length_meters": 425.0,
+          "maximum_longitudinal_meters": 6.447906309881032e-09,
+          "maximum_transverse_meters": 7.970000006219196,
+          "minimum_transverse_meters": 7.969999999565869,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": true,
+          "source_keys": [
+            "04_centimeter_east",
+            "04_near_east"
+          ]
+        },
+        {
+          "coverage_meters": [
+            60.0,
+            60.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                0,
+                12
+              ]
+            ],
+            [
+              [
+                0,
+                12
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            12,
+            12
+          ],
+          "eligible_match_count": 12,
+          "length_meters": 60.0,
+          "maximum_longitudinal_meters": 1.9441545696743035e-09,
+          "maximum_transverse_meters": 8.000000002484265,
+          "minimum_transverse_meters": 8.000000000610758,
+          "path_indices": [
+            0,
+            0
+          ],
+          "qualified": false,
+          "source_keys": [
+            "04_shared_qualification_partner",
+            "04_shared_qualification_route"
+          ]
+        },
+        {
+          "coverage_meters": [
+            60.0,
+            55.0
+          ],
+          "coverage_ranges": [
+            [
+              [
+                64,
+                76
+              ]
+            ],
+            [
+              [
+                1,
+                12
+              ]
+            ]
+          ],
+          "coverage_sample_counts": [
+            12,
+            11
+          ],
+          "eligible_match_count": 22,
+          "length_meters": 55.0,
+          "maximum_longitudinal_meters": 4.00000000257562,
+          "maximum_transverse_meters": 8.000000003930476,
+          "minimum_transverse_meters": 8.000000000337941,
+          "path_indices": [
+            0,
+            1
+          ],
+          "qualified": false,
+          "source_keys": [
+            "04_shared_qualification_partner",
+            "04_shared_qualification_route"
+          ]
+        }
+      ],
+      "shared_allocation_meters": 566.6249999999353,
+      "source_count": 6,
+      "source_coverage": {
+        "04_centimeter_east": {
+          "original_meters": 430.00000000301384,
+          "original_survey_miles": 0.2671890782847736,
+          "path_original_meters": [
+            430.00000000301384
+          ],
+          "path_original_survey_miles": [
+            0.2671890782847736
+          ],
+          "path_sample_counts": [
+            86
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": 3.013838068000041e-09
+        },
+        "04_interior_shared_interior": {
+          "original_meters": 160.00000000050048,
+          "original_survey_miles": 0.09941919191952991,
+          "path_original_meters": [
+            160.00000000050048
+          ],
+          "path_original_survey_miles": [
+            0.09941919191952991
+          ],
+          "path_sample_counts": [
+            32
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 32,
+          "sampled_meters": 160.0,
+          "unsampled_tail_meters": 5.004778813599842e-10
+        },
+        "04_near_east": {
+          "original_meters": 429.9999999966561,
+          "original_survey_miles": 0.26718907828082306,
+          "path_original_meters": [
+            429.9999999966561
+          ],
+          "path_original_survey_miles": [
+            0.26718907828082306
+          ],
+          "path_sample_counts": [
+            85
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [
+              [
+                0,
+                85
+              ]
+            ]
+          },
+          "qualifying_covered_meters": 425.0,
+          "qualifying_covered_sample_count": 85,
+          "sample_count": 85,
+          "sampled_meters": 425.0,
+          "unsampled_tail_meters": 4.999999996656072
+        },
+        "04_shared_qualification_partner": {
+          "original_meters": 380.0000000032489,
+          "original_survey_miles": 0.23612058081016374,
+          "path_original_meters": [
+            380.0000000032489
+          ],
+          "path_original_survey_miles": [
+            0.23612058081016374
+          ],
+          "path_sample_counts": [
+            76
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 76,
+          "sampled_meters": 380.0,
+          "unsampled_tail_meters": 3.248885604989482e-09
+        },
+        "04_shared_qualification_route": {
+          "original_meters": 127.99999999938282,
+          "original_survey_miles": 0.07953535353499165,
+          "path_original_meters": [
+            63.999999999500155,
+            63.999999999882675
+          ],
+          "path_original_survey_miles": [
+            0.03976767676737698,
+            0.039767676767614675
+          ],
+          "path_sample_counts": [
+            12,
+            12
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": [],
+            "1": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 24,
+          "sampled_meters": 120.0,
+          "unsampled_tail_meters": 7.999999999382823
+        },
+        "04_tiny_crossing": {
+          "original_meters": 0.05999994253493622,
+          "original_survey_miles": 3.728216126264332e-05,
+          "path_original_meters": [
+            0.05999994253493622
+          ],
+          "path_original_survey_miles": [
+            3.728216126264332e-05
+          ],
+          "path_sample_counts": [
+            0
+          ],
+          "qualifying_coverage_ranges_by_path": {
+            "0": []
+          },
+          "qualifying_covered_meters": 0.0,
+          "qualifying_covered_sample_count": 0,
+          "sample_count": 0,
+          "sampled_meters": 0.0,
+          "unsampled_tail_meters": 0.05999994253493622
+        }
+      },
+      "status": "complete",
+      "workload": {
+        "eligible_sample_pair_count": 119,
+        "exhaustive_sample_pair_visits": 34906,
+        "geodesic_sample_pair_tests": 532,
+        "spherical_screen_survivors": 579
+      }
+    }
+  },
+  "analysis_profile": {
+    "angular_tolerance_degrees": 15.0,
+    "detection_range_meters": 15.0,
+    "ellipsoid": "GRS80",
+    "id": "default-grs80-5m-v1",
+    "minimum_parallel_length_meters": 200.0,
+    "segment_length_meters": 5.0,
+    "survey_mile_meters": 1609.347218694
+  },
+  "archive": {
+    "bytes": 3159,
+    "path_count": 11,
+    "repeated_display_names": {},
+    "repeated_objectids": {
+      "1": 2,
+      "7": 4
+    },
+    "sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
+    "source_count": 11,
+    "vertex_count": 219,
+    "xml_counts": {
+      "Data": 33,
+      "Document": 1,
+      "ExtendedData": 11,
+      "LineString": 11,
+      "Placemark": 11,
+      "coordinates": 11,
+      "kml": 1,
+      "name": 12,
+      "tessellate": 11,
+      "value": 33
+    },
+    "xml_ids": [
+      "p_04_interior_shared_interior",
+      "p_04_shared_long",
+      "p_04_near_east",
+      "p_04_near_west",
+      "p_04_centimeter_east",
+      "p_04_centimeter_west",
+      "p_04_shared_qualification_route",
+      "p_04_shared_qualification_partner",
+      "p_04_shared_short",
+      "p_04_tiny_crossing",
+      "p_04_endpoint_touch"
+    ],
+    "xml_source_order": [
+      "04_interior_shared_interior",
+      "04_shared_long",
+      "04_near_east",
+      "04_near_west",
+      "04_centimeter_east",
+      "04_centimeter_west",
+      "04_shared_qualification_route",
+      "04_shared_qualification_partner",
+      "04_shared_short",
+      "04_tiny_crossing",
+      "04_endpoint_touch"
+    ],
+    "zip_entry": {
+      "compression": 8,
+      "date_time": [
+        2025,
+        1,
+        1,
+        0,
+        0,
+        0
+      ],
+      "external_attr": 2175008768,
+      "name": "doc.kml"
+    }
+  },
+  "baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+  "boundary_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+  "coverage_checks": [
+    {
+      "assertion": "Outside and unresolved length are both exactly zero",
+      "id": "resolved_complete_coverage",
+      "measured": {
+        "outside_meters": 0.0,
+        "unresolved_meters": 0.0
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "sum(state attributed) + outside + unresolved equals original within max(0.001 m, original*1e-10)",
+      "id": "fixture_conservation",
+      "measured": {
+        "difference_meters": 0.0,
+        "tolerance_meters": 0.001
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_interior_shared_interior",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "interior_shared_interior"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_interior_shared_interior"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_shared_long",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 5.684341886080802e-14
+      },
+      "motifs": [
+        "shared_long"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_long"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_near_east",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "near_parallel"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_near_east"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_near_west",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "near_parallel"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_near_west"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_centimeter_east",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 5.684341886080802e-14
+      },
+      "motifs": [
+        "centimeter_exclusive"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_centimeter_east"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_centimeter_west",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 5.684341886080802e-14
+      },
+      "motifs": [
+        "centimeter_exclusive"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_centimeter_west"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_shared_qualification_route",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "shared_cannot_qualify_state"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_qualification_route"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_shared_qualification_partner",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "shared_cannot_qualify_state"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_qualification_partner"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_shared_short",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": -1.4210854715202004e-14
+      },
+      "motifs": [
+        "shared_short"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_short"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_tiny_crossing",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 0.0
+      },
+      "motifs": [
+        "tiny_crossing"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_tiny_crossing"
+      ]
+    },
+    {
+      "assertion": "Source attributed + outside + unresolved equals its original within the conservation bound",
+      "id": "source_conservation_04_endpoint_touch",
+      "measured": {
+        "bound_meters": 0.001,
+        "difference_meters": 1.4210854715202004e-14
+      },
+      "motifs": [
+        "endpoint_touch"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_endpoint_touch"
+      ]
+    },
+    {
+      "assertion": "Every cut is certified to <=0.01 m along its source geodesic",
+      "id": "certified_cut_locations",
+      "measured": {
+        "maximum_bound_meters": 2.0953674317502594e-06
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Represented states equal the verified design states",
+      "id": "represented_states",
+      "measured": {
+        "actual": [
+          "NM",
+          "TX"
+        ],
+        "required": [
+          "NM",
+          "TX"
+        ]
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Every actual source has a distinct fixture identity; repeated display fields do not merge it",
+      "id": "source_identity_count",
+      "measured": {
+        "actual": 11,
+        "expected": 11
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Coverage uses exact 5 m units; a component qualifies iff both unique sample counts reach 40",
+      "id": "sample_units_Combined",
+      "measured": {
+        "section_count": 17
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Each source's reported coverage is the exact union of qualified sample-index sets, counted once across pairs",
+      "id": "unique_coverage_union_Combined",
+      "measured": {
+        "covered_sample_counts": {
+          "04_centimeter_east": 86,
+          "04_centimeter_west": 86,
+          "04_endpoint_touch": 0,
+          "04_interior_shared_interior": 64,
+          "04_near_east": 85,
+          "04_near_west": 85,
+          "04_shared_long": 86,
+          "04_shared_qualification_partner": 52,
+          "04_shared_qualification_route": 52,
+          "04_shared_short": 0,
+          "04_tiny_crossing": 0
+        }
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Adjusted equals attributed original minus savings; disjoint group savings are (members-1)*5 m",
+      "id": "group_and_adjusted_accounting_Combined",
+      "measured": {
+        "adjusted_difference_meters": 0.0,
+        "group_savings_meters": 1865
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Coverage uses exact 5 m units; a component qualifies iff both unique sample counts reach 40",
+      "id": "sample_units_NM",
+      "measured": {
+        "section_count": 1
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Each source's reported coverage is the exact union of qualified sample-index sets, counted once across pairs",
+      "id": "unique_coverage_union_NM",
+      "measured": {
+        "covered_sample_counts": {
+          "04_centimeter_west": 85,
+          "04_endpoint_touch": 0,
+          "04_interior_shared_interior": 0,
+          "04_near_west": 85,
+          "04_tiny_crossing": 0
+        }
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Adjusted equals attributed original minus savings; disjoint group savings are (members-1)*5 m",
+      "id": "group_and_adjusted_accounting_NM",
+      "measured": {
+        "adjusted_difference_meters": 0.0,
+        "group_savings_meters": 425
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Only exclusive interiors enter state sampling; attributed original adds shared allocation",
+      "id": "exclusive_state_inputs_NM",
+      "measured": {
+        "attributed_original_meters": 1676.6650000597388,
+        "attributed_original_survey_miles": 1.0418292464073524,
+        "interior_meters": 1110.0400000598033,
+        "length_error_bound_meters": 1.409536743175026e-05,
+        "name": "New Mexico",
+        "sample_input_original_meters": 1110.0400000599943,
+        "shared_allocation_meters": 566.6249999999353,
+        "shared_interval_references": [
+          {
+            "allocated_meters": 160.00000000031483,
+            "interval_id": "04_interior_shared_interior:p0:i1"
+          },
+          {
+            "allocated_meters": 214.99999999974136,
+            "interval_id": "04_shared_long:p0:i0"
+          },
+          {
+            "allocated_meters": 129.99999999987418,
+            "interval_id": "04_shared_qualification_route:p0:i1"
+          },
+          {
+            "allocated_meters": 61.6250000000049,
+            "interval_id": "04_shared_short:p0:i0"
+          }
+        ]
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Coverage uses exact 5 m units; a component qualifies iff both unique sample counts reach 40",
+      "id": "sample_units_TX",
+      "measured": {
+        "section_count": 3
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Each source's reported coverage is the exact union of qualified sample-index sets, counted once across pairs",
+      "id": "unique_coverage_union_TX",
+      "measured": {
+        "covered_sample_counts": {
+          "04_centimeter_east": 85,
+          "04_interior_shared_interior": 0,
+          "04_near_east": 85,
+          "04_shared_qualification_partner": 0,
+          "04_shared_qualification_route": 0,
+          "04_tiny_crossing": 0
+        }
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Adjusted equals attributed original minus savings; disjoint group savings are (members-1)*5 m",
+      "id": "group_and_adjusted_accounting_TX",
+      "measured": {
+        "adjusted_difference_meters": 0.0,
+        "group_savings_meters": 425
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Only exclusive interiors enter state sampling; attributed original adds shared allocation",
+      "id": "exclusive_state_inputs_TX",
+      "measured": {
+        "attributed_original_meters": 2094.6849999441474,
+        "attributed_original_survey_miles": 1.301574312623477,
+        "interior_meters": 1528.0599999442122,
+        "length_error_bound_meters": 1.609536743175026e-05,
+        "name": "Texas",
+        "sample_input_original_meters": 1528.059999945337,
+        "shared_allocation_meters": 566.6249999999353,
+        "shared_interval_references": [
+          {
+            "allocated_meters": 160.00000000031483,
+            "interval_id": "04_interior_shared_interior:p0:i1"
+          },
+          {
+            "allocated_meters": 214.99999999974136,
+            "interval_id": "04_shared_long:p0:i0"
+          },
+          {
+            "allocated_meters": 129.99999999987418,
+            "interval_id": "04_shared_qualification_route:p0:i1"
+          },
+          {
+            "allocated_meters": 61.6250000000049,
+            "interval_id": "04_shared_short:p0:i0"
+          }
+        ]
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "Each shared interval occurs once and has exactly two half-length allocation references for NM/TX",
+      "id": "shared_stored_once_allocated_equally",
+      "measured": {
+        "allocation_count": 8,
+        "shared_interval_count": 4,
+        "shared_meters": 1133.2499999998706
+      },
+      "motifs": [],
+      "passed": true,
+      "source_keys": []
+    },
+    {
+      "assertion": "A positive shared run below 200 m allocates original length to both states",
+      "id": "subthreshold_shared_allocation",
+      "measured": {
+        "original_meters": 123.25000000000982,
+        "state_accounts": {
+          "NM": {
+            "attributed_original_meters": 61.6250000000049,
+            "attributed_original_survey_miles": 0.03829192313763972,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 61.6250000000049,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 61.6250000000049,
+                "interval_id": "04_shared_short:p0:i0"
+              }
+            ]
+          },
+          "TX": {
+            "attributed_original_meters": 61.6250000000049,
+            "attributed_original_survey_miles": 0.03829192313763972,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 61.6250000000049,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 61.6250000000049,
+                "interval_id": "04_shared_short:p0:i0"
+              }
+            ]
+          }
+        }
+      },
+      "motifs": [
+        "shared_short"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_short"
+      ]
+    },
+    {
+      "assertion": "The serialized 3 cm offset measures 0.029\u20130.031 m from the canonical meridian and is wholly exclusive to TX",
+      "id": "centimeter_offset_east",
+      "measured": {
+        "measured_offset_range_meters": [
+          0.029999999570405767,
+          0.03000000108734865
+        ],
+        "shared_interval_count": 0,
+        "state_accounts": {
+          "TX": {
+            "attributed_original_meters": 430.0000000023015,
+            "attributed_original_survey_miles": 0.26718907828433097,
+            "interior_meters": 430.0000000023015,
+            "length_error_bound_meters": 0.0,
+            "name": "Texas",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        }
+      },
+      "motifs": [
+        "centimeter_exclusive"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_centimeter_east"
+      ]
+    },
+    {
+      "assertion": "The serialized 3 cm offset measures 0.029\u20130.031 m from the canonical meridian and is wholly exclusive to NM",
+      "id": "centimeter_offset_west",
+      "measured": {
+        "measured_offset_range_meters": [
+          0.029999999570405767,
+          0.03000000108734865
+        ],
+        "shared_interval_count": 0,
+        "state_accounts": {
+          "NM": {
+            "attributed_original_meters": 430.0000000023015,
+            "attributed_original_survey_miles": 0.26718907828433097,
+            "interior_meters": 430.0000000023015,
+            "length_error_bound_meters": 0.0,
+            "name": "New Mexico",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        }
+      },
+      "motifs": [
+        "centimeter_exclusive"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_centimeter_west"
+      ]
+    },
+    {
+      "assertion": "Shared-adjacent control qualifies Combined but no state; shared coverage cannot qualify an interior run",
+      "id": "shared_cannot_qualify_state",
+      "measured": {
+        "combined_savings": 260.0,
+        "state_qualified_section_counts": {
+          "NM": 0,
+          "TX": 0
+        }
+      },
+      "motifs": [
+        "shared_cannot_qualify_state"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_shared_qualification_route",
+        "04_shared_qualification_partner"
+      ]
+    },
+    {
+      "assertion": "A real 10 cm crossing retains one event and positive sub 10 cm exclusive intervals in both states",
+      "id": "centimeter_crossing_retained",
+      "measured": {
+        "NM": 0.040000057266357365,
+        "TX": 0.05999994284838842
+      },
+      "motifs": [
+        "tiny_crossing"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_tiny_crossing"
+      ]
+    },
+    {
+      "assertion": "The endpoint touches TX while contributing exactly zero TX length and zero crossing events",
+      "id": "shared_fixture_endpoint_touch",
+      "measured": {
+        "crossing_count": 0,
+        "tx_meters": 0.0
+      },
+      "motifs": [
+        "endpoint_touch"
+      ],
+      "passed": true,
+      "source_keys": [
+        "04_endpoint_touch"
+      ]
+    }
+  ],
+  "expected_application_status": {
+    "analysis_complete": true,
+    "combined_diagnostic_counts": {
+      "selected_primary_kml": 1
+    },
+    "geography_diagnostic_counts": {},
+    "geography_status": "complete",
+    "outside_meters": 0.0,
+    "unexpected_warning_or_error_is_failure": true,
+    "unresolved_meters": 0.0
+  },
+  "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+  "geometry": {
+    "certification": {
+      "boundary_resource_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+      "conservation_difference_meters": 0.0,
+      "conservation_passed": true,
+      "conservation_tolerance_meters": 0.001,
+      "coordinate_roundoff_allowance_meters": 2e-06,
+      "cut_target_meters": 0.01,
+      "distance_crosscheck": {
+        "checked_edge_count": 208,
+        "independence_limit": "Distinct Python/C implementations of related Karney geodesic algorithms; not independent earth models",
+        "largest_differences": [
+          {
+            "difference_meters": 1.4124772462764668e-09,
+            "edge_index": 13,
+            "geographiclib_meters": 18.69565217257986,
+            "path_index": 0,
+            "pyproj_meters": 18.695652173992336,
+            "source_key": "04_centimeter_east"
+          },
+          {
+            "difference_meters": 1.4124772462764668e-09,
+            "edge_index": 13,
+            "geographiclib_meters": 18.69565217257986,
+            "path_index": 0,
+            "pyproj_meters": 18.695652173992336,
+            "source_key": "04_centimeter_west"
+          },
+          {
+            "difference_meters": -1.4117880198227795e-09,
+            "edge_index": 12,
+            "geographiclib_meters": 18.695652174256743,
+            "path_index": 0,
+            "pyproj_meters": 18.695652172844955,
+            "source_key": "04_centimeter_east"
+          },
+          {
+            "difference_meters": -1.4117880198227795e-09,
+            "edge_index": 12,
+            "geographiclib_meters": 18.695652174256743,
+            "path_index": 0,
+            "pyproj_meters": 18.695652172844955,
+            "source_key": "04_centimeter_west"
+          },
+          {
+            "difference_meters": 1.0603962152799795e-09,
+            "edge_index": 7,
+            "geographiclib_meters": 18.095238096378736,
+            "path_index": 0,
+            "pyproj_meters": 18.095238097439132,
+            "source_key": "04_shared_qualification_partner"
+          },
+          {
+            "difference_meters": -1.0597069888262922e-09,
+            "edge_index": 22,
+            "geographiclib_meters": 18.6956521737293,
+            "path_index": 0,
+            "pyproj_meters": 18.695652172669593,
+            "source_key": "04_near_east"
+          },
+          {
+            "difference_meters": -1.0597069888262922e-09,
+            "edge_index": 22,
+            "geographiclib_meters": 18.6956521737293,
+            "path_index": 0,
+            "pyproj_meters": 18.695652172669593,
+            "source_key": "04_near_west"
+          },
+          {
+            "difference_meters": -1.0597034361126134e-09,
+            "edge_index": 6,
+            "geographiclib_meters": 18.69565217480902,
+            "path_index": 0,
+            "pyproj_meters": 18.695652173749316,
+            "source_key": "04_near_east"
+          },
+          {
+            "difference_meters": 1.0597034361126134e-09,
+            "edge_index": 9,
+            "geographiclib_meters": 18.695652173647833,
+            "path_index": 0,
+            "pyproj_meters": 18.695652174707536,
+            "source_key": "04_near_east"
+          },
+          {
+            "difference_meters": -1.0597034361126134e-09,
+            "edge_index": 6,
+            "geographiclib_meters": 18.69565217480902,
+            "path_index": 0,
+            "pyproj_meters": 18.695652173749316,
+            "source_key": "04_near_west"
+          },
+          {
+            "difference_meters": 1.0597034361126134e-09,
+            "edge_index": 9,
+            "geographiclib_meters": 18.695652173647833,
+            "path_index": 0,
+            "pyproj_meters": 18.695652174707536,
+            "source_key": "04_near_west"
+          },
+          {
+            "difference_meters": 1.0596998833989346e-09,
+            "edge_index": 7,
+            "geographiclib_meters": 18.695652172420374,
+            "path_index": 0,
+            "pyproj_meters": 18.695652173480074,
+            "source_key": "04_near_east"
+          }
+        ],
+        "maximum_absolute_difference_meters": 1.4124772462764668e-09,
+        "primary": "geographiclib 2.0 Python Geodesic(a=6378137,f=1/298.257222101)",
+        "secondary": "pyproj 3.7.1 PROJ Geod(ellps=GRS80)"
+      },
+      "domain_limits": "Nonpolar source edges <=200 km, unambiguous transverse roots or exact meridian/equator coincidence; unresolved near tangencies raise an error",
+      "longitude_wrapping": "Unwrap each native exterior and hole; query periodic copies without CRS transformation or simplification",
+      "maximum_cut_error_bound_meters": 2.0953674317502594e-06,
+      "maximum_root_refinement_change_meters": 8.583068857523357e-07,
+      "method": "GeographicLib GRS80 geodesic; native coordinate-line roots; analytic coordinate-curvature envelope and sign exclusion; station bisection",
+      "root_bracket_width_target_meters": 2.5e-07
+    },
+    "combined_original_meters": 3771.350000003886,
+    "combined_original_survey_miles": 2.3434035590308295,
+    "crossing_count": 2,
+    "crossings": [
+      {
+        "angle_degrees": 89.999999997933,
+        "chainage_meters": 480.0000000011181,
+        "coordinate": [
+          -103.064732,
+          32.74755134069854
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "from_states": [
+          "NM"
+        ],
+        "path_index": 0,
+        "source_key": "04_interior_shared_interior",
+        "to_states": [
+          "TX"
+        ],
+        "via_shared_interval": true
+      },
+      {
+        "angle_degrees": 89.99999982683454,
+        "chainage_meters": 0.040000057266357365,
+        "coordinate": [
+          -103.0647319999994,
+          32.7486063453601
+        ],
+        "cut_error_bound_meters": 2.0953674317502594e-06,
+        "from_states": [
+          "NM"
+        ],
+        "path_index": 0,
+        "source_key": "04_tiny_crossing",
+        "to_states": [
+          "TX"
+        ],
+        "via_shared_interval": false
+      }
+    ],
+    "endpoint_touches": [
+      {
+        "chainage_meters": 90.0000000020327,
+        "coordinate": [
+          -103.064732,
+          32.74881373941795
+        ],
+        "endpoint": "end",
+        "interior_states": [
+          "NM"
+        ],
+        "path_index": 0,
+        "positive_length_in_touched_states_meters": 0.0,
+        "source_key": "04_endpoint_touch",
+        "touched_states": [
+          "TX"
+        ]
+      }
+    ],
+    "interior_fragments": {
+      "NM": {
+        "04_centimeter_west": [
+          {
+            "coordinates": [
+              [
+                -103.06473232009647,
+                32.74439534278593
+              ],
+              [
+                -103.06473232009706,
+                32.74456392408113
+              ],
+              [
+                -103.06473232009768,
+                32.74473250537177
+              ],
+              [
+                -103.06473232009827,
+                32.74490108665788
+              ],
+              [
+                -103.06473232009888,
+                32.74506966793945
+              ],
+              [
+                -103.06473232009948,
+                32.74523824921649
+              ],
+              [
+                -103.06473232010009,
+                32.74540683048897
+              ],
+              [
+                -103.06473232010069,
+                32.74557541175692
+              ],
+              [
+                -103.06473232010129,
+                32.74574399302033
+              ],
+              [
+                -103.0647323201019,
+                32.7459125742792
+              ],
+              [
+                -103.0647323201025,
+                32.74608115553353
+              ],
+              [
+                -103.0647323201031,
+                32.74624973678331
+              ],
+              [
+                -103.0647323201037,
+                32.74641831802855
+              ],
+              [
+                -103.06473232010431,
+                32.74658689926925
+              ],
+              [
+                -103.06473232010491,
+                32.74675548050541
+              ],
+              [
+                -103.06473232010552,
+                32.74692406173704
+              ],
+              [
+                -103.06473232010612,
+                32.74709264296412
+              ],
+              [
+                -103.06473232010671,
+                32.74726122418666
+              ],
+              [
+                -103.06473232010732,
+                32.74742980540464
+              ],
+              [
+                -103.06473232010792,
+                32.74759838661811
+              ],
+              [
+                -103.06473232010853,
+                32.74776696782703
+              ],
+              [
+                -103.06473232010913,
+                32.7479355490314
+              ],
+              [
+                -103.06473232010974,
+                32.74810413023123
+              ],
+              [
+                -103.06473232011034,
+                32.74827271142652
+              ]
+            ],
+            "end_m": 430.0000000023015,
+            "interval_id": "04_centimeter_west:p0:i0",
+            "interval_ids": [
+              "04_centimeter_west:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_endpoint_touch": [
+          {
+            "coordinates": [
+              [
+                -103.06569233678157,
+                32.74881373573883
+              ],
+              [
+                -103.06550026942526,
+                32.74881373706332
+              ],
+              [
+                -103.06530820206895,
+                32.74881373809347
+              ],
+              [
+                -103.06511613471264,
+                32.7488137388293
+              ],
+              [
+                -103.06492406735633,
+                32.74881373927079
+              ],
+              [
+                -103.064732,
+                32.74881373941795
+              ]
+            ],
+            "end_m": 90.00000000203272,
+            "interval_id": "04_endpoint_touch:p0:i0",
+            "interval_ids": [
+              "04_endpoint_touch:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_interior_shared_interior": [
+          {
+            "coordinates": [
+              [
+                -103.06643918627859,
+                32.74466584532907
+              ],
+              [
+                -103.06624949891433,
+                32.7446658477691
+              ],
+              [
+                -103.06605981155006,
+                32.74466584992206
+              ],
+              [
+                -103.06587012418578,
+                32.74466585178796
+              ],
+              [
+                -103.0656804368215,
+                32.74466585336681
+              ],
+              [
+                -103.06549074945721,
+                32.74466585465859
+              ],
+              [
+                -103.06530106209291,
+                32.74466585566331
+              ],
+              [
+                -103.06511137472862,
+                32.74466585638096
+              ],
+              [
+                -103.0649216873643,
+                32.74466585681156
+              ],
+              [
+                -103.064732,
+                32.74466585695508
+              ]
+            ],
+            "end_m": 160.0000000004885,
+            "interval_id": "04_interior_shared_interior:p0:i0",
+            "interval_ids": [
+              "04_interior_shared_interior:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_near_west": [
+          {
+            "coordinates": [
+              [
+                -103.06481735905601,
+                32.74439534275686
+              ],
+              [
+                -103.06481735921676,
+                32.74456392405206
+              ],
+              [
+                -103.06481735937751,
+                32.74473250534271
+              ],
+              [
+                -103.06481735953827,
+                32.74490108662882
+              ],
+              [
+                -103.06481735969902,
+                32.74506966791039
+              ],
+              [
+                -103.06481735985979,
+                32.74523824918742
+              ],
+              [
+                -103.06481736002054,
+                32.74540683045991
+              ],
+              [
+                -103.0648173601813,
+                32.74557541172786
+              ],
+              [
+                -103.06481736034206,
+                32.74574399299126
+              ],
+              [
+                -103.06481736050281,
+                32.74591257425013
+              ],
+              [
+                -103.06481736066357,
+                32.74608115550446
+              ],
+              [
+                -103.06481736082434,
+                32.74624973675424
+              ],
+              [
+                -103.06481736098509,
+                32.74641831799947
+              ],
+              [
+                -103.06481736114586,
+                32.74658689924018
+              ],
+              [
+                -103.06481736130662,
+                32.74675548047635
+              ],
+              [
+                -103.06481736146738,
+                32.74692406170796
+              ],
+              [
+                -103.06481736162814,
+                32.74709264293504
+              ],
+              [
+                -103.06481736178891,
+                32.74726122415758
+              ],
+              [
+                -103.06481736194966,
+                32.74742980537557
+              ],
+              [
+                -103.06481736211043,
+                32.74759838658903
+              ],
+              [
+                -103.0648173622712,
+                32.74776696779794
+              ],
+              [
+                -103.06481736243197,
+                32.74793554900232
+              ],
+              [
+                -103.06481736259273,
+                32.74810413020215
+              ],
+              [
+                -103.0648173627535,
+                32.74827271139745
+              ]
+            ],
+            "end_m": 429.9999999977144,
+            "interval_id": "04_near_west:p0:i0",
+            "interval_ids": [
+              "04_near_west:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_tiny_crossing": [
+          {
+            "coordinates": [
+              [
+                -103.06473242681537,
+                32.7486063453601
+              ],
+              [
+                -103.0647319999994,
+                32.7486063453601
+              ]
+            ],
+            "end_m": 0.040000057266357365,
+            "interval_id": "04_tiny_crossing:p0:i0",
+            "interval_ids": [
+              "04_tiny_crossing:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ]
+      },
+      "TX": {
+        "04_centimeter_east": [
+          {
+            "coordinates": [
+              [
+                -103.06473167990355,
+                32.74439534278593
+              ],
+              [
+                -103.06473167990295,
+                32.74456392408113
+              ],
+              [
+                -103.06473167990234,
+                32.74473250537177
+              ],
+              [
+                -103.06473167990174,
+                32.74490108665788
+              ],
+              [
+                -103.06473167990113,
+                32.74506966793945
+              ],
+              [
+                -103.06473167990053,
+                32.74523824921649
+              ],
+              [
+                -103.06473167989992,
+                32.74540683048897
+              ],
+              [
+                -103.06473167989932,
+                32.74557541175692
+              ],
+              [
+                -103.06473167989873,
+                32.74574399302033
+              ],
+              [
+                -103.06473167989812,
+                32.7459125742792
+              ],
+              [
+                -103.06473167989752,
+                32.74608115553353
+              ],
+              [
+                -103.06473167989691,
+                32.74624973678331
+              ],
+              [
+                -103.06473167989631,
+                32.74641831802855
+              ],
+              [
+                -103.0647316798957,
+                32.74658689926925
+              ],
+              [
+                -103.0647316798951,
+                32.74675548050541
+              ],
+              [
+                -103.06473167989449,
+                32.74692406173704
+              ],
+              [
+                -103.0647316798939,
+                32.74709264296412
+              ],
+              [
+                -103.0647316798933,
+                32.74726122418666
+              ],
+              [
+                -103.06473167989269,
+                32.74742980540464
+              ],
+              [
+                -103.06473167989209,
+                32.74759838661811
+              ],
+              [
+                -103.06473167989148,
+                32.74776696782703
+              ],
+              [
+                -103.06473167989088,
+                32.7479355490314
+              ],
+              [
+                -103.06473167989027,
+                32.74810413023123
+              ],
+              [
+                -103.06473167988968,
+                32.74827271142652
+              ]
+            ],
+            "end_m": 430.0000000023015,
+            "interval_id": "04_centimeter_east:p0:i0",
+            "interval_ids": [
+              "04_centimeter_east:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_interior_shared_interior": [
+          {
+            "coordinates": [
+              [
+                -103.064732,
+                32.74755134069854
+              ],
+              [
+                -103.06454230652105,
+                32.747551340555
+              ],
+              [
+                -103.0643526130421,
+                32.74755134012436
+              ],
+              [
+                -103.06416291956316,
+                32.74755133940662
+              ],
+              [
+                -103.06397322608422,
+                32.7475513384018
+              ],
+              [
+                -103.06378353260527,
+                32.74755133710988
+              ],
+              [
+                -103.06359383912633,
+                32.74755133553086
+              ],
+              [
+                -103.06340414564741,
+                32.74755133366475
+              ],
+              [
+                -103.0632144521685,
+                32.74755133151154
+              ],
+              [
+                -103.06302475868958,
+                32.74755132907124
+              ]
+            ],
+            "end_m": 640.0000000023074,
+            "interval_id": "04_interior_shared_interior:p0:i2",
+            "interval_ids": [
+              "04_interior_shared_interior:p0:i2"
+            ],
+            "path_index": 0,
+            "start_m": 480.0000000011181
+          }
+        ],
+        "04_near_east": [
+          {
+            "coordinates": [
+              [
+                -103.064646640944,
+                32.74439534275686
+              ],
+              [
+                -103.06464664078325,
+                32.74456392405206
+              ],
+              [
+                -103.0646466406225,
+                32.74473250534271
+              ],
+              [
+                -103.06464664046175,
+                32.74490108662882
+              ],
+              [
+                -103.06464664030099,
+                32.74506966791039
+              ],
+              [
+                -103.06464664014023,
+                32.74523824918742
+              ],
+              [
+                -103.06464663997947,
+                32.74540683045991
+              ],
+              [
+                -103.06464663981872,
+                32.74557541172786
+              ],
+              [
+                -103.06464663965795,
+                32.74574399299126
+              ],
+              [
+                -103.0646466394972,
+                32.74591257425013
+              ],
+              [
+                -103.06464663933644,
+                32.74608115550446
+              ],
+              [
+                -103.06464663917568,
+                32.74624973675424
+              ],
+              [
+                -103.06464663901492,
+                32.74641831799947
+              ],
+              [
+                -103.06464663885416,
+                32.74658689924018
+              ],
+              [
+                -103.06464663869339,
+                32.74675548047635
+              ],
+              [
+                -103.06464663853264,
+                32.74692406170796
+              ],
+              [
+                -103.06464663837187,
+                32.74709264293504
+              ],
+              [
+                -103.0646466382111,
+                32.74726122415758
+              ],
+              [
+                -103.06464663805035,
+                32.74742980537557
+              ],
+              [
+                -103.06464663788958,
+                32.74759838658903
+              ],
+              [
+                -103.06464663772881,
+                32.74776696779794
+              ],
+              [
+                -103.06464663756805,
+                32.74793554900232
+              ],
+              [
+                -103.06464663740728,
+                32.74810413020215
+              ],
+              [
+                -103.06464663724651,
+                32.74827271139745
+              ]
+            ],
+            "end_m": 429.9999999977144,
+            "interval_id": "04_near_east:p0:i0",
+            "interval_ids": [
+              "04_near_east:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_shared_qualification_partner": [
+          {
+            "coordinates": [
+              [
+                -103.0646039547088,
+                32.74908425333071
+              ],
+              [
+                -103.06460395447536,
+                32.7492474204865
+              ],
+              [
+                -103.06460395424192,
+                32.74941058763803
+              ],
+              [
+                -103.06460395400848,
+                32.7495737547853
+              ],
+              [
+                -103.06460395377503,
+                32.74973692192833
+              ],
+              [
+                -103.06460395354159,
+                32.7499000890671
+              ],
+              [
+                -103.06460395330815,
+                32.75006325620161
+              ],
+              [
+                -103.06460395307471,
+                32.75022642333187
+              ],
+              [
+                -103.06460395284125,
+                32.75038959045789
+              ],
+              [
+                -103.06460395260781,
+                32.75055275757963
+              ],
+              [
+                -103.06460395237437,
+                32.75071592469714
+              ],
+              [
+                -103.06460395214091,
+                32.75087909181038
+              ],
+              [
+                -103.06460395190747,
+                32.75104225891937
+              ],
+              [
+                -103.06460395167402,
+                32.7512054260241
+              ],
+              [
+                -103.06460395144056,
+                32.75136859312459
+              ],
+              [
+                -103.06460395120712,
+                32.75153176022081
+              ],
+              [
+                -103.06460395097366,
+                32.75169492731278
+              ],
+              [
+                -103.0646039507402,
+                32.7518580944005
+              ],
+              [
+                -103.06460395050675,
+                32.75202126148397
+              ],
+              [
+                -103.0646039502733,
+                32.75218442856317
+              ],
+              [
+                -103.06460395003984,
+                32.75234759563813
+              ],
+              [
+                -103.06460394980638,
+                32.75251076270882
+              ]
+            ],
+            "end_m": 380.0000000014843,
+            "interval_id": "04_shared_qualification_partner:p0:i0",
+            "interval_ids": [
+              "04_shared_qualification_partner:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          }
+        ],
+        "04_shared_qualification_route": [
+          {
+            "coordinates": [
+              [
+                -103.06468931823628,
+                32.74908425338886
+              ],
+              [
+                -103.06468931817177,
+                32.74921951037356
+              ],
+              [
+                -103.06468931810727,
+                32.74935476735533
+              ],
+              [
+                -103.06468931804277,
+                32.74949002433418
+              ],
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ],
+              [
+                -103.064732,
+                32.7496252813174
+              ]
+            ],
+            "end_m": 63.9999999987898,
+            "interval_id": "04_shared_qualification_route:p0:i0",
+            "interval_ids": [
+              "04_shared_qualification_route:p0:i0"
+            ],
+            "path_index": 0,
+            "start_m": 0.0
+          },
+          {
+            "coordinates": [
+              [
+                -103.064732,
+                32.75196973510242
+              ],
+              [
+                -103.06468931686017,
+                32.75196973509515
+              ],
+              [
+                -103.06468931679566,
+                32.75210499201749
+              ],
+              [
+                -103.06468931673115,
+                32.7522402489369
+              ],
+              [
+                -103.06468931666664,
+                32.75237550585339
+              ],
+              [
+                -103.06468931660213,
+                32.75251076276696
+              ]
+            ],
+            "end_m": 387.99999999842294,
+            "interval_id": "04_shared_qualification_route:p0:i2",
+            "interval_ids": [
+              "04_shared_qualification_route:p0:i2"
+            ],
+            "path_index": 0,
+            "start_m": 323.99999999853816
+          }
+        ],
+        "04_tiny_crossing": [
+          {
+            "coordinates": [
+              [
+                -103.0647319999994,
+                32.7486063453601
+              ],
+              [
+                -103.06473135977697,
+                32.7486063453601
+              ]
+            ],
+            "end_m": 0.10000000011474579,
+            "interval_id": "04_tiny_crossing:p0:i1",
+            "interval_ids": [
+              "04_tiny_crossing:p0:i1"
+            ],
+            "path_index": 0,
+            "start_m": 0.040000057266357365
+          }
+        ]
+      }
+    },
+    "intervals": [
+      {
+        "coordinates": [
+          [
+            -103.06643918627859,
+            32.74466584532907
+          ],
+          [
+            -103.06624949891433,
+            32.7446658477691
+          ],
+          [
+            -103.06605981155006,
+            32.74466584992206
+          ],
+          [
+            -103.06587012418578,
+            32.74466585178796
+          ],
+          [
+            -103.0656804368215,
+            32.74466585336681
+          ],
+          [
+            -103.06549074945721,
+            32.74466585465859
+          ],
+          [
+            -103.06530106209291,
+            32.74466585566331
+          ],
+          [
+            -103.06511137472862,
+            32.74466585638096
+          ],
+          [
+            -103.0649216873643,
+            32.74466585681156
+          ],
+          [
+            -103.064732,
+            32.74466585695508
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 160.0000000004885,
+        "id": "04_interior_shared_interior:p0:i0",
+        "key": "04_interior_shared_interior",
+        "kind": "interior",
+        "length_meters": 160.00000000048848,
+        "path_index": 0,
+        "source_key": "04_interior_shared_interior",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.74466585695508
+          ],
+          [
+            -103.064732,
+            32.74483559132976
+          ],
+          [
+            -103.064732,
+            32.74500532569984
+          ],
+          [
+            -103.064732,
+            32.74517506006531
+          ],
+          [
+            -103.064732,
+            32.74534479442617
+          ],
+          [
+            -103.064732,
+            32.74551452878244
+          ],
+          [
+            -103.064732,
+            32.7456842631341
+          ],
+          [
+            -103.064732,
+            32.74585399748116
+          ],
+          [
+            -103.064732,
+            32.74602373182361
+          ],
+          [
+            -103.064732,
+            32.74619346616146
+          ],
+          [
+            -103.064732,
+            32.74636320049471
+          ],
+          [
+            -103.064732,
+            32.74653293482336
+          ],
+          [
+            -103.064732,
+            32.7467026691474
+          ],
+          [
+            -103.064732,
+            32.74687240346683
+          ],
+          [
+            -103.064732,
+            32.74704213778167
+          ],
+          [
+            -103.064732,
+            32.7472118720919
+          ],
+          [
+            -103.064732,
+            32.74738160639752
+          ],
+          [
+            -103.064732,
+            32.74755134069854
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 480.0000000011181,
+        "id": "04_interior_shared_interior:p0:i1",
+        "key": "04_interior_shared_interior",
+        "kind": "shared",
+        "length_meters": 320.00000000062965,
+        "path_index": 0,
+        "source_key": "04_interior_shared_interior",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 160.0000000004885,
+        "state_codes": [
+          "NM",
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.74755134069854
+          ],
+          [
+            -103.06454230652105,
+            32.747551340555
+          ],
+          [
+            -103.0643526130421,
+            32.74755134012436
+          ],
+          [
+            -103.06416291956316,
+            32.74755133940662
+          ],
+          [
+            -103.06397322608422,
+            32.7475513384018
+          ],
+          [
+            -103.06378353260527,
+            32.74755133710988
+          ],
+          [
+            -103.06359383912633,
+            32.74755133553086
+          ],
+          [
+            -103.06340414564741,
+            32.74755133366475
+          ],
+          [
+            -103.0632144521685,
+            32.74755133151154
+          ],
+          [
+            -103.06302475868958,
+            32.74755132907124
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 0.0,
+        "end_m": 640.0000000023074,
+        "id": "04_interior_shared_interior:p0:i2",
+        "key": "04_interior_shared_interior",
+        "kind": "interior",
+        "length_meters": 160.00000000118916,
+        "path_index": 0,
+        "source_key": "04_interior_shared_interior",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 480.0000000011181,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.74439534278593
+          ],
+          [
+            -103.064732,
+            32.74456392408113
+          ],
+          [
+            -103.064732,
+            32.74473250537177
+          ],
+          [
+            -103.064732,
+            32.74490108665788
+          ],
+          [
+            -103.064732,
+            32.74506966793945
+          ],
+          [
+            -103.064732,
+            32.74523824921649
+          ],
+          [
+            -103.064732,
+            32.74540683048897
+          ],
+          [
+            -103.064732,
+            32.74557541175692
+          ],
+          [
+            -103.064732,
+            32.74574399302033
+          ],
+          [
+            -103.064732,
+            32.7459125742792
+          ],
+          [
+            -103.064732,
+            32.74608115553353
+          ],
+          [
+            -103.064732,
+            32.74624973678331
+          ],
+          [
+            -103.064732,
+            32.74641831802855
+          ],
+          [
+            -103.064732,
+            32.74658689926925
+          ],
+          [
+            -103.064732,
+            32.74675548050541
+          ],
+          [
+            -103.064732,
+            32.74692406173704
+          ],
+          [
+            -103.064732,
+            32.74709264296412
+          ],
+          [
+            -103.064732,
+            32.74726122418666
+          ],
+          [
+            -103.064732,
+            32.74742980540464
+          ],
+          [
+            -103.064732,
+            32.74759838661811
+          ],
+          [
+            -103.064732,
+            32.74776696782703
+          ],
+          [
+            -103.064732,
+            32.7479355490314
+          ],
+          [
+            -103.064732,
+            32.74810413023123
+          ],
+          [
+            -103.064732,
+            32.74827271142652
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 429.9999999994827,
+        "id": "04_shared_long:p0:i0",
+        "key": "04_shared_long",
+        "kind": "shared",
+        "length_meters": 429.9999999994827,
+        "path_index": 0,
+        "source_key": "04_shared_long",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM",
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064646640944,
+            32.74439534275686
+          ],
+          [
+            -103.06464664078325,
+            32.74456392405206
+          ],
+          [
+            -103.0646466406225,
+            32.74473250534271
+          ],
+          [
+            -103.06464664046175,
+            32.74490108662882
+          ],
+          [
+            -103.06464664030099,
+            32.74506966791039
+          ],
+          [
+            -103.06464664014023,
+            32.74523824918742
+          ],
+          [
+            -103.06464663997947,
+            32.74540683045991
+          ],
+          [
+            -103.06464663981872,
+            32.74557541172786
+          ],
+          [
+            -103.06464663965795,
+            32.74574399299126
+          ],
+          [
+            -103.0646466394972,
+            32.74591257425013
+          ],
+          [
+            -103.06464663933644,
+            32.74608115550446
+          ],
+          [
+            -103.06464663917568,
+            32.74624973675424
+          ],
+          [
+            -103.06464663901492,
+            32.74641831799947
+          ],
+          [
+            -103.06464663885416,
+            32.74658689924018
+          ],
+          [
+            -103.06464663869339,
+            32.74675548047635
+          ],
+          [
+            -103.06464663853264,
+            32.74692406170796
+          ],
+          [
+            -103.06464663837187,
+            32.74709264293504
+          ],
+          [
+            -103.0646466382111,
+            32.74726122415758
+          ],
+          [
+            -103.06464663805035,
+            32.74742980537557
+          ],
+          [
+            -103.06464663788958,
+            32.74759838658903
+          ],
+          [
+            -103.06464663772881,
+            32.74776696779794
+          ],
+          [
+            -103.06464663756805,
+            32.74793554900232
+          ],
+          [
+            -103.06464663740728,
+            32.74810413020215
+          ],
+          [
+            -103.06464663724651,
+            32.74827271139745
+          ]
+        ],
+        "cut_error_bound_meters": 0.0,
+        "end_error_bound_meters": 0.0,
+        "end_m": 429.9999999977144,
+        "id": "04_near_east:p0:i0",
+        "key": "04_near_east",
+        "kind": "interior",
+        "length_meters": 429.9999999977144,
+        "path_index": 0,
+        "source_key": "04_near_east",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06481735905601,
+            32.74439534275686
+          ],
+          [
+            -103.06481735921676,
+            32.74456392405206
+          ],
+          [
+            -103.06481735937751,
+            32.74473250534271
+          ],
+          [
+            -103.06481735953827,
+            32.74490108662882
+          ],
+          [
+            -103.06481735969902,
+            32.74506966791039
+          ],
+          [
+            -103.06481735985979,
+            32.74523824918742
+          ],
+          [
+            -103.06481736002054,
+            32.74540683045991
+          ],
+          [
+            -103.0648173601813,
+            32.74557541172786
+          ],
+          [
+            -103.06481736034206,
+            32.74574399299126
+          ],
+          [
+            -103.06481736050281,
+            32.74591257425013
+          ],
+          [
+            -103.06481736066357,
+            32.74608115550446
+          ],
+          [
+            -103.06481736082434,
+            32.74624973675424
+          ],
+          [
+            -103.06481736098509,
+            32.74641831799947
+          ],
+          [
+            -103.06481736114586,
+            32.74658689924018
+          ],
+          [
+            -103.06481736130662,
+            32.74675548047635
+          ],
+          [
+            -103.06481736146738,
+            32.74692406170796
+          ],
+          [
+            -103.06481736162814,
+            32.74709264293504
+          ],
+          [
+            -103.06481736178891,
+            32.74726122415758
+          ],
+          [
+            -103.06481736194966,
+            32.74742980537557
+          ],
+          [
+            -103.06481736211043,
+            32.74759838658903
+          ],
+          [
+            -103.0648173622712,
+            32.74776696779794
+          ],
+          [
+            -103.06481736243197,
+            32.74793554900232
+          ],
+          [
+            -103.06481736259273,
+            32.74810413020215
+          ],
+          [
+            -103.0648173627535,
+            32.74827271139745
+          ]
+        ],
+        "cut_error_bound_meters": 0.0,
+        "end_error_bound_meters": 0.0,
+        "end_m": 429.9999999977144,
+        "id": "04_near_west:p0:i0",
+        "key": "04_near_west",
+        "kind": "interior",
+        "length_meters": 429.9999999977144,
+        "path_index": 0,
+        "source_key": "04_near_west",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06473167990355,
+            32.74439534278593
+          ],
+          [
+            -103.06473167990295,
+            32.74456392408113
+          ],
+          [
+            -103.06473167990234,
+            32.74473250537177
+          ],
+          [
+            -103.06473167990174,
+            32.74490108665788
+          ],
+          [
+            -103.06473167990113,
+            32.74506966793945
+          ],
+          [
+            -103.06473167990053,
+            32.74523824921649
+          ],
+          [
+            -103.06473167989992,
+            32.74540683048897
+          ],
+          [
+            -103.06473167989932,
+            32.74557541175692
+          ],
+          [
+            -103.06473167989873,
+            32.74574399302033
+          ],
+          [
+            -103.06473167989812,
+            32.7459125742792
+          ],
+          [
+            -103.06473167989752,
+            32.74608115553353
+          ],
+          [
+            -103.06473167989691,
+            32.74624973678331
+          ],
+          [
+            -103.06473167989631,
+            32.74641831802855
+          ],
+          [
+            -103.0647316798957,
+            32.74658689926925
+          ],
+          [
+            -103.0647316798951,
+            32.74675548050541
+          ],
+          [
+            -103.06473167989449,
+            32.74692406173704
+          ],
+          [
+            -103.0647316798939,
+            32.74709264296412
+          ],
+          [
+            -103.0647316798933,
+            32.74726122418666
+          ],
+          [
+            -103.06473167989269,
+            32.74742980540464
+          ],
+          [
+            -103.06473167989209,
+            32.74759838661811
+          ],
+          [
+            -103.06473167989148,
+            32.74776696782703
+          ],
+          [
+            -103.06473167989088,
+            32.7479355490314
+          ],
+          [
+            -103.06473167989027,
+            32.74810413023123
+          ],
+          [
+            -103.06473167988968,
+            32.74827271142652
+          ]
+        ],
+        "cut_error_bound_meters": 0.0,
+        "end_error_bound_meters": 0.0,
+        "end_m": 430.0000000023015,
+        "id": "04_centimeter_east:p0:i0",
+        "key": "04_centimeter_east",
+        "kind": "interior",
+        "length_meters": 430.0000000023015,
+        "path_index": 0,
+        "source_key": "04_centimeter_east",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06473232009647,
+            32.74439534278593
+          ],
+          [
+            -103.06473232009706,
+            32.74456392408113
+          ],
+          [
+            -103.06473232009768,
+            32.74473250537177
+          ],
+          [
+            -103.06473232009827,
+            32.74490108665788
+          ],
+          [
+            -103.06473232009888,
+            32.74506966793945
+          ],
+          [
+            -103.06473232009948,
+            32.74523824921649
+          ],
+          [
+            -103.06473232010009,
+            32.74540683048897
+          ],
+          [
+            -103.06473232010069,
+            32.74557541175692
+          ],
+          [
+            -103.06473232010129,
+            32.74574399302033
+          ],
+          [
+            -103.0647323201019,
+            32.7459125742792
+          ],
+          [
+            -103.0647323201025,
+            32.74608115553353
+          ],
+          [
+            -103.0647323201031,
+            32.74624973678331
+          ],
+          [
+            -103.0647323201037,
+            32.74641831802855
+          ],
+          [
+            -103.06473232010431,
+            32.74658689926925
+          ],
+          [
+            -103.06473232010491,
+            32.74675548050541
+          ],
+          [
+            -103.06473232010552,
+            32.74692406173704
+          ],
+          [
+            -103.06473232010612,
+            32.74709264296412
+          ],
+          [
+            -103.06473232010671,
+            32.74726122418666
+          ],
+          [
+            -103.06473232010732,
+            32.74742980540464
+          ],
+          [
+            -103.06473232010792,
+            32.74759838661811
+          ],
+          [
+            -103.06473232010853,
+            32.74776696782703
+          ],
+          [
+            -103.06473232010913,
+            32.7479355490314
+          ],
+          [
+            -103.06473232010974,
+            32.74810413023123
+          ],
+          [
+            -103.06473232011034,
+            32.74827271142652
+          ]
+        ],
+        "cut_error_bound_meters": 0.0,
+        "end_error_bound_meters": 0.0,
+        "end_m": 430.0000000023015,
+        "id": "04_centimeter_west:p0:i0",
+        "key": "04_centimeter_west",
+        "kind": "interior",
+        "length_meters": 430.0000000023015,
+        "path_index": 0,
+        "source_key": "04_centimeter_west",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06468931823628,
+            32.74908425338886
+          ],
+          [
+            -103.06468931817177,
+            32.74921951037356
+          ],
+          [
+            -103.06468931810727,
+            32.74935476735533
+          ],
+          [
+            -103.06468931804277,
+            32.74949002433418
+          ],
+          [
+            -103.06468931797826,
+            32.74962528131012
+          ],
+          [
+            -103.064732,
+            32.7496252813174
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 63.9999999987898,
+        "id": "04_shared_qualification_route:p0:i0",
+        "key": "04_shared_qualification_route",
+        "kind": "interior",
+        "length_meters": 63.9999999987898,
+        "path_index": 0,
+        "source_key": "04_shared_qualification_route",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.7496252813174
+          ],
+          [
+            -103.064732,
+            32.74979274233118
+          ],
+          [
+            -103.064732,
+            32.74996020334046
+          ],
+          [
+            -103.064732,
+            32.75012766434526
+          ],
+          [
+            -103.064732,
+            32.7502951253456
+          ],
+          [
+            -103.064732,
+            32.75046258634144
+          ],
+          [
+            -103.064732,
+            32.75063004733282
+          ],
+          [
+            -103.064732,
+            32.7507975083197
+          ],
+          [
+            -103.064732,
+            32.7509649693021
+          ],
+          [
+            -103.064732,
+            32.75113243028002
+          ],
+          [
+            -103.064732,
+            32.75129989125347
+          ],
+          [
+            -103.064732,
+            32.75146735222243
+          ],
+          [
+            -103.064732,
+            32.75163481318691
+          ],
+          [
+            -103.064732,
+            32.75180227414691
+          ],
+          [
+            -103.064732,
+            32.75196973510242
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 323.99999999853816,
+        "id": "04_shared_qualification_route:p0:i1",
+        "key": "04_shared_qualification_route",
+        "kind": "shared",
+        "length_meters": 259.99999999974835,
+        "path_index": 0,
+        "source_key": "04_shared_qualification_route",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 63.99999999878979,
+        "state_codes": [
+          "NM",
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.75196973510242
+          ],
+          [
+            -103.06468931686017,
+            32.75196973509515
+          ],
+          [
+            -103.06468931679566,
+            32.75210499201749
+          ],
+          [
+            -103.06468931673115,
+            32.7522402489369
+          ],
+          [
+            -103.06468931666664,
+            32.75237550585339
+          ],
+          [
+            -103.06468931660213,
+            32.75251076276696
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 0.0,
+        "end_m": 387.99999999842294,
+        "id": "04_shared_qualification_route:p0:i2",
+        "key": "04_shared_qualification_route",
+        "kind": "interior",
+        "length_meters": 63.99999999988475,
+        "path_index": 0,
+        "source_key": "04_shared_qualification_route",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 323.99999999853816,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.0646039547088,
+            32.74908425333071
+          ],
+          [
+            -103.06460395447536,
+            32.7492474204865
+          ],
+          [
+            -103.06460395424192,
+            32.74941058763803
+          ],
+          [
+            -103.06460395400848,
+            32.7495737547853
+          ],
+          [
+            -103.06460395377503,
+            32.74973692192833
+          ],
+          [
+            -103.06460395354159,
+            32.7499000890671
+          ],
+          [
+            -103.06460395330815,
+            32.75006325620161
+          ],
+          [
+            -103.06460395307471,
+            32.75022642333187
+          ],
+          [
+            -103.06460395284125,
+            32.75038959045789
+          ],
+          [
+            -103.06460395260781,
+            32.75055275757963
+          ],
+          [
+            -103.06460395237437,
+            32.75071592469714
+          ],
+          [
+            -103.06460395214091,
+            32.75087909181038
+          ],
+          [
+            -103.06460395190747,
+            32.75104225891937
+          ],
+          [
+            -103.06460395167402,
+            32.7512054260241
+          ],
+          [
+            -103.06460395144056,
+            32.75136859312459
+          ],
+          [
+            -103.06460395120712,
+            32.75153176022081
+          ],
+          [
+            -103.06460395097366,
+            32.75169492731278
+          ],
+          [
+            -103.0646039507402,
+            32.7518580944005
+          ],
+          [
+            -103.06460395050675,
+            32.75202126148397
+          ],
+          [
+            -103.0646039502733,
+            32.75218442856317
+          ],
+          [
+            -103.06460395003984,
+            32.75234759563813
+          ],
+          [
+            -103.06460394980638,
+            32.75251076270882
+          ]
+        ],
+        "cut_error_bound_meters": 0.0,
+        "end_error_bound_meters": 0.0,
+        "end_m": 380.0000000014843,
+        "id": "04_shared_qualification_partner:p0:i0",
+        "key": "04_shared_qualification_partner",
+        "kind": "interior",
+        "length_meters": 380.00000000148435,
+        "path_index": 0,
+        "source_key": "04_shared_qualification_partner",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.064732,
+            32.75300670476564
+          ],
+          [
+            -103.064732,
+            32.75316547060264
+          ],
+          [
+            -103.064732,
+            32.75332423643561
+          ],
+          [
+            -103.064732,
+            32.75348300226454
+          ],
+          [
+            -103.064732,
+            32.75364176808946
+          ],
+          [
+            -103.064732,
+            32.75380053391034
+          ],
+          [
+            -103.064732,
+            32.75395929972719
+          ],
+          [
+            -103.064732,
+            32.75411806554002
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 123.25000000000983,
+        "id": "04_shared_short:p0:i0",
+        "key": "04_shared_short",
+        "kind": "shared",
+        "length_meters": 123.2500000000098,
+        "path_index": 0,
+        "source_key": "04_shared_short",
+        "start_error_bound_meters": 2e-06,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM",
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06473242681537,
+            32.7486063453601
+          ],
+          [
+            -103.0647319999994,
+            32.7486063453601
+          ]
+        ],
+        "cut_error_bound_meters": 2.0953674317502594e-06,
+        "end_error_bound_meters": 2.0953674317502594e-06,
+        "end_m": 0.040000057266357365,
+        "id": "04_tiny_crossing:p0:i0",
+        "key": "04_tiny_crossing",
+        "kind": "interior",
+        "length_meters": 0.040000057266357365,
+        "path_index": 0,
+        "source_key": "04_tiny_crossing",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.0647319999994,
+            32.7486063453601
+          ],
+          [
+            -103.06473135977697,
+            32.7486063453601
+          ]
+        ],
+        "cut_error_bound_meters": 2.0953674317502594e-06,
+        "end_error_bound_meters": 0.0,
+        "end_m": 0.10000000011474579,
+        "id": "04_tiny_crossing:p0:i1",
+        "key": "04_tiny_crossing",
+        "kind": "interior",
+        "length_meters": 0.05999994284838842,
+        "path_index": 0,
+        "source_key": "04_tiny_crossing",
+        "start_error_bound_meters": 2.0953674317502594e-06,
+        "start_m": 0.040000057266357365,
+        "state_codes": [
+          "TX"
+        ]
+      },
+      {
+        "coordinates": [
+          [
+            -103.06569233678157,
+            32.74881373573883
+          ],
+          [
+            -103.06550026942526,
+            32.74881373706332
+          ],
+          [
+            -103.06530820206895,
+            32.74881373809347
+          ],
+          [
+            -103.06511613471264,
+            32.7488137388293
+          ],
+          [
+            -103.06492406735633,
+            32.74881373927079
+          ],
+          [
+            -103.064732,
+            32.74881373941795
+          ]
+        ],
+        "cut_error_bound_meters": 2e-06,
+        "end_error_bound_meters": 2e-06,
+        "end_m": 90.00000000203272,
+        "id": "04_endpoint_touch:p0:i0",
+        "key": "04_endpoint_touch",
+        "kind": "interior",
+        "length_meters": 90.00000000203272,
+        "path_index": 0,
+        "source_key": "04_endpoint_touch",
+        "start_error_bound_meters": 0.0,
+        "start_m": 0.0,
+        "state_codes": [
+          "NM"
+        ]
+      }
+    ],
+    "original_meters": 3771.350000003886,
+    "original_survey_miles": 2.3434035590308295,
+    "outside_meters": 0.0,
+    "represented_states": [
+      "NM",
+      "TX"
+    ],
+    "shared_allocations": [
+      {
+        "allocated_meters": 160.00000000031483,
+        "interval_id": "04_interior_shared_interior:p0:i1",
+        "source_key": "04_interior_shared_interior",
+        "state_code": "NM"
+      },
+      {
+        "allocated_meters": 160.00000000031483,
+        "interval_id": "04_interior_shared_interior:p0:i1",
+        "source_key": "04_interior_shared_interior",
+        "state_code": "TX"
+      },
+      {
+        "allocated_meters": 214.99999999974136,
+        "interval_id": "04_shared_long:p0:i0",
+        "source_key": "04_shared_long",
+        "state_code": "NM"
+      },
+      {
+        "allocated_meters": 214.99999999974136,
+        "interval_id": "04_shared_long:p0:i0",
+        "source_key": "04_shared_long",
+        "state_code": "TX"
+      },
+      {
+        "allocated_meters": 129.99999999987418,
+        "interval_id": "04_shared_qualification_route:p0:i1",
+        "source_key": "04_shared_qualification_route",
+        "state_code": "NM"
+      },
+      {
+        "allocated_meters": 129.99999999987418,
+        "interval_id": "04_shared_qualification_route:p0:i1",
+        "source_key": "04_shared_qualification_route",
+        "state_code": "TX"
+      },
+      {
+        "allocated_meters": 61.6250000000049,
+        "interval_id": "04_shared_short:p0:i0",
+        "source_key": "04_shared_short",
+        "state_code": "NM"
+      },
+      {
+        "allocated_meters": 61.6250000000049,
+        "interval_id": "04_shared_short:p0:i0",
+        "source_key": "04_shared_short",
+        "state_code": "TX"
+      }
+    ],
+    "shared_meters": 1133.2499999998706,
+    "sources": [
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_interior_shared_interior",
+        "motif": "interior_shared_interior",
+        "name": "04 interior shared interior",
+        "original_meters": 640.0000000023073,
+        "original_survey_miles": 0.3976767676783094,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_interior_shared_interior:p0:i0",
+              "04_interior_shared_interior:p0:i1",
+              "04_interior_shared_interior:p0:i2"
+            ],
+            "original_meters": 640.0000000023073,
+            "original_survey_miles": 0.3976767676783094,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 320.0000000008033,
+                "attributed_original_survey_miles": 0.19883838383893704,
+                "interior_meters": 160.00000000048848,
+                "length_error_bound_meters": 4e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 160.00000000031483,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 160.00000000031483,
+                    "interval_id": "04_interior_shared_interior:p0:i1"
+                  }
+                ]
+              },
+              "TX": {
+                "attributed_original_meters": 320.00000000150396,
+                "attributed_original_survey_miles": 0.19883838383937238,
+                "interior_meters": 160.00000000118916,
+                "length_error_bound_meters": 4e-06,
+                "name": "Texas",
+                "shared_allocation_meters": 160.00000000031483,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 160.00000000031483,
+                    "interval_id": "04_interior_shared_interior:p0:i1"
+                  }
+                ]
+              }
+            },
+            "vertex_count": 36
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 320.0000000008033,
+            "attributed_original_survey_miles": 0.19883838383893704,
+            "interior_meters": 160.00000000048848,
+            "length_error_bound_meters": 4e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 160.00000000031483,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 160.00000000031483,
+                "interval_id": "04_interior_shared_interior:p0:i1"
+              }
+            ]
+          },
+          "TX": {
+            "attributed_original_meters": 320.00000000150396,
+            "attributed_original_survey_miles": 0.19883838383937238,
+            "interior_meters": 160.00000000118916,
+            "length_error_bound_meters": 4e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 160.00000000031483,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 160.00000000031483,
+                "interval_id": "04_interior_shared_interior:p0:i1"
+              }
+            ]
+          }
+        },
+        "xml_order": 0
+      },
+      {
+        "conservation_difference_meters": 5.684341886080802e-14,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_shared_long",
+        "motif": "shared_long",
+        "name": "04 shared long",
+        "original_meters": 429.99999999948267,
+        "original_survey_miles": 0.26718907828257943,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_shared_long:p0:i0"
+            ],
+            "original_meters": 429.99999999948267,
+            "original_survey_miles": 0.26718907828257943,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 214.99999999974136,
+                "attributed_original_survey_miles": 0.13359453914128974,
+                "interior_meters": 0.0,
+                "length_error_bound_meters": 2e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 214.99999999974136,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 214.99999999974136,
+                    "interval_id": "04_shared_long:p0:i0"
+                  }
+                ]
+              },
+              "TX": {
+                "attributed_original_meters": 214.99999999974136,
+                "attributed_original_survey_miles": 0.13359453914128974,
+                "interior_meters": 0.0,
+                "length_error_bound_meters": 2e-06,
+                "name": "Texas",
+                "shared_allocation_meters": 214.99999999974136,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 214.99999999974136,
+                    "interval_id": "04_shared_long:p0:i0"
+                  }
+                ]
+              }
+            },
+            "vertex_count": 24
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 214.99999999974136,
+            "attributed_original_survey_miles": 0.13359453914128974,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 214.99999999974136,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 214.99999999974136,
+                "interval_id": "04_shared_long:p0:i0"
+              }
+            ]
+          },
+          "TX": {
+            "attributed_original_meters": 214.99999999974136,
+            "attributed_original_survey_miles": 0.13359453914128974,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 214.99999999974136,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 214.99999999974136,
+                "interval_id": "04_shared_long:p0:i0"
+              }
+            ]
+          }
+        },
+        "xml_order": 1
+      },
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_near_east",
+        "motif": "near_parallel",
+        "name": "04 near east",
+        "original_meters": 429.9999999977144,
+        "original_survey_miles": 0.2671890782814807,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_near_east:p0:i0"
+            ],
+            "original_meters": 429.9999999977144,
+            "original_survey_miles": 0.2671890782814807,
+            "path_index": 0,
+            "states": {
+              "TX": {
+                "attributed_original_meters": 429.9999999977144,
+                "attributed_original_survey_miles": 0.2671890782814807,
+                "interior_meters": 429.9999999977144,
+                "length_error_bound_meters": 0.0,
+                "name": "Texas",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 24
+          }
+        ],
+        "states": {
+          "TX": {
+            "attributed_original_meters": 429.9999999977144,
+            "attributed_original_survey_miles": 0.2671890782814807,
+            "interior_meters": 429.9999999977144,
+            "length_error_bound_meters": 0.0,
+            "name": "Texas",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 2
+      },
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_near_west",
+        "motif": "near_parallel",
+        "name": "04 near west",
+        "original_meters": 429.9999999977144,
+        "original_survey_miles": 0.2671890782814807,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_near_west:p0:i0"
+            ],
+            "original_meters": 429.9999999977144,
+            "original_survey_miles": 0.2671890782814807,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 429.9999999977144,
+                "attributed_original_survey_miles": 0.2671890782814807,
+                "interior_meters": 429.9999999977144,
+                "length_error_bound_meters": 0.0,
+                "name": "New Mexico",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 24
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 429.9999999977144,
+            "attributed_original_survey_miles": 0.2671890782814807,
+            "interior_meters": 429.9999999977144,
+            "length_error_bound_meters": 0.0,
+            "name": "New Mexico",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 3
+      },
+      {
+        "conservation_difference_meters": 5.684341886080802e-14,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_centimeter_east",
+        "motif": "centimeter_exclusive",
+        "name": "04 centimeter east",
+        "original_meters": 430.0000000023014,
+        "original_survey_miles": 0.2671890782843309,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_centimeter_east:p0:i0"
+            ],
+            "original_meters": 430.0000000023014,
+            "original_survey_miles": 0.2671890782843309,
+            "path_index": 0,
+            "states": {
+              "TX": {
+                "attributed_original_meters": 430.0000000023015,
+                "attributed_original_survey_miles": 0.26718907828433097,
+                "interior_meters": 430.0000000023015,
+                "length_error_bound_meters": 0.0,
+                "name": "Texas",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 24
+          }
+        ],
+        "states": {
+          "TX": {
+            "attributed_original_meters": 430.0000000023015,
+            "attributed_original_survey_miles": 0.26718907828433097,
+            "interior_meters": 430.0000000023015,
+            "length_error_bound_meters": 0.0,
+            "name": "Texas",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 4
+      },
+      {
+        "conservation_difference_meters": 5.684341886080802e-14,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_centimeter_west",
+        "motif": "centimeter_exclusive",
+        "name": "04 centimeter west",
+        "original_meters": 430.0000000023014,
+        "original_survey_miles": 0.2671890782843309,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_centimeter_west:p0:i0"
+            ],
+            "original_meters": 430.0000000023014,
+            "original_survey_miles": 0.2671890782843309,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 430.0000000023015,
+                "attributed_original_survey_miles": 0.26718907828433097,
+                "interior_meters": 430.0000000023015,
+                "length_error_bound_meters": 0.0,
+                "name": "New Mexico",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 24
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 430.0000000023015,
+            "attributed_original_survey_miles": 0.26718907828433097,
+            "interior_meters": 430.0000000023015,
+            "length_error_bound_meters": 0.0,
+            "name": "New Mexico",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 5
+      },
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_shared_qualification_route",
+        "motif": "shared_cannot_qualify_state",
+        "name": "04 shared qualification route",
+        "original_meters": 387.99999999842294,
+        "original_survey_miles": 0.24109154040312597,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_shared_qualification_route:p0:i0",
+              "04_shared_qualification_route:p0:i1",
+              "04_shared_qualification_route:p0:i2"
+            ],
+            "original_meters": 387.99999999842294,
+            "original_survey_miles": 0.24109154040312597,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 129.99999999987418,
+                "attributed_original_survey_miles": 0.0807780934342872,
+                "interior_meters": 0.0,
+                "length_error_bound_meters": 2e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 129.99999999987418,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 129.99999999987418,
+                    "interval_id": "04_shared_qualification_route:p0:i1"
+                  }
+                ]
+              },
+              "TX": {
+                "attributed_original_meters": 257.99999999854873,
+                "attributed_original_survey_miles": 0.16031344696883876,
+                "interior_meters": 127.99999999867455,
+                "length_error_bound_meters": 6e-06,
+                "name": "Texas",
+                "shared_allocation_meters": 129.99999999987418,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 129.99999999987418,
+                    "interval_id": "04_shared_qualification_route:p0:i1"
+                  }
+                ]
+              }
+            },
+            "vertex_count": 25
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 129.99999999987418,
+            "attributed_original_survey_miles": 0.0807780934342872,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 129.99999999987418,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 129.99999999987418,
+                "interval_id": "04_shared_qualification_route:p0:i1"
+              }
+            ]
+          },
+          "TX": {
+            "attributed_original_meters": 257.99999999854873,
+            "attributed_original_survey_miles": 0.16031344696883876,
+            "interior_meters": 127.99999999867455,
+            "length_error_bound_meters": 6e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 129.99999999987418,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 129.99999999987418,
+                "interval_id": "04_shared_qualification_route:p0:i1"
+              }
+            ]
+          }
+        },
+        "xml_order": 6
+      },
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_shared_qualification_partner",
+        "motif": "shared_cannot_qualify_state",
+        "name": "04 shared qualification partner",
+        "original_meters": 380.00000000148435,
+        "original_survey_miles": 0.2361205808090673,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_shared_qualification_partner:p0:i0"
+            ],
+            "original_meters": 380.00000000148435,
+            "original_survey_miles": 0.2361205808090673,
+            "path_index": 0,
+            "states": {
+              "TX": {
+                "attributed_original_meters": 380.00000000148435,
+                "attributed_original_survey_miles": 0.2361205808090673,
+                "interior_meters": 380.00000000148435,
+                "length_error_bound_meters": 0.0,
+                "name": "Texas",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 22
+          }
+        ],
+        "states": {
+          "TX": {
+            "attributed_original_meters": 380.00000000148435,
+            "attributed_original_survey_miles": 0.2361205808090673,
+            "interior_meters": 380.00000000148435,
+            "length_error_bound_meters": 0.0,
+            "name": "Texas",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 7
+      },
+      {
+        "conservation_difference_meters": -1.4210854715202004e-14,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_shared_short",
+        "motif": "shared_short",
+        "name": "04 shared short",
+        "original_meters": 123.25000000000982,
+        "original_survey_miles": 0.07658384627527944,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_shared_short:p0:i0"
+            ],
+            "original_meters": 123.25000000000982,
+            "original_survey_miles": 0.07658384627527944,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 61.6250000000049,
+                "attributed_original_survey_miles": 0.03829192313763972,
+                "interior_meters": 0.0,
+                "length_error_bound_meters": 2e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 61.6250000000049,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 61.6250000000049,
+                    "interval_id": "04_shared_short:p0:i0"
+                  }
+                ]
+              },
+              "TX": {
+                "attributed_original_meters": 61.6250000000049,
+                "attributed_original_survey_miles": 0.03829192313763972,
+                "interior_meters": 0.0,
+                "length_error_bound_meters": 2e-06,
+                "name": "Texas",
+                "shared_allocation_meters": 61.6250000000049,
+                "shared_interval_references": [
+                  {
+                    "allocated_meters": 61.6250000000049,
+                    "interval_id": "04_shared_short:p0:i0"
+                  }
+                ]
+              }
+            },
+            "vertex_count": 8
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 61.6250000000049,
+            "attributed_original_survey_miles": 0.03829192313763972,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 61.6250000000049,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 61.6250000000049,
+                "interval_id": "04_shared_short:p0:i0"
+              }
+            ]
+          },
+          "TX": {
+            "attributed_original_meters": 61.6250000000049,
+            "attributed_original_survey_miles": 0.03829192313763972,
+            "interior_meters": 0.0,
+            "length_error_bound_meters": 2e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 61.6250000000049,
+            "shared_interval_references": [
+              {
+                "allocated_meters": 61.6250000000049,
+                "interval_id": "04_shared_short:p0:i0"
+              }
+            ]
+          }
+        },
+        "xml_order": 8
+      },
+      {
+        "conservation_difference_meters": 0.0,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": -2.7755575615628914e-17,
+        "key": "04_tiny_crossing",
+        "motif": "tiny_crossing",
+        "name": "04 tiny crossing",
+        "original_meters": 0.10000000011474579,
+        "original_survey_miles": 6.213699502081142e-05,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_tiny_crossing:p0:i0",
+              "04_tiny_crossing:p0:i1"
+            ],
+            "original_meters": 0.10000000011474579,
+            "original_survey_miles": 6.213699502081142e-05,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 0.040000057266357365,
+                "attributed_original_survey_miles": 2.485483356339832e-05,
+                "interior_meters": 0.040000057266357365,
+                "length_error_bound_meters": 2.0953674317502594e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              },
+              "TX": {
+                "attributed_original_meters": 0.05999994284838842,
+                "attributed_original_survey_miles": 3.72821614574131e-05,
+                "interior_meters": 0.05999994284838842,
+                "length_error_bound_meters": 2.0953674317502594e-06,
+                "name": "Texas",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 2
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 0.040000057266357365,
+            "attributed_original_survey_miles": 2.485483356339832e-05,
+            "interior_meters": 0.040000057266357365,
+            "length_error_bound_meters": 2.0953674317502594e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          },
+          "TX": {
+            "attributed_original_meters": 0.05999994284838842,
+            "attributed_original_survey_miles": 3.72821614574131e-05,
+            "interior_meters": 0.05999994284838842,
+            "length_error_bound_meters": 2.0953674317502594e-06,
+            "name": "Texas",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 9
+      },
+      {
+        "conservation_difference_meters": 1.4210854715202004e-14,
+        "conservation_passed": true,
+        "conservation_tolerance_meters": 0.001,
+        "fragment_geometry_difference_meters": 0.0,
+        "key": "04_endpoint_touch",
+        "motif": "endpoint_touch",
+        "name": "04 endpoint touch",
+        "original_meters": 90.0000000020327,
+        "original_survey_miles": 0.05592329545582372,
+        "paths": [
+          {
+            "interval_ids": [
+              "04_endpoint_touch:p0:i0"
+            ],
+            "original_meters": 90.0000000020327,
+            "original_survey_miles": 0.05592329545582372,
+            "path_index": 0,
+            "states": {
+              "NM": {
+                "attributed_original_meters": 90.00000000203272,
+                "attributed_original_survey_miles": 0.055923295455823724,
+                "interior_meters": 90.00000000203272,
+                "length_error_bound_meters": 2e-06,
+                "name": "New Mexico",
+                "shared_allocation_meters": 0.0,
+                "shared_interval_references": []
+              }
+            },
+            "vertex_count": 6
+          }
+        ],
+        "states": {
+          "NM": {
+            "attributed_original_meters": 90.00000000203272,
+            "attributed_original_survey_miles": 0.055923295455823724,
+            "interior_meters": 90.00000000203272,
+            "length_error_bound_meters": 2e-06,
+            "name": "New Mexico",
+            "shared_allocation_meters": 0.0,
+            "shared_interval_references": []
+          }
+        },
+        "xml_order": 10
+      }
+    ],
+    "state_inputs": {
+      "NM": [
+        {
+          "fragment_references": [
+            {
+              "end_m": 160.0000000004885,
+              "interval_id": "04_interior_shared_interior:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_interior_shared_interior",
+          "metadata": {
+            "OBJECTID": "7",
+            "fixture_key": "04_interior_shared_interior",
+            "motif": "interior_shared_interior"
+          },
+          "motif": "interior_shared_interior",
+          "name": "04 interior shared interior",
+          "objectid": "7",
+          "paths": [
+            [
+              [
+                -103.06643918627859,
+                32.74466584532907
+              ],
+              [
+                -103.06624949891433,
+                32.7446658477691
+              ],
+              [
+                -103.06605981155006,
+                32.74466584992206
+              ],
+              [
+                -103.06587012418578,
+                32.74466585178796
+              ],
+              [
+                -103.0656804368215,
+                32.74466585336681
+              ],
+              [
+                -103.06549074945721,
+                32.74466585465859
+              ],
+              [
+                -103.06530106209291,
+                32.74466585566331
+              ],
+              [
+                -103.06511137472862,
+                32.74466585638096
+              ],
+              [
+                -103.0649216873643,
+                32.74466585681156
+              ],
+              [
+                -103.064732,
+                32.74466585695508
+              ]
+            ]
+          ],
+          "xml_id": "p_04_interior_shared_interior",
+          "xml_order": 0
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 429.9999999977144,
+              "interval_id": "04_near_west:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_near_west",
+          "metadata": {
+            "OBJECTID": "3",
+            "fixture_key": "04_near_west",
+            "motif": "near_parallel"
+          },
+          "motif": "near_parallel",
+          "name": "04 near west",
+          "objectid": "3",
+          "paths": [
+            [
+              [
+                -103.06481735905601,
+                32.74439534275686
+              ],
+              [
+                -103.06481735921676,
+                32.74456392405206
+              ],
+              [
+                -103.06481735937751,
+                32.74473250534271
+              ],
+              [
+                -103.06481735953827,
+                32.74490108662882
+              ],
+              [
+                -103.06481735969902,
+                32.74506966791039
+              ],
+              [
+                -103.06481735985979,
+                32.74523824918742
+              ],
+              [
+                -103.06481736002054,
+                32.74540683045991
+              ],
+              [
+                -103.0648173601813,
+                32.74557541172786
+              ],
+              [
+                -103.06481736034206,
+                32.74574399299126
+              ],
+              [
+                -103.06481736050281,
+                32.74591257425013
+              ],
+              [
+                -103.06481736066357,
+                32.74608115550446
+              ],
+              [
+                -103.06481736082434,
+                32.74624973675424
+              ],
+              [
+                -103.06481736098509,
+                32.74641831799947
+              ],
+              [
+                -103.06481736114586,
+                32.74658689924018
+              ],
+              [
+                -103.06481736130662,
+                32.74675548047635
+              ],
+              [
+                -103.06481736146738,
+                32.74692406170796
+              ],
+              [
+                -103.06481736162814,
+                32.74709264293504
+              ],
+              [
+                -103.06481736178891,
+                32.74726122415758
+              ],
+              [
+                -103.06481736194966,
+                32.74742980537557
+              ],
+              [
+                -103.06481736211043,
+                32.74759838658903
+              ],
+              [
+                -103.0648173622712,
+                32.74776696779794
+              ],
+              [
+                -103.06481736243197,
+                32.74793554900232
+              ],
+              [
+                -103.06481736259273,
+                32.74810413020215
+              ],
+              [
+                -103.0648173627535,
+                32.74827271139745
+              ]
+            ]
+          ],
+          "xml_id": "p_04_near_west",
+          "xml_order": 3
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 430.0000000023015,
+              "interval_id": "04_centimeter_west:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_centimeter_west",
+          "metadata": {
+            "OBJECTID": "5",
+            "fixture_key": "04_centimeter_west",
+            "motif": "centimeter_exclusive"
+          },
+          "motif": "centimeter_exclusive",
+          "name": "04 centimeter west",
+          "objectid": "5",
+          "paths": [
+            [
+              [
+                -103.06473232009647,
+                32.74439534278593
+              ],
+              [
+                -103.06473232009706,
+                32.74456392408113
+              ],
+              [
+                -103.06473232009768,
+                32.74473250537177
+              ],
+              [
+                -103.06473232009827,
+                32.74490108665788
+              ],
+              [
+                -103.06473232009888,
+                32.74506966793945
+              ],
+              [
+                -103.06473232009948,
+                32.74523824921649
+              ],
+              [
+                -103.06473232010009,
+                32.74540683048897
+              ],
+              [
+                -103.06473232010069,
+                32.74557541175692
+              ],
+              [
+                -103.06473232010129,
+                32.74574399302033
+              ],
+              [
+                -103.0647323201019,
+                32.7459125742792
+              ],
+              [
+                -103.0647323201025,
+                32.74608115553353
+              ],
+              [
+                -103.0647323201031,
+                32.74624973678331
+              ],
+              [
+                -103.0647323201037,
+                32.74641831802855
+              ],
+              [
+                -103.06473232010431,
+                32.74658689926925
+              ],
+              [
+                -103.06473232010491,
+                32.74675548050541
+              ],
+              [
+                -103.06473232010552,
+                32.74692406173704
+              ],
+              [
+                -103.06473232010612,
+                32.74709264296412
+              ],
+              [
+                -103.06473232010671,
+                32.74726122418666
+              ],
+              [
+                -103.06473232010732,
+                32.74742980540464
+              ],
+              [
+                -103.06473232010792,
+                32.74759838661811
+              ],
+              [
+                -103.06473232010853,
+                32.74776696782703
+              ],
+              [
+                -103.06473232010913,
+                32.7479355490314
+              ],
+              [
+                -103.06473232010974,
+                32.74810413023123
+              ],
+              [
+                -103.06473232011034,
+                32.74827271142652
+              ]
+            ]
+          ],
+          "xml_id": "p_04_centimeter_west",
+          "xml_order": 5
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 0.040000057266357365,
+              "interval_id": "04_tiny_crossing:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_tiny_crossing",
+          "metadata": {
+            "OBJECTID": "0",
+            "fixture_key": "04_tiny_crossing",
+            "motif": "tiny_crossing"
+          },
+          "motif": "tiny_crossing",
+          "name": "04 tiny crossing",
+          "objectid": "0",
+          "paths": [
+            [
+              [
+                -103.06473242681537,
+                32.7486063453601
+              ],
+              [
+                -103.0647319999994,
+                32.7486063453601
+              ]
+            ]
+          ],
+          "xml_id": "p_04_tiny_crossing",
+          "xml_order": 9
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 90.00000000203272,
+              "interval_id": "04_endpoint_touch:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_endpoint_touch",
+          "metadata": {
+            "OBJECTID": "1",
+            "fixture_key": "04_endpoint_touch",
+            "motif": "endpoint_touch"
+          },
+          "motif": "endpoint_touch",
+          "name": "04 endpoint touch",
+          "objectid": "1",
+          "paths": [
+            [
+              [
+                -103.06569233678157,
+                32.74881373573883
+              ],
+              [
+                -103.06550026942526,
+                32.74881373706332
+              ],
+              [
+                -103.06530820206895,
+                32.74881373809347
+              ],
+              [
+                -103.06511613471264,
+                32.7488137388293
+              ],
+              [
+                -103.06492406735633,
+                32.74881373927079
+              ],
+              [
+                -103.064732,
+                32.74881373941795
+              ]
+            ]
+          ],
+          "xml_id": "p_04_endpoint_touch",
+          "xml_order": 10
+        }
+      ],
+      "TX": [
+        {
+          "fragment_references": [
+            {
+              "end_m": 640.0000000023074,
+              "interval_id": "04_interior_shared_interior:p0:i2",
+              "path_index": 0,
+              "start_m": 480.0000000011181
+            }
+          ],
+          "key": "04_interior_shared_interior",
+          "metadata": {
+            "OBJECTID": "7",
+            "fixture_key": "04_interior_shared_interior",
+            "motif": "interior_shared_interior"
+          },
+          "motif": "interior_shared_interior",
+          "name": "04 interior shared interior",
+          "objectid": "7",
+          "paths": [
+            [
+              [
+                -103.064732,
+                32.74755134069854
+              ],
+              [
+                -103.06454230652105,
+                32.747551340555
+              ],
+              [
+                -103.0643526130421,
+                32.74755134012436
+              ],
+              [
+                -103.06416291956316,
+                32.74755133940662
+              ],
+              [
+                -103.06397322608422,
+                32.7475513384018
+              ],
+              [
+                -103.06378353260527,
+                32.74755133710988
+              ],
+              [
+                -103.06359383912633,
+                32.74755133553086
+              ],
+              [
+                -103.06340414564741,
+                32.74755133366475
+              ],
+              [
+                -103.0632144521685,
+                32.74755133151154
+              ],
+              [
+                -103.06302475868958,
+                32.74755132907124
+              ]
+            ]
+          ],
+          "xml_id": "p_04_interior_shared_interior",
+          "xml_order": 0
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 429.9999999977144,
+              "interval_id": "04_near_east:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_near_east",
+          "metadata": {
+            "OBJECTID": "2",
+            "fixture_key": "04_near_east",
+            "motif": "near_parallel"
+          },
+          "motif": "near_parallel",
+          "name": "04 near east",
+          "objectid": "2",
+          "paths": [
+            [
+              [
+                -103.064646640944,
+                32.74439534275686
+              ],
+              [
+                -103.06464664078325,
+                32.74456392405206
+              ],
+              [
+                -103.0646466406225,
+                32.74473250534271
+              ],
+              [
+                -103.06464664046175,
+                32.74490108662882
+              ],
+              [
+                -103.06464664030099,
+                32.74506966791039
+              ],
+              [
+                -103.06464664014023,
+                32.74523824918742
+              ],
+              [
+                -103.06464663997947,
+                32.74540683045991
+              ],
+              [
+                -103.06464663981872,
+                32.74557541172786
+              ],
+              [
+                -103.06464663965795,
+                32.74574399299126
+              ],
+              [
+                -103.0646466394972,
+                32.74591257425013
+              ],
+              [
+                -103.06464663933644,
+                32.74608115550446
+              ],
+              [
+                -103.06464663917568,
+                32.74624973675424
+              ],
+              [
+                -103.06464663901492,
+                32.74641831799947
+              ],
+              [
+                -103.06464663885416,
+                32.74658689924018
+              ],
+              [
+                -103.06464663869339,
+                32.74675548047635
+              ],
+              [
+                -103.06464663853264,
+                32.74692406170796
+              ],
+              [
+                -103.06464663837187,
+                32.74709264293504
+              ],
+              [
+                -103.0646466382111,
+                32.74726122415758
+              ],
+              [
+                -103.06464663805035,
+                32.74742980537557
+              ],
+              [
+                -103.06464663788958,
+                32.74759838658903
+              ],
+              [
+                -103.06464663772881,
+                32.74776696779794
+              ],
+              [
+                -103.06464663756805,
+                32.74793554900232
+              ],
+              [
+                -103.06464663740728,
+                32.74810413020215
+              ],
+              [
+                -103.06464663724651,
+                32.74827271139745
+              ]
+            ]
+          ],
+          "xml_id": "p_04_near_east",
+          "xml_order": 2
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 430.0000000023015,
+              "interval_id": "04_centimeter_east:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_centimeter_east",
+          "metadata": {
+            "OBJECTID": "7",
+            "fixture_key": "04_centimeter_east",
+            "motif": "centimeter_exclusive"
+          },
+          "motif": "centimeter_exclusive",
+          "name": "04 centimeter east",
+          "objectid": "7",
+          "paths": [
+            [
+              [
+                -103.06473167990355,
+                32.74439534278593
+              ],
+              [
+                -103.06473167990295,
+                32.74456392408113
+              ],
+              [
+                -103.06473167990234,
+                32.74473250537177
+              ],
+              [
+                -103.06473167990174,
+                32.74490108665788
+              ],
+              [
+                -103.06473167990113,
+                32.74506966793945
+              ],
+              [
+                -103.06473167990053,
+                32.74523824921649
+              ],
+              [
+                -103.06473167989992,
+                32.74540683048897
+              ],
+              [
+                -103.06473167989932,
+                32.74557541175692
+              ],
+              [
+                -103.06473167989873,
+                32.74574399302033
+              ],
+              [
+                -103.06473167989812,
+                32.7459125742792
+              ],
+              [
+                -103.06473167989752,
+                32.74608115553353
+              ],
+              [
+                -103.06473167989691,
+                32.74624973678331
+              ],
+              [
+                -103.06473167989631,
+                32.74641831802855
+              ],
+              [
+                -103.0647316798957,
+                32.74658689926925
+              ],
+              [
+                -103.0647316798951,
+                32.74675548050541
+              ],
+              [
+                -103.06473167989449,
+                32.74692406173704
+              ],
+              [
+                -103.0647316798939,
+                32.74709264296412
+              ],
+              [
+                -103.0647316798933,
+                32.74726122418666
+              ],
+              [
+                -103.06473167989269,
+                32.74742980540464
+              ],
+              [
+                -103.06473167989209,
+                32.74759838661811
+              ],
+              [
+                -103.06473167989148,
+                32.74776696782703
+              ],
+              [
+                -103.06473167989088,
+                32.7479355490314
+              ],
+              [
+                -103.06473167989027,
+                32.74810413023123
+              ],
+              [
+                -103.06473167988968,
+                32.74827271142652
+              ]
+            ]
+          ],
+          "xml_id": "p_04_centimeter_east",
+          "xml_order": 4
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 63.9999999987898,
+              "interval_id": "04_shared_qualification_route:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            },
+            {
+              "end_m": 387.99999999842294,
+              "interval_id": "04_shared_qualification_route:p0:i2",
+              "path_index": 0,
+              "start_m": 323.99999999853816
+            }
+          ],
+          "key": "04_shared_qualification_route",
+          "metadata": {
+            "OBJECTID": "6",
+            "fixture_key": "04_shared_qualification_route",
+            "motif": "shared_cannot_qualify_state"
+          },
+          "motif": "shared_cannot_qualify_state",
+          "name": "04 shared qualification route",
+          "objectid": "6",
+          "paths": [
+            [
+              [
+                -103.06468931823628,
+                32.74908425338886
+              ],
+              [
+                -103.06468931817177,
+                32.74921951037356
+              ],
+              [
+                -103.06468931810727,
+                32.74935476735533
+              ],
+              [
+                -103.06468931804277,
+                32.74949002433418
+              ],
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ],
+              [
+                -103.064732,
+                32.7496252813174
+              ]
+            ],
+            [
+              [
+                -103.064732,
+                32.75196973510242
+              ],
+              [
+                -103.06468931686017,
+                32.75196973509515
+              ],
+              [
+                -103.06468931679566,
+                32.75210499201749
+              ],
+              [
+                -103.06468931673115,
+                32.7522402489369
+              ],
+              [
+                -103.06468931666664,
+                32.75237550585339
+              ],
+              [
+                -103.06468931660213,
+                32.75251076276696
+              ]
+            ]
+          ],
+          "xml_id": "p_04_shared_qualification_route",
+          "xml_order": 6
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 380.0000000014843,
+              "interval_id": "04_shared_qualification_partner:p0:i0",
+              "path_index": 0,
+              "start_m": 0.0
+            }
+          ],
+          "key": "04_shared_qualification_partner",
+          "metadata": {
+            "OBJECTID": "7",
+            "fixture_key": "04_shared_qualification_partner",
+            "motif": "shared_cannot_qualify_state"
+          },
+          "motif": "shared_cannot_qualify_state",
+          "name": "04 shared qualification partner",
+          "objectid": "7",
+          "paths": [
+            [
+              [
+                -103.0646039547088,
+                32.74908425333071
+              ],
+              [
+                -103.06460395447536,
+                32.7492474204865
+              ],
+              [
+                -103.06460395424192,
+                32.74941058763803
+              ],
+              [
+                -103.06460395400848,
+                32.7495737547853
+              ],
+              [
+                -103.06460395377503,
+                32.74973692192833
+              ],
+              [
+                -103.06460395354159,
+                32.7499000890671
+              ],
+              [
+                -103.06460395330815,
+                32.75006325620161
+              ],
+              [
+                -103.06460395307471,
+                32.75022642333187
+              ],
+              [
+                -103.06460395284125,
+                32.75038959045789
+              ],
+              [
+                -103.06460395260781,
+                32.75055275757963
+              ],
+              [
+                -103.06460395237437,
+                32.75071592469714
+              ],
+              [
+                -103.06460395214091,
+                32.75087909181038
+              ],
+              [
+                -103.06460395190747,
+                32.75104225891937
+              ],
+              [
+                -103.06460395167402,
+                32.7512054260241
+              ],
+              [
+                -103.06460395144056,
+                32.75136859312459
+              ],
+              [
+                -103.06460395120712,
+                32.75153176022081
+              ],
+              [
+                -103.06460395097366,
+                32.75169492731278
+              ],
+              [
+                -103.0646039507402,
+                32.7518580944005
+              ],
+              [
+                -103.06460395050675,
+                32.75202126148397
+              ],
+              [
+                -103.0646039502733,
+                32.75218442856317
+              ],
+              [
+                -103.06460395003984,
+                32.75234759563813
+              ],
+              [
+                -103.06460394980638,
+                32.75251076270882
+              ]
+            ]
+          ],
+          "xml_id": "p_04_shared_qualification_partner",
+          "xml_order": 7
+        },
+        {
+          "fragment_references": [
+            {
+              "end_m": 0.10000000011474579,
+              "interval_id": "04_tiny_crossing:p0:i1",
+              "path_index": 0,
+              "start_m": 0.040000057266357365
+            }
+          ],
+          "key": "04_tiny_crossing",
+          "metadata": {
+            "OBJECTID": "0",
+            "fixture_key": "04_tiny_crossing",
+            "motif": "tiny_crossing"
+          },
+          "motif": "tiny_crossing",
+          "name": "04 tiny crossing",
+          "objectid": "0",
+          "paths": [
+            [
+              [
+                -103.0647319999994,
+                32.7486063453601
+              ],
+              [
+                -103.06473135977697,
+                32.7486063453601
+              ]
+            ]
+          ],
+          "xml_id": "p_04_tiny_crossing",
+          "xml_order": 9
+        }
+      ]
+    },
+    "states": {
+      "NM": {
+        "attributed_original_meters": 1676.6650000597388,
+        "attributed_original_survey_miles": 1.0418292464073524,
+        "interior_meters": 1110.0400000598033,
+        "length_error_bound_meters": 1.409536743175026e-05,
+        "name": "New Mexico",
+        "shared_allocation_meters": 566.6249999999353,
+        "shared_interval_references": [
+          {
+            "allocated_meters": 160.00000000031483,
+            "interval_id": "04_interior_shared_interior:p0:i1"
+          },
+          {
+            "allocated_meters": 214.99999999974136,
+            "interval_id": "04_shared_long:p0:i0"
+          },
+          {
+            "allocated_meters": 129.99999999987418,
+            "interval_id": "04_shared_qualification_route:p0:i1"
+          },
+          {
+            "allocated_meters": 61.6250000000049,
+            "interval_id": "04_shared_short:p0:i0"
+          }
+        ]
+      },
+      "TX": {
+        "attributed_original_meters": 2094.6849999441474,
+        "attributed_original_survey_miles": 1.301574312623477,
+        "interior_meters": 1528.0599999442122,
+        "length_error_bound_meters": 1.609536743175026e-05,
+        "name": "Texas",
+        "shared_allocation_meters": 566.6249999999353,
+        "shared_interval_references": [
+          {
+            "allocated_meters": 160.00000000031483,
+            "interval_id": "04_interior_shared_interior:p0:i1"
+          },
+          {
+            "allocated_meters": 214.99999999974136,
+            "interval_id": "04_shared_long:p0:i0"
+          },
+          {
+            "allocated_meters": 129.99999999987418,
+            "interval_id": "04_shared_qualification_route:p0:i1"
+          },
+          {
+            "allocated_meters": 61.6250000000049,
+            "interval_id": "04_shared_short:p0:i0"
+          }
+        ]
+      }
+    },
+    "unresolved_meters": 0.0
+  },
+  "reference_status": "reference-verified",
+  "schema_version": "1.0.0"
+}

@@ -1,0 +1,3477 @@
+{
+  "baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+  "boundary_manifest": {
+    "approximate_regions": [
+      {
+        "component_index": 1,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -172.890361,
+          60.138804,
+          -172.634324,
+          60.262161
+        ],
+        "state_code": "AK"
+      },
+      {
+        "component_index": 2,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -173.23683,
+          60.23883,
+          -172.108767,
+          60.747748
+        ],
+        "state_code": "AK"
+      },
+      {
+        "component_index": 14,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          178.530624,
+          51.293675,
+          179.578406,
+          51.716523
+        ],
+        "state_code": "AK"
+      },
+      {
+        "component_index": 23,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          172.347846,
+          52.681603,
+          173.580647,
+          53.065256
+        ],
+        "state_code": "AK"
+      },
+      {
+        "component_index": 39,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -179.231086,
+          51.175092,
+          -178.82402,
+          51.457429
+        ],
+        "state_code": "AK"
+      },
+      {
+        "component_index": 0,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -178.443593,
+          28.328336,
+          -178.230504,
+          28.517269
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 2,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -164.764911,
+          23.517002,
+          -164.640019,
+          23.623425
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 3,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -166.386532,
+          23.58709,
+          -166.104627,
+          23.93243
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 4,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -168.058387,
+          24.948107,
+          -167.944204,
+          25.05224
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 5,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -170.684631,
+          25.455732,
+          -170.573151,
+          25.557131
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 6,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -171.809629,
+          25.706533,
+          -171.667922,
+          25.837944
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 7,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -174.067457,
+          25.990212,
+          -173.903358,
+          26.137053
+        ],
+        "state_code": "HI"
+      },
+      {
+        "component_index": 8,
+        "operation": "BALLPARK",
+        "source_bounds": [
+          -176.043354,
+          27.688231,
+          -175.664062,
+          28.008607
+        ],
+        "state_code": "HI"
+      }
+    ],
+    "attribution": "U.S. Census Bureau, 2025 TIGER/Line Shapefiles. Public domain U.S. government data.",
+    "boundary_edge_model": "Coordinate-linear edges through transformed source vertices in longitude/latitude; original vertex count, islands, holes and water retained; no simplification.",
+    "coordinate_crs": "EPSG:4326",
+    "coverage": "50 United States and Washington, DC; no territories",
+    "name": "U.S. Census Bureau TIGER/Line States",
+    "schema_version": 1,
+    "source_crs": "EPSG:4269",
+    "source_crs_wkt": "GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]]",
+    "source_sha256": "59a220888a8d9be8117c4fcd38f542bd02d81abf0d198c78113595ad540dd957",
+    "source_url": "https://www2.census.gov/geo/tiger/TIGER2025/STATE/tl_2025_us_state.zip",
+    "states": [
+      {
+        "code": "AK",
+        "file": "states/AK.wkb",
+        "fips": "02",
+        "name": "Alaska",
+        "sha256": "2858607bfbe3e6ead3d773c09bc0812049b017fad65696c0879a568cdc95834d"
+      },
+      {
+        "code": "AL",
+        "file": "states/AL.wkb",
+        "fips": "01",
+        "name": "Alabama",
+        "sha256": "525e46382fb3f61fe47bb39dc66ca4a305752c18b920c47117912f03d1ced719"
+      },
+      {
+        "code": "AR",
+        "file": "states/AR.wkb",
+        "fips": "05",
+        "name": "Arkansas",
+        "sha256": "11ae0e2813b7df0a8bdafaff17c94c883d309fce0a9ccfbcc7954b26c922ed15"
+      },
+      {
+        "code": "AZ",
+        "file": "states/AZ.wkb",
+        "fips": "04",
+        "name": "Arizona",
+        "sha256": "c23ac0df8a92bb819696f5b9957eb2919be7e259030ae2141451958fbe9b657f"
+      },
+      {
+        "code": "CA",
+        "file": "states/CA.wkb",
+        "fips": "06",
+        "name": "California",
+        "sha256": "52bcadd242676694571236191169dc7046bc392f85f674bced985493a3c9f655"
+      },
+      {
+        "code": "CO",
+        "file": "states/CO.wkb",
+        "fips": "08",
+        "name": "Colorado",
+        "sha256": "80e24a71e4e8ed877c6d54a69974951a7f3d4609018eb209a1243c726f0c8d0b"
+      },
+      {
+        "code": "CT",
+        "file": "states/CT.wkb",
+        "fips": "09",
+        "name": "Connecticut",
+        "sha256": "c1b2d989d641e9f986cf6fb328fa83305408257e8b615e678a5da6494fabbb31"
+      },
+      {
+        "code": "DC",
+        "file": "states/DC.wkb",
+        "fips": "11",
+        "name": "District of Columbia",
+        "sha256": "08f76db134005ef656338f2eafe92e01d1e979ebb8a83c5e4a38481b322729f6"
+      },
+      {
+        "code": "DE",
+        "file": "states/DE.wkb",
+        "fips": "10",
+        "name": "Delaware",
+        "sha256": "dc9894ca9edc186f0f5bd2ae1b9ab7b1455b4908cfdc8546b159f6046d3ef751"
+      },
+      {
+        "code": "FL",
+        "file": "states/FL.wkb",
+        "fips": "12",
+        "name": "Florida",
+        "sha256": "a77bddf7f8dd44ba1633da932c6fa94eac3e06fd08aa4080ed851d6022871c4f"
+      },
+      {
+        "code": "GA",
+        "file": "states/GA.wkb",
+        "fips": "13",
+        "name": "Georgia",
+        "sha256": "868b002cc9e91e23f644b2b1b8405865e61d4c7e7a6df5e337cd1ad3a0447273"
+      },
+      {
+        "code": "HI",
+        "file": "states/HI.wkb",
+        "fips": "15",
+        "name": "Hawaii",
+        "sha256": "8b4202e7fd16af9f1838b000db4f0183312570850101b2dee5737b410436821f"
+      },
+      {
+        "code": "IA",
+        "file": "states/IA.wkb",
+        "fips": "19",
+        "name": "Iowa",
+        "sha256": "032ae8ca7fa43c1b30119d479369afa5d80f194283b64eead9a4ac8b4b8896ba"
+      },
+      {
+        "code": "ID",
+        "file": "states/ID.wkb",
+        "fips": "16",
+        "name": "Idaho",
+        "sha256": "a0c79791513b7c1c7816c9a7ca66fb8f642555edb2b8fe344e7c664bc17e0bc3"
+      },
+      {
+        "code": "IL",
+        "file": "states/IL.wkb",
+        "fips": "17",
+        "name": "Illinois",
+        "sha256": "a445bdf3543efa17cccde1017b27d7cbef8b70110d7a2877b8907c827c14b5de"
+      },
+      {
+        "code": "IN",
+        "file": "states/IN.wkb",
+        "fips": "18",
+        "name": "Indiana",
+        "sha256": "7b97fc2bf7facee88b4f36037ddf2a12287a0885988de59b55032a1ae02268f4"
+      },
+      {
+        "code": "KS",
+        "file": "states/KS.wkb",
+        "fips": "20",
+        "name": "Kansas",
+        "sha256": "805e0cff09f3403d44dfffc3d9fee7d496e78da6ba15eb195072e370229106e7"
+      },
+      {
+        "code": "KY",
+        "file": "states/KY.wkb",
+        "fips": "21",
+        "name": "Kentucky",
+        "sha256": "956120b6affa05d907aa1c9ad3639ae3882a7b2a14aab54a8da3b8fbd43bf359"
+      },
+      {
+        "code": "LA",
+        "file": "states/LA.wkb",
+        "fips": "22",
+        "name": "Louisiana",
+        "sha256": "d32f2480a02d3d701253fc1b1ca0932a6fe8fd18a8601b8450817792815ef6a1"
+      },
+      {
+        "code": "MA",
+        "file": "states/MA.wkb",
+        "fips": "25",
+        "name": "Massachusetts",
+        "sha256": "27138969a4d15384b246e521eaae8819284b17ab35bef672f3386ab02ea3af46"
+      },
+      {
+        "code": "MD",
+        "file": "states/MD.wkb",
+        "fips": "24",
+        "name": "Maryland",
+        "sha256": "6bb5cbc55b802fe82162e581a34bcb28251e1b6f357705e868c9548f2d43a399"
+      },
+      {
+        "code": "ME",
+        "file": "states/ME.wkb",
+        "fips": "23",
+        "name": "Maine",
+        "sha256": "53e346083079c8af8513b07d164e5622f3bc2e5f696436eb2f2ae556c113e736"
+      },
+      {
+        "code": "MI",
+        "file": "states/MI.wkb",
+        "fips": "26",
+        "name": "Michigan",
+        "sha256": "c985324c84febc37a99e6d7b13707e9a701d61ce921933c9c0a429be7372204f"
+      },
+      {
+        "code": "MN",
+        "file": "states/MN.wkb",
+        "fips": "27",
+        "name": "Minnesota",
+        "sha256": "a2cb9a2a8f63c424645802d1c4fe17e593b773799d2d4e7a1296ef204a53e5fd"
+      },
+      {
+        "code": "MO",
+        "file": "states/MO.wkb",
+        "fips": "29",
+        "name": "Missouri",
+        "sha256": "15cd7dcf85fa8f648e662ea93fb43200ceacc25377cc84402095a8ceb5848c83"
+      },
+      {
+        "code": "MS",
+        "file": "states/MS.wkb",
+        "fips": "28",
+        "name": "Mississippi",
+        "sha256": "538b1d6ef3b617ae7032858746ee8bb2204eee9b68085c467aaf0c5a347d5f7d"
+      },
+      {
+        "code": "MT",
+        "file": "states/MT.wkb",
+        "fips": "30",
+        "name": "Montana",
+        "sha256": "0c1a441f2fa0d509ac365dc9dea9bede05fe71b72b064a5d4d38094edd737280"
+      },
+      {
+        "code": "NC",
+        "file": "states/NC.wkb",
+        "fips": "37",
+        "name": "North Carolina",
+        "sha256": "05d45b753cc8d6d7f8074b6d53a9c7e17ac93021451ebb3a8456f0280ed270b1"
+      },
+      {
+        "code": "ND",
+        "file": "states/ND.wkb",
+        "fips": "38",
+        "name": "North Dakota",
+        "sha256": "0e9da7356687242f32342bac03811aa6250e223eb3928f6dcb1c8f596f193d67"
+      },
+      {
+        "code": "NE",
+        "file": "states/NE.wkb",
+        "fips": "31",
+        "name": "Nebraska",
+        "sha256": "61aa0e1e749c8951c98579cbb38f6198b806f16003fde6db657b3c367c155f62"
+      },
+      {
+        "code": "NH",
+        "file": "states/NH.wkb",
+        "fips": "33",
+        "name": "New Hampshire",
+        "sha256": "83fe2e64fe11186bf4635a3a42daf705690eb46a6d85e44b6d17ba0cc24394bc"
+      },
+      {
+        "code": "NJ",
+        "file": "states/NJ.wkb",
+        "fips": "34",
+        "name": "New Jersey",
+        "sha256": "f46c02c00314b25d9d4514e4bdc15db81908c496710f9894511c9701cec18e61"
+      },
+      {
+        "code": "NM",
+        "file": "states/NM.wkb",
+        "fips": "35",
+        "name": "New Mexico",
+        "sha256": "b49b64a3bed818a3769fd3ebb9ed57962e24505bb375e6b04960f82620e95a25"
+      },
+      {
+        "code": "NV",
+        "file": "states/NV.wkb",
+        "fips": "32",
+        "name": "Nevada",
+        "sha256": "e4192f6cbfffcb95c8df8de2d443e14026caf87789626beda57f94f0563e5b11"
+      },
+      {
+        "code": "NY",
+        "file": "states/NY.wkb",
+        "fips": "36",
+        "name": "New York",
+        "sha256": "cc8410b5aa1656dff903f37327788ba65aeb403ab634747cec0c9557bed5a768"
+      },
+      {
+        "code": "OH",
+        "file": "states/OH.wkb",
+        "fips": "39",
+        "name": "Ohio",
+        "sha256": "09ba8cdb95c428f9e046ec9dff6adb93ce6ad993cecf27d87ded032bfa8f42cb"
+      },
+      {
+        "code": "OK",
+        "file": "states/OK.wkb",
+        "fips": "40",
+        "name": "Oklahoma",
+        "sha256": "6e54d6255a2934ecced727b510c0fc10b65894e27338c188728820821a7df8aa"
+      },
+      {
+        "code": "OR",
+        "file": "states/OR.wkb",
+        "fips": "41",
+        "name": "Oregon",
+        "sha256": "d8f614b16d0ad2b446901ace6bc7c5e214aa16e53c4680a72c1a48a415bd72e7"
+      },
+      {
+        "code": "PA",
+        "file": "states/PA.wkb",
+        "fips": "42",
+        "name": "Pennsylvania",
+        "sha256": "4ab59b1c92f68094a29bca4cb9412f042d44d9f8620dc9d894ea17dd1a5a70db"
+      },
+      {
+        "code": "RI",
+        "file": "states/RI.wkb",
+        "fips": "44",
+        "name": "Rhode Island",
+        "sha256": "568a9ad0af11b357836923610c59ae7315076946d49aa4bd42a355ace4f00c91"
+      },
+      {
+        "code": "SC",
+        "file": "states/SC.wkb",
+        "fips": "45",
+        "name": "South Carolina",
+        "sha256": "b4c40082db836bd70e729ff9dc682baed4b8ec92330215e1e56cfd6a20875b89"
+      },
+      {
+        "code": "SD",
+        "file": "states/SD.wkb",
+        "fips": "46",
+        "name": "South Dakota",
+        "sha256": "940dfc20352badf966424319fc7b050a953a4d65297457c7908513907017e62b"
+      },
+      {
+        "code": "TN",
+        "file": "states/TN.wkb",
+        "fips": "47",
+        "name": "Tennessee",
+        "sha256": "b28afe5780eb247469568adbe5e40f48c7f2440042b716d8c98554d62413ddf5"
+      },
+      {
+        "code": "TX",
+        "file": "states/TX.wkb",
+        "fips": "48",
+        "name": "Texas",
+        "sha256": "090514818e1be0d26060edba7ba0aa8b9d39c3013d7b8e2c3531a8af68bad450"
+      },
+      {
+        "code": "UT",
+        "file": "states/UT.wkb",
+        "fips": "49",
+        "name": "Utah",
+        "sha256": "59712f571a5a3c431e710470738bae7c655630421969218ac34ea79b0e864469"
+      },
+      {
+        "code": "VA",
+        "file": "states/VA.wkb",
+        "fips": "51",
+        "name": "Virginia",
+        "sha256": "73a59b41c5b425577f9e9b96bb18a710c5057fa6d689dd27052dffaa79fc9e61"
+      },
+      {
+        "code": "VT",
+        "file": "states/VT.wkb",
+        "fips": "50",
+        "name": "Vermont",
+        "sha256": "c934a51eb56098bb3f935da9b6507633aad090f1dc60789abcdf4839b689126d"
+      },
+      {
+        "code": "WA",
+        "file": "states/WA.wkb",
+        "fips": "53",
+        "name": "Washington",
+        "sha256": "f722f4feaf86df3c0ee5702cdd74b294c31cde48be890072de8be926ddd099ef"
+      },
+      {
+        "code": "WI",
+        "file": "states/WI.wkb",
+        "fips": "55",
+        "name": "Wisconsin",
+        "sha256": "393d0f0c73adb1e3d03eaf7e1ab6ebac8dfd2b9aa3bd6fbc971303b6b851b40c"
+      },
+      {
+        "code": "WV",
+        "file": "states/WV.wkb",
+        "fips": "54",
+        "name": "West Virginia",
+        "sha256": "4dd692d7d0673e6cf436c379e2676c2a74e2b46055a1ead0e93393cac2c345a8"
+      },
+      {
+        "code": "WY",
+        "file": "states/WY.wkb",
+        "fips": "56",
+        "name": "Wyoming",
+        "sha256": "fc49770c6a31440d4c19bda86e1e1eaebdfca3b9ad58bf01738bcc1aa7d235c1"
+      }
+    ],
+    "transformation": {
+      "components": {
+        "AK": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -167.560296,
+              59.694051,
+              -165.402458,
+              60.510747
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -172.890361,
+              60.138804,
+              -172.634324,
+              60.262161
+            ]
+          },
+          {
+            "component_index": 2,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -173.23683,
+              60.23883,
+              -172.108767,
+              60.747748
+            ]
+          },
+          {
+            "component_index": 3,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -160.09759,
+              58.534684,
+              -159.862579,
+              58.665602
+            ]
+          },
+          {
+            "component_index": 4,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -160.54432,
+              58.535678,
+              -160.096265,
+              58.798445
+            ]
+          },
+          {
+            "component_index": 5,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -161.436921,
+              64.061969,
+              -161.176662,
+              64.189368
+            ]
+          },
+          {
+            "component_index": 6,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -161.859289,
+              63.552063,
+              -161.633969,
+              63.654517
+            ]
+          },
+          {
+            "component_index": 7,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -168.213963,
+              64.909284,
+              -167.913829,
+              65.043289
+            ]
+          },
+          {
+            "component_index": 8,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -168.869538,
+              65.571327,
+              -168.626815,
+              65.674299
+            ]
+          },
+          {
+            "component_index": 9,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -168.971903,
+              65.684332,
+              -168.761664,
+              65.82226
+            ]
+          },
+          {
+            "component_index": 10,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -171.965319,
+              62.884908,
+              -168.578617,
+              63.84368
+            ]
+          },
+          {
+            "component_index": 11,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -146.508292,
+              59.334006,
+              -146.145217,
+              59.587539
+            ]
+          },
+          {
+            "component_index": 12,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -168.231887,
+              54.337261,
+              -129.974167,
+              71.439786
+            ]
+          },
+          {
+            "component_index": 13,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              179.388742,
+              51.818988,
+              179.859681,
+              52.07827
+            ]
+          },
+          {
+            "component_index": 14,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              178.530624,
+              51.293675,
+              179.578406,
+              51.716523
+            ]
+          },
+          {
+            "component_index": 15,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              178.120934,
+              51.703609,
+              178.497993,
+              51.888858
+            ]
+          },
+          {
+            "component_index": 16,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              178.000402,
+              51.846716,
+              178.671306,
+              52.107419
+            ]
+          },
+          {
+            "component_index": 17,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              177.93361,
+              51.821497,
+              178.101382,
+              51.922606
+            ]
+          },
+          {
+            "component_index": 18,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              177.28016,
+              52.071396,
+              177.446838,
+              52.175299
+            ]
+          },
+          {
+            "component_index": 19,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              177.111976,
+              51.757738,
+              177.874093,
+              52.189506
+            ]
+          },
+          {
+            "component_index": 20,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              175.763482,
+              52.280934,
+              176.064518,
+              52.440379
+            ]
+          },
+          {
+            "component_index": 21,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              173.773204,
+              52.65598,
+              174.238343,
+              52.83479
+            ]
+          },
+          {
+            "component_index": 22,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              173.272581,
+              52.291992,
+              173.85635,
+              52.566102
+            ]
+          },
+          {
+            "component_index": 23,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              172.347846,
+              52.681603,
+              173.580647,
+              53.065256
+            ]
+          },
+          {
+            "component_index": 24,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -168.135846,
+              53.874226,
+              -167.952995,
+              53.994956
+            ]
+          },
+          {
+            "component_index": 25,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -169.880238,
+              56.483228,
+              -169.377545,
+              56.675681
+            ]
+          },
+          {
+            "component_index": 26,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -170.0505,
+              57.127984,
+              -169.847694,
+              57.23894
+            ]
+          },
+          {
+            "component_index": 27,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -170.274914,
+              52.661739,
+              -169.575111,
+              53.134329
+            ]
+          },
+          {
+            "component_index": 28,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -170.522709,
+              56.995772,
+              -170.012357,
+              57.305269
+            ]
+          },
+          {
+            "component_index": 29,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -170.927388,
+              52.487099,
+              -170.47278,
+              52.751594
+            ]
+          },
+          {
+            "component_index": 30,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -171.393716,
+              52.391228,
+              -171.018825,
+              52.640097
+            ]
+          },
+          {
+            "component_index": 31,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -172.720689,
+              52.198045,
+              -172.21053,
+              52.444505
+            ]
+          },
+          {
+            "component_index": 32,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -175.224817,
+              52.162979,
+              -175.036327,
+              52.28054
+            ]
+          },
+          {
+            "component_index": 33,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -175.609756,
+              52.107374,
+              -175.403742,
+              52.237577
+            ]
+          },
+          {
+            "component_index": 34,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -177.551982,
+              51.839857,
+              -177.33258,
+              51.982884
+            ]
+          },
+          {
+            "component_index": 35,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -178.30948,
+              51.537071,
+              -172.819916,
+              52.47302
+            ]
+          },
+          {
+            "component_index": 36,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -178.431181,
+              51.419872,
+              -178.187623,
+              51.542325
+            ]
+          },
+          {
+            "component_index": 37,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -178.957281,
+              51.693395,
+              -178.646648,
+              51.888719
+            ]
+          },
+          {
+            "component_index": 38,
+            "operation": "EPSG:1251",
+            "source_bounds": [
+              -179.150511,
+              51.485859,
+              -178.421676,
+              51.666484
+            ]
+          },
+          {
+            "component_index": 39,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -179.231086,
+              51.175092,
+              -178.82402,
+              51.457429
+            ]
+          },
+          {
+            "component_index": 40,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -159.91167,
+              54.699296,
+              -159.416439,
+              54.894163
+            ]
+          },
+          {
+            "component_index": 41,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -161.194534,
+              55.103455,
+              -161.005419,
+              55.208178
+            ]
+          },
+          {
+            "component_index": 42,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -162.81901,
+              54.753102,
+              -162.637181,
+              54.857851
+            ]
+          },
+          {
+            "component_index": 43,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -163.013968,
+              54.237969,
+              -162.238381,
+              54.554311
+            ]
+          },
+          {
+            "component_index": 44,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -163.271924,
+              55.343123,
+              -163.027938,
+              55.532122
+            ]
+          },
+          {
+            "component_index": 45,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -169.326592,
+              52.71461,
+              -164.679606,
+              54.349356
+            ]
+          },
+          {
+            "component_index": 46,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -152.466527,
+              58.819997,
+              -151.851641,
+              59.017887
+            ]
+          },
+          {
+            "component_index": 47,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -154.933694,
+              56.354692,
+              -151.690505,
+              58.757258
+            ]
+          },
+          {
+            "component_index": 48,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -155.836841,
+              55.699912,
+              -155.453119,
+              55.93068
+            ]
+          },
+          {
+            "component_index": 49,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -156.903153,
+              55.953001,
+              -156.547417,
+              56.279793
+            ]
+          }
+        ],
+        "AL": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -88.473227,
+              30.144425,
+              -84.888246,
+              35.008028
+            ]
+          }
+        ],
+        "AR": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -94.617859,
+              33.004282,
+              -89.640997,
+              36.499749
+            ]
+          }
+        ],
+        "AZ": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -114.8163,
+              31.332342,
+              -109.045172,
+              37.003725
+            ]
+          }
+        ],
+        "CA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -124.482003,
+              32.529508,
+              -114.131211,
+              42.009503
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -123.173825,
+              37.63983,
+              -122.93571,
+              37.823058
+            ]
+          },
+          {
+            "component_index": 2,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -119.118949,
+              33.411024,
+              -118.962728,
+              33.540116
+            ]
+          },
+          {
+            "component_index": 3,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -118.668203,
+              33.248083,
+              -118.241051,
+              33.532321
+            ]
+          },
+          {
+            "component_index": 4,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -118.678551,
+              32.75004,
+              -118.288784,
+              33.087111
+            ]
+          },
+          {
+            "component_index": 5,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -120.582264,
+              33.84158,
+              -119.293112,
+              34.160569
+            ]
+          },
+          {
+            "component_index": 6,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -119.636302,
+              33.163493,
+              -119.360133,
+              33.335259
+            ]
+          }
+        ],
+        "CO": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -109.060204,
+              36.992449,
+              -102.041522,
+              41.003444
+            ]
+          }
+        ],
+        "CT": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -73.727775,
+              40.950943,
+              -71.787239,
+              42.050511
+            ]
+          }
+        ],
+        "DC": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -77.119759,
+              38.791645,
+              -76.909393,
+              38.995845
+            ]
+          }
+        ],
+        "DE": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -75.789023,
+              38.451132,
+              -74.984165,
+              39.839516
+            ]
+          }
+        ],
+        "FL": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -87.634896,
+              24.396308,
+              -79.974306,
+              31.000968
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -83.108914,
+              24.476981,
+              -82.639914,
+              24.800469
+            ]
+          }
+        ],
+        "GA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -85.605165,
+              30.355757,
+              -80.78296,
+              35.001303
+            ]
+          }
+        ],
+        "HI": [
+          {
+            "component_index": 0,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -178.443593,
+              28.328336,
+              -178.230504,
+              28.517269
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -161.987555,
+              23.005313,
+              -161.858059,
+              23.113988
+            ]
+          },
+          {
+            "component_index": 2,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -164.764911,
+              23.517002,
+              -164.640019,
+              23.623425
+            ]
+          },
+          {
+            "component_index": 3,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -166.386532,
+              23.58709,
+              -166.104627,
+              23.93243
+            ]
+          },
+          {
+            "component_index": 4,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -168.058387,
+              24.948107,
+              -167.944204,
+              25.05224
+            ]
+          },
+          {
+            "component_index": 5,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -170.684631,
+              25.455732,
+              -170.573151,
+              25.557131
+            ]
+          },
+          {
+            "component_index": 6,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -171.809629,
+              25.706533,
+              -171.667922,
+              25.837944
+            ]
+          },
+          {
+            "component_index": 7,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -174.067457,
+              25.990212,
+              -173.903358,
+              26.137053
+            ]
+          },
+          {
+            "component_index": 8,
+            "operation": "BALLPARK",
+            "source_bounds": [
+              -176.043354,
+              27.688231,
+              -175.664062,
+              28.008607
+            ]
+          },
+          {
+            "component_index": 9,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -158.34465,
+              21.199238,
+              -157.597288,
+              21.762997
+            ]
+          },
+          {
+            "component_index": 10,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -157.366549,
+              20.99336,
+              -156.650525,
+              21.280347
+            ]
+          },
+          {
+            "component_index": 11,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -157.11724,
+              20.685459,
+              -156.75,
+              20.985058
+            ]
+          },
+          {
+            "component_index": 12,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -156.755978,
+              20.45293,
+              -155.926785,
+              21.09258
+            ]
+          },
+          {
+            "component_index": 13,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -159.850959,
+              21.817436,
+              -159.241827,
+              22.290473
+            ]
+          },
+          {
+            "component_index": 14,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -160.305007,
+              21.728241,
+              -159.995625,
+              22.082919
+            ]
+          },
+          {
+            "component_index": 15,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -160.600875,
+              21.600384,
+              -160.482475,
+              21.712912
+            ]
+          },
+          {
+            "component_index": 16,
+            "operation": "EPSG:1252",
+            "source_bounds": [
+              -156.120001,
+              18.86546,
+              -154.755792,
+              20.321453
+            ]
+          }
+        ],
+        "IA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -96.639485,
+              40.37544,
+              -90.140061,
+              43.501196
+            ]
+          }
+        ],
+        "ID": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -117.243027,
+              41.988182,
+              -111.043495,
+              49.000846
+            ]
+          }
+        ],
+        "IL": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -91.513079,
+              36.970298,
+              -87.019935,
+              42.508481
+            ]
+          }
+        ],
+        "IN": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -88.097892,
+              37.771672,
+              -84.784535,
+              41.761368
+            ]
+          }
+        ],
+        "KS": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -102.051769,
+              36.993016,
+              -94.588387,
+              40.003166
+            ]
+          }
+        ],
+        "KY": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -89.571203,
+              36.497491,
+              -89.46539,
+              36.58171
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -89.417275,
+              36.497058,
+              -81.964788,
+              39.147732
+            ]
+          }
+        ],
+        "LA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -94.043352,
+              28.855127,
+              -88.758388,
+              33.01962
+            ]
+          }
+        ],
+        "MA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -73.50821,
+              41.187053,
+              -69.858861,
+              42.886778
+            ]
+          }
+        ],
+        "MD": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -79.487651,
+              37.886605,
+              -74.986282,
+              39.723037
+            ]
+          }
+        ],
+        "ME": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -71.083928,
+              42.917126,
+              -66.885444,
+              47.459833
+            ]
+          }
+        ],
+        "MI": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -90.418392,
+              41.696118,
+              -82.122971,
+              48.306063
+            ]
+          }
+        ],
+        "MN": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -97.239093,
+              43.499361,
+              -89.483385,
+              49.384479
+            ]
+          }
+        ],
+        "MO": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -95.774704,
+              35.995685,
+              -89.098968,
+              40.61364
+            ]
+          }
+        ],
+        "MS": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -91.655009,
+              30.139845,
+              -88.097888,
+              34.996099
+            ]
+          }
+        ],
+        "MT": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -116.049153,
+              44.357915,
+              -104.039694,
+              49.001109
+            ]
+          }
+        ],
+        "NC": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -84.321821,
+              33.752878,
+              -75.400119,
+              36.588137
+            ]
+          }
+        ],
+        "ND": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -104.049012,
+              45.935072,
+              -96.554411,
+              49.000561
+            ]
+          }
+        ],
+        "NE": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -104.053514,
+              39.999932,
+              -95.30829,
+              43.001707
+            ]
+          }
+        ],
+        "NH": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -72.557124,
+              42.697042,
+              -70.575094,
+              45.305778
+            ]
+          }
+        ],
+        "NJ": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -75.563586,
+              38.788657,
+              -73.88506,
+              41.357607
+            ]
+          }
+        ],
+        "NM": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -109.050431,
+              31.33216,
+              -103.002043,
+              37.000233
+            ]
+          }
+        ],
+        "NV": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -120.006473,
+              35.001857,
+              -114.039461,
+              42.001842
+            ]
+          }
+        ],
+        "NY": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -79.76259,
+              40.476578,
+              -71.777491,
+              45.015865
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -74.040747,
+              40.69859,
+              -74.038368,
+              40.700215
+            ]
+          },
+          {
+            "component_index": 2,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -74.047207,
+              40.688508,
+              -74.043455,
+              40.691125
+            ]
+          }
+        ],
+        "OH": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -84.820305,
+              38.403423,
+              -80.518705,
+              42.327132
+            ]
+          }
+        ],
+        "OK": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -103.002413,
+              33.615787,
+              -94.431014,
+              37.002312
+            ]
+          }
+        ],
+        "OR": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -124.703541,
+              41.992082,
+              -116.463262,
+              46.299099
+            ]
+          }
+        ],
+        "PA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -80.519851,
+              39.719799,
+              -74.689561,
+              42.516072
+            ]
+          }
+        ],
+        "RI": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -71.907258,
+              41.184101,
+              -71.088571,
+              42.018799
+            ]
+          },
+          {
+            "component_index": 1,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -71.678807,
+              41.095834,
+              -71.476877,
+              41.294018
+            ]
+          }
+        ],
+        "SC": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -83.353928,
+              31.995954,
+              -78.499301,
+              35.215485
+            ]
+          }
+        ],
+        "SD": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -104.057879,
+              42.479686,
+              -96.436472,
+              45.945377
+            ]
+          }
+        ],
+        "TN": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -90.310491,
+              34.982924,
+              -81.6469,
+              36.678255
+            ]
+          }
+        ],
+        "TX": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -106.645646,
+              25.837048,
+              -93.508039,
+              36.500704
+            ]
+          }
+        ],
+        "UT": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -114.052885,
+              36.997657,
+              -109.041572,
+              42.001702
+            ]
+          }
+        ],
+        "VA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -83.675395,
+              36.540852,
+              -75.166435,
+              39.466012
+            ]
+          }
+        ],
+        "VT": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -73.437905,
+              42.726933,
+              -71.465047,
+              45.016658
+            ]
+          }
+        ],
+        "WA": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -124.848974,
+              45.543541,
+              -116.916071,
+              49.002439
+            ]
+          }
+        ],
+        "WI": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -92.889433,
+              42.49172,
+              -86.249548,
+              47.309822
+            ]
+          }
+        ],
+        "WV": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -82.644591,
+              37.20154,
+              -77.719519,
+              40.638801
+            ]
+          }
+        ],
+        "WY": [
+          {
+            "component_index": 0,
+            "operation": "EPSG:1188",
+            "source_bounds": [
+              -111.054558,
+              40.994772,
+              -104.052245,
+              45.005815
+            ]
+          }
+        ]
+      },
+      "notes": "Area-aware component operations fixed at build time without optional grids. Published operation accuracy is not a surveyed boundary guarantee. BALLPARK components have unknown datum accuracy.",
+      "operations": {
+        "BALLPARK": {
+          "accuracy_meters": null,
+          "area": "Components outside available published operation areas",
+          "bounds": [
+            -180,
+            -90,
+            180,
+            90
+          ],
+          "name": "Explicit approximate NAD83/WGS84 coordinate equivalence",
+          "notes": "Source coordinates retained under an approximate datum-equivalence convention. Accuracy is unknown, not four meters. No region-specific transformation is claimed.",
+          "pipeline": "+proj=noop"
+        },
+        "EPSG:1188": {
+          "accuracy_meters": 4.0,
+          "area": "Mainland North America",
+          "bounds": [
+            -172.54,
+            23.81,
+            -47.74,
+            86.46
+          ],
+          "name": "NAD83 to WGS 84 (1)",
+          "pipeline": "+proj=noop"
+        },
+        "EPSG:1251": {
+          "accuracy_meters": 8.0,
+          "area": "Aleutian Islands",
+          "bounds": [
+            172.42,
+            51.3,
+            -164.84,
+            54.34
+          ],
+          "name": "NAD83 to WGS 84 (2)",
+          "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=push v_3 step proj=cart ellps=GRS80 step proj=helmert x=-2 y=0 z=4 step inv proj=cart ellps=WGS84 step proj=pop v_3 step proj=unitconvert xy_in=rad xy_out=deg"
+        },
+        "EPSG:1252": {
+          "accuracy_meters": 4.0,
+          "area": "Hawaii main islands",
+          "bounds": [
+            -163.74,
+            15.56,
+            -151.27,
+            25.58
+          ],
+          "name": "NAD83 to WGS 84 (3)",
+          "pipeline": "proj=pipeline step proj=unitconvert xy_in=deg xy_out=rad step proj=push v_3 step proj=cart ellps=GRS80 step proj=helmert x=1 y=1 z=-1 step inv proj=cart ellps=WGS84 step proj=pop v_3 step proj=unitconvert xy_in=rad xy_out=deg"
+        }
+      }
+    },
+    "vintage": "2025"
+  },
+  "boundary_resource": "src/pipeline_calculator/data/states_2025.zip",
+  "boundary_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+  "coordinate_serialization_decimal_places": 14,
+  "expectation_policy": "This design manifest states intended controls, not numerical goldens. Independent references must measure the saved KMZ and confirm every assertion.",
+  "fixtures": [
+    {
+      "description": {
+        "boundary_edges": [],
+        "centers": {
+          "LA": [
+            -92.5,
+            31.0
+          ],
+          "TX": [
+            -100.0,
+            31.0
+          ],
+          "WY": [
+            -107.0,
+            43.0
+          ]
+        },
+        "intent": "Three widely separated interior networks, each with independently isolated positive and negative motifs.",
+        "states": [
+          "TX",
+          "LA",
+          "WY"
+        ]
+      },
+      "file": "fixtures/01_three_state_disconnected_networks.kmz",
+      "name": "01_three_state_disconnected_networks",
+      "path_count": 54,
+      "planned_assertions": [
+        "No unresolved or outside mileage; per-source and total original conservation within max(0.001 m, original*1e-10).",
+        "Stable fixture keys remain distinct despite repeated names and OBJECTID fields.",
+        "TX/LA/WY represented with zero crossings and zero shared length; Combined savings equals sum of state savings.",
+        "In each state: long_pair savings>0; clique_trio has three qualified source pairs and disjoint groups; chain_nonclique has exactly two qualified source pairs and no 3-member group.",
+        "In each state: multipart_short paths each below 200 m, combined above 200 m, and no qualifying sections; perpendicular/isolated/loop sources have zero cross-pipeline qualifying coverage."
+      ],
+      "sha256": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
+      "source_count": 48,
+      "sources": [
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_pair_a",
+          "motif": "tx_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 0
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_pair_b",
+          "motif": "tx_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 1
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_trio_a",
+          "motif": "tx_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 2
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_trio_b",
+          "motif": "tx_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 3
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_trio_c",
+          "motif": "tx_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 4
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_chain_a",
+          "motif": "tx_chain_nonclique",
+          "name": "01 tx chain a",
+          "path_count": 1,
+          "xml_order": 5
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_chain_b",
+          "motif": "tx_chain_nonclique",
+          "name": "01 tx chain b",
+          "path_count": 1,
+          "xml_order": 6
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_chain_c",
+          "motif": "tx_chain_nonclique",
+          "name": "01 tx chain c",
+          "path_count": 1,
+          "xml_order": 7
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_cross_east_west",
+          "motif": "tx_perpendicular",
+          "name": "01 tx cross east west",
+          "path_count": 1,
+          "xml_order": 8
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_cross_north_south",
+          "motif": "tx_perpendicular",
+          "name": "01 tx cross north south",
+          "path_count": 1,
+          "xml_order": 9
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_diverging_branch",
+          "motif": "tx_diverging_branch",
+          "name": "01 tx diverging branch",
+          "path_count": 1,
+          "xml_order": 10
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_loop",
+          "motif": "tx_loop",
+          "name": "01 tx loop",
+          "path_count": 1,
+          "xml_order": 11
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "TX",
+          "key": "01_tx_multipart_a",
+          "motif": "tx_multipart_short",
+          "name": "01 tx multipart a",
+          "path_count": 2,
+          "xml_order": 12
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "TX",
+          "key": "01_tx_multipart_b",
+          "motif": "tx_multipart_short",
+          "name": "01 tx multipart b",
+          "path_count": 2,
+          "xml_order": 13
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_isolated",
+          "motif": "tx_isolated",
+          "name": "01 tx isolated",
+          "path_count": 1,
+          "xml_order": 14
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "01_tx_feeder",
+          "motif": "tx_connecting_feeder",
+          "name": "01 tx feeder",
+          "path_count": 1,
+          "xml_order": 15
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_pair_a",
+          "motif": "la_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 16
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_pair_b",
+          "motif": "la_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 17
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_trio_a",
+          "motif": "la_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 18
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_trio_b",
+          "motif": "la_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 19
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_trio_c",
+          "motif": "la_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 20
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_chain_a",
+          "motif": "la_chain_nonclique",
+          "name": "01 la chain a",
+          "path_count": 1,
+          "xml_order": 21
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_chain_b",
+          "motif": "la_chain_nonclique",
+          "name": "01 la chain b",
+          "path_count": 1,
+          "xml_order": 22
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_chain_c",
+          "motif": "la_chain_nonclique",
+          "name": "01 la chain c",
+          "path_count": 1,
+          "xml_order": 23
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_cross_east_west",
+          "motif": "la_perpendicular",
+          "name": "01 la cross east west",
+          "path_count": 1,
+          "xml_order": 24
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_cross_north_south",
+          "motif": "la_perpendicular",
+          "name": "01 la cross north south",
+          "path_count": 1,
+          "xml_order": 25
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_diverging_branch",
+          "motif": "la_diverging_branch",
+          "name": "01 la diverging branch",
+          "path_count": 1,
+          "xml_order": 26
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_loop",
+          "motif": "la_loop",
+          "name": "01 la loop",
+          "path_count": 1,
+          "xml_order": 27
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "LA",
+          "key": "01_la_multipart_a",
+          "motif": "la_multipart_short",
+          "name": "01 la multipart a",
+          "path_count": 2,
+          "xml_order": 28
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "LA",
+          "key": "01_la_multipart_b",
+          "motif": "la_multipart_short",
+          "name": "01 la multipart b",
+          "path_count": 2,
+          "xml_order": 29
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_isolated",
+          "motif": "la_isolated",
+          "name": "01 la isolated",
+          "path_count": 1,
+          "xml_order": 30
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "LA",
+          "key": "01_la_feeder",
+          "motif": "la_connecting_feeder",
+          "name": "01 la feeder",
+          "path_count": 1,
+          "xml_order": 31
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_pair_a",
+          "motif": "wy_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 32
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_pair_b",
+          "motif": "wy_long_pair",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 33
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_trio_a",
+          "motif": "wy_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 34
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_trio_b",
+          "motif": "wy_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 35
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_trio_c",
+          "motif": "wy_clique_trio",
+          "name": "Gathering lateral",
+          "path_count": 1,
+          "xml_order": 36
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_chain_a",
+          "motif": "wy_chain_nonclique",
+          "name": "01 wy chain a",
+          "path_count": 1,
+          "xml_order": 37
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_chain_b",
+          "motif": "wy_chain_nonclique",
+          "name": "01 wy chain b",
+          "path_count": 1,
+          "xml_order": 38
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_chain_c",
+          "motif": "wy_chain_nonclique",
+          "name": "01 wy chain c",
+          "path_count": 1,
+          "xml_order": 39
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_cross_east_west",
+          "motif": "wy_perpendicular",
+          "name": "01 wy cross east west",
+          "path_count": 1,
+          "xml_order": 40
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_cross_north_south",
+          "motif": "wy_perpendicular",
+          "name": "01 wy cross north south",
+          "path_count": 1,
+          "xml_order": 41
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_diverging_branch",
+          "motif": "wy_diverging_branch",
+          "name": "01 wy diverging branch",
+          "path_count": 1,
+          "xml_order": 42
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_loop",
+          "motif": "wy_loop",
+          "name": "01 wy loop",
+          "path_count": 1,
+          "xml_order": 43
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "WY",
+          "key": "01_wy_multipart_a",
+          "motif": "wy_multipart_short",
+          "name": "01 wy multipart a",
+          "path_count": 2,
+          "xml_order": 44
+        },
+        {
+          "design_note": "Two disconnected 123.25 m design runs; qualification restarts on each.",
+          "design_state_hint": "WY",
+          "key": "01_wy_multipart_b",
+          "motif": "wy_multipart_short",
+          "name": "01 wy multipart b",
+          "path_count": 2,
+          "xml_order": 45
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_isolated",
+          "motif": "wy_isolated",
+          "name": "01 wy isolated",
+          "path_count": 1,
+          "xml_order": 46
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "WY",
+          "key": "01_wy_feeder",
+          "motif": "wy_connecting_feeder",
+          "name": "01 wy feeder",
+          "path_count": 1,
+          "xml_order": 47
+        }
+      ],
+      "variants": [
+        {
+          "file": "fixtures/variants/01_three_state_disconnected_networks__source_order.kmz",
+          "kind": "source_order",
+          "sha256": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2"
+        }
+      ],
+      "vertex_count": 753
+    },
+    {
+      "description": {
+        "boundary_edges": [
+          {
+            "construction_crossing_center": [
+              -103.04170777115063,
+              36.4799999766659
+            ],
+            "endpoint_touch_coordinate": [
+              -103.041703,
+              36.478411
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041703,
+                  36.478411
+                ],
+                "canonical_start": [
+                  -103.041729,
+                  36.48707
+                ],
+                "edge_index": 5628,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041729,
+                  36.48707
+                ],
+                "canonical_start": [
+                  -103.041703,
+                  36.478411
+                ],
+                "edge_index": 59404,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041703,
+              36.478411
+            ],
+            "segment_start": [
+              -103.041729,
+              36.48707
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -102.91999999906614,
+              36.50030064853654
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -102.912605,
+                  36.50029
+                ],
+                "canonical_start": [
+                  -102.921633,
+                  36.500303
+                ],
+                "edge_index": 59448,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              },
+              {
+                "canonical_end": [
+                  -102.921633,
+                  36.500303
+                ],
+                "canonical_start": [
+                  -102.912605,
+                  36.50029
+                ],
+                "edge_index": 17951,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "OK"
+              }
+            ],
+            "segment_end": [
+              -102.912605,
+              36.50029
+            ],
+            "segment_start": [
+              -102.921633,
+              36.500303
+            ],
+            "states": [
+              "TX",
+              "OK"
+            ]
+          }
+        ],
+        "intent": "Sparse transverse crossings, repeated visits, zero-length border touch, short positive visit, and interior branch networks.",
+        "states": [
+          "NM",
+          "TX",
+          "OK"
+        ]
+      },
+      "file": "fixtures/02_three_state_transverse_crossings.kmz",
+      "name": "02_three_state_transverse_crossings",
+      "path_count": 20,
+      "planned_assertions": [
+        "No unresolved or outside mileage; per-source and total original conservation within max(0.001 m, original*1e-10).",
+        "Stable fixture keys remain distinct despite repeated names and OBJECTID fields.",
+        "Three states represented; every border crossing transverse; shared length zero.",
+        "three_state_route visits NM,TX,OK; sparse first edge contains an interior crossing; reentry has at least three transitions.",
+        "endpoint_touch has zero TX positive length; short_visit retains two crossings and a positive OK interval.",
+        "Interior pair in each state qualifies without cross-border matching near clipped crossings."
+      ],
+      "sha256": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
+      "source_count": 20,
+      "sources": [
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "02_three_state_route",
+          "motif": "three_state_route",
+          "name": "02 three state route",
+          "path_count": 1,
+          "xml_order": 0
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "02_reentry_route",
+          "motif": "reentry",
+          "name": "02 reentry route",
+          "path_count": 1,
+          "xml_order": 1
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "02_ok_reentry",
+          "motif": "reentry",
+          "name": "02 ok reentry",
+          "path_count": 1,
+          "xml_order": 2
+        },
+        {
+          "design_note": "Ends exactly at a canonical common-edge vertex; no positive TX visit.",
+          "design_state_hint": null,
+          "key": "02_endpoint_touch",
+          "motif": "endpoint_touch",
+          "name": "02 endpoint touch",
+          "path_count": 1,
+          "xml_order": 3
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "02_short_state_visit",
+          "motif": "short_visit",
+          "name": "02 short state visit",
+          "path_count": 1,
+          "xml_order": 4
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "NM",
+          "key": "02_nm_pair_a",
+          "motif": "nm_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 5
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "NM",
+          "key": "02_nm_pair_b",
+          "motif": "nm_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 6
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "NM",
+          "key": "02_nm_branch",
+          "motif": "nm_branch",
+          "name": "02 nm branch",
+          "path_count": 1,
+          "xml_order": 7
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "NM",
+          "key": "02_nm_loop",
+          "motif": "nm_loop",
+          "name": "02 nm loop",
+          "path_count": 1,
+          "xml_order": 8
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "NM",
+          "key": "02_nm_spur",
+          "motif": "nm_spur",
+          "name": "02 nm spur",
+          "path_count": 1,
+          "xml_order": 9
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "02_tx_pair_a",
+          "motif": "tx_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 10
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "02_tx_pair_b",
+          "motif": "tx_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 11
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "02_tx_branch",
+          "motif": "tx_branch",
+          "name": "02 tx branch",
+          "path_count": 1,
+          "xml_order": 12
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "02_tx_loop",
+          "motif": "tx_loop",
+          "name": "02 tx loop",
+          "path_count": 1,
+          "xml_order": 13
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "TX",
+          "key": "02_tx_spur",
+          "motif": "tx_spur",
+          "name": "02 tx spur",
+          "path_count": 1,
+          "xml_order": 14
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "OK",
+          "key": "02_ok_pair_a",
+          "motif": "ok_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 15
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "OK",
+          "key": "02_ok_pair_b",
+          "motif": "ok_interior_pair",
+          "name": "Distribution branch",
+          "path_count": 1,
+          "xml_order": 16
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "OK",
+          "key": "02_ok_branch",
+          "motif": "ok_branch",
+          "name": "02 ok branch",
+          "path_count": 1,
+          "xml_order": 17
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "OK",
+          "key": "02_ok_loop",
+          "motif": "ok_loop",
+          "name": "02 ok loop",
+          "path_count": 1,
+          "xml_order": 18
+        },
+        {
+          "design_note": "",
+          "design_state_hint": "OK",
+          "key": "02_ok_spur",
+          "motif": "ok_spur",
+          "name": "02 ok spur",
+          "path_count": 1,
+          "xml_order": 19
+        }
+      ],
+      "variants": [],
+      "vertex_count": 292
+    },
+    {
+      "description": {
+        "boundary_edges": [
+          {
+            "construction_crossing_center": [
+              -103.04161893715546,
+              36.43500000147345
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041612,
+                  36.429996
+                ],
+                "canonical_start": [
+                  -103.041621,
+                  36.436488
+                ],
+                "edge_index": 5637,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041621,
+                  36.436488
+                ],
+                "canonical_start": [
+                  -103.041612,
+                  36.429996
+                ],
+                "edge_index": 59395,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041612,
+              36.429996
+            ],
+            "segment_start": [
+              -103.041621,
+              36.436488
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -103.04162690418347,
+              36.4450000016273
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041624,
+                  36.439475
+                ],
+                "canonical_start": [
+                  -103.041631,
+                  36.452792
+                ],
+                "edge_index": 5634,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041631,
+                  36.452792
+                ],
+                "canonical_start": [
+                  -103.041624,
+                  36.439475
+                ],
+                "edge_index": 59398,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041624,
+              36.439475
+            ],
+            "segment_start": [
+              -103.041631,
+              36.452792
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -103.04164182864992,
+              36.45500008911379
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041631,
+                  36.452792
+                ],
+                "canonical_start": [
+                  -103.041665,
+                  36.459725
+                ],
+                "edge_index": 5633,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041665,
+                  36.459725
+                ],
+                "canonical_start": [
+                  -103.041631,
+                  36.452792
+                ],
+                "edge_index": 59399,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041631,
+              36.452792
+            ],
+            "segment_start": [
+              -103.041665,
+              36.459725
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -103.04167972686808,
+              36.46600000051218
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041674,
+                  36.462946
+                ],
+                "canonical_start": [
+                  -103.041703,
+                  36.478411
+                ],
+                "edge_index": 5629,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041703,
+                  36.478411
+                ],
+                "canonical_start": [
+                  -103.041674,
+                  36.462946
+                ],
+                "edge_index": 59403,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041674,
+              36.462946
+            ],
+            "segment_start": [
+              -103.041703,
+              36.478411
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -103.04171377649904,
+              36.48199998866047
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.041703,
+                  36.478411
+                ],
+                "canonical_start": [
+                  -103.041729,
+                  36.48707
+                ],
+                "edge_index": 5628,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041729,
+                  36.48707
+                ],
+                "canonical_start": [
+                  -103.041703,
+                  36.478411
+                ],
+                "edge_index": 59404,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.041703,
+              36.478411
+            ],
+            "segment_start": [
+              -103.041729,
+              36.48707
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -103.04160497676158,
+              36.42500000934556
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.0416,
+                  36.422325
+                ],
+                "canonical_start": [
+                  -103.041606,
+                  36.42555
+                ],
+                "edge_index": 5641,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.041606,
+                  36.42555
+                ],
+                "canonical_start": [
+                  -103.0416,
+                  36.422325
+                ],
+                "edge_index": 59391,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.0416,
+              36.422325
+            ],
+            "segment_start": [
+              -103.041606,
+              36.42555
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          },
+          {
+            "construction_crossing_center": [
+              -102.95000000915888,
+              36.500343726674096
+            ],
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -102.928269,
+                  36.500312
+                ],
+                "canonical_start": [
+                  -102.952927,
+                  36.500348
+                ],
+                "edge_index": 59446,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              },
+              {
+                "canonical_end": [
+                  -102.952927,
+                  36.500348
+                ],
+                "canonical_start": [
+                  -102.928269,
+                  36.500312
+                ],
+                "edge_index": 17953,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "OK"
+              }
+            ],
+            "segment_end": [
+              -102.928269,
+              36.500312
+            ],
+            "segment_start": [
+              -102.952927,
+              36.500348
+            ],
+            "states": [
+              "TX",
+              "OK"
+            ]
+          }
+        ],
+        "intent": "Seven labeled cross-border matching motifs; shared mileage must be zero. Nonaligned phase and opposite directions are intentional.",
+        "states": [
+          "NM",
+          "TX",
+          "OK"
+        ]
+      },
+      "file": "fixtures/03_parallel_corridors_crossing_borders.kmz",
+      "name": "03_parallel_corridors_crossing_borders",
+      "path_count": 20,
+      "planned_assertions": [
+        "No unresolved or outside mileage; per-source and total original conservation within max(0.001 m, original*1e-10).",
+        "Stable fixture keys remain distinct despite repeated names and OBJECTID fields.",
+        "Shared length zero; all seven motifs analyzed independently and every source included globally.",
+        "long_crossborder qualifies Combined and both exclusive states; short_split qualifies Combined and neither state.",
+        "asymmetric_split qualifies Combined and NM only; joining_trio qualifies three pairs Combined and three pairs in TX, but only A/B in NM.",
+        "diverge_rejoin has at least two distinct qualified sections; opposite_state_pair qualifies Combined but never state savings.",
+        "phase_tails_reverse covers nonaligned starts, nonmultiple tails, opposite digitization, and dense/sparse original vertices."
+      ],
+      "sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+      "source_count": 20,
+      "sources": [
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_long_a",
+          "motif": "long_crossborder",
+          "name": "03 long a",
+          "path_count": 1,
+          "xml_order": 0
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_long_b",
+          "motif": "long_crossborder",
+          "name": "03 long b",
+          "path_count": 1,
+          "xml_order": 1
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_short_a",
+          "motif": "short_split",
+          "name": "03 short a",
+          "path_count": 1,
+          "xml_order": 2
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_short_b",
+          "motif": "short_split",
+          "name": "03 short b",
+          "path_count": 1,
+          "xml_order": 3
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_asymmetric_a",
+          "motif": "asymmetric_split",
+          "name": "03 asymmetric a",
+          "path_count": 1,
+          "xml_order": 4
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_asymmetric_b",
+          "motif": "asymmetric_split",
+          "name": "03 asymmetric b",
+          "path_count": 1,
+          "xml_order": 5
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_trio_a",
+          "motif": "joining_trio",
+          "name": "03 trio a",
+          "path_count": 1,
+          "xml_order": 6
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_trio_b",
+          "motif": "joining_trio",
+          "name": "03 trio b",
+          "path_count": 1,
+          "xml_order": 7
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_trio_c",
+          "motif": "joining_trio",
+          "name": "03 trio c",
+          "path_count": 1,
+          "xml_order": 8
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_rejoin_a",
+          "motif": "diverge_rejoin",
+          "name": "03 rejoin a",
+          "path_count": 1,
+          "xml_order": 9
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_rejoin_b",
+          "motif": "diverge_rejoin",
+          "name": "03 rejoin b",
+          "path_count": 1,
+          "xml_order": 10
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_opposite_nm",
+          "motif": "opposite_state_pair",
+          "name": "03 opposite nm",
+          "path_count": 1,
+          "xml_order": 11
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_opposite_tx",
+          "motif": "opposite_state_pair",
+          "name": "03 opposite tx",
+          "path_count": 1,
+          "xml_order": 12
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_phase_a",
+          "motif": "phase_tails_reverse",
+          "name": "03 phase a",
+          "path_count": 1,
+          "xml_order": 13
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_phase_b",
+          "motif": "phase_tails_reverse",
+          "name": "03 phase b",
+          "path_count": 1,
+          "xml_order": 14
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_phase_spur",
+          "motif": "phase_branch",
+          "name": "03 phase spur",
+          "path_count": 1,
+          "xml_order": 15
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_nm_feeder",
+          "motif": "nm_feeder",
+          "name": "03 nm feeder",
+          "path_count": 1,
+          "xml_order": 16
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_tx_feeder",
+          "motif": "tx_feeder",
+          "name": "03 tx feeder",
+          "path_count": 1,
+          "xml_order": 17
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_ok_feeder",
+          "motif": "ok_feeder",
+          "name": "03 ok feeder",
+          "path_count": 1,
+          "xml_order": 18
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "03_tx_loop",
+          "motif": "tx_loop",
+          "name": "03 tx loop",
+          "path_count": 1,
+          "xml_order": 19
+        }
+      ],
+      "variants": [],
+      "vertex_count": 481
+    },
+    {
+      "description": {
+        "boundary_edges": [
+          {
+            "native_edges": [
+              {
+                "canonical_end": [
+                  -103.064732,
+                  32.744215
+                ],
+                "canonical_start": [
+                  -103.064732,
+                  32.75427
+                ],
+                "edge_index": 7043,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "NM"
+              },
+              {
+                "canonical_end": [
+                  -103.064732,
+                  32.75427
+                ],
+                "canonical_start": [
+                  -103.064732,
+                  32.744215
+                ],
+                "edge_index": 57989,
+                "polygon_index": 0,
+                "ring_index": 0,
+                "state": "TX"
+              }
+            ],
+            "segment_end": [
+              -103.064732,
+              32.75427
+            ],
+            "segment_start": [
+              -103.064732,
+              32.744215
+            ],
+            "states": [
+              "NM",
+              "TX"
+            ]
+          }
+        ],
+        "intent": "Exact meridian sharing, 3 cm exclusive offsets, shared allocation at all lengths, and 10 cm crossing.",
+        "size_exception": "A deliberately compact 11-source meridian case keeps centimeter and sub-threshold controls legible; the first three files carry larger networks.",
+        "states": [
+          "NM",
+          "TX"
+        ]
+      },
+      "file": "fixtures/04_shared_border_and_near_border.kmz",
+      "name": "04_shared_border_and_near_border",
+      "path_count": 11,
+      "planned_assertions": [
+        "No unresolved or outside mileage; per-source and total original conservation within max(0.001 m, original*1e-10).",
+        "Stable fixture keys remain distinct despite repeated names and OBJECTID fields.",
+        "Shared meridian intervals have exactly NM/TX ownership, allocation half to each; shared_short is allocated despite length below 200 m.",
+        "3 cm east/west offsets remain exclusive TX/NM respectively, with zero shared length.",
+        "shared_cannot_qualify_state pair qualifies Combined but its route/partner has zero qualified state sections.",
+        "tiny_crossing retains positive intervals in both states; endpoint_touch has no TX positive interval.",
+        "Reverse and redundant-geodesic-vertex variants preserve original and allocated geography within certified bounds; savings must be recomputed because sampling phase can change."
+      ],
+      "sha256": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
+      "source_count": 11,
+      "sources": [
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_interior_shared_interior",
+          "motif": "interior_shared_interior",
+          "name": "04 interior shared interior",
+          "path_count": 1,
+          "xml_order": 0
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_shared_long",
+          "motif": "shared_long",
+          "name": "04 shared long",
+          "path_count": 1,
+          "xml_order": 1
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_near_east",
+          "motif": "near_parallel",
+          "name": "04 near east",
+          "path_count": 1,
+          "xml_order": 2
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_near_west",
+          "motif": "near_parallel",
+          "name": "04 near west",
+          "path_count": 1,
+          "xml_order": 3
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_centimeter_east",
+          "motif": "centimeter_exclusive",
+          "name": "04 centimeter east",
+          "path_count": 1,
+          "xml_order": 4
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_centimeter_west",
+          "motif": "centimeter_exclusive",
+          "name": "04 centimeter west",
+          "path_count": 1,
+          "xml_order": 5
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_shared_qualification_route",
+          "motif": "shared_cannot_qualify_state",
+          "name": "04 shared qualification route",
+          "path_count": 1,
+          "xml_order": 6
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_shared_qualification_partner",
+          "motif": "shared_cannot_qualify_state",
+          "name": "04 shared qualification partner",
+          "path_count": 1,
+          "xml_order": 7
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_shared_short",
+          "motif": "shared_short",
+          "name": "04 shared short",
+          "path_count": 1,
+          "xml_order": 8
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_tiny_crossing",
+          "motif": "tiny_crossing",
+          "name": "04 tiny crossing",
+          "path_count": 1,
+          "xml_order": 9
+        },
+        {
+          "design_note": "",
+          "design_state_hint": null,
+          "key": "04_endpoint_touch",
+          "motif": "endpoint_touch",
+          "name": "04 endpoint touch",
+          "path_count": 1,
+          "xml_order": 10
+        }
+      ],
+      "variants": [
+        {
+          "file": "fixtures/variants/04_shared_border_and_near_border__reversed.kmz",
+          "kind": "reversed",
+          "sha256": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd"
+        },
+        {
+          "file": "fixtures/variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+          "kind": "redundant_vertices",
+          "sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308"
+        }
+      ],
+      "vertex_count": 28
+    }
+  ],
+  "generator_version": "1.0.0",
+  "longitude_wrapping": "Construction uses Geod longitude normalization. Core fixture edges never cross the antimeridian; the reference handles wrapping explicitly.",
+  "random_seed": 71499,
+  "schema_version": "pipeline-kmz-design/1",
+  "zip_timestamp": "2025-01-01T00:00:00"
+}

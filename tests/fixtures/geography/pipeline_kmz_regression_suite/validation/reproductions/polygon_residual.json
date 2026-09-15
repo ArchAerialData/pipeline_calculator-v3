@@ -1,0 +1,57 @@
+{
+  "cases": [
+    {
+      "bounded_containment_checks": [
+        {
+          "area_bound_degrees2": 1.4615605979306064e-16,
+          "coordinate_tolerance_degrees": 9.094947017729282e-13,
+          "outside_area_degrees2": 0.0,
+          "outside_numerical_strip_area_degrees2": 0.0,
+          "passed": true,
+          "valid": true
+        },
+        {
+          "area_bound_degrees2": 1.963602556043592e-16,
+          "coordinate_tolerance_degrees": 9.094947017729282e-13,
+          "outside_area_degrees2": 0.0,
+          "outside_numerical_strip_area_degrees2": 0.0,
+          "passed": true,
+          "valid": true
+        },
+        {
+          "area_bound_degrees2": 1.5261348353336052e-16,
+          "coordinate_tolerance_degrees": 9.094947017729282e-13,
+          "outside_area_degrees2": 2.381739251443905e-18,
+          "outside_numerical_strip_area_degrees2": 0.0,
+          "passed": true,
+          "valid": true
+        }
+      ],
+      "bounded_containment_passed": true,
+      "classification": "Strict floating-point clipping diagnostic; evaluate acceptance with the local numerical boundary strip.",
+      "file": "validation/reproductions/03_joining_trio_polygon_residual.kmz",
+      "independent_original_meters": 3659.500000000287,
+      "independent_unresolved_meters": 0.0,
+      "motif": "joining_trio",
+      "outside_area_degrees_squared": 2.381739251443905e-18,
+      "outside_area_square_meters_approximate": 2.3688895121540265e-08,
+      "polygon_count": 3,
+      "residual_bounds": [
+        [
+          -103.04168004452636,
+          36.4660018,
+          -103.04167973024248,
+          36.4661694
+        ]
+      ],
+      "sha256": "3626351f25dfaf3496bf8a193748890f0f9b1d98d1de48cd0ef6db497b3bed71",
+      "source_keys": [
+        "03_trio_a",
+        "03_trio_b",
+        "03_trio_c"
+      ],
+      "strict_containment_assertion_passed": false
+    }
+  ],
+  "source_fixture_sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c"
+}

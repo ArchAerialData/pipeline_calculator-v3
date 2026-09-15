@@ -1,0 +1,143 @@
+{
+  "adversarial_tests": {
+    "counts_by_module": {
+      "test_application_contract.py": 14,
+      "test_geometry_reference.py": 14,
+      "test_sampled_contract.py": 26,
+      "test_stress_contract.py": 13,
+      "test_suite_validation.py": 29
+    },
+    "passed": true,
+    "test_count": 96
+  },
+  "application": {
+    "check_count": 9466,
+    "fixtures": [
+      {
+        "check_count": 2435,
+        "defect_id": null,
+        "fixture": "01_three_state_disconnected_networks.kmz",
+        "mismatch_count": 0,
+        "status": "passed",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 1219,
+        "defect_id": "baseline-endpoint-touch-one-ulp-crossing",
+        "fixture": "02_three_state_transverse_crossings.kmz",
+        "mismatch_count": 7,
+        "status": "known_failure",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 1379,
+        "defect_id": null,
+        "fixture": "03_parallel_corridors_crossing_borders.kmz",
+        "mismatch_count": 0,
+        "status": "passed",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 666,
+        "defect_id": "baseline-shared-junction-roundoff-unresolved",
+        "fixture": "04_shared_border_and_near_border.kmz",
+        "mismatch_count": 10,
+        "status": "known_failure",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 2435,
+        "defect_id": null,
+        "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
+        "mismatch_count": 0,
+        "status": "passed",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 666,
+        "defect_id": "baseline-shared-junction-roundoff-unresolved",
+        "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+        "mismatch_count": 10,
+        "status": "known_failure",
+        "unexpected_assertions": []
+      },
+      {
+        "check_count": 666,
+        "defect_id": null,
+        "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
+        "mismatch_count": 0,
+        "status": "passed",
+        "unexpected_assertions": []
+      }
+    ],
+    "fully_passing": false,
+    "known_defect_ids": [
+      "baseline-endpoint-touch-one-ulp-crossing",
+      "baseline-shared-junction-roundoff-unresolved"
+    ],
+    "known_failure_fixture_count": 3,
+    "unexpected_failure_fixture_count": 0
+  },
+  "application_sources_unchanged": true,
+  "artifacts_unchanged": true,
+  "classification_schema_version": 1,
+  "elapsed_seconds": 49.006521800067276,
+  "evidence_sha256": {
+    "application_comparison.json": "e31eed13a19abf7c49dc3e38a9332f7a629bc3cce3870f20095d50bafd1037ec",
+    "reference_report.json": "27a98fd1a2290c3ce52d32586f8d52a7fd94445bd2a10de7520fb39454f96af3"
+  },
+  "implementation_sha256": {
+    "__init__.py": "76c2ca40a0f97c0e8f8488b5ecba74f7c7d47bec51feddec40bd192dbf7b4bfb",
+    "generator/__init__.py": "fcf267a53b0a30eda300e766937249bdd30d41735997ef842aa0a626397237e5",
+    "generator/generate.py": "a922c6891036e41a87bfb99c43d5f5d2153f3270934c96025040f912e804a06c",
+    "reference/__init__.py": "93f3497b7454e1bbcd3654fd7cc7a6ef514b7d358faa3ba2aeaab76161770ee7",
+    "reference/geometry.py": "aea04c6790113c45cf15f09e235518edf1935ae2a29b9fd9a6ea0890b92588a8",
+    "reference/sampled.py": "007970bbedce8381afef14acf0b4a9cba1f52585f51bd38240e170feaf733ee6",
+    "suite.py": "b08bb765b15475a0bf5c5b8a1e1eff369ea55fd658ff451fb35cd903cbc3e843",
+    "validation/__init__.py": "bf7ded9a2f134c6ead4d0695761d16a3eda395b4de1307a62d9ae0e5eda7eb1b",
+    "validation/application_contract.py": "02cc55bfb22ee617ff4e2680858ef49bc87a77f92fe167cede22fb4465f78203",
+    "validation/compare_application.py": "9e6d4e574643a1a1ace67f9abfd823076aea5492114d7b868e8289712d165d05",
+    "validation/coverage_checks.py": "a4e190de9782b5d72374a40cd83b584cbfd60e35133141e540330982802700d9",
+    "validation/known_application_failures.py": "188f70b6f10f58a5eade0ff8cbc3ebd0714e2f5e0230a7bfcf9d83e2b8e85521",
+    "validation/render_reports.py": "f0f7d76c8229d7f0369ab0a97cda18e14dece5e77c4ea25231f316c95e38de66",
+    "validation/reproduce_export_precision.py": "5b0345c9a9ceba663af5301bcee630a8b3e8ec8fdc96066b6b84f0aa58b91db4",
+    "validation/reproduce_polygon_residual.py": "aa4c2e67d9e732add94617f0283123c37b1acb2b85545f5eeccb5dcf8411e16e",
+    "validation/reproductions/reproduce.py": "77aae9c6b1ca6e3b6bf07c11fe132fcff765b85174346dabc63068c95df3f9f0",
+    "validation/run_audit.py": "4e9c813426aee555db7426316de80376fb1e9aaac25a552f8cb1cc3ae521feb2",
+    "validation/run_stress.py": "a8b6ae55c316af48544a91038db44a93bc4c0e7880d1a67d1c3bd5e805d9f494",
+    "validation/test_application_contract.py": "0354aaf04b05e452a5350e1059ca07d086b75ffa1dfef2d836ada59a595f996f",
+    "validation/test_geometry_reference.py": "f0588ef6f93cfe085867e1c95b5af64ab1d63d019dc38309c9936ff498de340a",
+    "validation/test_sampled_contract.py": "1699bc43fd278a1d9ed84406ccc8a80f9fa2823c5eb29d16a56d1746dc90d68e",
+    "validation/test_stress_contract.py": "ba68c86a5d5125e9462287b35359b60defe121742461ce688aa25acd01c25f21",
+    "validation/test_suite_validation.py": "0555ddc37add5010fc6d187ff7ac8f67f8fdbaefdfc5c08b98f29db79a6e0a13"
+  },
+  "known_defect_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+  "meaning": "No unexpected regressions; known application defects are reported separately.",
+  "passed": true,
+  "reference_verification": {
+    "fixture_count": 7,
+    "hand_worked_control_count": 9,
+    "intent_assertion_count": 383,
+    "passed": true,
+    "stress_reference": {
+      "deterministic_archive_checked": true,
+      "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
+      "passed": true,
+      "sample_count": 27120,
+      "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+      "source_count": 96,
+      "status": "reference-verified"
+    }
+  },
+  "schema_version": "1.0.0",
+  "started_at_utc": "2026-09-15T20:36:09.189321+00:00",
+  "status": "complete",
+  "stress_application": {
+    "application_runtime_seconds": 7.089870800031349,
+    "check_count": 1954,
+    "passed": true,
+    "report_sha256": "37baba97bc5e752521a4aa8451698b274b5923c510997996248ccc121a9d31a4",
+    "sample_count": 27120,
+    "source_count": 96
+  }
+}

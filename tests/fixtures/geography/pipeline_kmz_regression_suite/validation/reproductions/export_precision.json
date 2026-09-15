@@ -1,0 +1,125 @@
+{
+  "export_checks": [
+    {
+      "certified": false,
+      "exported_meters": 151.62499999952453,
+      "exported_sources": [
+        {
+          "end_m": "151.62499999953187",
+          "id": "f0",
+          "key": "export-0",
+          "length_meters": "151.62499999953187",
+          "motif": "export",
+          "name": "03 short a",
+          "objectid": "2",
+          "path_index": "0",
+          "paths": [
+            [
+              [
+                -103.04331812028467,
+                36.44499998964761
+              ],
+              [
+                -103.04162690418347,
+                36.445000001627314
+              ]
+            ]
+          ],
+          "placemark_id": "p_03_short_a",
+          "source_id": "0",
+          "source_kml": "doc.kml",
+          "start_m": "0.0",
+          "xml_order": 0
+        }
+      ],
+      "reason": "Root uncertainty overlaps a source endpoint without exact boundary identity; redesign the endpoint",
+      "state": "NM"
+    },
+    {
+      "certified": true,
+      "exported_meters": 151.62499999952453,
+      "exported_sources": [
+        {
+          "end_m": "303.24999999918424",
+          "id": "f1",
+          "key": "export-0",
+          "length_meters": "151.62499999965237",
+          "motif": "export",
+          "name": "03 short a",
+          "objectid": "2",
+          "path_index": "0",
+          "paths": [
+            [
+              [
+                -103.04162690418347,
+                36.445000001627314
+              ],
+              [
+                -103.03993568808228,
+                36.44499998964761
+              ]
+            ]
+          ],
+          "placemark_id": "p_03_short_a",
+          "source_id": "0",
+          "source_kml": "doc.kml",
+          "start_m": "151.62499999953187",
+          "xml_order": 0
+        }
+      ],
+      "intervals": [
+        {
+          "coordinates": [
+            [
+              -103.04162690418347,
+              36.445000001627314
+            ],
+            [
+              -103.03993568808228,
+              36.44499998964761
+            ]
+          ],
+          "cut_error_bound_meters": 0.0,
+          "end_error_bound_meters": 0.0,
+          "end_m": 151.62499999952453,
+          "id": "export-0:p0:i0",
+          "key": "export-0",
+          "kind": "interior",
+          "length_meters": 151.62499999952453,
+          "path_index": 0,
+          "source_key": "export-0",
+          "start_error_bound_meters": 0.0,
+          "start_m": 0.0,
+          "state_codes": [
+            "TX"
+          ]
+        }
+      ],
+      "state": "TX"
+    }
+  ],
+  "independent_input_crossings": [
+    {
+      "angle_degrees": 89.9756672580779,
+      "chainage_meters": 151.62499992898626,
+      "coordinate": [
+        -103.04162690418426,
+        36.445000001627314
+      ],
+      "cut_error_bound_meters": 2.070605878477181e-06,
+      "from_states": [
+        "NM"
+      ],
+      "path_index": 0,
+      "source_key": "03_short_a",
+      "to_states": [
+        "TX"
+      ],
+      "via_shared_interval": false
+    }
+  ],
+  "independent_input_original_meters": 303.24999999918424,
+  "input": "validation/reproductions/03_export_endpoint_precision.kmz",
+  "interpretation": "Historical strict-certificate diagnostic, not the export acceptance test. A failed strict ownership certificate is inconclusive about nanometer-scale incursion. The audited comparator instead checks each exported line against independently owned original source spans, the 1 cm cut target, 10 micrometer source-geodesic membership, and separate mileage conservation.",
+  "sha256": "85ea1d4ae5024ccdc60294a7723efdfa8319f41109a4b88d192f1a706bcd3142"
+}
