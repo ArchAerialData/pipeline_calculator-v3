@@ -1,13 +1,22 @@
 # State boundary analysis: audit and resolution plan
 
-Status: **audit complete; fixes deferred**. No application code or automated test
-files were changed for this audit. The fixtures and this plan can be reviewed while
-the separate **Fix DMG UI contrast and Summary** task finishes its work.
+Status, September 15, 2026: **SB-01 through SB-05 and fixture regressions implemented;
+437 tests pass. RV-01's deadline mismatch is resolved; its historical native crash,
+strict performance evidence and native macOS verification remain open.** Current outcomes are recorded in
+[the resolution validation report](docs/validation/state-boundary-resolution.md).
+The findings and readiness evidence below describe the pre-fix baseline.
 
-Audited baseline: `a8640fd783e938cf7ea243196dc97bd82f608091` (`State Aware Planning`).
-Inspection and probes used an isolated export of that commit, not the GUI files
-being edited in the shared working tree. Findings must be checked again against
-the other task's final changes before implementation.
+Current implementation baseline: `6bc6e5f7aa083604edbaa25f177f671f58ea15d6`
+(`UI Fixes 2`). The worktree was clean at the start of the readiness review and the
+other task's changes were committed. Fresh probes of that commit confirmed all five
+original findings. At that point the geometry, parser and core export files were
+unchanged from audit baseline `a8640fd783e938cf7ea243196dc97bd82f608091`.
+
+The earlier audit used an isolated copy while GUI work was in progress. Its evidence
+remains below; the new readiness results and integration constraints supersede its
+concurrency hold. No additional product decision or missing fixture blocks starting
+the documented fixes. RV-01 and native macOS checks block a clean integrated completion
+claim, not independent work on the geometry/export core.
 
 ## 1. Findings at a glance
 
@@ -19,6 +28,7 @@ the other task's final changes before implementation.
 | SB-04 | P2 | State corridor clipping omits valid fallback shapes; unusable Combined corridors can be omitted without a diagnostic. | Missing visualizations and inconsistent explanations between scopes. |
 | SB-05 | P2 | The public float progress callback reaches 100% before geography starts and emits no geography updates. | API callers see premature completion; desktop context-based progress is unaffected. |
 | FX-01 | Resolved | The initial archive contains polygons; the subsequently supplied Centerlines KMZ contains valid line geometry. | Both negative and positive regression fixtures are now available. |
+| RV-01 | Validation blocker | The current 100-cycle scope-replacement test crashed on the first run and timed out on an isolated repeat. Root cause is not established. | Diagnose the native failure before claiming integrated UI/release readiness. |
 
 Resolve SB-01 through SB-03 before declaring the shared-border and antimeridian
 acceptance scenarios complete. Mileage conservation passed
@@ -83,7 +93,7 @@ This fixture's state overlap savings were zero at default settings. Treat that v
 as characterization rather than an independent overlap oracle. These successful checks
 do not resolve SB-01 through SB-05, which concern other inputs or API paths.
 
-Proposed fixture tests, after the concurrent work finishes:
+Proposed automated fixture tests (the fixtures and expectations are ready):
 
 1. Verify the archive checksum and independently count XML geometry types.
 2. Assert polygon outlines contribute no pipeline count or mileage with the toggle
@@ -263,37 +273,97 @@ Additional integration coverage to add:
 - Exercise persisted options through Browse, drag/drop, retry and Apply/Cancel
   reanalysis in both entrypoints. Existing tests cover components, but not every
   complete route.
-- Re-run native UI tests after the concurrent UI task settles, including small
+- Re-run native UI tests after RV-01 is resolved, including small
   windows, high DPI, keyboard state selection, unsupported polygon-only input,
   shared allocations and unavailable adjusted mileage.
 
-## 6. Execution order and conflict controls
+### RV-01 — current native scope-switching validation fails
 
-1. **Wait for the other task to finish.** Inspect its status and final changes, then
-   record the exact new baseline. Preserve its uncommitted work; a clean tree must
-   not be obtained by discarding changes. Do not restore these older snapshot files
-   over the current checkout.
-2. **Reproduce against the final baseline.** Re-run the minimal cases below and
-   mark any findings already resolved by the other task. Compare its final changes
-   with the proposed file ownership before edits begin. Use a separate worktree from
-   the agreed integrated baseline if parallel work resumes.
+Current test: [test_ui_lifecycle.py](tests/test_ui_lifecycle.py),
+`test_scope_replacement_releases_views_and_recovers_from_failure` near line 192.
+It checks a failed-render recovery followed by 100 Combined/Texas scope replacements,
+retired-view cleanup, bindings/styles and event-loop responsiveness.
+
+On the current clean commit:
+
+- A selected UI run had **15 passes and one failure**. This test's child process
+  exited with Windows access violation `3221225477` (`0xC0000005`). The diagnostic
+  trace was in Tk canvas coordinates / CustomTkinter rendering.
+- A repeat of that test alone, with the fixture analysis already finished, also
+  failed: its native child exceeded the existing **45-second timeout**. The 20-second
+  diagnostic trace was in Tk canvas text creation and CTk frame/scrollbar drawing,
+  including `update_idletasks`, while the scope-replacement loop called `root.update()`.
+- These are observed failures of the native validation path. They do not establish
+  which application, dependency, test-harness or environment behavior caused them.
+  The two failure forms should both be retained during investigation.
+
+**Investigation/resolution plan:** minimize the sequence while recording completed
+scope cycles, per-cycle duration, Configure/idle callback activity, widget lifetimes,
+resource counts and the exact Tk/CustomTkinter environment. Compare the isolated test
+with an equivalent bounded normal-event-loop probe. Preserve the new transactional
+replacement and callback-ownership contracts. Fix any identified reentrant redraw,
+lifetime or harness defect at its source; a timeout increase or skipped test alone
+does not explain the observed access violation. Do not infer a specific cause from
+the stack trace without a reproduction that distinguishes it.
+
+Acceptance: repeated isolated runs of the unchanged 100-cycle correctness scenario,
+the neighboring lifecycle tests, and the full suite must complete with no native crash,
+hang, callback error or retained retired view. Then run both packaged GUI modes with
+the existing stderr/callback-error checks. Keep strict performance measurements
+separate from the correctness run, as specified by the UI task's validation report.
+
+## 6. Execution order and integration controls
+
+1. **Completed — handoff and baseline verification.** The other task is finished,
+   its changes are committed at `6bc6e5f`, and the worktree started clean. Do not
+   restore older snapshot files over the committed UI improvements. Check for newer
+   edits again when implementation starts; a new task could change this condition.
+2. **Completed — original failure recheck.** SB-01 through SB-05 still reproduce
+   against current imports, and both fixture checks pass. Add RV-01 investigation
+   to the work plan now. It can run independently of the core fixes with distinct
+   file ownership. Use a separate worktree from the agreed baseline if parallel
+   work resumes.
 3. **Fix shared-border correctness (SB-01/02)** in the geometry core with focused
    tests. Treat these as one owned work unit so projection and station policies remain
    consistent. Require equal allocation and direction invariance, not conservation
    alone.
 4. **Unify corridor handling (SB-03/04)** across core/export with a small shared
-   geometry utility, avoiding a core-to-export dependency. Coordinate this unit with
-   any finished corridor-dialog or export-action edits. Add end-to-end package tests.
+   geometry utility, avoiding a core-to-export dependency. Preserve the committed
+   corridor-dialog and background-export behavior described below. Add end-to-end package tests.
 5. **Fix callback aggregation (SB-05)** and commit the cancellation/retry tests.
 6. **Add fixture regressions.** Both the polygon-only negative regression and the real
    positive disconnected-centerline regression can proceed after the integration gate.
    Use the saved independent expectations, preserving synthetic cases for shared
    borders and qualifying overlaps that the real fixture does not exercise.
-7. **Integrate and verify.** Run targeted tests after each unit, then the full suite
+7. **Integrate and verify, including RV-01.** Run targeted tests after each unit, then the full suite
    once the integrated changes settle. Inspect a real sample export, shared-border
    exports, antimeridian maps, and the affected UI states. Build and run offline frozen
    smoke checks in both GUI modes on Windows and macOS; native macOS verification
-   remains an outstanding release gate from the original delivery.
+   remains an outstanding release gate from the original delivery. Neither the
+   earlier passing Windows report nor this recheck establishes macOS behavior.
+
+### Contracts inherited from the completed UI task
+
+These are integration requirements, not requests for another GUI redesign:
+
+| Surface | Preserve during the fixes |
+| --- | --- |
+| [Results scope selection](src/pipeline_calculator/gui/pages/results_page.py) | Prepare a replacement before removing the previous valid view; keep Retry display and selector/view agreement after failure. Same-scope selection remains a no-op. Keep the complete analysis snapshot available for export. |
+| [Background actions](src/pipeline_calculator/gui/background_action.py) and [export actions](src/pipeline_calculator/gui/actions/export_actions.py) | Ordinary export stays off the Tk thread. Package export retains its existing worker, captured options, retry handling and atomic publication. Workers return plain data and never address destroyed widgets. Put visualization preflight in the pure package/geometry layer. |
+| [Tables](src/pipeline_calculator/gui/table_loading.py) | Preserve bounded row batches, pause/resume while hidden, callback cancellation on destruction, and full-precision sorting. New state/diagnostic rows must not restore synchronous bulk insertion. UI assertions must wait for loading completion instead of assuming every row exists immediately. |
+| [Parameter dialog](src/pipeline_calculator/gui/dialogs/params_dialog.py) | Commit preference drafts only on Apply, preserve Cancel behavior, and keep parameter-transition errors visible. |
+| [Bindings](src/pipeline_calculator/gui/bindings.py), [scrolling](src/pipeline_calculator/gui/scrolling.py), [styles](src/pipeline_calculator/gui/styles.py) and [disclosures](src/pipeline_calculator/gui/disclosure.py) | Keep owned subscriptions, deferred/cancelled redraw work, size-keyed shared styles, keyboard behavior and lazy details. Preserve per-popup styling without changing other windows. |
+| [Dependencies](requirements.txt) and [packaged checks](scripts/validation/check_packaged_smoke.py) | Keep the tested CustomTkinter 5.2.2 pin unless a separately justified dependency change is needed. Preserve repeated Summary/disclosure smoke cycles and rejection of Tcl callback-error stderr. |
+
+SB-01/02 should primarily own `core/geography/partition.py` and focused geometry tests.
+SB-03/04 should primarily own shared polygon normalization, `core/geography/corridors.py`,
+the pure export modules and their tests. SB-05 should own analyzer/execution progress
+and its tests. Keep RV-01's UI/test-harness investigation separately owned. Changes to
+shared files such as `state_analysis.py` or `execution.py` must be integrated serially.
+
+Build a separate export diagnostic snapshot before workbook/JSON/map generation if
+preflight adds warnings; do not mutate the displayed analysis from a worker. The two
+export worker paths need no consolidation to fix SB-03/04.
 
 No automatic implementation, cross-task messages, remote pushes or release actions
 were scheduled by this audit. This document defines the deferred work, not approval
@@ -335,6 +405,53 @@ insufficient for the additional acceptance scenarios above.
 The original polygon archive cannot establish pipeline-mileage correctness. The new
 centerline archive verifies positive disconnected-state attribution and mileage, but
 does not exercise shared borders or qualifying state overlaps. Its upstream centerline
-generation method was not audited. Native macOS operation and the other task's unfinished
-GUI changes were not validated by this audit. The existing boundary provenance and
+generation method was not audited. Native macOS operation was not validated. The
+other task's now-committed GUI changes received the readiness checks below. The existing boundary provenance and
 source-accuracy limitations still apply; this plan makes no new surveyed-accuracy claim.
+
+## 8. September 15 readiness evidence
+
+[Readiness summary](docs/validation/state-boundary-readiness.json) records the exact
+commit, fresh outcomes, environment and artifact references. Local detailed evidence
+is under `.validation-output/state-boundary-readiness-6bc6e5f/`.
+
+| Check | Current result |
+| --- | --- |
+| Conflict/integration baseline | Clean initial worktree; finished work committed at `6bc6e5f`; geometry, parser and core export unchanged since the audit. |
+| Original findings | All five reproduced against current repository imports. Keep their fixes in the plan. |
+| Geometry tests | 20 passed. |
+| Headless export tests | 10 passed; one native test intentionally deselected. |
+| Scoped UI/state integration | 15 passed, one native stress failure; isolated repeat of the failed test also failed. See RV-01. |
+| Polygon fixture | Hash and tracked-file checks passed; zero pipeline mileage and incomplete status verified with State breakdown OFF and ON. |
+| Centerline fixture | All 281 per-source expectations / 4,827 paths matched; full analysis complete, zero crossings/unassigned mileage, totals reconciled, all four KMZ mileage round trips passed. |
+| Earlier UI validation | Retained report records 366 passes and both Windows packaged modes passing. All 26 recorded source hashes match this commit. These historical passes do not override the fresh RV-01 failures. |
+| Native macOS | Still unverified; completion/release gate, not a prerequisite to starting the independent core fixes. |
+
+The real fixtures and expectation manifests are now committed, but no automated
+pytest test currently consumes them. Adding those regressions remains implementation
+work, not a missing-input blocker. No full-suite or package rebuild was repeated in
+this readiness review after the native failures; diagnose them before broad validation.
+
+Readiness verdict: **the concurrency hold is removed and the technical fix plan is
+actionable without further product decisions. Add RV-01 to implementation and require
+it to pass before an unqualified integrated completion claim.**
+
+## 9. Implementation outcome
+
+SB-01 through SB-05 are implemented, with the real polygon-only and disconnected
+centerline fixtures now protected by automated regression tests. The full suite passes
+437 tests; both freshly packaged Windows GUI modes pass offline smoke checks. Four
+sample export packages were inspected, including nine successful map mileage round
+trips. Code and evidence remain uncommitted for review.
+
+RV-01's confirmed whole-test deadline mismatch is resolved in the test harness.
+Repeated 100-cycle acceptance runs and the full suite pass with every original
+ownership/liveness assertion retained. The historical intermittent Windows access
+violation remains unexplained; no production crash fix is claimed. Strict reference
+performance and native macOS operation remain outstanding release evidence.
+
+The [validation report](docs/validation/state-boundary-resolution.md) and
+[machine-readable evidence](docs/validation/state-boundary-resolution.json) record
+the exact results, source/artifact hashes, sample outputs, remaining limits and next
+verification steps. The pre-fix findings and readiness sections above are retained
+as the audit history.

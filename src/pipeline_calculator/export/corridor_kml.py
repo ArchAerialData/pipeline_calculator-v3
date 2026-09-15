@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from xml.sax.saxutils import escape as _xml_escape
+from xml.etree import ElementTree as ET
 from pipeline_calculator.export.geometry_validation import prepare_geometry
+from pipeline_calculator.core.corridor_geometry import normalize_polygons, prepare_corridor
 
 
 def build_overlap_corridor_kml(section, index):
@@ -11,12 +13,12 @@ def build_overlap_corridor_kml(section, index):
     and reused by both the legacy monolith and the refactored package modules.
     """
     if "clipped_polygons" in section:
-        from xml.etree import ElementTree as ET
         from pipeline_calculator.export.geography_kmz import append_corridor, document
-        if not section["clipped_polygons"]:
+        prepared = prepare_corridor(section, require_clipped=True)
+        if prepared['visualization_status'] == 'omitted':
             raise ValueError("No usable clipped corridor geometry is available")
         root, doc = document("State overlap corridor", "Approximate overlap geometry clipped to the selected state.")
-        append_corridor(doc, section, index, require_clipped=True)
+        append_corridor(doc, prepared, index, require_clipped=True)
         return ET.tostring(root, encoding="unicode", xml_declaration=True)
 
     coords_list, center, geometry_kind, approximation = prepare_geometry(section)
@@ -27,9 +29,10 @@ def build_overlap_corridor_kml(section, index):
         f"{section['average_separation']:.1f} m)"
     )
 
-    coords_str = "\n              ".join(
-        f"{lon:.7f},{lat:.7f},0" for lon, lat in coords_list
-    )
+    from pipeline_calculator.export.geography_kmz import append_polygons
+    geometry = ET.Element('geometry')
+    append_polygons(geometry, normalize_polygons([{'outer': coords_list, 'holes': []}]), precision=7)
+    polygons_xml = ''.join(ET.tostring(child, encoding='unicode') for child in geometry)
 
     width_text = ''
     try:
@@ -60,15 +63,7 @@ def build_overlap_corridor_kml(section, index):
       <name>{label_xml}</name>
       <description>{desc_xml}</description>
       <styleUrl>#surveyCorridorStyle</styleUrl>
-      <Polygon>
-        <outerBoundaryIs>
-          <LinearRing>
-            <coordinates>
-              {coords_str}
-            </coordinates>
-          </LinearRing>
-        </outerBoundaryIs>
-      </Polygon>
+      {polygons_xml}
     </Placemark>
     <Placemark>
       <name>Center: {label_xml}</name>

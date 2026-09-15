@@ -1,6 +1,8 @@
 from __future__ import annotations
 
-from pipeline_calculator.core.execution import AnalysisCancelled, ScopedExecutionContext
+from pipeline_calculator.core.execution import (
+    AnalysisCancelled, CallbackExecutionContext, ExecutionContext, ScopedExecutionContext,
+)
 from pipeline_calculator.core.options import AnalysisOptions
 
 import math
@@ -169,6 +171,14 @@ class PipelineAnalyzer:
         options = options or AnalysisOptions()
         if not isinstance(options, AnalysisOptions):
             raise TypeError('options must be AnalysisOptions')
+        callback_context = None
+        if options.state_breakdown and progress_callback is not None:
+            callback_context = CallbackExecutionContext(
+                context if context is not None else ExecutionContext(), progress_callback)
+            context = callback_context
+            # Every stage now reports through the job context. An individual
+            # overlap pass must not publish its local 100% to the public API.
+            progress_callback = None
         try:
             parse_context = (ScopedExecutionContext(context, 0, .03)
                              if context is not None and options.state_breakdown else context)
@@ -188,6 +198,14 @@ class PipelineAnalyzer:
                 from pipeline_calculator.core.state_analysis import build_state_breakdown
                 combined['geography'] = build_state_breakdown(
                     self, parsed.pipelines, combined, context=context)
+                from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+                # Prepare Combined visuals after state analysis so their optional
+                # display diagnostics are not inherited as state input errors.
+                combined = prepare_scope_visualizations(combined, context=context)
+            if callback_context is not None:
+                # Optional geography failures still yield a finished, explicitly
+                # incomplete result. Cancellation raises before completion.
+                callback_context.report('Complete', 1, 1, fraction=1.0)
             return combined
         except AnalysisCancelled:
             raise

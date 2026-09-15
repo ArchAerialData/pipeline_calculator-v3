@@ -53,12 +53,19 @@ whole-path state containment after geodesic densification to at most 100 m spaci
 That containment check supports this fixture's state assignments; it does not certify
 sub-centimeter boundary accuracy or the upstream method used to create centerlines.
 
-Add regressions for parsing, unique internal identities despite repeated XML IDs,
-disconnected multipart paths, state source counts, zero crossings, per-source and
-total conservation, and export/reimport mileage. Retain synthetic cross-border and
-shared-border cases because this fixture does not exercise those workflows.
+The automated tests in [test_geography_fixtures.py](../../test_geography_fixtures.py)
+verify archive checksums and direct XML geometry counts, both modes for polygon-only
+input, unique internal identities despite repeated XML IDs, every original coordinate
+path, independently expected source lengths and state membership, zero crossings,
+per-source and total conservation, and all four KMZ mileage round trips. The full
+analysis runs once in that test module using default overlap parameters. Synthetic
+cross-border and shared-border tests remain necessary because this fixture does not
+exercise those workflows.
 
-No production code or automated test files were changed during this audit because
-another task was editing the shared workspace. Implement the proposed tests with the
-[resolution plan](../../../STATE_BOUNDARY_ANALYSIS_RESOLUTION_PLAN.md) after that work
-has finished and its final state has been reconciled.
+The initial audit preserved the other task's in-progress work. The September 15
+readiness review revalidated both fixtures against committed baseline `6bc6e5f`.
+The later implementation follows the
+[resolution plan](../../../STATE_BOUNDARY_ANALYSIS_RESOLUTION_PLAN.md), including its
+UI integration requirements. The original fixture/readiness reviews made no production
+or test-code changes; regression implementation is recorded separately in the
+[resolution validation report](../../../docs/validation/state-boundary-resolution.md).

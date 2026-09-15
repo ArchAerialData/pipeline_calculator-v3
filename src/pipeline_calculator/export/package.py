@@ -11,6 +11,16 @@ import tempfile
 
 from pipeline_calculator.export.geography_kmz import write_geography_kmz
 from pipeline_calculator.export.xlsx import build_analysis_workbook
+from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+
+
+def prepare_export_snapshot(results):
+    """Preflight requested map visuals before writing reports, without UI mutation."""
+    snapshot = prepare_scope_visualizations(results)
+    geography = snapshot['geography'] = dict(results['geography'])
+    geography['states'] = [prepare_scope_visualizations(state, state_code=state['state_code'])
+                           for state in geography.get('states', [])]
+    return snapshot
 
 
 def _filename(value):
@@ -52,6 +62,8 @@ def export_analysis_package(results, output_parent, current_file=None, *, includ
     staging = None
     try:
         staging = Path(tempfile.mkdtemp(prefix=f".{name}-", dir=parent))
+        if include_maps:
+            results = prepare_export_snapshot(results)
         build_analysis_workbook(results).save(staging / "analysis.xlsx")
         if include_json:
             with (staging / "analysis.json").open("w", encoding="utf-8") as stream:

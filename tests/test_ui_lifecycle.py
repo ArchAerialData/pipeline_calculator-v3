@@ -187,7 +187,11 @@ def test_summary_repeated_returns_remain_visible_and_fast():
         root.destroy()
 
 
-@pytest.mark.native_gui
+# This deliberately reconstructs 100 complete result views. Measured healthy
+# runs exceed 45 seconds: the ordinary process limit is not a
+# per-operation responsiveness budget. Keep the heartbeat budget and every
+# ownership assertion; retain a diagnostic dump just before the hard deadline.
+@pytest.mark.native_gui(timeout=120, traceback_timeout=110)
 def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch):
     from tkinter import ttk
     from test_state_breakdown_ui import descendants
@@ -226,11 +230,18 @@ def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch)
             beats.append(time.perf_counter())
             root.after(10, heartbeat)
         heartbeat()
+        replacements_started = time.perf_counter()
         for index in range(100):
             refs.append(weakref.ref(next(w for w in descendants(root) if isinstance(w, SummaryView))))
             started = time.perf_counter()
             choose('Texas' if index % 2 == 0 else 'Combined')
             times.append(time.perf_counter() - started)
+            if (index + 1) % 10 == 0:
+                print(json.dumps({'scope_replacement_progress': {
+                    'completed_cycles': index + 1,
+                    'elapsed_seconds': time.perf_counter() - replacements_started,
+                    'max_replacement_seconds': max(times),
+                }}), flush=True)
         settle(root, .5)
         gc.collect()
         assert not any(ref() is not None for ref in refs)
@@ -241,6 +252,7 @@ def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch)
         assert len(root._pipeline_table_styles) <= 4
         gap = max(b-a for a, b in zip(beats, beats[1:]))
         report(root, 'scope_replacement', {'cycles': 100, 'retained_retired_views': 0,
+                                         'elapsed_seconds': time.perf_counter() - replacements_started,
                                          'max_ms': max(times) * 1000, 'style_variants': len(root._pipeline_table_styles),
                                          'callback_errors': errors, 'heartbeat_max_gap_ms': gap*1000})
         ui_budget(gap, .25)

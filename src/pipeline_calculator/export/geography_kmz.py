@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
 
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
-from pipeline_calculator.export.geometry_validation import prepare_geometry
+from pipeline_calculator.core.corridor_geometry import GEOD, prepare_corridor, prepare_scope_visualizations
 
 KML_NS = "http://www.opengis.net/kml/2.2"
 ET.register_namespace("", KML_NS)
@@ -37,7 +37,7 @@ def document(name, description):
     return root, doc
 
 
-def _coordinates(points, *, ring=False):
+def _coordinates(points, *, ring=False, precision=None):
     cleaned = []
     for point in points:
         lon, lat = map(float, point[:2])
@@ -50,10 +50,13 @@ def _coordinates(points, *, ring=False):
     if len(cleaned) < (4 if ring else 2):
         raise ValueError("Map geometry has too few distinct coordinates")
     # Preserve sub-centimeter crossings rather than rounding to display precision.
-    return " ".join(f"{lon:.15g},{lat:.15g},0" for lon, lat in cleaned)
+    if precision is not None:
+        return ' '.join(f'{lon:.{precision}f},{lat:.{precision}f},0' for lon, lat in cleaned)
+    # repr preserves every input float, including a certified state boundary edge.
+    return " ".join(f"{lon!r},{lat!r},0" for lon, lat in cleaned)
 
 
-def append_polygons(parent, polygons):
+def append_polygons(parent, polygons, *, precision=None):
     """Serialize verified clipped polygons, preserving multipart components and holes."""
     from shapely.geometry import Polygon
 
@@ -66,29 +69,25 @@ def append_polygons(parent, polygons):
             raise ValueError("Clipped corridor polygon is invalid")
         shape = element(container, "Polygon")
         ring = element(element(shape, "outerBoundaryIs"), "LinearRing")
-        element(ring, "coordinates", _coordinates(outer, ring=True))
+        element(ring, "coordinates", _coordinates(outer, ring=True, precision=precision))
         for hole in holes:
             ring = element(element(shape, "innerBoundaryIs"), "LinearRing")
-            element(ring, "coordinates", _coordinates(hole, ring=True))
+            element(ring, "coordinates", _coordinates(hole, ring=True, precision=precision))
 
 
 def corridor_polygons(section, *, require_clipped=False):
-    if "clipped_polygons" in section:
-        # Presence is authoritative: empty means omitted, never an unsafe fallback.
-        return section["clipped_polygons"]
-    if require_clipped:
-        raise ValueError("State corridor lacks boundary-clipped geometry")
-    ring, _, _, _ = prepare_geometry(section)
-    return [{"outer": ring, "holes": []}]
+    return prepare_corridor(section, require_clipped=require_clipped)['visualization_polygons']
 
 
 def append_corridor(parent, section, index, *, require_clipped=False):
-    polygons = corridor_polygons(section, require_clipped=require_clipped)
+    prepared = prepare_corridor(section, require_clipped=require_clipped)
+    polygons = prepared['visualization_polygons']
     if not polygons:
         return
     placemark = element(parent, "Placemark")
     element(placemark, "name", f"Corridor {index}: {section.get('pipeline_1', '')} + {section.get('pipeline_2', '')}")
-    element(placemark, "description", "Approximate overlap area; polygon geometry is not included in line mileage.")
+    element(placemark, "description", "Approximate overlap area; polygon geometry is not included in line mileage. "
+            + prepared.get('visualization_approximation', ''))
     element(placemark, "styleUrl", "#corridor")
     source_ids = {key: section[key] for key in ("pipeline_1_id", "pipeline_2_id") if key in section}
     if source_ids:
@@ -110,9 +109,50 @@ def _append_fragment(parent, fragment):
     metadata = element(placemark, "ExtendedData")
     for key in ("id", "source_id", "placemark_id", "objectid", "source_kml", "path_index", "start_m", "end_m", "length_meters"):
         element(element(metadata, "Data", name=key), "value", fragment.get(key, ""))
-    line = element(placemark, "LineString")
-    element(line, "tessellate", "1")
-    element(line, "coordinates", _coordinates(fragment["coordinates"]))
+    paths = _map_line_paths(fragment['coordinates'])
+    container = element(placemark, 'MultiGeometry') if len(paths) > 1 else placemark
+    for path in paths:
+        line = element(container, "LineString")
+        element(line, "tessellate", "1")
+        element(line, "coordinates", _coordinates(path))
+
+
+def _map_line_paths(coordinates):
+    """Split dateline map edges on their original GRS80 geodesic, without bridges."""
+    paths = [[coordinates[0]]]
+    for b in coordinates[1:]:
+        a = paths[-1][-1]
+        if abs(a[0]-b[0]) <= 180:
+            paths[-1].append(b)
+            continue
+        # Equal +/-180 endpoints denote the same meridian; keep one longitude zone.
+        if abs(a[0]) == 180:
+            if len(paths[-1]) == 1:
+                paths[-1][0] = [-a[0], a[1]]
+            else:
+                paths.append([[-a[0], a[1]]])
+            paths[-1].append(b)
+            continue
+        if abs(b[0]) == 180:
+            paths[-1].append([-b[0], b[1]])
+            continue
+        bearing, _, length = GEOD.inv(*a, *b)
+        target = 180.0 if a[0] > 0 else -180.0
+        lower, upper = 0.0, length
+        # Longitude is monotone along this non-polar geodesic in its unwrapped zone.
+        for _ in range(60):
+            station = (lower+upper)/2
+            lon, lat, _ = GEOD.fwd(*a, bearing, station)
+            unwrapped = a[0] + (lon-a[0]+180) % 360 - 180
+            if (unwrapped < target) == (target > 0):
+                lower = station
+            else:
+                upper = station
+            if upper-lower <= 1e-7:
+                break
+        paths[-1].append([target, lat])
+        paths.append([[-target, lat], b])
+    return [path for path in paths if len(path) >= 2]
 
 
 def build_geography_kml(results, state_code=None):
@@ -137,7 +177,7 @@ def build_geography_kml(results, state_code=None):
         element(interiors, "name", "State Interiors")
         for fragment in fragments:
             _append_fragment(interiors, fragment)
-        sections = (state.get("overlap_analysis") or {}).get("bundled_sections", [])
+        scope = prepare_scope_visualizations(state, state_code=state_code)
     else:
         root, doc = document("Combined pipeline analysis", (
             "Original source line geometry is partitioned without duplicate overlays. Shared-border "
@@ -161,20 +201,20 @@ def build_geography_kml(results, state_code=None):
                     element(state_folders[code], "name", states.get(code, {}).get("state_name", code))
                 parent = state_folders[code]
             _append_fragment(parent, fragment)
-        sections = (results.get("overlap_analysis") or {}).get("bundled_sections", [])
-    if sections:
+        scope = prepare_scope_visualizations(results)
+    sections = (scope.get('overlap_analysis') or {}).get('bundled_sections', [])
+    omitted = sum(section.get('visualization_status') == 'omitted' for section in sections)
+    if omitted:
+        description = doc.find(_tag('description'))
+        description.text += f' {omitted} corridor visualization(s) omitted; see report diagnostics.'
+    if any(section['visualization_status'] == 'ready' for section in sections):
         corridors = element(doc, "Folder")
         element(corridors, "name", "Overlap Areas")
         for index, section in enumerate(sections, start=1):
-            # Invalid visualizations are omitted and disclosed by analysis diagnostics.
-            # Unexpected exporter errors abort the package rather than publish bad maps.
-            if "clipped_polygons" in section and not section["clipped_polygons"]:
+            # All expected geometry failures have a structured preflight decision.
+            # Unexpected exporter/file errors still abort the atomic package.
+            if section['visualization_status'] == 'omitted':
                 continue
-            if state_code is None:
-                try:
-                    corridor_polygons(section)
-                except (ValueError, TypeError, KeyError):
-                    continue
             append_corridor(corridors, section, index, require_clipped=state_code is not None)
     return ET.tostring(root, encoding="unicode", xml_declaration=True)
 

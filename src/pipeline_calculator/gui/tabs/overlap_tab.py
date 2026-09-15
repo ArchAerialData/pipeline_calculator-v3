@@ -8,6 +8,7 @@ from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
 from pipeline_calculator.gui.tabs.summary_tab import number
 from pipeline_calculator.gui.styles import corridor_button_style
+from pipeline_calculator.gui.actions.corridor_launch import corridor_is_omitted
 
 
 class CorridorTable(ctk.CTkFrame):
@@ -67,7 +68,7 @@ class CorridorTable(ctk.CTkFrame):
     def _open(self, item):
         if item in self.item_map:
             section, index = self.item_map[item]
-            if section.get('clipped_polygons') != []:
+            if not corridor_is_omitted(section):
                 self.on_open_corridor(section, index)
 
     def _double_click(self, event):
@@ -96,7 +97,7 @@ class CorridorTable(ctk.CTkFrame):
                 number(section.get('bundled_length_miles', 0)),
                 f"{section.get('average_separation', 0):.1f}", ''))
             self.item_map[item] = (section, index)
-            omitted = section.get('clipped_polygons') == []
+            omitted = corridor_is_omitted(section)
             button = ttk.Button(self.tree, text='Map unavailable' if omitted else 'View Corridor', style=self.button_style,
                                 command=lambda item=item: self._open(item), takefocus=True)
             if omitted:

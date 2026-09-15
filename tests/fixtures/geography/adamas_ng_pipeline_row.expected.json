@@ -38,5 +38,5 @@
     }
   },
   "audit_baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
-  "positive_line_assignment_test": "Companion adamas_ng_pipeline_row_centerlines.kmz supplied and validated; automated regression implementation deferred until concurrent UI task finishes."
+  "positive_line_assignment_test": "Companion adamas_ng_pipeline_row_centerlines.kmz supplied and independently validated; automated regressions are in tests/test_geography_fixtures.py."
 }

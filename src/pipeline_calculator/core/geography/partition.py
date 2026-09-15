@@ -11,7 +11,6 @@ from __future__ import annotations
 import math
 from collections import defaultdict
 
-from pyproj import CRS, Transformer
 from scipy.optimize import brentq, minimize_scalar
 from shapely.geometry import LineString, box
 
@@ -26,18 +25,75 @@ COINCIDENCE_ROUNDOFF_METERS = 1e-8
 ROOT_DISTANCE_METERS = 1e-6
 
 
+class _NumericalClippingError(ValueError):
+    """An operation could not establish ownership within its numerical bound."""
+
+
 def _checkpoint(context):
     if context is not None:
         context.check()
 
 
+class _GeodesicProjection:
+    """Ellipsoidal AEQD from inverse geodesic distance and azimuth.
+
+    The definition x=d*sin(azimuth), y=d*cos(azimuth) uses the actual source
+    origin and the analyzer's ellipsoid. It avoids CRS parameter serialization
+    and the general AEQD transform's near-origin zero-distance shortcut, which
+    can erase real submillimeter crossings.
+    """
+
+    def __init__(self, lon, lat, geod):
+        self.origin = (lon, lat)
+        self.geod = geod
+
+    def transform(self, lon, lat):
+        azimuth, _, distance = self.geod.inv(*self.origin, lon, lat)
+        angle = math.radians(azimuth)
+        return distance*math.sin(angle), distance*math.cos(angle)
+
+
 def _local_projection(lon, lat, geod):
-    crs = CRS.from_proj4(f"+proj=aeqd +lon_0={lon:.15g} +lat_0={lat:.15g} +a={geod.a:.15g} +b={geod.b:.15g} +units=m +no_defs")
-    return Transformer.from_crs("EPSG:4326", crs, always_xy=True)
+    return _GeodesicProjection(lon, lat, geod)
 
 
 def _longitude_near(lon, center):
     return lon + 360 * round((center-lon) / 360)
+
+
+def _shared_stations(start, finish, a, b, length, geod):
+    """Prove coincidence and retain exact endpoint identities, without snapping.
+
+    Boundary edges are coordinate-linear and source edges are geodesics. Their
+    positive-length common arcs are meridians or the equator. A merely close
+    projected chord is insufficient proof, especially for very short edges.
+    Geographic endpoints define the overlap; projection roundoff cannot create
+    another event immediately before an already known source endpoint.
+    """
+    finish = (_longitude_near(finish[0], start[0]), finish[1])
+    if start[0] == finish[0] == a[0] == b[0]:
+        axis = 1
+    elif start[1] == finish[1] == a[1] == b[1] == 0:
+        axis = 0
+    else:
+        return None
+    lower = max(min(start[axis], finish[axis]), min(a[axis], b[axis]))
+    upper = min(max(start[axis], finish[axis]), max(a[axis], b[axis]))
+    if upper <= lower:
+        return None
+
+    def station(value):
+        if value == start[axis]:
+            return 0.0
+        if value == finish[axis]:
+            return length
+        point = (start[0], value) if axis == 1 else (value, 0.0)
+        return abs(geod.inv(*start, *point)[2])
+
+    lo, hi = sorted((station(lower), station(upper)))
+    if not 0 <= lo < hi <= length:
+        raise _NumericalClippingError("Distinct shared endpoints could not be measured reliably")
+    return lo, hi
 
 
 def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget):
@@ -94,18 +150,27 @@ def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget)
 
             if transformer is None:
                 transformer = _local_projection(*start, geod)
+                # Audit this actual operation, not only its requested CRS.
+                # These points lie on the original geodesic at known stations.
+                for distance in (0.0, length/2, length):
+                    point = start if distance == 0 else source_point(distance)
+                    x, y = transformer.transform(*point)
+                    radial_error = math.hypot(x-distance*along[0], y-distance*along[1])
+                    if not math.isfinite(radial_error) or radial_error > ROOT_DISTANCE_METERS:
+                        raise _NumericalClippingError("Local projection failed its source-geodesic accuracy check")
 
             def projected(t):
                 x, y = transformer.transform(a[0]+t*(b[0]-a[0]), a[1]+t*(b[1]-a[1]))
                 return x*along[0]+y*along[1], x*normal[0]+y*normal[1]
 
             samples = [(i/4, projected(i/4)) for i in range(5)]
-            if all(abs(p[1]) <= COINCIDENCE_ROUNDOFF_METERS for _, p in samples):
-                lo = max(0.0, min(p[0] for _, p in samples))
-                hi = min(length, max(p[0] for _, p in samples))
-                if hi > lo:
-                    events.extend([lo, hi])
-                    shared.append((lo, hi, code))
+            coincidence = _shared_stations(start, finish, a, b, length, geod)
+            if coincidence is not None:
+                if not all(abs(p[1]) <= COINCIDENCE_ROUNDOFF_METERS for _, p in samples):
+                    raise _NumericalClippingError("Verified shared geometry failed its projection roundoff check")
+                lo, hi = coincidence
+                events.extend([lo, hi])
+                shared.append((lo, hi, code))
                 continue
 
             dense = [samples[0]]
@@ -152,8 +217,8 @@ def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget)
                         if 0.0 < distance < length:
                             events.append(distance)
 
-    # Only identical floating-point stations coalesce. There is no short-piece
-    # threshold or redistribution of genuine positive source mileage.
+    # Proven source endpoints already use their canonical stations. Distinct
+    # events remain distinct; there is no short-piece threshold or balancing.
     stations = sorted(set(events))
     intervals = []
     for lo, hi in zip(stations, stations[1:]):
@@ -170,7 +235,8 @@ def _edge_events(start, finish, azimuth, length, dataset, geod, context, budget)
         elif not codes:
             kind = "outside"
         else:
-            # Positive-area overlapping boundaries are ambiguous, not shared.
+            # Multiple memberships alone cannot distinguish polygon overlap
+            # from a boundary event whose ownership is numerically uncertain.
             kind = "unresolved"
         start_coord = list(start) if lo == 0 else list(geod.fwd(*start, azimuth, lo)[:2])
         end_coord = list(finish) if hi == length else list(geod.fwd(*start, azimuth, hi)[:2])
@@ -229,7 +295,9 @@ def partition_pipelines(pipelines, geod, *, context=None, boundaries=None):
                         raise
                     except Exception as error:
                         if not failed:
-                            diagnostics.append({"level": "error", "code": "state_clipping_incomplete",
+                            diagnostic_code = ("state_clipping_numerical_uncertainty" if isinstance(error, _NumericalClippingError)
+                                               else "state_clipping_incomplete")
+                            diagnostics.append({"level": "error", "code": diagnostic_code,
                                                 "message": "Some source geometry could not be assigned reliably and remains unresolved.",
                                                 "context": {"error": str(error), "source_id": source_id, "path_index": path_index}})
                         failed = True
@@ -261,7 +329,11 @@ def partition_pipelines(pipelines, geod, *, context=None, boundaries=None):
                         if can_merge:
                             prev["end_m"] = absolute_end
                             prev["length_meters"] += b-a
-                            prev["coordinates"].append(last)
+                            # An endpoint can also be encountered by another
+                            # boundary edge. Retain its coordinate once; this
+                            # equality check never removes a distinct crossing.
+                            if prev["coordinates"][-1] != last:
+                                prev["coordinates"].append(last)
                         else:
                             fragments.append(current)
                 station += distance
@@ -294,7 +366,7 @@ def partition_pipelines(pipelines, geod, *, context=None, boundaries=None):
                             "message": "State geometry failed the source-mileage conservation audit. No balancing adjustment was made."})
     if any(f["kind"] == "unresolved" for f in fragments) and not any(d.get("level") == "error" for d in diagnostics):
         diagnostics.append({"level": "error", "code": "ambiguous_state_coverage",
-                            "message": "Positive-area boundary overlaps are unresolved; they were not treated as shared borders."})
+                            "message": "State membership could not be uniquely verified; the affected geometry remains unresolved."})
     _checkpoint(context)
     if context is not None:
         context.report("Splitting geometry", total_edges, total_edges)

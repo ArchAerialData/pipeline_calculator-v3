@@ -134,6 +134,30 @@ class ExecutionContext:
             return self._snapshot
 
 
+class CallbackExecutionContext:
+    """Mirror published job progress to a legacy float callback.
+
+    The parent retains cancellation, throttling and runtime-warning ownership.
+    Callbacks observe the same aggregate fractions as desktop consumers rather
+    than the individual overlap passes' local completion notifications.
+    """
+
+    def __init__(self, parent, callback):
+        self.parent = parent
+        self.callback = callback
+        self._last_sequence = None
+
+    def __getattr__(self, name):
+        return getattr(self.parent, name)
+
+    def report(self, stage, completed=0, total=None, *, fraction=None):
+        self.parent.report(stage, completed, total, fraction=fraction)
+        snapshot = self.parent.snapshot()
+        if snapshot is not None and snapshot.sequence != self._last_sequence:
+            self._last_sequence = snapshot.sequence
+            self.callback(float(snapshot.fraction))
+
+
 class ScopedExecutionContext:
     """Map a sequential sub-analysis into one interval of its parent's progress.
 

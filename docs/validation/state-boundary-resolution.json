@@ -1,0 +1,496 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "6bc6e5f7aa083604edbaa25f177f671f58ea15d6",
+  "code_state": "Uncommitted working tree; no push or release",
+  "status": "Windows implementation verified; native fault investigation and release evidence remain open",
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "callback_errors": [],
+    "surfaces": [
+      "Combined",
+      "Texas",
+      "polygon-only"
+    ],
+    "viewport": [
+      1250,
+      900
+    ],
+    "tcl": "8.6.12",
+    "tk": "8.6.12"
+  },
+  "source_hashes": {
+    "pytest.ini": "55cc9c61430877a81d5f5fe5cfb46aa53fd4d6d8e1bcaeaa835a79756980fcd8",
+    "src/pipeline_calculator/core/analyzer.py": "13bff29580161959d32a51ae1fa7ff90e348beedb8f1a9671e35495961b06cea",
+    "src/pipeline_calculator/core/corridor_geometry.py": "f88cdf9988f89aeebf5b3d2cc75cc3ac8138b50de6f4254158fa6bdd16b82576",
+    "src/pipeline_calculator/core/execution.py": "e7297c05bc1c48d57191f953291563d546f1e97cc9e2d6ecaf18ab0320926f48",
+    "src/pipeline_calculator/core/geography/corridors.py": "d32f7a4c3d7315dfd4c3195958e9858f5fceb2f434c7087015a84d3aa7571cea",
+    "src/pipeline_calculator/core/geography/partition.py": "a9b81614a4bc0110ea125a01f5100ca98b9aef33a02dc81adf165205df091b3c",
+    "src/pipeline_calculator/export/corridor_kml.py": "0b6968a27775856c7a62b2a36d643d14d5b9f6059d7f68504b8571bc56e0e223",
+    "src/pipeline_calculator/export/geography_kmz.py": "2eed02a278c2a51d80b5d1ae7f94f1a26dd3549c58eee7e0a9f399c47232d2df",
+    "src/pipeline_calculator/export/geometry_validation.py": "ec8d6514c680f30dfa6b2f123ce1d6c472fea582331f5ab2a614bde227525578",
+    "src/pipeline_calculator/export/package.py": "e250d0ef64228a62541c4b02a2d503d660255e4aa0d280d07d4f5d4d55b1d709",
+    "src/pipeline_calculator/gui/actions/corridor_launch.py": "89b120a9a049ff815e4e594074b849fcfdb0c02f4a28bb950212c2813cf552e0",
+    "src/pipeline_calculator/gui/tabs/overlap_tab.py": "7a3977fc54fd66b787d308f9705ca164fa55b7eb65c4f63b7064352695331ecf",
+    "tests/conftest.py": "a3819775dc33bfb2840b318302378ceb1e3e172386f413784c975b47e4b2f991",
+    "tests/fixtures/geography/README.md": "d7f62261a239fb80ee2ccd862b1cf99735699850acf46b5a80911d7aa34c4800",
+    "tests/fixtures/geography/adamas_ng_pipeline_row.expected.json": "537c699958686e4d0bd93a2032895c9f77893bd5547dec9fa26f9d516c2f9d80",
+    "tests/test_corridor_visibility.py": "bead14192b3c731f974a583b2d4462cbbcfdc9dc5458a5a8f5a25efcab4fc2b3",
+    "tests/test_geography_fixtures.py": "170ad8f79810e8159848589d98dc723b486f4cbe606ce666f69f4facb94d467f",
+    "tests/test_geography_visualizations.py": "09f406e993a94a2ffdb18fd3e6cf7aaf2ed23ab73a99179ffb5848114b10b0f3",
+    "tests/test_native_gui_harness.py": "feba75a3ecfddc834829b36742d69066a3d3bf376c4371c3cc7f298eb0dee24d",
+    "tests/test_state_input_routes.py": "d3d2c2f426d68c301fad8f13405af20fb5ced165211e643399c7876d8be4300e",
+    "tests/test_state_progress.py": "cf31c3b5955585e69ec1d831c875a4138183e805824566d0210ec8a506552ca9",
+    "tests/test_state_shared_boundaries.py": "0d5ac1570a1379e6d2c0ab3176944d5570de978484b9d471b95657787c1485b1",
+    "tests/test_ui_lifecycle.py": "cc25006f6a31e675c9a529c52d9094c4807c90ae750b60a07517a0c53995cf68"
+  },
+  "full_suite": {
+    "path": ".validation-output/state-boundary-resolution/full-suite.xml",
+    "tests": 437,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 363.831,
+    "timestamp": "2026-09-15T10:30:19.197345-05:00"
+  },
+  "focused_runs": [
+    {
+      "path": ".validation-output/state-boundary-fixes/geometry/tests.xml",
+      "tests": 50,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.428,
+      "timestamp": "2026-09-15T10:12:32.394433-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-implementation/visualization-tests.xml",
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.446,
+      "timestamp": "2026-09-15T10:18:32.513843-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/progress-tests.xml",
+      "tests": 46,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.942,
+      "timestamp": "2026-09-15T10:07:00.757792-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/fixture-tests.xml",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 45.968,
+      "timestamp": "2026-09-15T10:08:46.023031-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/corridor-ui-tests.xml",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.888,
+      "timestamp": "2026-09-15T10:11:51.199047-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/input-route-tests.xml",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 14.524,
+      "timestamp": "2026-09-15T10:16:55.222343-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/rv01/acceptance-1/tests.xml",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 80.75,
+      "timestamp": "2026-09-15T10:25:54.173301-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-resolution/rv01/acceptance-lifecycle/tests.xml",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 104.577,
+      "timestamp": "2026-09-15T10:27:15.181801-05:00"
+    }
+  ],
+  "focused_count_note": "Focused runs overlap; do not add them as unique test counts.",
+  "geometry_probe": {
+    "current_source": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\src\\pipeline_calculator\\core\\geography\\partition.py",
+    "candidates": 1254,
+    "cases": 500,
+    "elapsed_seconds": 2.8688424000283703,
+    "failures": []
+  },
+  "independent_export_review": {
+    "dateline_directions": 200,
+    "max_distance_error_m": 2.3283064365386963e-09,
+    "longitude_steps_passed": true,
+    "source_immutability_passed": true,
+    "scope_source_unchanged": true,
+    "scope_idempotent": true,
+    "scope_diagnostic_count": 2,
+    "polygon_normalization_idempotent": true,
+    "normalized_polygon_parts": 2,
+    "preserved_holes": 1
+  },
+  "rv01": {
+    "baseline": "6bc6e5f7aa083604edbaa25f177f671f58ea15d6",
+    "production_widgets": {
+      "src/pipeline_calculator/gui/pages/results_page.py": {
+        "baseline_sha256": "e322ccc955b712bd4c58b629604dfde886372338e28d9f92a312817fd06b659a",
+        "current_sha256_lf_normalized": "e322ccc955b712bd4c58b629604dfde886372338e28d9f92a312817fd06b659a",
+        "unchanged": true
+      },
+      "src/pipeline_calculator/gui/layout.py": {
+        "baseline_sha256": "67c31ee5af0543c7a49f444f01b709b0b0a8edfa3898ee8863334a56475d689d",
+        "current_sha256_lf_normalized": "67c31ee5af0543c7a49f444f01b709b0b0a8edfa3898ee8863334a56475d689d",
+        "unchanged": true
+      },
+      "src/pipeline_calculator/gui/scrolling.py": {
+        "baseline_sha256": "4309873c51626205e23688f9b30d44dba92b37ae8b10350a2c829a5ed0d858c0",
+        "current_sha256_lf_normalized": "4309873c51626205e23688f9b30d44dba92b37ae8b10350a2c829a5ed0d858c0",
+        "unchanged": true
+      },
+      "src/pipeline_calculator/gui/styles.py": {
+        "baseline_sha256": "76260faae11da38e7fcb6b9259468454eebf7ef7481029b033e16fd818b3e85b",
+        "current_sha256_lf_normalized": "76260faae11da38e7fcb6b9259468454eebf7ef7481029b033e16fd818b3e85b",
+        "unchanged": true
+      }
+    },
+    "confirmed_findings": [
+      "The 45-second whole-test deadline expires during healthy progress across 100 separate view replacements.",
+      "Current long-scenario comparison trials each finished 100 cycles with zero retained views and zero callback errors.",
+      "The historical Windows access violation remains unexplained; scheduled traceback activity is correlated with some failures but a new full100 trial with a20-second dump passed."
+    ],
+    "historical_evidence": [
+      ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scoped-tests-failure.txt",
+      ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scope-repeat-failure.txt",
+      ".validation-output/state-boundary-resolution/rv01/idle-probe.stderr.txt"
+    ],
+    "comparisons": [
+      {
+        "delay_seconds": 0,
+        "exit_code": 0,
+        "elapsed_seconds": 74.98495650000405,
+        "scope_report": {
+          "cycles": 100,
+          "retained_retired_views": 0,
+          "max_ms": 1411.2139999633655,
+          "style_variants": 1,
+          "callback_errors": [],
+          "heartbeat_max_gap_ms": 698.5491999657825,
+          "python": "3.11.9",
+          "platform": "Windows",
+          "tk": "8.6.12",
+          "customtkinter": "5.2.2",
+          "strict_performance_gate": false
+        },
+        "stdout": "comparison-0.stdout.txt",
+        "stderr": "comparison-0.stderr.txt"
+      },
+      {
+        "delay_seconds": 20,
+        "exit_code": 0,
+        "elapsed_seconds": 77.21816649998073,
+        "scope_report": {
+          "cycles": 100,
+          "retained_retired_views": 0,
+          "max_ms": 1418.6186000006273,
+          "style_variants": 1,
+          "callback_errors": [],
+          "heartbeat_max_gap_ms": 561.7527000140399,
+          "python": "3.11.9",
+          "platform": "Windows",
+          "tk": "8.6.12",
+          "customtkinter": "5.2.2",
+          "strict_performance_gate": false
+        },
+        "stdout": "comparison-20.stdout.txt",
+        "stderr": "comparison-20.stderr.txt"
+      }
+    ],
+    "acceptance_status": "passed_two_consecutive100_cycle_runs",
+    "interpretation": "Harness deadline correction only. No production freeze fixed or native crash cause certified. Functional checks are not strict reference-performance evidence.",
+    "harness_change": {
+      "default_deadlines_seconds": [
+        45,
+        20
+      ],
+      "scope100_deadlines_seconds": [
+        120,
+        110
+      ],
+      "fatal_traceback_capture": true,
+      "reject_known_tcl_stderr": true,
+      "cycle_count": 100,
+      "retained_assertions": [
+        "same-scope no-op",
+        "transactional render failure preserves old view and selector",
+        "all retired views collected",
+        "one live global mousewheel subscription",
+        "no callback errors",
+        "style variants plateau",
+        "functional heartbeat <=2seconds"
+      ],
+      "progress": "Every10completed cycles, captured on passing and failing subprocesses."
+    },
+    "acceptance_runs": [
+      {
+        "exit_code": 0,
+        "seconds": 81.00924719998147,
+        "test_counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "scope_report": {
+          "cycles": 100,
+          "retained_retired_views": 0,
+          "elapsed_seconds": 78.55225569999311,
+          "max_ms": 1585.548899951391,
+          "style_variants": 1,
+          "callback_errors": [],
+          "heartbeat_max_gap_ms": 730.7547000236809,
+          "python": "3.11.9",
+          "platform": "Windows",
+          "tk": "8.6.12",
+          "customtkinter": "5.2.2",
+          "strict_performance_gate": false
+        },
+        "directory": ".validation-output\\state-boundary-resolution\\rv01\\acceptance-1",
+        "progress_completed_cycles": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100
+        ],
+        "retained_log_sha256": {
+          "stdout.txt": "7e5c269c4c9333d0c0684d82f6f41b1c847318a721fa22e0aceb478761fc136c",
+          "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tests.xml": "5c9d2de3fe8125ee2750d90a7a722cc0834318048a08668c86a6b0d1a31d36e0",
+          "scope_replacement.json": "57aa25b8a751f373c85a15648bb4e9c7deea3b93e34781508d720bbd93abd183"
+        }
+      },
+      {
+        "exit_code": 0,
+        "seconds": 104.84918360004667,
+        "test_counts": {
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "scope_report": {
+          "cycles": 100,
+          "retained_retired_views": 0,
+          "elapsed_seconds": 77.3988917999668,
+          "max_ms": 1266.2084999028593,
+          "style_variants": 1,
+          "callback_errors": [],
+          "heartbeat_max_gap_ms": 464.3218000419438,
+          "python": "3.11.9",
+          "platform": "Windows",
+          "tk": "8.6.12",
+          "customtkinter": "5.2.2",
+          "strict_performance_gate": false
+        },
+        "directory": ".validation-output\\state-boundary-resolution\\rv01\\acceptance-lifecycle",
+        "progress_completed_cycles": [
+          10,
+          20,
+          30,
+          40,
+          50,
+          60,
+          70,
+          80,
+          90,
+          100
+        ],
+        "retained_log_sha256": {
+          "stdout.txt": "6fac9e7856292d6f20f897693ad79d354e7bc95db38af196de25bfd671a8b6de",
+          "stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "tests.xml": "157724f14031daa087bedc4f587db579f6bab8e025b40575fbb612e341eae7e5",
+          "scope_replacement.json": "4d819a130c9b85a360e6d4baba47d02dcc07bb25ad6b370ab54b728fda6204bb"
+        }
+      }
+    ],
+    "remaining_limits": [
+      "Historical Windows access violation has unknown root cause and was not claimed fixed.",
+      "Current functional tests do not certify250ms strict reference heartbeat latency.",
+      "No native macOS validation on this Windows host.",
+      "Final integration and packaging delegated to root."
+    ]
+  },
+  "fixtures": {
+    "adamas_ng_pipeline_row.kmz": {
+      "sha256": "bd2006ad9c3e673b1a2337409c0b84c3cf375b2f926656de2bee0dcca0aa4892"
+    },
+    "adamas_ng_pipeline_row_centerlines.kmz": {
+      "sha256": "c3095b793deaee49de963058a3399b39d79438f7aeb64d6c9056eae9af1127d6"
+    }
+  },
+  "samples": [
+    {
+      "name": "real_centerlines",
+      "package": "adamas_ng_pipeline_row_centerlines_analysis_20260915_102238",
+      "total_meters": 1965917.8631994629,
+      "total_miles": 1221.5622833678003,
+      "states": [
+        {
+          "state_code": "LA",
+          "state_name": "Louisiana",
+          "interior_meters": 1255195.5030877413,
+          "shared_allocation_meters": 0.0,
+          "total_meters": 1255195.5030877413,
+          "interior_savings_meters": 0.0,
+          "adjusted_total_meters": 1255195.5030877413,
+          "analysis_complete": true
+        },
+        {
+          "state_code": "TX",
+          "state_name": "Texas",
+          "interior_meters": 335084.0137085223,
+          "shared_allocation_meters": 0.0,
+          "total_meters": 335084.0137085223,
+          "interior_savings_meters": 0.0,
+          "adjusted_total_meters": 335084.0137085223,
+          "analysis_complete": true
+        },
+        {
+          "state_code": "WY",
+          "state_name": "Wyoming",
+          "interior_meters": 375638.3464031984,
+          "shared_allocation_meters": 0.0,
+          "total_meters": 375638.3464031984,
+          "interior_savings_meters": 0.0,
+          "adjusted_total_meters": 375638.3464031984,
+          "analysis_complete": true
+        }
+      ],
+      "issues": []
+    },
+    {
+      "name": "shared_texas_new_mexico",
+      "package": "shared_texas_new_mexico_analysis_20260915_102244",
+      "total_meters": 1115.0995456325722,
+      "total_miles": 0.6928893483517409,
+      "states": [
+        {
+          "state_code": "NM",
+          "state_name": "New Mexico",
+          "interior_meters": 0.0,
+          "shared_allocation_meters": 557.5497728162861,
+          "total_meters": 557.5497728162861,
+          "interior_savings_meters": 0.0,
+          "adjusted_total_meters": 557.5497728162861,
+          "analysis_complete": true
+        },
+        {
+          "state_code": "TX",
+          "state_name": "Texas",
+          "interior_meters": 0.0,
+          "shared_allocation_meters": 557.5497728162861,
+          "total_meters": 557.5497728162861,
+          "interior_savings_meters": 0.0,
+          "adjusted_total_meters": 557.5497728162861,
+          "analysis_complete": true
+        }
+      ],
+      "issues": []
+    },
+    {
+      "name": "antimeridian",
+      "package": "antimeridian_parallel_analysis_20260915_102244",
+      "total_meters": 824.1352745413919,
+      "total_miles": 0.5120928939189302,
+      "states": [],
+      "issues": []
+    },
+    {
+      "name": "texas_oklahoma_corridors",
+      "package": "texas_oklahoma_corridors_analysis_20260915_102523",
+      "total_meters": 4438.731837382211,
+      "total_miles": 2.7580945776165584,
+      "states": [
+        {
+          "state_code": "OK",
+          "state_name": "Oklahoma",
+          "interior_meters": 2172.695822357319,
+          "shared_allocation_meters": 0.0,
+          "total_meters": 2172.695822357319,
+          "interior_savings_meters": 1085.0,
+          "adjusted_total_meters": 1087.6958223573188,
+          "analysis_complete": true
+        },
+        {
+          "state_code": "TX",
+          "state_name": "Texas",
+          "interior_meters": 2266.036015024892,
+          "shared_allocation_meters": 0.0,
+          "total_meters": 2266.036015024892,
+          "interior_savings_meters": 1130.0,
+          "adjusted_total_meters": 1136.036015024892,
+          "analysis_complete": true
+        }
+      ],
+      "issues": []
+    }
+  ],
+  "sample_evidence": ".validation-output/state-boundary-resolution/samples/sample-evidence.json",
+  "package": {
+    "path": ".validation-output/state-boundary-resolution/package/dist/Pipeline_Calculator_v4.18-dev.6bc6e5f7aa08.dirty.exe",
+    "bytes": 102483884,
+    "sha256": "91152451e738cb39dba1d132815fdb8788100ddbc1eb7e45e536188b84945116",
+    "version": {
+      "version": "4.18-dev.6bc6e5f7aa08.dirty",
+      "numeric_version": "4.18",
+      "commit": "6bc6e5f7aa083604edbaa25f177f671f58ea15d6",
+      "dirty": true
+    },
+    "smoke": {
+      "status": "passed",
+      "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\state-boundary-resolution\\package\\dist\\Pipeline_Calculator_v4.18-dev.6bc6e5f7aa08.dirty.exe",
+      "proj_network": "OFF",
+      "implementations": [
+        {
+          "implementation": "new",
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "implementation": "legacy",
+          "status": "passed",
+          "exit_code": 0
+        }
+      ]
+    }
+  },
+  "limits": [
+    "Earlier intermittent Windows native access violations remain unexplained; no application-crash fix is claimed.",
+    "Current functional UI checks do not certify strict reference performance; scope heartbeat exceeded250ms.",
+    "Native macOS execution and physical macOS visual review were not available on this Windows host.",
+    "Numerical precision is not surveyed boundary accuracy; bundled boundary source/provenance is unchanged."
+  ]
+}
