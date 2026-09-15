@@ -23,6 +23,12 @@ if __package__ in (None, ""):
 from scripts.validation.gui_process import run_gui
 
 
+def validate_tk_output(stderr):
+    """Tcl timer failures can be printed without reaching Python's handler."""
+    if any(marker in stderr for marker in ('invalid command name', 'Exception in Tkinter callback', 'TclError:')):
+        raise ValueError('Packaged UI printed a Tk callback error; see the retained stderr log')
+
+
 def resolve_executable(artifact):
     """Resolve a Windows/Linux executable or the actual binary named by a macOS app."""
     artifact = Path(artifact).resolve(strict=True)
@@ -45,6 +51,8 @@ def validate_report(report, implementation, expected_version=None):
         "status": report.get("status") == "passed",
         "implementation": report.get("implementation") == implementation,
         "frozen executable": report.get("frozen") is True,
+        "repeated Summary navigation": (report.get('ui_reliability') or {}).get('summary_returns') == 20,
+        "UI callback errors": (report.get('ui_reliability') or {}).get('callback_errors') == [],
     }
     geography = report.get("geography")
     if not isinstance(geography, dict):
@@ -94,6 +102,7 @@ def check_packaged_smoke(artifact, output_directory, *, timeout=90, expected_ver
                     report = json.loads(report_path.read_text(encoding="utf-8"))
                 if process.returncode != 0:
                     raise ValueError(f"Packaged executable exited with code {process.returncode}")
+                validate_tk_output(stderr)
                 if report is None:
                     raise ValueError("Packaged executable did not create a fresh smoke report")
                 validate_report(report, implementation, expected_version)

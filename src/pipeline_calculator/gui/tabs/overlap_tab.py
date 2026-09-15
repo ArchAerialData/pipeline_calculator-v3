@@ -7,6 +7,7 @@ from pipeline_calculator.gui.tables import create_table
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
 from pipeline_calculator.gui.tabs.summary_tab import number
+from pipeline_calculator.gui.styles import corridor_button_style
 
 
 class CorridorTable(ctk.CTkFrame):
@@ -33,12 +34,8 @@ class CorridorTable(ctk.CTkFrame):
         self.page_label.pack(fill='x', expand=True)
         self.tree = create_table(self, ('Pipeline Pair', 'Length (miles)', 'Avg Sep (m)', 'Action'),
                                  (440, 145, 130, 155), vertical_padding=0)
-        self.style = ttk.Style(self.tree)
-        self.button_style = f'Corridor{id(self)}.TButton'
-        self.style.configure(self.button_style, background='#206CA4', foreground='#FFFFFF',
-                             borderwidth=0, padding=(8, 2), anchor='center')
-        self.style.map(self.button_style, background=[('pressed', '#174D76'), ('active', '#185888')],
-                       foreground=[('disabled', '#9AA7B5')])
+        self.button_style = corridor_button_style(self.tree, ctk.ScalingTracker.get_widget_scaling(self))
+        self._position_style = None
         for column in self.tree['columns']:
             self.tree.heading(column, anchor='w')
         # Scroll notifications include wheel, keyboard and scrollbar navigation.
@@ -49,6 +46,8 @@ class CorridorTable(ctk.CTkFrame):
                 self._queue_position()
             self.tree.configure(**{axis+'scrollcommand': scrolled})
         self.tree.bind('<Configure>', self._queue_position, add='+')
+        self.tree.bind('<Map>', self._queue_position, add='+')
+        self.tree.bind('<Unmap>', self._cancel_position, add='+')
         self.tree.bind('<ButtonRelease-1>', self._queue_position, add='+')
         self.tree.bind('<Double-1>', self._double_click)
         self.tree.bind('<Return>', self._open_selected)
@@ -119,21 +118,26 @@ class CorridorTable(ctk.CTkFrame):
         return 'break'
 
     def _queue_position(self, event=None):
-        if self._position_id is None:
+        if self._position_id is None and self.winfo_viewable():
             self._position_id = self._callback_host.after(20, self._position_buttons)
 
     def _position_buttons(self):
         self._position_id = None
+        if not self.winfo_viewable():
+            return
         scale = ctk.ScalingTracker.get_widget_scaling(self)
         compact = self.winfo_height()/scale < 160
         if compact != self._compact:
             self._compact = compact
             self.navigation.pack(side='bottom', fill='x', padx=8, pady=0 if compact else (8, 4))
-        tree_style = self.tree.cget('style')
-        self.style.configure(tree_style, rowheight=round((30 if compact else 40)*scale))
-        self.style.configure(self.button_style, font=('Arial', -round(13*scale)))
-        for column in ('Length (miles)', 'Avg Sep (m)', 'Action'):
-            self.tree.column(column, stretch=False)
+        if self._position_style != (scale, compact):
+            self._position_style = (scale, compact)
+            self.tree.set_row_height(30 if compact else 40)
+            self.button_style = corridor_button_style(self.tree, scale)
+            for button in self.row_buttons.values():
+                button.configure(style=self.button_style)
+            for column in ('Length (miles)', 'Avg Sep (m)', 'Action'):
+                self.tree.column(column, stretch=False)
         pad = round(4*scale)
         for item, button in self.row_buttons.items():
             box = self.tree.bbox(item, 'Action')
@@ -146,10 +150,13 @@ class CorridorTable(ctk.CTkFrame):
                     continue
             button.place_forget()
 
-    def destroy(self):
+    def _cancel_position(self, event=None):
         if self._position_id is not None:
             self._callback_host.after_cancel(self._position_id)
             self._position_id = None
+
+    def destroy(self):
+        self._cancel_position()
         super().destroy()
 
 

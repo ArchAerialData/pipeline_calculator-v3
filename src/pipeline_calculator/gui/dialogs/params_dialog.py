@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import customtkinter as ctk
-from tkinter import BooleanVar
+from tkinter import BooleanVar, messagebox
 from pipeline_calculator.gui.layout import ActionBar, WrappedLabel, parameter_fields
 from pipeline_calculator.gui.modal import ModalSurface, ModalBody, TEXT
 
@@ -45,8 +45,8 @@ class ParamsDialog:
     def close(self) -> None:
         try:
             self.surface.destroy()
-        except Exception:
-            pass
+        except Exception as error:
+            messagebox.showerror('Could not close parameters', str(error), parent=self._root)
 
     def _apply(self) -> None:
         if self._state_preference is not None:
@@ -54,8 +54,8 @@ class ParamsDialog:
         self.close()
         try:
             self._on_apply()
-        except Exception:
-            pass
+        except Exception as error:
+            messagebox.showerror('Could not start analysis', str(error), parent=self._root)
 
     def _cancel(self) -> None:
         self.close()
@@ -63,6 +63,6 @@ class ParamsDialog:
             return
         try:
             self._on_cancel()
-        except Exception:
-            pass
+        except Exception as error:
+            messagebox.showerror('Could not return to results', str(error), parent=self._root)
 

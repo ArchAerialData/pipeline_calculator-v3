@@ -1,5 +1,7 @@
 """Responsive text, actions and parameter fields shared by both entrypoints."""
 import customtkinter as ctk
+import tkinter as tk
+from pipeline_calculator.gui.bindings import ConfigureBinding
 
 
 class WrappedLabel(ctk.CTkLabel):
@@ -10,7 +12,7 @@ class WrappedLabel(ctk.CTkLabel):
         super().__init__(master, **kwargs)
         self._wrap_id = None
         self._wrap_width = None
-        master.bind('<Configure>', self._wrap, add='+')
+        self._parent_binding = ConfigureBinding(master, self._wrap)
 
     def _wrap(self, event):
         if self.winfo_exists():
@@ -28,8 +30,10 @@ class WrappedLabel(ctk.CTkLabel):
         self.configure(wraplength=self._wrap_width)
 
     def destroy(self):
+        self._parent_binding.close()
         if self._wrap_id is not None:
             self.after_cancel(self._wrap_id)
+            self._wrap_id = None
         super().destroy()
 
 
@@ -102,6 +106,7 @@ class ResultPages(ctk.CTkFrame):
     def __init__(self, master):
         super().__init__(master, height=100)
         self.pages = {}
+        self._selected = None
         self._navigation_id = None
         self.navigation = ctk.CTkFrame(self, fg_color='transparent')
         self.navigation.pack(fill='x', pady=8)
@@ -111,7 +116,7 @@ class ResultPages(ctk.CTkFrame):
         self.selector = ctk.CTkOptionMenu(self.navigation, values=["Summary"], command=self.set, width=200,
                                          font=self.tab_font, height=34)
         self.selector.pack()
-        self.navigation.bind('<Configure>', self._arrange_navigation, add='+')
+        self.navigation.bind('<Configure>', self._queue_navigation, add='+')
         self.content = ctk.CTkFrame(self, fg_color="transparent", height=1, width=1)
         self.content.pack(fill="both", expand=True)
         self.content.pack_propagate(False)
@@ -137,20 +142,43 @@ class ResultPages(ctk.CTkFrame):
         self._navigation_id = None
         self._arrange_navigation()
 
+    def _queue_navigation(self, event=None):
+        # CTkOptionMenu redraw enters update_idletasks. Never change its mapping
+        # from a Configure callback inside that nested redraw.
+        if self._navigation_id is None:
+            self._navigation_id = self.after(20, self._refresh_navigation)
+
     def _arrange_navigation(self, event=None):
         scale = ctk.ScalingTracker.get_widget_scaling(self)
         width = self.navigation.winfo_width() / scale
         required = self.tabs.winfo_reqwidth() / scale + 24
         show_tabs = bool(self.pages) and width >= required
         visible, hidden = (self.tabs, self.selector) if show_tabs else (self.selector, self.tabs)
-        hidden.pack_forget()
+        if hidden.winfo_manager():
+            hidden.pack_forget()
         if not visible.winfo_manager():
             visible.pack()
 
     def set(self, name):
-        for page in self.pages.values():
-            page.pack_forget()
+        if name not in self.pages or self._selected == name:
+            return
+        move_focus = False
+        if self._selected is not None:
+            previous = self.pages[self._selected]
+            try:
+                focused = self.focus_get()
+            except (KeyError, tk.TclError):
+                focused = None  # Native popup widgets may not have Python wrappers.
+            while focused is not None:
+                if focused is previous:
+                    move_focus = True
+                    break
+                focused = focused.master
+            previous.pack_forget()
         self.pages[name].pack(fill="both", expand=True)
+        if move_focus:
+            self.pages[name].focus_set()
+        self._selected = name
         self.selector.set(name)
         self.tabs.set(name)
 

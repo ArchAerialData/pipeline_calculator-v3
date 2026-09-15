@@ -1,0 +1,2055 @@
+{
+  "schema_version": 1,
+  "fixture": "adamas_ng_pipeline_row_centerlines.kmz",
+  "source_filename": "Adamas - NG_PIPELINE_ROW-Centerlines.kmz",
+  "bytes": 515885,
+  "sha256": "c3095b793deaee49de963058a3399b39d79438f7aeb64d6c9056eae9af1127d6",
+  "source_preserved": true,
+  "xml_counts": {
+    "Placemark": 281,
+    "LineString": 4827,
+    "Polygon": 0,
+    "Point": 0,
+    "Track": 0,
+    "MultiTrack": 0
+  },
+  "purpose": "Positive disconnected multipart pipeline state-assignment regression",
+  "baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+  "boundary_resource_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+  "expectation_basis": {
+    "parser": "Python ElementTree, direct XML; no application parser",
+    "length": "pyproj.Geod GRS80, unrounded sum of original adjacent-vertex geodesics",
+    "containment": "Each original geodesic edge independently densified to <=100m; complete LineString covered by exactly one bundled WKB state and intersects no other state. No application partition routines called.",
+    "limitation": "Densified containment is an independent practical check, not proof of sub-centimeter boundary accuracy."
+  },
+  "parser_expectations": {
+    "source_pipelines": 281,
+    "coordinate_paths": 4827,
+    "vertices": 48327,
+    "unique_source_ids": 281,
+    "error_count": 0,
+    "warning_count": 0
+  },
+  "geometry_characteristics": {
+    "multipath_features": 67,
+    "closed_paths": 15,
+    "duplicate_xml_ids": {
+      "ID_00000": 281
+    }
+  },
+  "geography_expectations": {
+    "state_codes": [
+      "LA",
+      "TX",
+      "WY"
+    ],
+    "crossing_count": 0,
+    "shared_meters": 0.0,
+    "outside_meters": 0.0,
+    "unresolved_meters": 0.0,
+    "original_meters": 1965917.863199462,
+    "absolute_tolerance_meters": 0.001,
+    "states": [
+      {
+        "state_code": "LA",
+        "state_name": "Louisiana",
+        "source_pipelines": 197,
+        "coordinate_paths": 3563,
+        "original_meters": 1255195.5030877413
+      },
+      {
+        "state_code": "TX",
+        "state_name": "Texas",
+        "source_pipelines": 57,
+        "coordinate_paths": 452,
+        "original_meters": 335084.0137085223
+      },
+      {
+        "state_code": "WY",
+        "state_name": "Wyoming",
+        "source_pipelines": 27,
+        "coordinate_paths": 812,
+        "original_meters": 375638.3464031983
+      }
+    ]
+  },
+  "source_expectations": [
+    {
+      "source_index": 0,
+      "name": "Pipeline-1",
+      "path_count": 776,
+      "state_code": "WY",
+      "original_meters": 338975.4151955844
+    },
+    {
+      "source_index": 1,
+      "name": "Pipeline-2",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 252.34824809829416
+    },
+    {
+      "source_index": 2,
+      "name": "Pipeline-3",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 7.282899882615562
+    },
+    {
+      "source_index": 3,
+      "name": "Pipeline-4",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 937.4553262224006
+    },
+    {
+      "source_index": 4,
+      "name": "Pipeline-5",
+      "path_count": 253,
+      "state_code": "TX",
+      "original_meters": 156291.7893045736
+    },
+    {
+      "source_index": 5,
+      "name": "Pipeline-6",
+      "path_count": 3,
+      "state_code": "WY",
+      "original_meters": 9496.863279332401
+    },
+    {
+      "source_index": 6,
+      "name": "Pipeline-7",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 126.41716400323956
+    },
+    {
+      "source_index": 7,
+      "name": "Pipeline-8",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 18.908864005490887
+    },
+    {
+      "source_index": 8,
+      "name": "Pipeline-9",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 225.88613012503603
+    },
+    {
+      "source_index": 9,
+      "name": "Pipeline-10",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 346.46566626893997
+    },
+    {
+      "source_index": 10,
+      "name": "Pipeline-11",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 139.17464701800452
+    },
+    {
+      "source_index": 11,
+      "name": "Pipeline-12",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 972.6598945215329
+    },
+    {
+      "source_index": 12,
+      "name": "Pipeline-13",
+      "path_count": 24,
+      "state_code": "LA",
+      "original_meters": 23526.334040143585
+    },
+    {
+      "source_index": 13,
+      "name": "Pipeline-14",
+      "path_count": 2474,
+      "state_code": "LA",
+      "original_meters": 762714.5992175974
+    },
+    {
+      "source_index": 14,
+      "name": "Pipeline-15",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 70.0380585083532
+    },
+    {
+      "source_index": 15,
+      "name": "Pipeline-16",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 94.78065708163973
+    },
+    {
+      "source_index": 16,
+      "name": "Pipeline-17",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 86.15953517320398
+    },
+    {
+      "source_index": 17,
+      "name": "Pipeline-18",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 64.99266537530953
+    },
+    {
+      "source_index": 18,
+      "name": "Pipeline-19",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 57.09686096471664
+    },
+    {
+      "source_index": 19,
+      "name": "Pipeline-20",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 402.2061381455893
+    },
+    {
+      "source_index": 20,
+      "name": "Pipeline-21",
+      "path_count": 155,
+      "state_code": "LA",
+      "original_meters": 126989.4155501136
+    },
+    {
+      "source_index": 21,
+      "name": "Pipeline-22",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 174.49342986749207
+    },
+    {
+      "source_index": 22,
+      "name": "Pipeline-23",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 49.81851309119283
+    },
+    {
+      "source_index": 23,
+      "name": "Pipeline-24",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 82.62179818100877
+    },
+    {
+      "source_index": 24,
+      "name": "Pipeline-25",
+      "path_count": 4,
+      "state_code": "LA",
+      "original_meters": 747.6196908514909
+    },
+    {
+      "source_index": 25,
+      "name": "Pipeline-26",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 53.83245642218164
+    },
+    {
+      "source_index": 26,
+      "name": "Pipeline-27",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 51.9787177790235
+    },
+    {
+      "source_index": 27,
+      "name": "Pipeline-28",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 48.33952868447728
+    },
+    {
+      "source_index": 28,
+      "name": "Pipeline-29",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 87.87406580128723
+    },
+    {
+      "source_index": 29,
+      "name": "Pipeline-30",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 59.119974308310624
+    },
+    {
+      "source_index": 30,
+      "name": "Pipeline-31",
+      "path_count": 35,
+      "state_code": "LA",
+      "original_meters": 7125.905547182517
+    },
+    {
+      "source_index": 31,
+      "name": "Pipeline-32",
+      "path_count": 14,
+      "state_code": "LA",
+      "original_meters": 2843.8846171163877
+    },
+    {
+      "source_index": 32,
+      "name": "Pipeline-33",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 75.63528482143273
+    },
+    {
+      "source_index": 33,
+      "name": "Pipeline-34",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 328.56042901791744
+    },
+    {
+      "source_index": 34,
+      "name": "Pipeline-35",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 301.4136710044178
+    },
+    {
+      "source_index": 35,
+      "name": "Pipeline-36",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 606.0650993455623
+    },
+    {
+      "source_index": 36,
+      "name": "Pipeline-37",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 32.15871650355306
+    },
+    {
+      "source_index": 37,
+      "name": "Pipeline-38",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 31.57176732622257
+    },
+    {
+      "source_index": 38,
+      "name": "Pipeline-39",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 217.77978682113573
+    },
+    {
+      "source_index": 39,
+      "name": "Pipeline-40",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 198.9333465113187
+    },
+    {
+      "source_index": 40,
+      "name": "Pipeline-41",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1511.5437284794557
+    },
+    {
+      "source_index": 41,
+      "name": "Pipeline-42",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 246.4136215500871
+    },
+    {
+      "source_index": 42,
+      "name": "Pipeline-43",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 132.99841197262077
+    },
+    {
+      "source_index": 43,
+      "name": "Pipeline-44",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 626.1656181495495
+    },
+    {
+      "source_index": 44,
+      "name": "Pipeline-45",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 11.98029876094931
+    },
+    {
+      "source_index": 45,
+      "name": "Pipeline-46",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 244.73647642165793
+    },
+    {
+      "source_index": 46,
+      "name": "Pipeline-47",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 10.943687685363017
+    },
+    {
+      "source_index": 47,
+      "name": "Pipeline-48",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 168.67822005299183
+    },
+    {
+      "source_index": 48,
+      "name": "Pipeline-49",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 96.37035020366218
+    },
+    {
+      "source_index": 49,
+      "name": "Pipeline-50",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 23.154585794898008
+    },
+    {
+      "source_index": 50,
+      "name": "Pipeline-51",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 401.43904208786114
+    },
+    {
+      "source_index": 51,
+      "name": "Pipeline-52",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 770.4679952209085
+    },
+    {
+      "source_index": 52,
+      "name": "Pipeline-53",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 84.27654236730558
+    },
+    {
+      "source_index": 53,
+      "name": "Pipeline-54",
+      "path_count": 7,
+      "state_code": "LA",
+      "original_meters": 2437.5743864881542
+    },
+    {
+      "source_index": 54,
+      "name": "Pipeline-55",
+      "path_count": 12,
+      "state_code": "LA",
+      "original_meters": 2185.6293487029684
+    },
+    {
+      "source_index": 55,
+      "name": "Pipeline-56",
+      "path_count": 17,
+      "state_code": "LA",
+      "original_meters": 1582.2690249053107
+    },
+    {
+      "source_index": 56,
+      "name": "Pipeline-57",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 73.9125390263027
+    },
+    {
+      "source_index": 57,
+      "name": "Pipeline-58",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 57.46929618858123
+    },
+    {
+      "source_index": 58,
+      "name": "Pipeline-59",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 148.7899786732567
+    },
+    {
+      "source_index": 59,
+      "name": "Pipeline-60",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 80.68076649890237
+    },
+    {
+      "source_index": 60,
+      "name": "Pipeline-61",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 1513.14512523102
+    },
+    {
+      "source_index": 61,
+      "name": "Pipeline-62",
+      "path_count": 7,
+      "state_code": "LA",
+      "original_meters": 2072.237356203361
+    },
+    {
+      "source_index": 62,
+      "name": "Pipeline-63",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 22.541528334295776
+    },
+    {
+      "source_index": 63,
+      "name": "Pipeline-64",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 824.7633464961415
+    },
+    {
+      "source_index": 64,
+      "name": "Pipeline-65",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 191.90218438791314
+    },
+    {
+      "source_index": 65,
+      "name": "Pipeline-66",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 149.03532004759424
+    },
+    {
+      "source_index": 66,
+      "name": "Pipeline-67",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 178.86121426974154
+    },
+    {
+      "source_index": 67,
+      "name": "Pipeline-68",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1268.160679405425
+    },
+    {
+      "source_index": 68,
+      "name": "Pipeline-69",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 210.92549534711156
+    },
+    {
+      "source_index": 69,
+      "name": "Pipeline-70",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 2724.0074152168927
+    },
+    {
+      "source_index": 70,
+      "name": "Pipeline-71",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 102.96929432568777
+    },
+    {
+      "source_index": 71,
+      "name": "Pipeline-72",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 49.80424079103563
+    },
+    {
+      "source_index": 72,
+      "name": "Pipeline-73",
+      "path_count": 17,
+      "state_code": "LA",
+      "original_meters": 19428.01842383196
+    },
+    {
+      "source_index": 73,
+      "name": "Pipeline-74",
+      "path_count": 466,
+      "state_code": "LA",
+      "original_meters": 189944.04914072892
+    },
+    {
+      "source_index": 74,
+      "name": "Pipeline-75",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 62.51389634984352
+    },
+    {
+      "source_index": 75,
+      "name": "Pipeline-76",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 176.0066264286187
+    },
+    {
+      "source_index": 76,
+      "name": "Pipeline-77",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 1205.199664798651
+    },
+    {
+      "source_index": 77,
+      "name": "Pipeline-78",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 445.96348957878416
+    },
+    {
+      "source_index": 78,
+      "name": "Pipeline-79",
+      "path_count": 15,
+      "state_code": "LA",
+      "original_meters": 2454.492898226994
+    },
+    {
+      "source_index": 79,
+      "name": "Pipeline-80",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 33.61239852326077
+    },
+    {
+      "source_index": 80,
+      "name": "Pipeline-81",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 98.42841592898006
+    },
+    {
+      "source_index": 81,
+      "name": "Pipeline-82",
+      "path_count": 3,
+      "state_code": "WY",
+      "original_meters": 631.2419183919636
+    },
+    {
+      "source_index": 82,
+      "name": "Pipeline-83",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 1994.0823516907744
+    },
+    {
+      "source_index": 83,
+      "name": "Pipeline-84",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 147.88731021322005
+    },
+    {
+      "source_index": 84,
+      "name": "Pipeline-85",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 206.7164636633504
+    },
+    {
+      "source_index": 85,
+      "name": "Pipeline-86",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 139.35114509031555
+    },
+    {
+      "source_index": 86,
+      "name": "Pipeline-87",
+      "path_count": 11,
+      "state_code": "LA",
+      "original_meters": 1439.7143732765005
+    },
+    {
+      "source_index": 87,
+      "name": "Pipeline-88",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 168.01793300012804
+    },
+    {
+      "source_index": 88,
+      "name": "Pipeline-89",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 8.521203543973336
+    },
+    {
+      "source_index": 89,
+      "name": "Pipeline-90",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 63.25938829850824
+    },
+    {
+      "source_index": 90,
+      "name": "Pipeline-91",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 86.62672375387363
+    },
+    {
+      "source_index": 91,
+      "name": "Pipeline-92",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 1084.920185354879
+    },
+    {
+      "source_index": 92,
+      "name": "Pipeline-93",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 91.30360608773555
+    },
+    {
+      "source_index": 93,
+      "name": "Pipeline-94",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 763.0904976325285
+    },
+    {
+      "source_index": 94,
+      "name": "Pipeline-95",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 11.833314381159754
+    },
+    {
+      "source_index": 95,
+      "name": "Pipeline-96",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 25.12637548289228
+    },
+    {
+      "source_index": 96,
+      "name": "Pipeline-97",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 215.70263888130222
+    },
+    {
+      "source_index": 97,
+      "name": "Pipeline-98",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 112.85060402179055
+    },
+    {
+      "source_index": 98,
+      "name": "Pipeline-99",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1655.4027566290085
+    },
+    {
+      "source_index": 99,
+      "name": "Pipeline-100",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 394.073595323054
+    },
+    {
+      "source_index": 100,
+      "name": "Pipeline-101",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 50.43249355330988
+    },
+    {
+      "source_index": 101,
+      "name": "Pipeline-102",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 308.7751022207991
+    },
+    {
+      "source_index": 102,
+      "name": "Pipeline-103",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 33.51084535284237
+    },
+    {
+      "source_index": 103,
+      "name": "Pipeline-104",
+      "path_count": 8,
+      "state_code": "LA",
+      "original_meters": 830.9204576847375
+    },
+    {
+      "source_index": 104,
+      "name": "Pipeline-105",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 259.36539942454164
+    },
+    {
+      "source_index": 105,
+      "name": "Pipeline-106",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 75.22126092142706
+    },
+    {
+      "source_index": 106,
+      "name": "Pipeline-107",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 2238.586702384971
+    },
+    {
+      "source_index": 107,
+      "name": "Pipeline-108",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 59.2861489318591
+    },
+    {
+      "source_index": 108,
+      "name": "Pipeline-109",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 70.46775255659165
+    },
+    {
+      "source_index": 109,
+      "name": "Pipeline-110",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 994.0694388324899
+    },
+    {
+      "source_index": 110,
+      "name": "Pipeline-111",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 11341.878067460628
+    },
+    {
+      "source_index": 111,
+      "name": "Pipeline-112",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 10.888027006614331
+    },
+    {
+      "source_index": 112,
+      "name": "Pipeline-113",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 155.69989624128115
+    },
+    {
+      "source_index": 113,
+      "name": "Pipeline-114",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 149.43814991277225
+    },
+    {
+      "source_index": 114,
+      "name": "Pipeline-115",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 615.8888625783155
+    },
+    {
+      "source_index": 115,
+      "name": "Pipeline-116",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 3339.2730877163604
+    },
+    {
+      "source_index": 116,
+      "name": "Pipeline-117",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 85.01751832328182
+    },
+    {
+      "source_index": 117,
+      "name": "Pipeline-118",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 8.899318588738023
+    },
+    {
+      "source_index": 118,
+      "name": "Pipeline-119",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 641.5155245710376
+    },
+    {
+      "source_index": 119,
+      "name": "Pipeline-120",
+      "path_count": 6,
+      "state_code": "LA",
+      "original_meters": 1558.5132683448207
+    },
+    {
+      "source_index": 120,
+      "name": "Pipeline-121",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 62.882352050504096
+    },
+    {
+      "source_index": 121,
+      "name": "Pipeline-122",
+      "path_count": 7,
+      "state_code": "LA",
+      "original_meters": 2433.7401030468245
+    },
+    {
+      "source_index": 122,
+      "name": "Pipeline-123",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 378.5924252741443
+    },
+    {
+      "source_index": 123,
+      "name": "Pipeline-124",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 962.3872000114744
+    },
+    {
+      "source_index": 124,
+      "name": "Pipeline-125",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 301.1400223327312
+    },
+    {
+      "source_index": 125,
+      "name": "Pipeline-126",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 79.61537467430615
+    },
+    {
+      "source_index": 126,
+      "name": "Pipeline-127",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 138.1278077751365
+    },
+    {
+      "source_index": 127,
+      "name": "Pipeline-128",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 2.693041404081188
+    },
+    {
+      "source_index": 128,
+      "name": "Pipeline-129",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 123.71164950080073
+    },
+    {
+      "source_index": 129,
+      "name": "Pipeline-130",
+      "path_count": 6,
+      "state_code": "LA",
+      "original_meters": 1044.4584715484198
+    },
+    {
+      "source_index": 130,
+      "name": "Pipeline-131",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 3656.7778329467656
+    },
+    {
+      "source_index": 131,
+      "name": "Pipeline-132",
+      "path_count": 9,
+      "state_code": "LA",
+      "original_meters": 12672.47654843003
+    },
+    {
+      "source_index": 132,
+      "name": "Pipeline-133",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 6.15004456099161
+    },
+    {
+      "source_index": 133,
+      "name": "Pipeline-134",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 128.7724618844824
+    },
+    {
+      "source_index": 134,
+      "name": "Pipeline-135",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 264.75451035145994
+    },
+    {
+      "source_index": 135,
+      "name": "Pipeline-136",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 107.5170574133562
+    },
+    {
+      "source_index": 136,
+      "name": "Pipeline-137",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 20.393226684498572
+    },
+    {
+      "source_index": 137,
+      "name": "Pipeline-138",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 25.232336244271853
+    },
+    {
+      "source_index": 138,
+      "name": "Pipeline-139",
+      "path_count": 6,
+      "state_code": "LA",
+      "original_meters": 568.2433773600193
+    },
+    {
+      "source_index": 139,
+      "name": "Pipeline-140",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 59.291541559747955
+    },
+    {
+      "source_index": 140,
+      "name": "Pipeline-141",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 227.46806765962268
+    },
+    {
+      "source_index": 141,
+      "name": "Pipeline-142",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 170.3231662325997
+    },
+    {
+      "source_index": 142,
+      "name": "Pipeline-143",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 51.48125464103023
+    },
+    {
+      "source_index": 143,
+      "name": "Pipeline-144",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 48.09785921787774
+    },
+    {
+      "source_index": 144,
+      "name": "Pipeline-145",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 101.01213032740361
+    },
+    {
+      "source_index": 145,
+      "name": "Pipeline-146",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 481.8592753671073
+    },
+    {
+      "source_index": 146,
+      "name": "Pipeline-147",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 72.78980510088729
+    },
+    {
+      "source_index": 147,
+      "name": "Pipeline-148",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 31.721912474752724
+    },
+    {
+      "source_index": 148,
+      "name": "Pipeline-149",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 116.14591103954653
+    },
+    {
+      "source_index": 149,
+      "name": "Pipeline-150",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 495.1830378763798
+    },
+    {
+      "source_index": 150,
+      "name": "Pipeline-151",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 13.80706802125825
+    },
+    {
+      "source_index": 151,
+      "name": "Pipeline-152",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 101.84514605261305
+    },
+    {
+      "source_index": 152,
+      "name": "Pipeline-153",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 35.7242829219978
+    },
+    {
+      "source_index": 153,
+      "name": "Pipeline-154",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 34.63495310927413
+    },
+    {
+      "source_index": 154,
+      "name": "Pipeline-155",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 83.97084586974717
+    },
+    {
+      "source_index": 155,
+      "name": "Pipeline-156",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 177.16060508490764
+    },
+    {
+      "source_index": 156,
+      "name": "Pipeline-157",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1793.0987410003609
+    },
+    {
+      "source_index": 157,
+      "name": "Pipeline-158",
+      "path_count": 7,
+      "state_code": "LA",
+      "original_meters": 7096.99992721235
+    },
+    {
+      "source_index": 158,
+      "name": "Pipeline-159",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 160.52334937111402
+    },
+    {
+      "source_index": 159,
+      "name": "Pipeline-160",
+      "path_count": 11,
+      "state_code": "LA",
+      "original_meters": 1098.0401452142405
+    },
+    {
+      "source_index": 160,
+      "name": "Pipeline-161",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 570.6312904271145
+    },
+    {
+      "source_index": 161,
+      "name": "Pipeline-162",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 464.45526583715554
+    },
+    {
+      "source_index": 162,
+      "name": "Pipeline-163",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 701.8090075805073
+    },
+    {
+      "source_index": 163,
+      "name": "Pipeline-164",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 111.19750861324916
+    },
+    {
+      "source_index": 164,
+      "name": "Pipeline-165",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 327.17273080019623
+    },
+    {
+      "source_index": 165,
+      "name": "Pipeline-166",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 233.05367336549645
+    },
+    {
+      "source_index": 166,
+      "name": "Pipeline-167",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 46.7107891408089
+    },
+    {
+      "source_index": 167,
+      "name": "Pipeline-168",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 510.31708356412094
+    },
+    {
+      "source_index": 168,
+      "name": "Pipeline-169",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 75.15068262568728
+    },
+    {
+      "source_index": 169,
+      "name": "Pipeline-170",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 32.73393782936777
+    },
+    {
+      "source_index": 170,
+      "name": "Pipeline-171",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 350.2115466533547
+    },
+    {
+      "source_index": 171,
+      "name": "Pipeline-172",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 28.08136087164627
+    },
+    {
+      "source_index": 172,
+      "name": "Pipeline-173",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 67.0908205295784
+    },
+    {
+      "source_index": 173,
+      "name": "Pipeline-174",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1183.2908535275692
+    },
+    {
+      "source_index": 174,
+      "name": "Pipeline-175",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 51.61250103562068
+    },
+    {
+      "source_index": 175,
+      "name": "Pipeline-176",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 81.3484066203311
+    },
+    {
+      "source_index": 176,
+      "name": "Pipeline-177",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 6287.061842293735
+    },
+    {
+      "source_index": 177,
+      "name": "Pipeline-178",
+      "path_count": 2,
+      "state_code": "LA",
+      "original_meters": 853.6453277418178
+    },
+    {
+      "source_index": 178,
+      "name": "Pipeline-179",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 13.54027687545581
+    },
+    {
+      "source_index": 179,
+      "name": "Pipeline-180",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 11.829868013785282
+    },
+    {
+      "source_index": 180,
+      "name": "Pipeline-181",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 1885.1726443755674
+    },
+    {
+      "source_index": 181,
+      "name": "Pipeline-182",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 1904.4475530945385
+    },
+    {
+      "source_index": 182,
+      "name": "Pipeline-183",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 32.02756791807581
+    },
+    {
+      "source_index": 183,
+      "name": "Pipeline-184",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 551.311213533084
+    },
+    {
+      "source_index": 184,
+      "name": "Pipeline-185",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 530.2170178171091
+    },
+    {
+      "source_index": 185,
+      "name": "Pipeline-186",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 155.53930516332755
+    },
+    {
+      "source_index": 186,
+      "name": "Pipeline-187",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 707.6976261351427
+    },
+    {
+      "source_index": 187,
+      "name": "Pipeline-188",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 53.651731434729506
+    },
+    {
+      "source_index": 188,
+      "name": "Pipeline-189",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 424.0407070852103
+    },
+    {
+      "source_index": 189,
+      "name": "Pipeline-190",
+      "path_count": 4,
+      "state_code": "TX",
+      "original_meters": 4638.6662469765615
+    },
+    {
+      "source_index": 190,
+      "name": "Pipeline-191",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 367.99420249573194
+    },
+    {
+      "source_index": 191,
+      "name": "Pipeline-192",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 453.17770728128886
+    },
+    {
+      "source_index": 192,
+      "name": "Pipeline-193",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 732.4277499917476
+    },
+    {
+      "source_index": 193,
+      "name": "Pipeline-194",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 135.15885649326432
+    },
+    {
+      "source_index": 194,
+      "name": "Pipeline-195",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 128.4070671525895
+    },
+    {
+      "source_index": 195,
+      "name": "Pipeline-196",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 7502.648737365842
+    },
+    {
+      "source_index": 196,
+      "name": "Pipeline-197",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 1207.2642895491238
+    },
+    {
+      "source_index": 197,
+      "name": "Pipeline-198",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 109.23805610823155
+    },
+    {
+      "source_index": 198,
+      "name": "Pipeline-199",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 34.8045650604103
+    },
+    {
+      "source_index": 199,
+      "name": "Pipeline-200",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 145.281193403892
+    },
+    {
+      "source_index": 200,
+      "name": "Pipeline-201",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1835.0441010735844
+    },
+    {
+      "source_index": 201,
+      "name": "Pipeline-202",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 5.600373351646627
+    },
+    {
+      "source_index": 202,
+      "name": "Pipeline-203",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 3228.4363169363664
+    },
+    {
+      "source_index": 203,
+      "name": "Pipeline-204",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 248.83703476673568
+    },
+    {
+      "source_index": 204,
+      "name": "Pipeline-205",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 38.5224504857869
+    },
+    {
+      "source_index": 205,
+      "name": "Pipeline-206",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 45.243359665294044
+    },
+    {
+      "source_index": 206,
+      "name": "Pipeline-207",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 60.28494937500797
+    },
+    {
+      "source_index": 207,
+      "name": "Pipeline-208",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 53.680829158254255
+    },
+    {
+      "source_index": 208,
+      "name": "Pipeline-209",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 143.65368146364176
+    },
+    {
+      "source_index": 209,
+      "name": "Pipeline-210",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 52.992609863508676
+    },
+    {
+      "source_index": 210,
+      "name": "Pipeline-211",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1399.9480630431574
+    },
+    {
+      "source_index": 211,
+      "name": "Pipeline-212",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 544.8596033691683
+    },
+    {
+      "source_index": 212,
+      "name": "Pipeline-213",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 89.10275333136981
+    },
+    {
+      "source_index": 213,
+      "name": "Pipeline-214",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 104.6093537934519
+    },
+    {
+      "source_index": 214,
+      "name": "Pipeline-215",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 134.94119084281257
+    },
+    {
+      "source_index": 215,
+      "name": "Pipeline-216",
+      "path_count": 12,
+      "state_code": "LA",
+      "original_meters": 2473.1487979754215
+    },
+    {
+      "source_index": 216,
+      "name": "Pipeline-217",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 1170.5890573401095
+    },
+    {
+      "source_index": 217,
+      "name": "Pipeline-218",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 50.885136024611256
+    },
+    {
+      "source_index": 218,
+      "name": "Pipeline-219",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 3665.9358254950025
+    },
+    {
+      "source_index": 219,
+      "name": "Pipeline-220",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1202.0118194567035
+    },
+    {
+      "source_index": 220,
+      "name": "Pipeline-221",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 4336.953795136341
+    },
+    {
+      "source_index": 221,
+      "name": "Pipeline-222",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 7531.684099786586
+    },
+    {
+      "source_index": 222,
+      "name": "Pipeline-223",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 224.99120773211226
+    },
+    {
+      "source_index": 223,
+      "name": "Pipeline-224",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 17.624395173330395
+    },
+    {
+      "source_index": 224,
+      "name": "Pipeline-225",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 11323.616855020786
+    },
+    {
+      "source_index": 225,
+      "name": "Pipeline-226",
+      "path_count": 3,
+      "state_code": "LA",
+      "original_meters": 1074.4922628392253
+    },
+    {
+      "source_index": 226,
+      "name": "Pipeline-227",
+      "path_count": 5,
+      "state_code": "LA",
+      "original_meters": 1502.7444802493928
+    },
+    {
+      "source_index": 227,
+      "name": "Pipeline-228",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 406.17692613637894
+    },
+    {
+      "source_index": 228,
+      "name": "Pipeline-229",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 24.420868575718103
+    },
+    {
+      "source_index": 229,
+      "name": "Pipeline-230",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 54.423136830954576
+    },
+    {
+      "source_index": 230,
+      "name": "Pipeline-231",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 160.125998303326
+    },
+    {
+      "source_index": 231,
+      "name": "Pipeline-232",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 190.1797825500979
+    },
+    {
+      "source_index": 232,
+      "name": "Pipeline-233",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 511.21886777033706
+    },
+    {
+      "source_index": 233,
+      "name": "Pipeline-234",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 139.8139923464859
+    },
+    {
+      "source_index": 234,
+      "name": "Pipeline-235",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 607.4066077877962
+    },
+    {
+      "source_index": 235,
+      "name": "Pipeline-236",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 108.59699879797276
+    },
+    {
+      "source_index": 236,
+      "name": "Pipeline-237",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 203.59228144527114
+    },
+    {
+      "source_index": 237,
+      "name": "Pipeline-238",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 671.5995115056503
+    },
+    {
+      "source_index": 238,
+      "name": "Pipeline-239",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 156.6252739060027
+    },
+    {
+      "source_index": 239,
+      "name": "Pipeline-240",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 2708.831062059365
+    },
+    {
+      "source_index": 240,
+      "name": "Pipeline-241",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 395.80025035658207
+    },
+    {
+      "source_index": 241,
+      "name": "Pipeline-242",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 94.77287225428591
+    },
+    {
+      "source_index": 242,
+      "name": "Pipeline-243",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 103.12480568044384
+    },
+    {
+      "source_index": 243,
+      "name": "Pipeline-244",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 187.6127627135547
+    },
+    {
+      "source_index": 244,
+      "name": "Pipeline-245",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 244.5541909930432
+    },
+    {
+      "source_index": 245,
+      "name": "Pipeline-246",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 230.68161497725296
+    },
+    {
+      "source_index": 246,
+      "name": "Pipeline-247",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 58.264265134351014
+    },
+    {
+      "source_index": 247,
+      "name": "Pipeline-248",
+      "path_count": 1,
+      "state_code": "LA",
+      "original_meters": 396.3571348987973
+    },
+    {
+      "source_index": 248,
+      "name": "Pipeline-249",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 517.4601729767649
+    },
+    {
+      "source_index": 249,
+      "name": "Pipeline-250",
+      "path_count": 9,
+      "state_code": "TX",
+      "original_meters": 7981.014466884226
+    },
+    {
+      "source_index": 250,
+      "name": "Pipeline-251",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1265.3075810688847
+    },
+    {
+      "source_index": 251,
+      "name": "Pipeline-252",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 1682.0886944232698
+    },
+    {
+      "source_index": 252,
+      "name": "Pipeline-253",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 766.0905437588639
+    },
+    {
+      "source_index": 253,
+      "name": "Pipeline-254",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1378.6887508505306
+    },
+    {
+      "source_index": 254,
+      "name": "Pipeline-255",
+      "path_count": 81,
+      "state_code": "TX",
+      "original_meters": 35719.44319416857
+    },
+    {
+      "source_index": 255,
+      "name": "Pipeline-256",
+      "path_count": 7,
+      "state_code": "TX",
+      "original_meters": 6089.270200424067
+    },
+    {
+      "source_index": 256,
+      "name": "Pipeline-257",
+      "path_count": 3,
+      "state_code": "TX",
+      "original_meters": 9388.862165223662
+    },
+    {
+      "source_index": 257,
+      "name": "Pipeline-258",
+      "path_count": 8,
+      "state_code": "TX",
+      "original_meters": 11054.574557751732
+    },
+    {
+      "source_index": 258,
+      "name": "Pipeline-259",
+      "path_count": 5,
+      "state_code": "TX",
+      "original_meters": 4357.823280985594
+    },
+    {
+      "source_index": 259,
+      "name": "Pipeline-260",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 500.0351325245462
+    },
+    {
+      "source_index": 260,
+      "name": "Pipeline-261",
+      "path_count": 7,
+      "state_code": "TX",
+      "original_meters": 16107.882483615738
+    },
+    {
+      "source_index": 261,
+      "name": "Pipeline-262",
+      "path_count": 5,
+      "state_code": "TX",
+      "original_meters": 9772.66431862278
+    },
+    {
+      "source_index": 262,
+      "name": "Pipeline-263",
+      "path_count": 12,
+      "state_code": "TX",
+      "original_meters": 7983.990480268184
+    },
+    {
+      "source_index": 263,
+      "name": "Pipeline-264",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 170.57815212888173
+    },
+    {
+      "source_index": 264,
+      "name": "Pipeline-265",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 901.5120275722934
+    },
+    {
+      "source_index": 265,
+      "name": "Pipeline-266",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 2609.7552426997363
+    },
+    {
+      "source_index": 266,
+      "name": "Pipeline-267",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 3389.732493009273
+    },
+    {
+      "source_index": 267,
+      "name": "Pipeline-268",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 664.0204623633631
+    },
+    {
+      "source_index": 268,
+      "name": "Pipeline-269",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 13778.320525936771
+    },
+    {
+      "source_index": 269,
+      "name": "Pipeline-270",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 146.0109304199453
+    },
+    {
+      "source_index": 270,
+      "name": "Pipeline-271",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 599.006182203885
+    },
+    {
+      "source_index": 271,
+      "name": "Pipeline-272",
+      "path_count": 7,
+      "state_code": "WY",
+      "original_meters": 2659.091558777128
+    },
+    {
+      "source_index": 272,
+      "name": "Pipeline-273",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 34.21169322253379
+    },
+    {
+      "source_index": 273,
+      "name": "Pipeline-274",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 288.4052101804423
+    },
+    {
+      "source_index": 274,
+      "name": "Pipeline-275",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 194.3560478011345
+    },
+    {
+      "source_index": 275,
+      "name": "Pipeline-276",
+      "path_count": 1,
+      "state_code": "TX",
+      "original_meters": 1857.9899411521915
+    },
+    {
+      "source_index": 276,
+      "name": "Pipeline-277",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 137.32744265178414
+    },
+    {
+      "source_index": 277,
+      "name": "Pipeline-278",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 304.2635046370227
+    },
+    {
+      "source_index": 278,
+      "name": "Pipeline-279",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 458.4448213350847
+    },
+    {
+      "source_index": 279,
+      "name": "Pipeline-280",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 2637.8018485662474
+    },
+    {
+      "source_index": 280,
+      "name": "Pipeline-281",
+      "path_count": 1,
+      "state_code": "WY",
+      "original_meters": 144.86423786902196
+    }
+  ],
+  "observed_default_analysis": {
+    "basis": "Characterization of baseline, not an independent overlap oracle",
+    "status": "complete",
+    "state_savings_meters": {
+      "LA": 0.0,
+      "TX": 0.0,
+      "WY": 0.0
+    },
+    "all_map_mileage_roundtrips_passed": true
+  }
+}

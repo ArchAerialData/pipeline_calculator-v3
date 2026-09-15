@@ -2,8 +2,8 @@
 from __future__ import annotations
 
 import math
-import tkinter as tk
 import customtkinter as ctk
+from pipeline_calculator.gui.disclosure import DisclosureButton
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.scrolling import AutoScrollFrame
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
@@ -87,6 +87,11 @@ class InlinePair(DeferredLayoutFrame):
                                  text_color=color if metric else TEXT, font=self.label_font)
         self.value = ctk.CTkLabel(self, text=value, width=1, anchor='sw' if metric else 'w', justify='left',
                                  text_color=MUTED if metric else color, font=self.value_font)
+        # Establish visible content before the first deferred width measurement.
+        # Map/Configure timers can be delayed during DPI or scope transitions.
+        self.grid_columnconfigure(1, weight=1)
+        self.label.grid(row=0, column=0, sticky='w')
+        self.value.grid(row=0, column=1, sticky='ew')
 
     def _arrange(self, event=None):
         scale = ctk.ScalingTracker.get_widget_scaling(self)
@@ -100,7 +105,8 @@ class InlinePair(DeferredLayoutFrame):
             size = 40 if width >= 340 else 32
             if self.label.cget('text') in ('Unavailable', 'Not applicable'):
                 size = 28
-            self.label_font.configure(size=size)
+            if self.label_font.cget('size') != size:
+                self.label_font.configure(size=size)
             # Keep units beside the value; let the unit phrase wrap on phones.
             while size > 26 and self.label_font.measure(self.label.cget('text')) + gap + 72 > width:
                 size -= 2
@@ -110,8 +116,10 @@ class InlinePair(DeferredLayoutFrame):
             stacked = False
         else:
             size = 18 if width >= 340 else 16
-            self.label_font.configure(size=size)
-            self.value_font.configure(size=size)
+            if self.label_font.cget('size') != size:
+                self.label_font.configure(size=size)
+            if self.value_font.cget('size') != size:
+                self.value_font.configure(size=size)
             label_width = self.label_font.measure(self.label.cget('text')) + 2
             stacked = label_width + gap + min(140, self.value_font.measure(self.value.cget('text'))) > width
         self.grid_columnconfigure(0, weight=int(stacked))
@@ -231,17 +239,41 @@ class SummaryView(AutoScrollFrame):
             self._create_state_comparison()
         self.disclosure = ctk.CTkFrame(self.inner, fg_color=CARD, corner_radius=14, border_width=1, border_color=OUTLINE)
         self.disclosure.pack(fill='x', pady=(20, 0))
-        # Native button supplies Tab/Space activation and a visible focus outline.
-        self.toggle = tk.Button(self.disclosure, command=self.toggle_details, text='Additional details & run settings  ▸',
+        self.toggle = DisclosureButton(self.disclosure, command=self.toggle_details, text='Additional details & run settings  ▸',
                                 anchor='w', justify='left', bg=CARD, fg=TEXT, activebackground='#34404E',
                                 activeforeground=TEXT, relief='flat', borderwidth=0, highlightthickness=1,
                                 highlightbackground=CARD, highlightcolor=BLUE, takefocus=True, cursor='hand2', padx=8, pady=8)
         self.toggle.pack(fill='x', padx=12, pady=12)
-        self.toggle.bind('<Return>', self.toggle_details)
-        self.toggle.bind('<FocusIn>', self._reveal_toggle)
+        self.toggle.bind('<FocusIn>', self._reveal_toggle, add='+')
         self.details = ctk.CTkFrame(self.disclosure, fg_color='transparent')
-        self._create_details(diagnostics, overlap)
-        self.bind('<Configure>', self._arrange, add='+')
+        self._details_created = False
+        self._arrange_id = None
+        self.bind('<Configure>', self._queue_arrange, add='+')
+        self.bind('<Map>', self._queue_arrange, add='+')
+        self.bind('<Unmap>', self._cancel_arrange, add='+')
+        # Start with a valid stacked layout, then adapt to the mapped width.
+        # A new scope must never depend on a timer just to display its cards.
+        self.cards.grid_columnconfigure(0, weight=1)
+        self.original.grid(row=0, column=0, sticky='nsew', pady=(0, 16))
+        self.adjusted.grid(row=1, column=0, sticky='nsew')
+
+    def _queue_arrange(self, event=None):
+        if self.winfo_viewable() and self._arrange_id is None:
+            self._arrange_id = self._callback_host.after(20, self._apply_arrange)
+
+    def _apply_arrange(self):
+        self._arrange_id = None
+        if self.winfo_viewable():
+            self._arrange()
+
+    def _cancel_arrange(self, event=None):
+        if self._arrange_id is not None:
+            self._callback_host.after_cancel(self._arrange_id)
+            self._arrange_id = None
+
+    def destroy(self):
+        self._cancel_arrange()
+        super().destroy()
 
     def _create_details(self, diagnostics, overlap):
         text_label(self.details, 'Run settings', size=16, color=TEXT, bold=True, pady=(0, 8))
@@ -353,6 +385,9 @@ class SummaryView(AutoScrollFrame):
         self.expanded = not self.expanded
         self.toggle.configure(text='Additional details & run settings  ' + ('▾' if self.expanded else '▸'))
         if self.expanded:
+            if not self._details_created:
+                self._create_details(self.results.get('diagnostics') or [], self.results.get('overlap_analysis'))
+                self._details_created = True
             self.details.pack(fill='x', padx=24, pady=(0, 24))
         else:
             self.details.pack_forget()

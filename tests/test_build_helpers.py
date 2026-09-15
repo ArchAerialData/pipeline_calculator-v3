@@ -32,6 +32,8 @@ def test_source_smoke_entrypoints(tmp_path):
         output=tmp_path/f'{implementation}.json'
         process=run_gui([sys.executable,str(ROOT/'src'/entry),'--smoke-test',str(output)],timeout=30)
         assert process.returncode==0,process.stderr
+        from scripts.validation.check_packaged_smoke import validate_tk_output
+        validate_tk_output(process.stderr)
         report=json.loads(output.read_text())
         assert report['status']=='passed' and report['implementation']==implementation
         assert report['geography']['boundary_jurisdictions'] == 51

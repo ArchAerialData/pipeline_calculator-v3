@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import os
+import logging
 from tkinter import StringVar, ttk
 
 import customtkinter as ctk
 from pipeline_calculator.gui.layout import ActionBar, ResultPages, WrappedLabel
+from pipeline_calculator.gui.styles import scope_style
 
 from pipeline_calculator.gui.tabs.overlap_tab import create as create_overlap_tab
 from pipeline_calculator.gui.tabs.pipelines_tab import create as create_pipelines_tab
@@ -53,22 +55,20 @@ def show(
     scopes = {'Combined': current_results, **{row['state_name']: row for row in states}}
     selection = StringVar(root, value='Combined')
     tabview = None
+    current_scope = None
+    selector = None
+    failed_scope = [None]
+    error_frame = ctk.CTkFrame(root)
+    error_label = WrappedLabel(error_frame, text='', text_color='#FFB993', justify='left')
+    error_label.pack(fill='x', padx=12, pady=8)
+    ctk.CTkButton(error_frame, text='Retry display', command=lambda: select_scope(failed_scope[0])).pack(pady=(0, 8))
 
-    def select_scope(name):
-        nonlocal tabview
-        if name not in scopes:
-            return
-        previous = tabview.selector.get() if tabview is not None else 'Summary'
-        if tabview is not None:
-            tabview.destroy()
-        selection.set(name)
+    def populate_scope(tabview, name):
         # A presentation copy leaves the complete analysis snapshot available to export.
         displayed = dict(scopes[name])
         displayed['_geography'] = geography
         displayed.setdefault('analysis_parameters', current_results.get('analysis_parameters'))
         state_view = name != 'Combined'
-        tabview = ResultPages(root)
-        tabview.pack(fill='both', expand=True, padx=10, pady=5)
         summary_tab = tabview.add('Summary')
         create_summary_tab(summary_tab, displayed, on_select_state=select_scope)
         if displayed.get('pipelines'):
@@ -87,8 +87,43 @@ def show(
             diagnostics += (geography or {}).get('diagnostics') or []
         if diagnostics:
             create_diagnostics_tab(tabview.add('Diagnostics'), {'diagnostics': diagnostics})
-        if previous in tabview.pages:
-            tabview.set(previous)
+    def select_scope(name):
+        nonlocal tabview, current_scope
+        if name not in scopes:
+            return
+        if name == current_scope:
+            selection.set(current_scope)
+            error_frame.pack_forget()
+            return
+        previous = tabview.selector.get() if tabview is not None else 'Summary'
+        replacement = ResultPages(root)
+        try:
+            populate_scope(replacement, name)
+            if previous in replacement.pages:
+                replacement.set(previous)
+        except Exception:
+            replacement.destroy()
+            logging.getLogger(__name__).exception('Could not render results scope %s', name)
+            failed_scope[0] = name
+            selection.set(current_scope or 'Combined')
+            error_label.configure(text=f'Could not display {name}. ' +
+                                  ('Your previous results are still available.' if tabview is not None else
+                                   'Your analysis is still available to export.'))
+            error_frame.pack(fill='x', padx=18, pady=4, **({'before': tabview} if tabview else {}))
+            return
+        error_frame.pack_forget()
+        if tabview is not None:
+            tabview.pack_forget()
+        # Do not retain pack(before=old_view): CTk replays pack options on DPI
+        # changes, after old_view has been destroyed.
+        replacement.pack(fill='both', expand=True, padx=10, pady=5)
+        if tabview is not None:
+            tabview.destroy()
+            if selector is not None:
+                selector.focus_set()
+        tabview = replacement
+        current_scope = name
+        selection.set(name)
 
     if geography is not None:
         scope_bar = ctk.CTkFrame(root, fg_color='transparent')
@@ -96,23 +131,18 @@ def show(
         ctk.CTkLabel(scope_bar, text='View:').pack(side='left', padx=(0, 8))
         selector = ttk.Combobox(scope_bar, textvariable=selection, values=list(scopes),
                                 state='readonly', width=25, takefocus=True)
-        style = ttk.Style(selector)
-        style.theme_use('clam')
-        style_name = f'StateScope{id(selector)}.TCombobox'
-        style.configure(style_name, foreground='#F1F4F8', fieldbackground='#242424',
-                        background='#343434', arrowcolor='#F1F4F8', bordercolor='#535B65')
-        style.map(style_name, fieldbackground=[('readonly', '#242424')],
-                  foreground=[('readonly', '#F1F4F8')], selectbackground=[('readonly', '#1F538D')])
-        selector.configure(style=style_name)
         last_scale = [None]
         def scale_selector(event=None):
             factor = ctk.ScalingTracker.get_widget_scaling(scope_bar)
             if factor != last_scale[0]:
                 last_scale[0] = factor
                 font = ('Arial', -round(14 * factor))
-                selector.configure(font=font)
-                style.configure(style_name, padding=round(5 * factor), arrowsize=round(14 * factor))
-                root.option_add('*TCombobox*Listbox.font', font)
+                selector.configure(font=font, style=scope_style(selector, factor))
+                # Style the actual popup, without changing other windows' fonts.
+                popup = selector.tk.call('ttk::combobox::PopdownWindow', selector)
+                selector.tk.call(f'{popup}.f.l', 'configure', '-font', font,
+                                 '-background', '#242424', '-foreground', '#F1F4F8',
+                                 '-selectbackground', '#1F538D', '-selectforeground', '#FFFFFF')
         scope_bar.bind('<Configure>', scale_selector, add='+')
         scale_selector()
         selector.pack(side='left', padx=(0, 8), pady=4)

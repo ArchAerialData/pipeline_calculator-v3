@@ -13,9 +13,17 @@ from scripts.validation import check_packaged_smoke as smoke
 def passed_report(implementation):
     return {
         "status": "passed", "implementation": implementation, "frozen": True, "version": "4.16-test",
+        "ui_reliability": {"summary_returns": 20, "callback_errors": []},
         "geography": {"boundary_jurisdictions": 51, "state_codes": ["OK", "TX"],
                       "reconciliation_passed": True, "package_map_roundtrips": True},
     }
+
+
+@pytest.mark.parametrize('stderr', ['invalid command name "123after"',
+                                    'Exception in Tkinter callback', '_tkinter.TclError: missing widget'])
+def test_tcl_callback_errors_cannot_pass_packaging(stderr):
+    with pytest.raises(ValueError, match='Tk callback error'):
+        smoke.validate_tk_output(stderr)
 
 
 def test_resolves_versioned_inner_macos_binary_from_plist(tmp_path):

@@ -39,10 +39,17 @@ def export_with_dialog(current_results: dict[str, Any], current_file: str | None
     if not save_path:
         return None
 
-    try:
+    import tkinter as tk
+    from pipeline_calculator.gui.background_action import run_background_action
+    def write():
         export_results_to_path(current_results, save_path)
-    except Exception as e:
-        messagebox.showerror("Export Error", str(e))
+        return save_path
+    path, error = run_background_action(tk._default_root, 'Export Results',
+                                        'Writing your export. This window will close when it is ready.', write)
+    if error is not None:
+        messagebox.showerror("Export Error", str(error))
+        return None
+    if path is None:
         return None
 
     messagebox.showinfo("Export Complete", f"Results exported to:\n{save_path}")
@@ -58,13 +65,14 @@ def _export_package_with_dialog(current_results, current_file):
     from pipeline_calculator.export.package import export_analysis_package
     from pipeline_calculator.gui.layout import WrappedLabel
     from pipeline_calculator.gui.window import fit_window
+    from pipeline_calculator.gui.scrolling import AutoScrollFrame
 
     parent = tk._default_root
     window = ctk.CTkToplevel(parent)
     window.title("Export Analysis Package")
     if parent is not None:
         window.transient(parent)
-    content = ctk.CTkScrollableFrame(window)
+    content = AutoScrollFrame(window)
     content.pack(fill="both", expand=True, padx=16, pady=16)
     WrappedLabel(content, text="Export every state and the combined analysis together.",
                  font=ctk.CTkFont(size=18, weight="bold"), justify="left").pack(fill="x", padx=8, pady=(8, 12))

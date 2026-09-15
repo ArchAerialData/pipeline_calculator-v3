@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "fixture": "adamas_ng_pipeline_row.kmz",
+  "purpose": "Real polygon-only input validation; not a positive pipeline-mileage fixture",
+  "source_filename": "Adamas - NG_PIPELINE_ROW.kmz",
+  "sha256": "bd2006ad9c3e673b1a2337409c0b84c3cf375b2f926656de2bee0dcca0aa4892",
+  "bytes": 3709955,
+  "source_preserved": true,
+  "xml_expectations": {
+    "Placemark": 281,
+    "Polygon": 281,
+    "LinearRing": 922,
+    "LineString": 0,
+    "Point": 0,
+    "Track": 0,
+    "MultiTrack": 0
+  },
+  "parser_expectations": {
+    "pipelines": 0,
+    "placemarks": 0,
+    "total_meters": 0.0,
+    "analysis_complete": false,
+    "diagnostic_counts": {
+      "selected_primary_kml": 1,
+      "unsupported_geometry": 281,
+      "no_supported_features": 1
+    }
+  },
+  "polygon_coverage_observations": {
+    "boundary_model": "2025 Census TIGER/Line bundled snapshot",
+    "boundary_resource_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+    "method": "Shapely covers on each complete original polygon against state polygons; separate from mileage partition",
+    "valid_polygons": 281,
+    "state_counts": {
+      "WY": 27,
+      "TX": 57,
+      "LA": 197
+    }
+  },
+  "audit_baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+  "positive_line_assignment_test": "Companion adamas_ng_pipeline_row_centerlines.kmz supplied and validated; automated regression implementation deferred until concurrent UI task finishes."
+}

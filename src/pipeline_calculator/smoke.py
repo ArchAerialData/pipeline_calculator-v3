@@ -6,22 +6,33 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import traceback
+import time
 
 
-def _check_live_results(result):
+def _check_live_results(result, implementation='new'):
     """Exercise the packaged analysis-to-results transition under a real mainloop."""
-    from pipeline_calculator.gui.main_window import PipelineCalculatorGUI
+    if implementation == 'legacy':
+        from pipeline_calculator_v3 import PipelineCalculatorGUI
+    else:
+        from pipeline_calculator.gui.main_window import PipelineCalculatorGUI
     from pipeline_calculator.gui.tabs.overlap_tab import CorridorTable
     from pipeline_calculator.gui.layout import ResultPages
+    from pipeline_calculator.gui.tabs.summary_tab import SummaryView
     from tkinter import ttk
     app = PipelineCalculatorGUI()
     assert app.root.TkdndVersion
     errors, opened, rendered = [], [], []
-    app.root.report_callback_exception = lambda *args: errors.append(str(args)) or app.root.quit()
+    app.root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args))) or app.root.quit()
     app.view_overlap_corridor = lambda section, index: opened.append((section, index))
+    app.view_overlap_kml = app.view_overlap_corridor
     def show():
-        app.state.current_results = result
+        if implementation == 'legacy':
+            app.current_results = result
+        else:
+            app.state.current_results = result
         app.show_results()
+        next(w for w in app.root.winfo_children() if isinstance(w, ResultPages)).set('Pipelines')
         rendered.append(True)
     def children(node):
         for child in node.winfo_children():
@@ -30,6 +41,9 @@ def _check_live_results(result):
     def check():
         pages = next(w for w in app.root.winfo_children() if isinstance(w, ResultPages))
         tree = next(w for w in children(pages.pages['Pipelines']) if isinstance(w, ttk.Treeview))
+        if tree.row_loader.rows is not None:
+            app.root.after(50, check)
+            return
         assert tree.heading('Placemark ID', 'text') == 'Placemark ID'
         assert [tree.set(item, 'Placemark ID') for item in tree.get_children()[:-1]] == [
             p['Placemark_ID'] for p in result['pipelines']]
@@ -38,12 +52,38 @@ def _check_live_results(result):
             table = next(w for w in children(app.root) if isinstance(w, CorridorTable))
             next(iter(table.row_buttons.values())).invoke()
             assert opened == [(sections[0], 1)]
+        cycle()
+    cycles = []
+    def cycle():
+        pages = next(w for w in app.root.winfo_children() if isinstance(w, ResultPages))
+        pages.set('Pipelines')
+        def return_to_summary():
+            pages.set('Summary')
+            deadline[0] = time.monotonic() + 1
+            app.root.after(30, inspect_summary)
+        app.root.after(30, return_to_summary)
+    deadline = [None]
+    def inspect_summary():
+        summary = next(w for w in children(app.root) if isinstance(w, SummaryView))
+        if not summary.original.value.winfo_viewable() and time.monotonic() < deadline[0]:
+            app.root.after(10, inspect_summary)
+            return
+        assert summary.winfo_viewable() and summary.original.value.winfo_viewable()
+        assert summary.original.value.cget('text') != ''
+        summary.toggle.invoke()
+        cycles.append(True)
+        if len(cycles) < 20:
+            app.root.after(30, cycle)
+        else:
+            app.root.quit()
     try:
         app.root.after(250, show)
         app.root.after(1800, check)
-        app.root.after(2200, app.root.quit)
+        app.root.after(15000, app.root.quit)
         app.root.mainloop()
-        assert rendered and not errors, errors
+        assert rendered and len(cycles) == 20 and not errors, errors
+        return {'summary_returns': len(cycles), 'callback_errors': errors,
+                'tk_patchlevel': app.root.tk.call('info', 'patchlevel')}
     finally:
         app.close()
 
@@ -100,15 +140,8 @@ def run(output_path, *, implementation='new'):
         from pipeline_calculator.core.analyzer import PipelineAnalyzer
     output=Path(output_path)
     try:
-        if implementation == 'legacy':
-            root=TkinterDnD.Tk()
-            root.withdraw()
-            try:
-                label=ctk.CTkLabel(root,text='Packaging check')
-                label.pack()
-                root.update_idletasks()
-            finally:
-                root.destroy()
+        # Both modes now exercise their real AppWindow below. A preliminary
+        # throwaway Tk root leaves CTk's interpreter timers behind on teardown.
         with tempfile.TemporaryDirectory(prefix='pipeline-smoke-') as directory:
             path=Path(directory)/'fixture.kml'
             path.write_text('<kml><Placemark><LineString><coordinates>-100,40 -100,40.001</coordinates></LineString></Placemark></kml>')
@@ -125,15 +158,14 @@ def run(output_path, *, implementation='new'):
                 p['Placemark_ID'] for p in result['pipelines']]
             workbook.save(Path(directory)/'result.xlsx')
             geography_report = _check_geography_packaging(directory)
-        if implementation == 'new':
-            _check_live_results(result)
+        ui_report = _check_live_results(result, implementation)
         icon=icon_path()
         assert icon is not None and icon.exists()
         assert (resource_root()/'README.md').is_file()
         report={'status':'passed','implementation':implementation,'frozen':bool(getattr(sys,'frozen',False)),
                 'version':get_version(),'total_meters':result['total_meters'],'icon':icon.name,
                 'tk_widgets':True,'dnd_loaded':True,
-                'live_results': implementation == 'new', 'pipeline_count': len(result['pipelines']),
+                'live_results': True, 'ui_reliability': ui_report, 'pipeline_count': len(result['pipelines']),
                 'placemark_ids': [p['Placemark_ID'] for p in result['pipelines']],
                 'original_miles': result['total_miles'],
                 'geography': geography_report,
