@@ -82,11 +82,38 @@ class StateBreakdownPreference:
         from pipeline_calculator.gui.layout import WrappedLabel
         frame = ctk.CTkFrame(parent, fg_color='transparent')
         frame.pack(fill='x', padx=12, pady=(8, 10))
-        switch = ctk.CTkSwitch(frame, text='State breakdown',
-                              variable=self.variable if draft is None else draft,
+        row = ctk.CTkFrame(frame, fg_color='transparent')
+        row.pack(anchor='w', pady=(0, 4))
+        variable = self.variable if draft is None else draft
+        switch = ctk.CTkSwitch(row, text='State breakdown',
+                              variable=variable,
                               command=self.commit if draft is None else None,
                               state='disabled' if self._busy else 'normal')
-        switch.pack(anchor='w', pady=(0, 4))
+        switch.pack(side='left')
+
+        class StatusLabel(ctk.CTkLabel):
+            preference_trace = None
+
+            def destroy(label):
+                if label.preference_trace is not None:
+                    variable.trace_remove('write', label.preference_trace)
+                    label.preference_trace = None
+                super().destroy()
+
+        switch_font = switch.cget('font')
+        font = ctk.CTkFont(family=switch_font.cget('family'),
+                          size=switch_font.cget('size'), weight='bold')
+        status = StatusLabel(row, text='', font=font, width=32,
+                             height=switch.cget('height'), anchor='w')
+        status.pack(side='left', padx=(8, 0))
+
+        def update_status(*args):
+            enabled = variable.get()
+            status.configure(text='ON' if enabled else 'OFF',
+                             text_color='#8CD8A8' if enabled else '#FF8080')
+
+        status.preference_trace = variable.trace_add('write', update_status)
+        update_status()
         # CTk's canvas switch otherwise lacks native keyboard activation.
         switch._canvas.configure(takefocus=True, highlightthickness=1,
                                   highlightcolor='#9CC8EB', highlightbackground='#202020')

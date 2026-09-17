@@ -14,7 +14,8 @@ def create_table(parent, columns, widths, *, vertical_padding=8):
     name = scroll_style + '.Treeview'
     tree = ttk.Treeview(frame, columns=columns, show='headings', height=6, style=name)
     for column in columns:
-        tree.heading(column, text=column)
+        tree.heading(column, text=column, anchor='w')
+        tree.column(column, anchor='w')
     vsb = ttk.Scrollbar(frame, orient='vertical', command=tree.yview, style=scroll_style+'.Vertical.TScrollbar')
     hsb = ttk.Scrollbar(frame, orient='horizontal', command=tree.xview, style=scroll_style+'.Horizontal.TScrollbar')
     tree.configure(xscrollcommand=hsb.set, yscrollcommand=vsb.set)

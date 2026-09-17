@@ -128,7 +128,9 @@ def show(
     if geography is not None:
         scope_bar = ctk.CTkFrame(root, fg_color='transparent')
         scope_bar.pack(fill='x', padx=18, pady=(4, 0))
-        ctk.CTkLabel(scope_bar, text='View:').pack(side='left', padx=(0, 8))
+        scope_bar.grid_columnconfigure(1, weight=1)
+        ctk.CTkLabel(scope_bar, text='View:', text_color='#A9D9FF',
+                     font=('Arial', 14, 'bold')).grid(row=0, column=0, padx=(0, 8), sticky='w')
         selector = ttk.Combobox(scope_bar, textvariable=selection, values=list(scopes),
                                 state='readonly', width=25, takefocus=True)
         last_scale = [None]
@@ -145,7 +147,10 @@ def show(
                                  '-selectbackground', '#1F538D', '-selectforeground', '#FFFFFF')
         scope_bar.bind('<Configure>', scale_selector, add='+')
         scale_selector()
-        selector.pack(side='left', padx=(0, 8), pady=4)
+        selector.grid(row=0, column=1, sticky='w', padx=(0, 8), pady=4)
+        WrappedLabel(scope_bar, text='Use the dropdown to view individual state statistics.',
+                     text_color='#B8C8D8', font=('Arial', 13), anchor='w', justify='left',
+                     wrap_padding=8).grid(row=1, column=0, columnspan=2, sticky='ew', pady=(0, 4))
         selector.bind('<<ComboboxSelected>>', lambda event: select_scope(selection.get()))
     select_scope('Combined')
 
