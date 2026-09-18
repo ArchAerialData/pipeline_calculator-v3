@@ -62,6 +62,7 @@ def test_omitted_corridor_row_is_labelled_and_disabled():
     ('corridor_projection_unavailable', {}, 'geographic accuracy checks'),
     ('corridor_geometry_invalid', {}, 'safely constructed'),
     ('corridor_coverage_failed', {}, 'all qualifying pipeline paths'),
+    ('state_corridor_omitted', {'reason_code': 'state_corridor_geometry_invalid'}, 'safely prepared or verified'),
     ('state_corridor_omitted', {}, 'clipped and verified within this state'),
     ('state_corridor_unavailable', {}, 'could not be prepared'),
     ('unknown', {'error': 'budget geometry containment'}, 'could not be generated'),
@@ -72,6 +73,25 @@ def test_omission_reason_uses_structured_codes_not_arbitrary_error_text(code, co
     assert expected in corridor_unavailable_reason(section)
     with pytest.raises(ValueError, match=expected):
         launch_corridor(None, section, 1)
+
+
+@pytest.mark.parametrize('failure', ['invalid_polygon', 'missing_boundary'])
+def test_real_state_clipping_fallback_has_accurate_explanation_without_claiming_bad_source(failure):
+    from shapely.geometry import box
+    from pipeline_calculator.core.analyzer import PipelineAnalyzer
+    from pipeline_calculator.core.geography import BoundaryDataset, clip_state_corridor
+
+    outer = ([[0, 0], [1, 1], [0, 1], [1, 0], [0, 0]] if failure == 'invalid_polygon'
+             else [[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]])
+    section = {'bundled_length_meters': 200, 'visualization_schema_version': 1,
+               'visualization_status': 'ready', 'visualization_polygons': [{'outer': outer, 'holes': []}]}
+    boundaries = BoundaryDataset({'AA' if failure == 'invalid_polygon' else 'BB': box(-2, -2, 2, 2)})
+    result = clip_state_corridor(section, 'AA', boundaries, PipelineAnalyzer().geod)
+    assert result['visualization_status'] == 'omitted'
+    assert result['bundled_length_meters'] == section['bundled_length_meters']
+    diagnostic = next(d for d in result['diagnostics'] if d['code'] == 'state_corridor_omitted')
+    assert diagnostic['context']['reason_code'] == 'state_corridor_geometry_invalid'
+    assert corridor_unavailable_reason(result) == 'The state map could not be safely prepared or verified.'
 
 
 def test_missing_unsupported_and_valid_canonical_geometry_have_distinct_explanations():
@@ -209,14 +229,39 @@ def test_full_results_page_keeps_omitted_map_rows_usable_in_short_viewport(monke
             assert len(dialogs) == count + 2
             table.map_details.invoke()
             assert len(dialogs) == count + 3
-        # Enlarging the window restores inline details and moves focus off the
-        # now-hidden compact action, so subsequent Tab presses remain usable.
+        # Expand the logical viewport at a scale that fits the macOS runner's
+        # 1024x768 display. At 150% DPI, requesting 1000x650 means 1500x975
+        # native pixels; the window manager can clamp that request and correctly
+        # leave the table compact. Keep the high-DPI short-window checks above.
+        # This also exercises moving to a lower-DPI display with keyboard focus.
         table.map_details.focus_set()
         settle(root)
+        ctk.set_widget_scaling(.75 / scale)
+        ctk.set_window_scaling(.75 / scale)
+        # CTk pins native dimensions briefly during a DPI transition. Restore
+        # resize bounds explicitly instead of waiting for its one-second timer.
+        root.minsize(1, 1)
+        root.maxsize(1100, 750)
         root.geometry('1000x650')
         settle(root, .3)
-        assert table.map_explanation.winfo_ismapped()
+        viewport = {
+            'screen': (root.winfo_screenwidth(), root.winfo_screenheight()),
+            'window': (root.winfo_width(), root.winfo_height()),
+            'table': table.winfo_height(),
+            'scale': ctk.ScalingTracker.get_widget_scaling(table),
+        }
+        print('Expanded corridor viewport:', viewport)
+        assert viewport['table'] / viewport['scale'] >= 210, viewport
+        assert table.map_explanation.winfo_ismapped(), viewport
+        assert_inside(table.map_explanation, table)
         assert not table.map_details.winfo_ismapped()
         assert root.focus_get() is table.tree
+        root.geometry('640x360')
+        settle(root, .3)
+        assert not table.map_explanation.winfo_ismapped()
+        assert_inside(table.map_details, table.navigation)
+        assert table.tree.bbox(table.tree.get_children()[0])
     finally:
         root.destroy()
+        ctk.set_widget_scaling(1.0)
+        ctk.set_window_scaling(1.0)

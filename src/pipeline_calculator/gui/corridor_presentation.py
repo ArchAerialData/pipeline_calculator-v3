@@ -22,6 +22,9 @@ _REASONS = {
     'corridor_projection_unavailable': 'The map could not meet its geographic accuracy checks.',
     'corridor_geometry_invalid': 'The map shape could not be safely constructed.',
     'corridor_coverage_failed': 'The map could not reliably cover all qualifying pipeline paths.',
+    # The clipping producer uses this fallback for any uncoded exception, not
+    # only invalid input geometry (for example, an unavailable state boundary).
+    'state_corridor_geometry_invalid': 'The state map could not be safely prepared or verified.',
     'state_corridor_omitted': 'The map could not be safely clipped and verified within this state.',
     'state_corridor_unavailable': 'The state corridor map could not be prepared.',
 }

@@ -40,6 +40,44 @@ instrumented map generation. Its peak working set was 790,786,048 bytes
 just maps. They do not establish a direct relationship between work allowance
 and memory consumption or a cross-platform performance guarantee.
 
+### Matched memory comparison
+
+A follow-up review compared the 2M and 10M allowances in two sequential fresh
+Windows Python 3.11.9 processes, using the same captured `b1a456a` source, input
+and analysis parameters. Only the work allowance differed. Windows process
+memory counters were sampled every 50 ms and at stage transitions and map-call
+boundaries. The measured interval ends before result serialization.
+
+| Measurement | 2M allowance | 10M allowance |
+| --- | ---: | ---: |
+| Combined / Texas maps available | 50 / 0 | 95 / 95 |
+| Full analysis time | 77.20 s | 89.89 s |
+| Instrumented map time | 4.07 s | 15.05 s |
+| Peak working set | 788,631,552 bytes | 791,789,568 bytes |
+| Peak process commitment | 2,316,673,024 bytes | 2,320,113,664 bytes |
+
+The higher allowance completed all 190 maps with unchanged numerical results.
+Peak working set differed by 3.01 MiB (0.40%); peak commitment differed by
+3.28 MiB (0.15%). In both runs the final lifetime peaks were first observed
+while building the Texas overlap spatial index, before Texas map generation.
+Neither Combined map generation, Texas map generation nor Texas clipping set
+a new lifetime memory peak. Both processes already reported approximately
+1.605 billion bytes of commitment after imports, before opening the input.
+
+These measurements do not support attributing the earlier 2.16 GiB whole-job
+peak to the higher map allowance: the 2M run already reached approximately the
+same peak while omitting 140 maps. The work counter permits additional
+processing; it does not allocate a buffer sized to the allowance. Its unchanged
+per-operation and retained-output guards constrain geometry complexity, rather
+than enforcing a byte or OS process-memory ceiling. This single matched pair
+does not establish worst-case capacity for other inputs, machines or platforms.
+
+Local receipts: `.validation-output/wwm-corridor-review/memory-comparison.json`,
+`memory-budget-2000000/` and `memory-budget-10000000/` under that same directory;
+each run includes a summary, stage samples and map-call measurements. The probe
+is `budget_memory_probe.py` in the same directory and reads the isolated source
+snapshot without changing application code.
+
 Original mileage, adjusted mileage, savings and numerical section records were
 unchanged. The independent review of the 20M output additionally compared the
 complete source fragment ledger/reconciliation and checked 157 Texas polygons,
