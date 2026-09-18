@@ -1,0 +1,34 @@
+{
+  "status": "published",
+  "version": "4.25-dev.dc733fafff69.dirty",
+  "published_at": "2026-09-18T10:32:00.4462383-05:00",
+  "sha256": "AD0B945902782736B87005DFB89582EE12727AB019EA64C6F380778A372D6D9E",
+  "size_bytes": 102623564,
+  "tested_executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\repair-title-layout\\package\\dist\\Pipeline_Calculator_v4.25-dev.dc733fafff69.dirty.exe",
+  "destinations": [
+    "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\Pipeline_Calculator_v4.25-dev.dc733fafff69.dirty.exe",
+    "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\Pipeline_Calculator_v4.exe"
+  ],
+  "preserved_previous_builds": [
+    "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\archive\\Pipeline_Calculator_v4_before_repair_title_20260918_103159.exe"
+  ],
+  "offline_smoke": {
+    "status": "passed",
+    "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\repair-title-layout\\package\\dist\\Pipeline_Calculator_v4.25-dev.dc733fafff69.dirty.exe",
+    "proj_network": "OFF",
+    "implementations": [
+      {
+        "implementation": "new",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "implementation": "legacy",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ]
+  },
+  "repair_ui_tests_passed": 8,
+  "running_user_apps_stopped": false
+}

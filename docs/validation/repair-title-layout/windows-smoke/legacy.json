@@ -1,0 +1,50 @@
+{
+  "status": "passed",
+  "implementation": "legacy",
+  "frozen": true,
+  "version": "4.25-dev.dc733fafff69.dirty",
+  "total_meters": 111.03464218395374,
+  "icon": "icon.ico",
+  "tk_widgets": true,
+  "dnd_loaded": true,
+  "live_results": true,
+  "ui_reliability": {
+    "summary_returns": 20,
+    "callback_errors": [],
+    "tk_patchlevel": "8.6.12"
+  },
+  "pipeline_count": 1,
+  "placemark_ids": [
+    "N/A"
+  ],
+  "original_miles": 0.06899359000605187,
+  "geography": {
+    "boundary_jurisdictions": 51,
+    "state_codes": [
+      "OK",
+      "TX"
+    ],
+    "boundary_vintage": "2025",
+    "reconciliation_passed": true,
+    "package_map_roundtrips": true
+  },
+  "repair": {
+    "approval_required": true,
+    "source_unchanged": true,
+    "geometry_verified": true,
+    "saved_copy_roundtrip": true,
+    "provenance_exported": true
+  },
+  "corridors": {
+    "policy": "qualified_path_buffer_v1",
+    "curved_geometry": true,
+    "holes_preserved": true,
+    "multipart_preserved": true,
+    "polygon_only_preview": true,
+    "state_containment": true,
+    "numeric_parity": true,
+    "map_roundtrips": true,
+    "state_polygon_count": 4
+  },
+  "adjusted_miles": null
+}

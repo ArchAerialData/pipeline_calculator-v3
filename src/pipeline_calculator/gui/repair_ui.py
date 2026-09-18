@@ -74,8 +74,17 @@ class RepairPanel:
         self.footer.pack(side='bottom', fill='x', padx=14, pady=(8, 14))
         self.body = ModalBody(self.card)
         self.body.pack(fill='both', expand=True, padx=22, pady=(20, 4))
-        WrappedLabel(self.body, text=title, text_color=TEXT, anchor='w', justify='left',
-                     font=ctk.CTkFont(size=22, weight='bold')).pack(fill='x', pady=(0, 8))
+        self.header = ctk.CTkFrame(self.body, fg_color='transparent', width=1, height=1)
+        self.header.pack(fill='x', pady=(0, 8))
+        self.header.grid_columnconfigure(0, weight=1)
+        # Wrap against the title's own available width, excluding the details button.
+        self.title_area = ctk.CTkFrame(self.header, fg_color='transparent', width=1, height=1)
+        self.title_area.grid(row=0, column=0, sticky='ew')
+        self.title_label = WrappedLabel(self.title_area, text=title, text_color=TEXT,
+            anchor='w', justify='left', wrap_padding=0,
+            font=ctk.CTkFont(size=22, weight='bold'))
+        self.title_label.pack(fill='x')
+        self._header_stacked = None
         if filename:
             WrappedLabel(self.body, text=filename, text_color=MUTED, anchor='w',
                          justify='left').pack(fill='x', pady=(0, 10))
@@ -89,9 +98,10 @@ class RepairPanel:
                                    else self.footer.buttons)
         self.initial_focus = self.focus_controls[0] if self.focus_controls else None
         if self.detail_text:
-            self.detail_button = ctk.CTkButton(self.body, text='Show details', width=150,
+            self.detail_button = ctk.CTkButton(self.header, text='Show details', width=120,
                                               fg_color='#394553', command=self.toggle_details)
-            self.detail_button.pack(anchor='w', pady=(0, 8))
+            self.header.bind('<Configure>', self._arrange_header, add='+')
+            self._arrange_header()
             self.focus_controls.append(self.detail_button)
         if primary_action is None:
             for index, button in enumerate(self.footer.buttons):
@@ -109,6 +119,18 @@ class RepairPanel:
         self.surface.grab_set()
         if self.initial_focus is not None:
             tk.Misc.focus_set(self.initial_focus)
+
+    def _arrange_header(self, event=None):
+        scale = ctk.ScalingTracker.get_widget_scaling(self.header)
+        width = event.width if event is not None else self.header.winfo_width()
+        stacked = width / scale < 500
+        if stacked == self._header_stacked:
+            return
+        self._header_stacked = stacked
+        self.title_area.grid_configure(columnspan=2 if stacked else 1)
+        self.detail_button.grid(row=1 if stacked else 0, column=0 if stacked else 1,
+            columnspan=2 if stacked else 1, sticky='e',
+            padx=0 if stacked else (16, 0), pady=(8, 0) if stacked else 0)
 
     def _escape(self, event=None):
         if self.on_cancel is not None:
