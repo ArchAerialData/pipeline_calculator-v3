@@ -66,6 +66,21 @@ def test_scope_shares_navigation_row_without_increasing_height(monkeypatch, scal
                         visible.winfo_rooty() + visible.winfo_height())
                     if pages.scope_helper.winfo_viewable():
                         assert_inside(pages.scope_helper, pages.navigation)
+                        first = min(pages.view_label.winfo_rooty(), pages.scope_selector.winfo_rooty())
+                        last = pages.scope_helper.winfo_rooty() + pages.scope_helper.winfo_height()
+                        top_gap = first - pages.navigation.winfo_rooty()
+                        bottom_gap = pages.navigation.winfo_rooty() + nav_height - last
+                        assert min(top_gap, bottom_gap) >= 3 * factor
+                        assert abs(top_gap - bottom_gap) <= 2
+                        assert pages.scope_helper.winfo_rooty() >= (
+                            pages.scope_selector.winfo_rooty() + pages.scope_selector.winfo_height() + factor)
+                        assert pages.scope_helper._label.winfo_reqheight() <= pages.scope_helper.winfo_height()
+                    else:
+                        middle = pages.scope_selector.winfo_rooty() + pages.scope_selector.winfo_height() / 2
+                        assert abs(middle - (pages.navigation.winfo_rooty() + nav_height / 2)) <= 1
+                    assert pages.scope_selector.winfo_height() >= pages.scope_selector.winfo_reqheight()
+                    if width == 1200 and logical_height >= 280:
+                        assert pages.scope_helper.winfo_viewable()
                     if pages.navigation.winfo_width() / factor <= 400:
                         assert pages.selector.winfo_viewable() and not pages.tabs.winfo_viewable()
                 pages.destroy()

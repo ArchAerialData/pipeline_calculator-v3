@@ -292,14 +292,23 @@ class ResultPages(ctk.CTkFrame):
                          '-selectbackground', '#1F538D', '-selectforeground', '#FFFFFF')
         self.scope.configure(width=width, height=height)
         self.scope.place(x=8, y=0)
-        helper_fits = (height == 50 and self.scope_helper.winfo_reqwidth() / scale <= width)
-        top = 1 if helper_fits else (height - 30) / 2
-        self.view_label.place(x=0, y=top + 1)
+        # Center the complete selector/helper group within the existing row.
+        # Measure the native ttk control instead of fixing it to 30 pixels;
+        # its tighter vertical padding leaves room above and below the group.
+        control_height = max(24, self.scope_selector.winfo_reqheight() / scale)
+        helper_height = self.scope_helper.winfo_reqheight() / scale
+        gap = 2
+        group_height = control_height + gap + helper_height
+        helper_fits = (height == 50 and self.scope_helper.winfo_reqwidth() / scale <= width
+                       and group_height <= height - 8)
+        top = (height - (group_height if helper_fits else control_height)) / 2
+        self.view_label.configure(height=control_height)
+        self.view_label.place(x=0, y=top)
         # ttk uses physical pixels; CustomTkinter scales its own place options.
         self.scope_selector.place(x=round(44 * scale), y=round(top * scale),
-                                  width=max(1, round((width - 44) * scale)), height=round(30 * scale))
+                                  width=max(1, round((width - 44) * scale)), height=round(control_height * scale))
         if helper_fits:
-            self.scope_helper.place(x=0, y=32)
+            self.scope_helper.place(x=0, y=top + control_height + gap)
         else:
             self.scope_helper.place_forget()
 
