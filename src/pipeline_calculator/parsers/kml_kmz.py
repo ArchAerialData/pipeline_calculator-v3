@@ -317,16 +317,25 @@ def _extract_network_links(root, state: _ParserState, *, source: str):
 
 
 def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required: bool, validate_structure=True):
+    from pipeline_calculator.parsers.repair import RepairFailure, safe_xml_root
+
     try:
         if state.context is not None:
             state.context.check()
-        from pipeline_calculator.parsers.repair import safe_xml_root
         root = safe_xml_root(data, context=state.context)
         if state.context is not None:
             state.context.check()
     except ET.ParseError as e:
         if required:
             raise ValueError(f"Invalid KML data in {source}: {str(e)}") from e
+        _diag(state, "linked_kml_parse_error", f"Could not parse linked KML: {str(e)}", source=source)
+        return []
+    except RepairFailure as e:
+        # Match source-session handling for optional documents. Resource limits
+        # and policy failures still abort, and the structural guard below stays
+        # outside this catch so ambiguous geometry can never be skipped here.
+        if required or e.category not in {"source", "unsupported"}:
+            raise
         _diag(state, "linked_kml_parse_error", f"Could not parse linked KML: {str(e)}", source=source)
         return []
 
