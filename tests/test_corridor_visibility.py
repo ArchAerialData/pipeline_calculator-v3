@@ -25,8 +25,14 @@ def test_omitted_corridor_cannot_launch_even_with_a_valid_original_fallback(deci
 
 
 @pytest.mark.native_gui
-def test_omitted_corridor_row_is_labelled_and_disabled():
+def test_omitted_corridor_row_is_labelled_and_disabled(monkeypatch):
     import customtkinter as ctk
+    from pipeline_calculator.gui.tabs import overlap_tab
+    from test_ui_lifecycle import settle
+
+    details = []
+    monkeypatch.setattr(overlap_tab.messagebox, 'showinfo',
+                        lambda title, text, **kwargs: details.append((title, text, kwargs['parent'])))
     root = ctk.CTk()
     sections = [{'pipeline_1': 'A', 'pipeline_2': 'B', 'visualization_status': status}
                 for status in ('omitted', 'ready')]
@@ -38,14 +44,24 @@ def test_omitted_corridor_row_is_labelled_and_disabled():
     table = CorridorTable(root, sections, lambda *args: launches.append(args))
     try:
         table.pack(fill='both', expand=True)
-        root.update()
+        settle(root, .2)
         first, second, missing = table.tree.get_children()
         for item in (first, missing):
             assert table.row_buttons[item].cget('text') == 'Map unavailable'
             assert table.row_buttons[item].instate(['disabled'])
             table.tree.selection_set(item)
+            settle(root)
+            before = len(details)
+            compact = table._details_compact
             table._open_selected()
+            assert len(details) == before + int(compact)
+            if compact:
+                assert details[-1][0] == 'Corridor map unavailable'
+                assert corridor_unavailable_reason(table.item_map[item][0]) in details[-1][1]
+                assert details[-1][2] is table
+            after_keyboard = len(details)
             table.row_buttons[item].invoke()
+            assert len(details) == after_keyboard  # Disabled map buttons never activate.
         assert launches == []
         assert table.row_buttons[second].cget('text') == 'View Corridor'
         assert table.row_buttons[second].instate(['!disabled'])
@@ -258,7 +274,14 @@ def test_full_results_page_keeps_omitted_map_rows_usable_in_short_viewport(monke
         assert root.focus_get() is table.tree
         root.geometry('640x360')
         settle(root, .3)
-        assert not table.map_explanation.winfo_ismapped()
+        compact_viewport = {
+            'window': (root.winfo_width(), root.winfo_height()),
+            'table': table.winfo_height(),
+            'scale': ctk.ScalingTracker.get_widget_scaling(table),
+        }
+        print('Compact corridor viewport:', compact_viewport)
+        assert compact_viewport['table'] / compact_viewport['scale'] < 210, compact_viewport
+        assert not table.map_explanation.winfo_ismapped(), compact_viewport
         assert_inside(table.map_details, table.navigation)
         assert table.tree.bbox(table.tree.get_children()[0])
     finally:

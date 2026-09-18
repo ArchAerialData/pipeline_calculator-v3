@@ -164,11 +164,17 @@ def test_map_status_and_padding_text_use_real_result_values(buffered_section):
 
 @pytest.mark.native_gui
 @pytest.mark.parametrize('scale,size', [(1.0, '900x650'), (1.5, '900x650'), (2.0, '900x650'), (1.25, '640x480')])
-def test_buffered_map_notes_share_existing_details_and_disable_omitted_action(buffered_section, scale, size):
+def test_buffered_map_notes_share_existing_details_and_disable_omitted_action(buffered_section, scale, size, monkeypatch):
     import customtkinter as ctk
+    from pipeline_calculator.gui.tabs import overlap_tab
     from pipeline_calculator.gui.tabs.overlap_tab import create, CorridorTable
     from pipeline_calculator.gui.tabs.summary_tab import SummaryView
+    from pipeline_calculator.gui.corridor_presentation import corridor_unavailable_reason
+    from test_ui_lifecycle import settle
 
+    details = []
+    monkeypatch.setattr(overlap_tab.messagebox, 'showinfo',
+                        lambda title, text, **kwargs: details.append((title, text, kwargs['parent'])))
     ctk.set_widget_scaling(scale)
     root = ctk.CTk()
     root.geometry(size)
@@ -178,15 +184,25 @@ def test_buffered_map_notes_share_existing_details_and_disable_omitted_action(bu
     opened = []
     try:
         create(root, result, on_open_corridor=lambda *args: opened.append(args))
-        root.update()
+        settle(root, .2)
         table = next(child for child in root.winfo_children() if isinstance(child, CorridorTable))
         first, second = table.tree.get_children()
         table.tree.selection_set(first)
         table._open_selected()
+        assert not details
         table.tree.selection_set(second)
+        settle(root)
+        compact = table._details_compact
         table._open_selected()
+        assert len(details) == int(compact)
+        if compact:
+            assert details[0][0] == 'Corridor map unavailable'
+            assert corridor_unavailable_reason(omitted) in details[0][1]
+            assert details[0][2] is table
         assert opened == [(buffered_section, 1)]
         assert table.row_buttons[second].instate(['disabled'])
+        table.row_buttons[second].invoke()
+        assert opened == [(buffered_section, 1)] and len(details) == int(compact)
         assert table.winfo_width() > 0 and table.winfo_height() > 0
         for child in root.winfo_children():
             child.destroy()

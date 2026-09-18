@@ -59,7 +59,10 @@ class CorridorTable(ctk.CTkFrame):
             self.tree.configure(**{axis+'scrollcommand': scrolled})
         self.tree.bind('<Configure>', self._queue_position, add='+')
         self.tree.bind('<Map>', self._queue_position, add='+')
-        self.tree.bind('<Unmap>', self._cancel_position, add='+')
+        # A short viewport can squeeze the tree out of view while this table
+        # remains visible. Its pending layout must still switch inline details
+        # to the compact action and give the tree its space back.
+        self.bind('<Unmap>', self._cancel_position, add='+')
         self.tree.bind('<ButtonRelease-1>', self._queue_position, add='+')
         self.tree.bind('<Double-1>', self._double_click)
         self.tree.bind('<Return>', self._open_selected)
