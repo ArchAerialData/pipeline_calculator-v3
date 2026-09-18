@@ -26,7 +26,7 @@ import zipfile
 from pipeline_calculator.core.execution import AnalysisCancelled
 from pipeline_calculator.versioning import get_version
 from . import kml_kmz as parser
-from .repair import RepairFailure, inspect_document, inspect_geometry, safe_xml_root, validate_repair_encoding
+from .repair import RepairFailure, inspect_document, inspect_geometry, safe_xml_root, validate_repair_encoding, validate_geometry_structure
 
 
 MAX_SOURCE_BYTES = 256 * 1024 * 1024
@@ -616,7 +616,11 @@ def _prepare_source(path, *, context=None):
         patch_bytes += sum(len(edit.removed) + len(edit.inserted) for edit in document.edits)
         if patch_count > MAX_PATCHES or patch_bytes > MAX_PATCH_BYTES:
             raise _failure("repair_patch_limit", "The source exceeds the supported repair edit limit.", category="limit")
-        links = parser._parse_kml_bytes(document.effective, state, source=source, required=source == primary)
+        # Repaired sources receive the stronger independent coverage check below.
+        # Ordinary snapshots must still pass the shared structural guard before
+        # any baseline is published, even though their XML already parses.
+        links = parser._parse_kml_bytes(document.effective, state, source=source,
+                                        required=source == primary, validate_structure=False)
         graph.append(source)
         for link in links:
             _check(context)
@@ -668,6 +672,10 @@ def _prepare_source(path, *, context=None):
         for source, document in documents:
             validate_repair_encoding(document.effective, source=source, context=context)
         coverage = _coverage(state, documents, context)
+    else:
+        for source, document in documents:
+            validate_geometry_structure(safe_xml_root(document.effective, context=context),
+                                        source=source, context=context)
     if mismatch and effective_format == "kml" and not can_relocate:
         raise _failure("format_mismatch_dependencies", "A misnamed plaintext KML depends on its original filename or location.",
                        original_path.name, action="Request a correctly named self-contained KML/KMZ export preserving every pipeline.")

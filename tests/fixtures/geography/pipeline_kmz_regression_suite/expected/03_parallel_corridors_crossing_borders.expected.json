@@ -93,11 +93,12 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
       "qualifying_pairwise_meters": 9775.0,
       "qualifying_section_count": 10,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 0,
       "sample_count": 5965,
       "sampled_meters": 29825.0,
@@ -1207,11 +1208,12 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
       "qualifying_pairwise_meters": 2535.0,
       "qualifying_section_count": 4,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 3,
       "sample_count": 2015,
       "sampled_meters": 10075.0,
@@ -1895,11 +1897,12 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
       "qualifying_pairwise_meters": 900.0,
       "qualifying_section_count": 1,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 0,
       "sample_count": 1017,
       "sampled_meters": 5085.0,
@@ -2294,11 +2297,12 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
       "qualifying_pairwise_meters": 4900.0,
       "qualifying_section_count": 6,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 2,
       "sample_count": 2926,
       "sampled_meters": 14630.0,

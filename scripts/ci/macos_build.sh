@@ -16,11 +16,24 @@ fi
 # shellcheck disable=SC1091
 source ".venv/bin/activate"
 
+# Fail early if a cached/wrong interpreter would mislabel a native artifact.
+python - <<'PY'
+import os
+import platform
+expected = os.environ.get('ARTIFACT_ARCH')
+actual = platform.machine()
+if expected and actual != expected:
+    raise SystemExit(f'Architecture mismatch: expected {expected}, got {actual}')
+print(f'Native build architecture: {actual}')
+PY
+
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 if [[ -f requirements-dev.txt ]]; then
   python -m pip install -r requirements-dev.txt
 fi
+mkdir -p .validation-output
+python -m pip freeze > .validation-output/build-dependencies.txt
 
 export MACOSX_DEPLOYMENT_TARGET="${MACOSX_DEPLOYMENT_TARGET:-13.0}"
 
@@ -53,5 +66,7 @@ python -m pytest -vv -rA --tb=short -o faulthandler_timeout=30 --junitxml=.valid
 bash scripts/macos/build_app.sh
 
 # Resolve the versioned inner executable through the built app's Info.plist.
-python scripts/validation/check_packaged_smoke.py "dist/Pipeline_Calculator.app" \
+VERSION="$(python -c 'import json; print(json.load(open("build/version.json"))["version"])')"
+python scripts/validation/check_packaged_smoke.py "dist/Pipeline_Calculator_v5.app" \
+  --expected-version "${VERSION}" \
   --output-directory ".validation-output/packaged-smoke"

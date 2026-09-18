@@ -10,6 +10,20 @@ import traceback
 import time
 
 
+def _visibility_details(widget):
+    """Retain native layout evidence if a source/frozen smoke fails remotely."""
+    rows = []
+    current = widget
+    while current is not None:
+        rows.append({'widget': str(current), 'class': current.winfo_class(),
+                     'mapped': current.winfo_ismapped(), 'viewable': current.winfo_viewable(),
+                     'geometry': current.winfo_geometry(), 'manager': current.winfo_manager()})
+        current = current.master
+    canvas = getattr(widget, '_parent_canvas', None)
+    return {'ancestors': rows, 'canvas': {'region': canvas.cget('scrollregion'),
+            'bbox': canvas.bbox('all'), 'yview': canvas.yview()} if canvas else None}
+
+
 def _check_live_results(result, implementation='new'):
     """Exercise the packaged analysis-to-results transition under a real mainloop."""
     if implementation == 'legacy':
@@ -20,6 +34,7 @@ def _check_live_results(result, implementation='new'):
     from pipeline_calculator.gui.layout import ResultPages
     from pipeline_calculator.gui.tabs.summary_tab import SummaryView
     from tkinter import ttk
+    from pipeline_calculator.versioning import get_display_version
     app = PipelineCalculatorGUI()
     assert app.root.TkdndVersion
     errors, opened, rendered = [], [], []
@@ -32,6 +47,7 @@ def _check_live_results(result, implementation='new'):
         else:
             app.state.current_results = result
         app.show_results()
+        assert app.root.title() == f'Pipeline Calculator v{get_display_version()} - Results'
         next(w for w in app.root.winfo_children() if isinstance(w, ResultPages)).set('Pipelines')
         rendered.append(True)
     def children(node):
@@ -68,7 +84,7 @@ def _check_live_results(result, implementation='new'):
         if not summary.original.value.winfo_viewable() and time.monotonic() < deadline[0]:
             app.root.after(10, inspect_summary)
             return
-        assert summary.winfo_viewable() and summary.original.value.winfo_viewable()
+        assert summary.winfo_viewable() and summary.original.value.winfo_viewable(), _visibility_details(summary)
         assert summary.original.value.cget('text') != ''
         summary.toggle.invoke()
         cycles.append(True)
@@ -77,8 +93,20 @@ def _check_live_results(result, implementation='new'):
         else:
             app.root.quit()
     try:
-        app.root.after(250, show)
-        app.root.after(1800, check)
+        started = False
+        def begin_when_mapped(event=None):
+            nonlocal started
+            if event is not None and event.widget is not app.root:
+                return
+            if not started and app.root.winfo_viewable():
+                started = True
+                app.root.after(250, show)
+                app.root.after(1800, check)
+        # CTk's initial Windows titlebar refresh temporarily withdraws the root
+        # and drains events before entering the native mainloop. Under load,
+        # timers scheduled before that refresh can test a not-yet-shown window.
+        app.root.bind('<Map>', begin_when_mapped, add='+')
+        app.root.after_idle(begin_when_mapped)
         app.root.after(15000, app.root.quit)
         app.root.mainloop()
         assert rendered and len(cycles) == 20 and not errors, errors
@@ -202,12 +230,13 @@ def _check_corridor_packaging(directory):
     path = write_source('corridor-shapes.kml', [[geographic(*p) for p in points] for points in metric_paths])
     result = analyzer.analyze_complete(path)
     assert result['analysis_complete'], result['diagnostics']
-    # Frozen before activating the buffered builder. These remain sampled-overlap
-    # expectations, independent of any polygon's area, radius or vertex count.
+    # Independent sampled-overlap expectations; the release audit's terminal
+    # allowance includes the 1200 m loop (0.221 micrometres short), but not the
+    # 600 m bend (1.340 micrometres short). Polygon area/radius are irrelevant.
     assert abs(result['total_meters'] - 4599.9999803715655) <= .000001
-    assert result['overlap_analysis']['savings_meters'] == 2285.0
+    assert result['overlap_analysis']['savings_meters'] == 2290.0
     sections = result['overlap_analysis']['bundled_sections']
-    assert [s['bundled_length_meters'] for s in sections] == [1195., 595., 495.]
+    assert [s['bundled_length_meters'] for s in sections] == [1200., 595., 495.]
     maps = []
     for index, section in enumerate(sections, 1):
         assert section['visualization_schema_version'] == 1 and section['visualization_status'] == 'ready'
@@ -283,6 +312,9 @@ def run(output_path, *, implementation='new'):
             if not real_input:
                 assert len(result['pipelines']) == 1 and 110 < result['total_meters'] < 112
             workbook = build_analysis_workbook(result)
+            assert result['application_version'] == get_version()
+            assert ('Application build', get_version()) in list(
+                workbook['Analysis Details'].values)
             sheet = workbook['Pipeline Length Analysis']
             assert sheet['A1'].value == 'Placemark ID'
             assert [sheet.cell(i+2, 1).value for i in range(len(result['pipelines']))] == [
@@ -306,7 +338,8 @@ def run(output_path, *, implementation='new'):
                 'corridors': corridor_report,
                 'adjusted_miles': (result.get('overlap_analysis') or {}).get('effective_total_miles')}
     except Exception as exc:
-        report={'status':'failed','implementation':implementation,'error':str(exc)}
+        report={'status':'failed','implementation':implementation,'error':str(exc),
+                'traceback':traceback.format_exc()}
     output.parent.mkdir(parents=True,exist_ok=True)
     output.write_text(json.dumps(report,indent=2),encoding='utf-8')
     return int(report['status']!='passed')

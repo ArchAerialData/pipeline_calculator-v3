@@ -8,6 +8,13 @@ import pipeline_calculator_v3 as legacy
 from pipeline_calculator.export.xlsx import build_analysis_workbook
 
 
+def test_build_identity_is_preserved_separately_from_display_version():
+    full = '5.0-dev.123456abcdef.dirty'
+    results = {'pipelines': [], 'application_version': full}
+    wb = build_analysis_workbook(results)
+    assert ('Application build', full) in list(wb['Analysis Details'].values)
+
+
 def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
     pytest.importorskip("openpyxl")
 

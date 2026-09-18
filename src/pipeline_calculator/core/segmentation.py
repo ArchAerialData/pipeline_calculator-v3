@@ -6,6 +6,19 @@ import math
 
 MAX_ANALYSIS_SEGMENTS = 1_000_000
 
+
+def sampling_endpoint_allowance(segment_length):
+    """Numerical allowance at a path's final full-sample boundary, in metres.
+
+    Geodesic roundoff can put an integral path length on either side of a
+    sample boundary on different platforms. Allow at most one micrometre, or
+    one millionth of a sample for very small steps. This never changes source
+    coordinates or measured original mileage, and is applied only once per
+    disconnected path, not once per vertex.
+    """
+    return min(1e-6, float(segment_length) * 1e-6)
+
+
 def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_segments=None, progress_offset=0, progress_total=None):
     """Break a pipeline polyline into fixed-length analysis segments.
 
@@ -53,6 +66,25 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
     carry_m = 0.0  # meters from last segment boundary to the current vertex
     prev_boundary = tuple(coordinates[0])
 
+    def append_segment(seg_end):
+        nonlocal prev_boundary
+        if len(segments) >= limit:
+            raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
+        if context is not None:
+            context.checkpoint()
+            if len(segments) % 256 == 0:
+                context.report("Segmenting path", progress_offset+len(segments), progress_total)
+        # Do not substitute invented geometry if geodesic operations fail.
+        seg_bearing, _, seg_dist = geod.inv(*prev_boundary, *seg_end)
+        seg_bearing, seg_dist = float(seg_bearing), abs(float(seg_dist))
+        mid_lon, mid_lat, _ = geod.fwd(*prev_boundary, seg_bearing, seg_dist / 2)
+        midpoint = (float(mid_lon), float(mid_lat))
+        if not all(math.isfinite(v) for v in (*midpoint, seg_bearing, seg_dist)):
+            raise ValueError("Non-finite segment geometry")
+        segments.append({"midpoint": midpoint, "bearing": seg_bearing,
+                         "length": seg_len, "segment_index": len(segments)})
+        prev_boundary = seg_end
+
     try:
         for i in range(len(coordinates) - 1):
             if context is not None and i % 256 == 0:
@@ -78,23 +110,13 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
 
             edge_pos_m = 0.0  # distance along the current edge from A
             rem_m = dist_ab
-            if carry_m + rem_m + 1e-9 >= (limit - len(segments) + 1) * seg_len:
+            if carry_m + rem_m >= (limit - len(segments) + 1) * seg_len:
                 raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
 
             # Generate as many full segments as we can on this edge, accounting
             # for `carry_m` accumulated from previous edges.
-            while carry_m + rem_m >= seg_len - 1e-9:
-                if len(segments) >= limit:
-                    raise ValueError("Analysis segment limit exceeded; split the dataset or increase segment length")
-                if context is not None:
-                    context.checkpoint()
-                if context is not None and len(segments) % 256 == 0:
-                    context.report("Segmenting path", progress_offset+len(segments), progress_total)
+            while carry_m + rem_m >= seg_len:
                 needed_m = seg_len - carry_m
-                if needed_m <= 1e-12:
-                    # Defensive: if floating error yields ~0, snap to a fresh segment.
-                    needed_m = seg_len
-                    carry_m = 0.0
 
                 edge_pos_m += needed_m
                 if edge_pos_m > dist_ab:
@@ -104,34 +126,22 @@ def segment_pipeline(geod, coordinates, segment_length, *, context=None, max_seg
                 seg_end_lon, seg_end_lat, _ = geod.fwd(lon_a, lat_a, az_ab, edge_pos_m)
                 seg_end = (float(seg_end_lon), float(seg_end_lat))
 
-                # Do not substitute invented geometry if geodesic operations fail.
-                seg_bearing, _, seg_dist = geod.inv(*prev_boundary, *seg_end)
-                seg_bearing, seg_dist = float(seg_bearing), abs(float(seg_dist))
-                mid_lon, mid_lat, _ = geod.fwd(*prev_boundary, seg_bearing, seg_dist / 2)
-                midpoint = (float(mid_lon), float(mid_lat))
-                if not all(math.isfinite(v) for v in (*midpoint, seg_bearing, seg_dist)):
-                    raise ValueError("Non-finite segment geometry")
-
-                segments.append(
-                    {
-                        "midpoint": midpoint,
-                        "bearing": seg_bearing,
-                        "length": seg_len,
-                        "segment_index": len(segments),
-                    }
-                )
-
-                prev_boundary = seg_end
+                append_segment(seg_end)
                 rem_m = dist_ab - edge_pos_m
                 carry_m = 0.0
 
-                if rem_m <= 1e-9:
-                    rem_m = 0.0
+                if rem_m <= 0:
                     break
 
             # Any remaining edge distance (that didn't complete a segment) is
             # carried forward to the next vertex-to-vertex edge.
             carry_m += rem_m
+        # Round only a nearly complete terminal sample. Clamping to the real
+        # endpoint preserves geometry; ordinary shorter tails stay unsampled.
+        # Keeping every intermediate residual prevents a tolerance allowance
+        # from accumulating across redundant vertices.
+        if carry_m > 0 and seg_len - carry_m <= sampling_endpoint_allowance(seg_len):
+            append_segment(tuple(coordinates[-1]))
     except AnalysisCancelled:
         raise
     except Exception as e:

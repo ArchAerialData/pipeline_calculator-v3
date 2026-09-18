@@ -6,6 +6,7 @@ import customtkinter as ctk
 from pipeline_calculator.gui.disclosure import DisclosureButton
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.scrolling import AutoScrollFrame
+from pipeline_calculator.gui.bindings import ConfigureBinding
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
 from pipeline_calculator.gui.tables import create_table
 from pipeline_calculator.export.corridor_metadata import corridor_detail_text, has_corridor_metadata
@@ -180,6 +181,8 @@ class SummaryView(AutoScrollFrame):
         self.state_view = bool(results.get('state_code'))
         self.on_select_state = on_select_state
         self.expanded = False
+        self._outer_padding = None
+        self._padding_id = None
         self._arrangement = None
         self.inner = ctk.CTkFrame(self, fg_color='transparent')
         self.inner.pack(fill='x', padx=20, pady=(16, 24))
@@ -257,6 +260,34 @@ class SummaryView(AutoScrollFrame):
         self.cards.grid_columnconfigure(0, weight=1)
         self.original.grid(row=0, column=0, sticky='nsew', pady=(0, 16))
         self.adjusted.grid(row=1, column=0, sticky='nsew')
+        # A short parent can initially leave the canvas unmapped. Its margins
+        # must recover from the live parent's size, without waiting for Map.
+        self._viewport_parent_binding = ConfigureBinding(parent, self._queue_padding)
+        self._queue_padding()
+
+    def _queue_padding(self, event=None):
+        if not self._disposed and self._padding_id is None:
+            self._padding_id = self._callback_host.after(20, self._apply_padding)
+
+    def _apply_padding(self):
+        self._padding_id = None
+        if not self._disposed and self.winfo_exists():
+            self._resize_viewport()
+            self._schedule_scrollbar()
+
+    def _resize_viewport(self):
+        # Preserve breathing room on normal windows, but don't spend most of a
+        # short results viewport on margins before any mileage can be read.
+        scale = ctk.ScalingTracker.get_widget_scaling(self)
+        available = self._parent_frame.master.winfo_height() / scale
+        padding, radius = (0, 0) if available < 80 else ((8, 12) if available < 160 else (16, 12))
+        key = (padding, scale, radius)
+        if key != self._outer_padding:
+            self._outer_padding = key
+            self.configure(corner_radius=radius)
+            if self._disposed:
+                return
+            self.pack(fill='both', expand=True, padx=16, pady=padding)
 
     def _queue_arrange(self, event=None):
         if self.winfo_viewable() and self._arrange_id is None:
@@ -273,6 +304,10 @@ class SummaryView(AutoScrollFrame):
             self._arrange_id = None
 
     def destroy(self):
+        self._viewport_parent_binding.close()
+        if self._padding_id is not None:
+            self._callback_host.after_cancel(self._padding_id)
+            self._padding_id = None
         self._cancel_arrange()
         super().destroy()
 
@@ -289,6 +324,7 @@ class SummaryView(AutoScrollFrame):
             text_label(self.details, 'Corridor maps', size=16, color=TEXT, bold=True, pady=(20, 8))
             text_label(self.details, corridor_detail_text(self.results), pady=2)
         text_label(self.details, 'Run details', size=16, color=TEXT, bold=True, pady=(20, 8))
+        text_label(self.details, f'Application build: {self.results.get("application_version") or "Not recorded"}', pady=2)
         counts = {level: sum(d.get('level') == level for d in diagnostics) for level in ('error', 'warning', 'info')}
         text_label(self.details, f'Diagnostics: {counts["error"]} errors · {counts["warning"]} warnings · {counts["info"]} informational', pady=2)
         text_label(self.details, f'Placemarks: {len(self.results.get("placemarks") or []):,}', pady=2)

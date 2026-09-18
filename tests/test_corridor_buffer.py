@@ -119,6 +119,38 @@ def test_duplicate_source_vertices_and_span_endpoints_do_not_create_zero_length_
     assert projected(result).symmetric_difference(projected(ready([run(points)]))).area < .01
 
 
+@pytest.mark.parametrize('origin', [(-100, 30), (-155, 20), (-150, 68), (179.999, 52), (-179.999, 52), (20, 82)])
+@pytest.mark.parametrize('width', [100., 350.])
+def test_loop_then_partial_retrace_keeps_certified_neighborhood_in_both_directions(origin, width):
+    from pipeline_calculator.core.corridor_coverage import MeasuredPath
+
+    xy = [(0, 0), (width, 0), (width, 300), (0, 300), (0, 0), (width, 0)]
+    path = MeasuredPath(GEOD, geographic(xy, origin))
+    # An ordinary short unqualified tail ends partway along the repeated edge.
+    points = path.span(0, path.chainage[-1] - 5)
+    before = tuple(points)
+    outputs = [ready([run(points)]), ready([run(points[::-1])])]
+    source = LineString(xy[:-1] + [(width - 5, 0)])
+    for output in outputs:
+        shape = projected(output, origin)
+        assert shape.is_valid
+        assert source.buffer(4.95, quad_segs=128).difference(shape).is_empty
+        assert shape.difference(source.buffer(5.05, quad_segs=128)).is_empty
+        assert not shape.covers(Point(width / 2, 150))
+    assert outputs[0]['visualization_polygons'] == outputs[1]['visualization_polygons']
+    assert tuple(points) == before
+
+
+def test_repeated_dateline_vertex_alias_keeps_loop_support():
+    points = list(geographic([(0, 0), (350, 0), (350, 300), (0, 300), (0, 0), (345, 0)], (180, 52)))
+    points[0], points[4] = (180., 52.), (-180., 52.)
+    result = ready([run(points)])
+    shape = projected(result, (180, 52))
+    source = LineString([(0, 0), (350, 0), (350, 300), (0, 300), (0, 0), (345, 0)])
+    assert source.buffer(4.95, quad_segs=128).difference(shape).is_empty
+    assert shape.difference(source.buffer(5.05, quad_segs=128)).is_empty
+
+
 def test_oblique_sparse_geodesic_edges_have_independent_distance_oracle():
     from scipy.optimize import minimize_scalar
     start = (179.98, 68)
@@ -151,6 +183,36 @@ def test_sparse_long_geodesic_chart_seams_match_alternative_partition():
     assert first['visualization_metadata']['chart_count'] == 5
     assert a.hausdorff_distance(b) < .02
     assert a.covers(LineString([(0, 0), (0, 100_000)]))
+
+
+@pytest.mark.parametrize('offset', [1e-12, -1e-12, 1e-6])
+def test_long_chart_union_batches_by_vertices_without_relaxing_limits(offset, monkeypatch):
+    from pipeline_calculator.core import corridor_buffer
+    from shapely import get_num_coordinates
+
+    origin = (-100 + offset, 40 + offset)
+    points = geographic([(0, 0), (0, 100_000)], origin)
+    budget = CorridorGeometryBudget(max_native_vertices=4000)
+    actual_union = corridor_buffer.unary_union
+    calls = []
+
+    def bounded_union(shapes):
+        count = sum(int(get_num_coordinates(shape)) for shape in shapes)
+        calls.append((len(shapes), count))
+        assert len(shapes) <= budget.max_native_operands
+        assert count <= budget.max_native_vertices
+        return actual_union(shapes)
+
+    monkeypatch.setattr(corridor_buffer, 'unary_union', bounded_union)
+    result = ready([run(points)], budget=budget,
+                   options=replace(CorridorDisplayOptions(), max_chunk_m=15_000))
+    assert result['visualization_metadata']['chart_count'] == 7
+    assert len(calls) >= 2  # Tighter than the default, irrespective of ULP variation.
+    shape = projected(result, origin)
+    source = LineString([(0, 0), (0, 100_000)])
+    assert source.buffer(4.95, quad_segs=128).difference(shape).is_empty
+    assert shape.difference(source.buffer(5.05, quad_segs=128)).is_empty
+    assert shape.covers(source)
 
 
 def test_dateline_polygons_have_canonical_longitude_and_no_world_spanning_edges():

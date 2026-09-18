@@ -74,6 +74,59 @@ def test_default_dateline_analysis_exports_valid_maps_and_reimports(tmp_path, re
         assert preview.equals_exact(exported, 0)
 
 
+def test_default_loop_then_retrace_analysis_retains_all_maps_and_frozen_accounting(tmp_path):
+    """The source path returns to its start, then partially repeats its first edge."""
+    import math
+    from pipeline_calculator.core.corridor_geometry import GEOD
+
+    origin = (179.999, 52)
+    vertices = [(0, 0), (350, 0), (350, 300), (0, 300), (0, 0), (350, 0)]
+    paths = [
+        [GEOD.fwd(*origin, math.degrees(math.atan2(x + offset, y + offset)),
+                  math.hypot(x + offset, y + offset))[:2] for x, y in vertices]
+        for offset in (0, 3)
+    ]
+    source = tmp_path / 'dateline-loop-then-retrace.kml'
+    source.write_text('<kml xmlns="http://www.opengis.net/kml/2.2"><Document>' + ''.join(
+        '<Placemark><name>duplicate &amp; name</name><LineString><coordinates>' +
+        ' '.join(f'{lon!r},{lat!r}' for lon, lat in path) +
+        '</coordinates></LineString></Placemark>' for path in paths) +
+        '</Document></kml>', encoding='utf-8')
+    analyzer = PipelineAnalyzer()
+    ordinary = analyzer.analyze_complete(source)
+    result = analyzer.analyze_complete(source, options=AnalysisOptions(state_breakdown=True))
+    for scope in (ordinary, result):
+        assert scope['analysis_complete']
+        # Independent sampled-contract-2 includes the terminal sample on these
+        # paths (<0.3 micrometres short of 1650 m). Map construction must leave
+        # that numerical analysis exactly unchanged.
+        assert scope['total_meters'] == pytest.approx(3299.99999943254, abs=1e-7)
+        overlap = scope['overlap_analysis']
+        assert overlap['savings_meters'] == 1625
+        assert overlap['total_bundled_length'] == 2350
+        assert [s['bundled_length_meters'] for s in overlap['bundled_sections']] == [1650, 350, 350]
+        assert all(s['visualization_status'] == 'ready' for s in overlap['bundled_sections'])
+        assert not scope['diagnostics']
+    assert result['geography']['reconciliation']['passed']
+    before = deepcopy(result)
+    package = export_analysis_package(result, tmp_path, source, include_json=True)
+    assert result == before
+    report = json.loads((package / 'analysis.json').read_text(encoding='utf-8'))
+    assert all(s['visualization_status'] == 'ready' for s in report['overlap_analysis']['bundled_sections'])
+    workbook = load_workbook(package / 'analysis.xlsx')
+    statuses = [row[13] for row in workbook['Pipeline Overlap Analysis'].iter_rows(min_row=2, values_only=True)]
+    assert len(statuses) == 3 and all(value.startswith('Available') for value in statuses)
+    root = read_map(package / 'Combined' / 'analysis.kmz')
+    map_polygons = polygons(root)
+    previews = [p for index, section in enumerate(result['overlap_analysis']['bundled_sections'])
+                for p in polygons(ET.fromstring(build_overlap_corridor_kml(section, index)))]
+    assert len(previews) == len(map_polygons)
+    assert all(shape.is_valid for shape in map_polygons)
+    assert all(a.equals_exact(b, 0) for a, b in zip(previews, map_polygons))
+    roundtrip = analyzer.analyze_complete(package / 'Combined' / 'analysis.kmz')
+    assert roundtrip['total_meters'] == pytest.approx(result['total_meters'], abs=.001)
+
+
 @pytest.mark.parametrize('representation', ['bad_preferred', 'bbox'])
 def test_state_fallback_is_clipped_and_holes_remain_in_preview_and_map(geography_result, representation):
     state = Polygon([(-1, -1), (0, -1), (0, 1), (-1, 1)],

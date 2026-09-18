@@ -58,6 +58,11 @@ Freeze the default analysis profile:
 
 Original mileage includes short tails. Overlap uses full 5-meter samples on each
 independent path; the trailing remainder does not contribute sampled savings.
+Numerical policy amendment (September 2026): a terminal sample missing at most
+`min(0.000001 m, segment_length * 0.000001)` counts as full, with its endpoint
+clamped to the actual source endpoint. Apply this allowance only once per path,
+never per vertex. It stabilizes integral sample counts across geodesic platforms;
+it does not change original mileage, source geometry, or genuine shorter tails.
 Sampling continues across vertices within a path and restarts at disconnected
 paths and clipped state fragments. For a sample spanning a bend, the application
 uses the midpoint and bearing of the geodesic chord between its sample endpoints.

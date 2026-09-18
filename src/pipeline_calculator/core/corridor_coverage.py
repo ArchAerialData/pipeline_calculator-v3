@@ -4,6 +4,8 @@ from dataclasses import dataclass
 import heapq
 import math
 
+from pipeline_calculator.core.segmentation import sampling_endpoint_allowance
+
 MAX_COVERAGE_INSPECTIONS = 1_000_000
 
 
@@ -147,8 +149,9 @@ def qualified_path_runs(pipelines, qualified, segment_length, geod, *,
             raise ValueError('Qualified source ID must be a string or integer')
         for first, last in ranges:
             start, end = first * step, (last + 1) * step
-            # Segmentation allows only one nanometre of end-of-edge roundoff.
-            if not 0 <= start < end or end > path.chainage[-1] + 1e-9:
+            # Accept the same bounded terminal roundoff as sampling, then
+            # retain the actual source endpoint rather than extending it.
+            if not 0 <= start < end or end > path.chainage[-1] + sampling_endpoint_allowance(step):
                 raise ValueError('Qualified interval exceeds its original path')
             end = min(end, path.chainage[-1])
             needed = 2 + max(0, bisect_left(path.chainage, end) - bisect_right(path.chainage, start))

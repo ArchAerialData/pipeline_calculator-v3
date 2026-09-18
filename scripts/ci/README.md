@@ -32,7 +32,7 @@ Reports, captured output, and the gate summary are saved in
 when a smoke run fails. Re-run locally with:
 
 ```bash
-python scripts/validation/check_packaged_smoke.py dist/Pipeline_Calculator.app
+python scripts/validation/check_packaged_smoke.py dist/Pipeline_Calculator_v5.app
 ```
 
 On Windows, pass the exact `dist/Pipeline_Calculator_v<version>.exe` path instead.

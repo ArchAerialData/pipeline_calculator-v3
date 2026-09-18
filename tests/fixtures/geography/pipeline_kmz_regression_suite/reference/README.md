@@ -4,7 +4,8 @@ The references measure **saved KMZ coordinates**, importing no application
 calculation functions. Expectations are fixed before the separate
 [application comparison](../validation/compare_application.py).
 The governing specification is the [fixture prompt](../../../../../docs/validation/kmz-fixture-agent-prompt.md)
-at repository baseline `71da499d5756648ae395660f0a241ea00edbea4f`.
+at repository baseline `71da499d5756648ae395660f0a241ea00edbea4f`, with the
+[September 2026 terminal sampling amendment](../../../../../docs/validation/terminal-sampling-policy.md).
 
 ## Frozen calculation contract
 
@@ -23,6 +24,12 @@ fragments. A bent sample uses its endpoint **geodesic chord** midpoint and beari
 while its counted coverage remains 5 m. Shared geometry contributes equally
 allocated original length to its adjoining states and contributes no state
 overlap samples. Combined analysis uses complete original paths.
+The final sample alone may be up to 1 µm short at the fixed 5 m profile; its
+endpoint stays clamped to the original path. In general the allowance is the
+smaller of 1 µm and one millionth of a sample. It never accumulates per vertex.
+The audit field `unsampled_tail_meters` is original length minus nominal sample
+coverage, so it can be slightly negative within this bounded roundoff allowance;
+original geometry and original mileage are not changed to hide that difference.
 [Contract implementation references](../../../../../src/pipeline_calculator/core/constants.py):
 [sampling](../../../../../src/pipeline_calculator/core/segmentation.py),
 [eligibility](../../../../../src/pipeline_calculator/core/overlap.py),

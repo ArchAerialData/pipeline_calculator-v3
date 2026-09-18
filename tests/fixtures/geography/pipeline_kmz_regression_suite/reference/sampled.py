@@ -2,7 +2,8 @@
 
 This module does not import application code.  The specification is the public
 contract documented in docs/validation/kmz-fixture-agent-prompt.md, read together
-with baseline 71da499d5756648ae395660f0a241ea00edbea4f.  Distances use GRS80.
+with baseline 71da499d5756648ae395660f0a241ea00edbea4f and the documented
+September 2026 terminal-sample numerical policy amendment. Distances use GRS80.
 
 Differences in construction from the application are intentional: samples are
 located by whole-path cumulative chainages; candidate generation is exhaustive
@@ -40,6 +41,7 @@ SAMPLE_METERS = 5.0
 DETECTION_METERS = 15.0
 MINIMUM_METERS = 200.0
 ANGLE_DEGREES = 15.0
+TERMINAL_ALLOWANCE_METERS = min(1e-6, SAMPLE_METERS * 1e-6)
 SURVEY_MILE_METERS = 1609.347218694
 # This is smaller than the GRS80 minimum meridional radius of curvature.
 # Therefore radius * unit-sphere chord is a lower bound on surface distance.
@@ -51,6 +53,7 @@ PROFILE = {
     "minimum_qualifying_meters": MINIMUM_METERS,
     "angular_tolerance_degrees": ANGLE_DEGREES,
     "survey_mile_meters": SURVEY_MILE_METERS,
+    "terminal_sample_allowance_meters": TERMINAL_ALLOWANCE_METERS,
 }
 
 
@@ -120,7 +123,10 @@ def _sample_path(source: dict, path_index: int, source_offset: int):
         return [], 0.0
     cumulative = np.r_[0.0, np.cumsum(lengths)]
     original = float(math.fsum(map(float, lengths)))
-    count = math.floor((original + 1e-9) / SAMPLE_METERS)
+    # Only the final boundary receives the allowance. Whole-path chainages
+    # avoid adding an allowance at each redundant vertex; actual geometry and
+    # original mileage remain unchanged, and the final boundary is clamped.
+    count = math.floor((original + TERMINAL_ALLOWANCE_METERS) / SAMPLE_METERS)
     if not count:
         return [], original
     boundaries = np.minimum(np.arange(count + 1) * SAMPLE_METERS, cumulative[-1])
@@ -369,7 +375,7 @@ def analyze(sources: list[dict]) -> dict:
     count = sum(map(len, sampled.values()))
     qualifying = [section for section in sections if section["qualified"]]
     return {
-        "reference_version": "sampled-contract-1", "profile": dict(PROFILE),
+        "reference_version": "sampled-contract-2", "profile": dict(PROFILE),
         "status": "complete", "diagnostics": [], "source_count": len(sources),
         "original_meters": original, "original_survey_miles": original / SURVEY_MILE_METERS,
         "sample_count": count, "sampled_meters": count * SAMPLE_METERS,

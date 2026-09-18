@@ -316,7 +316,7 @@ def _extract_network_links(root, state: _ParserState, *, source: str):
     return links
 
 
-def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required: bool):
+def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required: bool, validate_structure=True):
     try:
         if state.context is not None:
             state.context.check()
@@ -329,6 +329,10 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
             raise ValueError(f"Invalid KML data in {source}: {str(e)}") from e
         _diag(state, "linked_kml_parse_error", f"Could not parse linked KML: {str(e)}", source=source)
         return []
+
+    if validate_structure:
+        from pipeline_calculator.parsers.repair import validate_geometry_structure
+        validate_geometry_structure(root, source=source, context=state.context)
 
     state.parsed_kml_files.append(source)
 

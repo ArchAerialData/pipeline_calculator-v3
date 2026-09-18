@@ -1,22 +1,21 @@
 {
   "analyses": {
     "Combined": {
-      "adjusted_meters": 1906.350000006967,
-      "adjusted_survey_miles": 1.184548603224348,
+      "adjusted_meters": 1901.350000006967,
+      "adjusted_survey_miles": 1.1814417534768724,
       "diagnostics": [],
       "grouping": {
-        "accepted_merges": 373,
-        "group_count": 223,
+        "accepted_merges": 374,
+        "group_count": 224,
         "group_size_counts": {
-          "1": 85,
+          "1": 86,
           "2": 52,
-          "3": 1,
-          "4": 21,
+          "4": 22,
           "5": 64
         },
         "mutual_compatibility_and_disjointness_checked": true,
-        "nontrivial_groups_sha256": "1e8997c97fbe584151658c7034832751adaaffaf5c80426c0e45212b819383fe",
-        "rejected_nonclique_merges": 319,
+        "nontrivial_groups_sha256": "b4e09d57f996f254e53ba01fbaaa4d1dca79ecd227551c7969ce50072a12d610",
+        "rejected_nonclique_merges": 322,
         "rejected_shared_source_merges": 51,
         "savings_by_source_set": [
           {
@@ -30,19 +29,11 @@
             ]
           },
           {
-            "savings_meters": 315.0,
+            "savings_meters": 330.0,
             "source_keys": [
               "04_centimeter_east",
               "04_centimeter_west",
               "04_near_west",
-              "04_shared_long"
-            ]
-          },
-          {
-            "savings_meters": 10.0,
-            "source_keys": [
-              "04_centimeter_east",
-              "04_centimeter_west",
               "04_shared_long"
             ]
           },
@@ -57,8 +48,7 @@
       },
       "motif_savings": {
         "centimeter_exclusive+interior_shared_interior+near_parallel+shared_long": 1280.0,
-        "centimeter_exclusive+near_parallel+shared_long": 315.0,
-        "centimeter_exclusive+shared_long": 10.0,
+        "centimeter_exclusive+near_parallel+shared_long": 330.0,
         "near_parallel": 0.0,
         "shared_cannot_qualify_state": 260.0
       },
@@ -70,16 +60,17 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
-      "qualifying_pairwise_meters": 5700.0,
+      "qualifying_pairwise_meters": 5730.0,
       "qualifying_section_count": 15,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 2,
-      "sample_count": 751,
-      "sampled_meters": 3755.0,
-      "savings_meters": 1865.0,
-      "savings_survey_miles": 1.1588549558083958,
+      "sample_count": 753,
+      "sampled_meters": 3765.0,
+      "savings_meters": 1870.0,
+      "savings_survey_miles": 1.1619618055558714,
       "sections": [
         {
           "coverage_meters": [
@@ -159,29 +150,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.447906309881032e-09,
           "maximum_transverse_meters": 7.970000006219196,
           "minimum_transverse_meters": 7.969999999565869,
@@ -197,29 +188,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.453960096144023e-09,
           "maximum_transverse_meters": 8.030000005542346,
           "minimum_transverse_meters": 8.029999999090585,
@@ -311,29 +302,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.453960096144023e-09,
           "maximum_transverse_meters": 8.030000005542346,
           "minimum_transverse_meters": 8.029999999090585,
@@ -349,29 +340,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.447906309881032e-09,
           "maximum_transverse_meters": 7.970000006219196,
           "minimum_transverse_meters": 7.969999999565869,
@@ -539,29 +530,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 3.818802562475937e-09,
           "maximum_transverse_meters": 8.000000005626822,
           "minimum_transverse_meters": 7.999999999858611,
@@ -577,29 +568,29 @@
         },
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 3.818802562475937e-09,
           "maximum_transverse_meters": 8.000000005626822,
           "minimum_transverse_meters": 7.999999999858611,
@@ -839,21 +830,21 @@
             0.26718907828082306
           ],
           "path_sample_counts": [
-            85
+            86
           ],
           "qualifying_coverage_ranges_by_path": {
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
-          "sample_count": 85,
-          "sampled_meters": 425.0,
-          "unsampled_tail_meters": 4.999999996656072
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": -3.343927801324753e-09
         },
         "04_near_west": {
           "original_meters": 429.9999999966561,
@@ -865,21 +856,21 @@
             0.26718907828082306
           ],
           "path_sample_counts": [
-            85
+            86
           ],
           "qualifying_coverage_ranges_by_path": {
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
-          "sample_count": 85,
-          "sampled_meters": 425.0,
-          "unsampled_tail_meters": 4.999999996656072
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": -3.343927801324753e-09
         },
         "04_shared_long": {
           "original_meters": 430.00000000018963,
@@ -1004,15 +995,15 @@
       },
       "status": "complete",
       "workload": {
-        "eligible_sample_pair_count": 1225,
-        "exhaustive_sample_pair_visits": 249187,
-        "geodesic_sample_pair_tests": 6609,
-        "spherical_screen_survivors": 6779
+        "eligible_sample_pair_count": 1231,
+        "exhaustive_sample_pair_visits": 250520,
+        "geodesic_sample_pair_tests": 6627,
+        "spherical_screen_survivors": 6797
       }
     },
     "NM": {
-      "adjusted_meters": 1251.6650000597388,
-      "adjusted_survey_miles": 0.7777470178719272,
+      "adjusted_meters": 1246.6650000597388,
+      "adjusted_survey_miles": 0.7746401681244516,
       "attributed_original_meters": 1676.6650000597388,
       "attributed_original_survey_miles": 1.0418292464073524,
       "diagnostics": [],
@@ -1074,18 +1065,18 @@
         ]
       },
       "grouping": {
-        "accepted_merges": 85,
-        "group_count": 85,
+        "accepted_merges": 86,
+        "group_count": 86,
         "group_size_counts": {
-          "2": 85
+          "2": 86
         },
         "mutual_compatibility_and_disjointness_checked": true,
-        "nontrivial_groups_sha256": "13195eff5dc4836ba50404b9dc997ce40dc396aeb8e00ed19212ff98e24396e0",
+        "nontrivial_groups_sha256": "9f10fd45de6af547a56a9fdf17b7217761e0e602bf5fcdc961524b238344a4c1",
         "rejected_nonclique_merges": 0,
         "rejected_shared_source_merges": 0,
         "savings_by_source_set": [
           {
-            "savings_meters": 425.0,
+            "savings_meters": 430.0,
             "source_keys": [
               "04_centimeter_west",
               "04_near_west"
@@ -1095,7 +1086,7 @@
       },
       "interior_meters": 1110.0400000598033,
       "motif_savings": {
-        "centimeter_exclusive+near_parallel": 425.0
+        "centimeter_exclusive+near_parallel": 430.0
       },
       "original_meters": 1110.0400000599943,
       "original_survey_miles": 0.6897454987748398,
@@ -1105,42 +1096,43 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
-      "qualifying_pairwise_meters": 425.0,
+      "qualifying_pairwise_meters": 430.0,
       "qualifying_section_count": 1,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 0,
-      "sample_count": 221,
-      "sampled_meters": 1105.0,
-      "savings_meters": 425.0,
-      "savings_survey_miles": 0.2640822285354253,
+      "sample_count": 222,
+      "sampled_meters": 1110.0,
+      "savings_meters": 430.0,
+      "savings_survey_miles": 0.2671890782829009,
       "sections": [
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.447906309881032e-09,
           "maximum_transverse_meters": 7.970000006219196,
           "minimum_transverse_meters": 7.969999999565869,
@@ -1174,12 +1166,12 @@
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
           "sample_count": 86,
           "sampled_meters": 430.0,
           "unsampled_tail_meters": 3.013838068000041e-09
@@ -1236,21 +1228,21 @@
             0.26718907828082306
           ],
           "path_sample_counts": [
-            85
+            86
           ],
           "qualifying_coverage_ranges_by_path": {
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
-          "sample_count": 85,
-          "sampled_meters": 425.0,
-          "unsampled_tail_meters": 4.999999996656072
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": -3.343927801324753e-09
         },
         "04_tiny_crossing": {
           "original_meters": 0.04000005757980954,
@@ -1276,15 +1268,15 @@
       },
       "status": "complete",
       "workload": {
-        "eligible_sample_pair_count": 85,
-        "exhaustive_sample_pair_visits": 16436,
-        "geodesic_sample_pair_tests": 421,
-        "spherical_screen_survivors": 463
+        "eligible_sample_pair_count": 86,
+        "exhaustive_sample_pair_visits": 16572,
+        "geodesic_sample_pair_tests": 424,
+        "spherical_screen_survivors": 466
       }
     },
     "TX": {
-      "adjusted_meters": 1669.6849999441474,
-      "adjusted_survey_miles": 1.0374920840880515,
+      "adjusted_meters": 1664.6849999441474,
+      "adjusted_survey_miles": 1.034385234340576,
       "attributed_original_meters": 2094.6849999441474,
       "attributed_original_survey_miles": 1.301574312623477,
       "diagnostics": [],
@@ -1366,18 +1358,18 @@
         ]
       },
       "grouping": {
-        "accepted_merges": 85,
-        "group_count": 85,
+        "accepted_merges": 86,
+        "group_count": 86,
         "group_size_counts": {
-          "2": 85
+          "2": 86
         },
         "mutual_compatibility_and_disjointness_checked": true,
-        "nontrivial_groups_sha256": "a698fc29f8ec07f0e67fdeeb54962831129b6449aee2e3563dcfa39d468d8a44",
+        "nontrivial_groups_sha256": "cbb5b56fe06655459d53b361d6c18d9efd532c6b06cd6aab5466cddad1b89ae9",
         "rejected_nonclique_merges": 0,
         "rejected_shared_source_merges": 0,
         "savings_by_source_set": [
           {
-            "savings_meters": 425.0,
+            "savings_meters": 430.0,
             "source_keys": [
               "04_centimeter_east",
               "04_near_east"
@@ -1387,7 +1379,7 @@
       },
       "interior_meters": 1528.0599999442122,
       "motif_savings": {
-        "centimeter_exclusive+near_parallel": 425.0
+        "centimeter_exclusive+near_parallel": 430.0
       },
       "original_meters": 1528.059999945337,
       "original_survey_miles": 0.9494905649915446,
@@ -1397,42 +1389,43 @@
         "ellipsoid": "GRS80",
         "minimum_qualifying_meters": 200.0,
         "segment_meters": 5.0,
-        "survey_mile_meters": 1609.347218694
+        "survey_mile_meters": 1609.347218694,
+        "terminal_sample_allowance_meters": 1e-06
       },
-      "qualifying_pairwise_meters": 425.0,
+      "qualifying_pairwise_meters": 430.0,
       "qualifying_section_count": 1,
-      "reference_version": "sampled-contract-1",
+      "reference_version": "sampled-contract-2",
       "rejected_section_count": 2,
-      "sample_count": 303,
-      "sampled_meters": 1515.0,
-      "savings_meters": 425.0,
-      "savings_survey_miles": 0.2640822285354253,
+      "sample_count": 304,
+      "sampled_meters": 1520.0,
+      "savings_meters": 430.0,
+      "savings_survey_miles": 0.2671890782829009,
       "sections": [
         {
           "coverage_meters": [
-            425.0,
-            425.0
+            430.0,
+            430.0
           ],
           "coverage_ranges": [
             [
               [
                 0,
-                85
+                86
               ]
             ],
             [
               [
                 0,
-                85
+                86
               ]
             ]
           ],
           "coverage_sample_counts": [
-            85,
-            85
+            86,
+            86
           ],
-          "eligible_match_count": 85,
-          "length_meters": 425.0,
+          "eligible_match_count": 86,
+          "length_meters": 430.0,
           "maximum_longitudinal_meters": 6.447906309881032e-09,
           "maximum_transverse_meters": 7.970000006219196,
           "minimum_transverse_meters": 7.969999999565869,
@@ -1542,12 +1535,12 @@
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
           "sample_count": 86,
           "sampled_meters": 430.0,
           "unsampled_tail_meters": 3.013838068000041e-09
@@ -1583,21 +1576,21 @@
             0.26718907828082306
           ],
           "path_sample_counts": [
-            85
+            86
           ],
           "qualifying_coverage_ranges_by_path": {
             "0": [
               [
                 0,
-                85
+                86
               ]
             ]
           },
-          "qualifying_covered_meters": 425.0,
-          "qualifying_covered_sample_count": 85,
-          "sample_count": 85,
-          "sampled_meters": 425.0,
-          "unsampled_tail_meters": 4.999999996656072
+          "qualifying_covered_meters": 430.0,
+          "qualifying_covered_sample_count": 86,
+          "sample_count": 86,
+          "sampled_meters": 430.0,
+          "unsampled_tail_meters": -3.343927801324753e-09
         },
         "04_shared_qualification_partner": {
           "original_meters": 380.0000000032489,
@@ -1669,10 +1662,10 @@
       },
       "status": "complete",
       "workload": {
-        "eligible_sample_pair_count": 119,
-        "exhaustive_sample_pair_visits": 34906,
-        "geodesic_sample_pair_tests": 532,
-        "spherical_screen_survivors": 579
+        "eligible_sample_pair_count": 120,
+        "exhaustive_sample_pair_visits": 35124,
+        "geodesic_sample_pair_tests": 535,
+        "spherical_screen_survivors": 582
       }
     }
   },
@@ -1995,8 +1988,8 @@
           "04_centimeter_west": 86,
           "04_endpoint_touch": 0,
           "04_interior_shared_interior": 64,
-          "04_near_east": 85,
-          "04_near_west": 85,
+          "04_near_east": 86,
+          "04_near_west": 86,
           "04_shared_long": 86,
           "04_shared_qualification_partner": 52,
           "04_shared_qualification_route": 52,
@@ -2013,7 +2006,7 @@
       "id": "group_and_adjusted_accounting_Combined",
       "measured": {
         "adjusted_difference_meters": 0.0,
-        "group_savings_meters": 1865
+        "group_savings_meters": 1870
       },
       "motifs": [],
       "passed": true,
@@ -2034,10 +2027,10 @@
       "id": "unique_coverage_union_NM",
       "measured": {
         "covered_sample_counts": {
-          "04_centimeter_west": 85,
+          "04_centimeter_west": 86,
           "04_endpoint_touch": 0,
           "04_interior_shared_interior": 0,
-          "04_near_west": 85,
+          "04_near_west": 86,
           "04_tiny_crossing": 0
         }
       },
@@ -2050,7 +2043,7 @@
       "id": "group_and_adjusted_accounting_NM",
       "measured": {
         "adjusted_difference_meters": 0.0,
-        "group_savings_meters": 425
+        "group_savings_meters": 430
       },
       "motifs": [],
       "passed": true,
@@ -2105,9 +2098,9 @@
       "id": "unique_coverage_union_TX",
       "measured": {
         "covered_sample_counts": {
-          "04_centimeter_east": 85,
+          "04_centimeter_east": 86,
           "04_interior_shared_interior": 0,
-          "04_near_east": 85,
+          "04_near_east": 86,
           "04_shared_qualification_partner": 0,
           "04_shared_qualification_route": 0,
           "04_tiny_crossing": 0
@@ -2122,7 +2115,7 @@
       "id": "group_and_adjusted_accounting_TX",
       "measured": {
         "adjusted_difference_meters": 0.0,
-        "group_savings_meters": 425
+        "group_savings_meters": 430
       },
       "motifs": [],
       "passed": true,

@@ -1,4 +1,5 @@
 from pathlib import Path
+import json
 import sys
 
 import pytest
@@ -30,6 +31,21 @@ def test_native_layout(scale, width, height, impl):
                             timeout=30)
     assert result.returncode == 0, result.stdout + result.stderr
     assert '"status": "passed"' in result.stdout
+
+
+@pytest.mark.skipif(sys.platform != 'win32', reason='Native Windows layout verification')
+@pytest.mark.parametrize('impl', ['new', 'legacy'])
+def test_native_layout_uses_actual_clamped_viewport_and_keyboard_focus(impl):
+    # Reproduce a high-DPI request on a small CI monitor using a real WM size
+    # constraint. The app must expose the narrow navigation and keyboard-scroll
+    # the disclosure, rather than the probe assuming its requested width stuck.
+    result = run_gui([sys.executable, str(Path(__file__).with_name('ui_layout_probe.py')),
+                      '2.5', '1000', '720', '-', impl, '408x288'], timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
+    receipt = json.loads(result.stdout.strip().splitlines()[-1])
+    assert receipt['status'] == 'passed'
+    assert receipt['logical_size'] == [1000, 720]
+    assert all(0 < actual <= limit for actual, limit in zip(receipt['actual_logical_size'], (408, 288)))
 
 
 @pytest.mark.skipif(sys.platform != 'win32', reason='Native Windows startup verification')

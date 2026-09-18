@@ -31,7 +31,7 @@ def test_source_smoke_entrypoints(tmp_path):
     for entry,implementation in [('pipeline_calculator_entry.py','new'),('pipeline_calculator_v3.py','legacy')]:
         output=tmp_path/f'{implementation}.json'
         process=run_gui([sys.executable,str(ROOT/'src'/entry),'--smoke-test',str(output)],timeout=30)
-        assert process.returncode==0,process.stderr
+        assert process.returncode==0, (process.stderr, output.read_text() if output.exists() else 'No smoke report written')
         from scripts.validation.check_packaged_smoke import validate_tk_output
         validate_tk_output(process.stderr)
         report=json.loads(output.read_text())

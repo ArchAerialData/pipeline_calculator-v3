@@ -24212,11 +24212,12 @@
       "ellipsoid": "GRS80",
       "minimum_qualifying_meters": 200.0,
       "segment_meters": 5.0,
-      "survey_mile_meters": 1609.347218694
+      "survey_mile_meters": 1609.347218694,
+      "terminal_sample_allowance_meters": 1e-06
     },
     "qualifying_pairwise_meters": 112200.0,
     "qualifying_section_count": 96,
-    "reference_version": "sampled-contract-1",
+    "reference_version": "sampled-contract-2",
     "rejected_section_count": 0,
     "sample_count": 27120,
     "sampled_meters": 135600.0,

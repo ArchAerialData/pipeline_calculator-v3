@@ -1,6 +1,7 @@
 """Repair UI regressions run on the repository's isolated native desktop."""
 import threading
 import time
+import traceback
 from types import SimpleNamespace
 
 import customtkinter as ctk
@@ -26,6 +27,21 @@ def workflow(root):
         on_return=lambda: calls.append(('return',)), on_replace=lambda path: calls.append(('replace', path)),
         on_resume=lambda *args, **kwargs: calls.append(('resume', args, kwargs)))
     return instance, calls
+
+
+def activate_for_keyboard(root):
+    """Establish the foreground app prerequisite before testing modal focus.
+
+    A mapped Aqua window in a freshly spawned CI Python process is not always
+    the key window. Production focus_set intentionally does not activate an
+    inactive application; the test must activate its root before opening the
+    decision, then verify which control the decision itself chooses.
+    """
+    root.lift()
+    root.focus_force()
+    settle(root)
+    assert root.winfo_viewable() and root.focus_get() is root, (
+        'Test root did not acquire native keyboard focus', root.focus_get())
 
 
 @pytest.mark.native_gui
@@ -92,6 +108,7 @@ def test_approval_uses_captured_request_once_and_cancel_restores_input(monkeypat
         file_path='sample.kmz', params=AnalysisParameters(), options=AnalysisOptions(state_breakdown=False))
     try:
         settle(root)
+        activate_for_keyboard(root)
         assert flow.handle_done(job)
         settle(root)
         primary = flow.panel.footer.primary_button
@@ -135,6 +152,7 @@ def test_repair_primary_stays_below_secondary_actions_and_details_scroll():
     panel = None
     try:
         settle(root)
+        activate_for_keyboard(root)
         panel = RepairPanel(root, title='This file may be safely repairable',
             filename='Long client pipeline name ' * 12 + '.kmz',
             message='We will verify that geometry is unchanged before analyzing it.',
@@ -353,7 +371,7 @@ def test_complete_repair_retry_and_explicit_reimport_in_both_entrypoints(tmp_pat
     monkeypatch.setattr(main_window.messagebox, 'showerror', lambda *args, **kwargs: errors.append(args))
     monkeypatch.setattr(AppWindow, 'dnd_bind', lambda root, event, callback, *args: drops.update({event: callback}))
     app = (main_window.PipelineCalculatorGUI if implementation == 'modern' else legacy.PipelineCalculatorGUI)()
-    app.root.report_callback_exception = lambda *args: errors.append(args)
+    app.root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args)))
     def until(predicate):
         deadline = time.monotonic() + 10
         while not predicate() and time.monotonic() < deadline:

@@ -290,7 +290,9 @@ class PipelineAnalyzer:
 
             if context is not None:
                 context.report("Finalizing results")
+            from pipeline_calculator import __version__
             result = {
+                "application_version": __version__,
                 "pipelines": pipeline_data,
                 "placemarks": list(placemarks or []),
                 "total_meters": total_meters,

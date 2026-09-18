@@ -362,7 +362,8 @@ class RepairWorkflow:
     def add_notice(self, parent, **pack_options):
         if not self.verified:
             return None
-        report = self.source.report
+        source = self.source
+        report = source.report
         if report.get('status') in ('not_needed', 'unchanged'):
             return None
         frame = ctk.CTkFrame(parent, fg_color='#23372F', border_color='#456A59', border_width=1)
@@ -377,7 +378,13 @@ class RepairWorkflow:
                      font=ctk.CTkFont(size=13)).pack(fill='x', padx=12, pady=(8, 2))
         controls = ctk.CTkFrame(frame, fg_color='transparent')
         controls.pack(fill='x', padx=12, pady=(0, 8))
-        buttons = [ctk.CTkButton(controls, text=label, command=command, width=width, height=28,
+        def current_source_action(command):
+            def invoke():
+                # Retired notices must not show or save a subsequent import.
+                if not self.closed and self.source is source and self.verified:
+                    command()
+            return invoke
+        buttons = [ctk.CTkButton(controls, text=label, command=current_source_action(command), width=width, height=28,
                     font=ctk.CTkFont(size=12), fg_color='#304D3E', hover_color='#3D634F')
                    for label, command, width in [('Details', self.show_details, 88),
                                                 ('Save repaired copy…', self.save_copy, 168)]]
@@ -389,7 +396,7 @@ class RepairWorkflow:
                             padx=(0, 8), pady=(2, 0))
         controls.bind('<Configure>', arrange, add='+')
         arrange()
-        if not self.source.can_save:
+        if not source.can_save:
             buttons[1].configure(state='disabled')
         for button in buttons:
             _keyboard_button(button)

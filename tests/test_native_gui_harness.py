@@ -1,6 +1,7 @@
 """Native test deadlines are independent of per-operation responsiveness."""
 from types import SimpleNamespace
 import subprocess
+import sys
 
 import pytest
 import conftest
@@ -14,8 +15,11 @@ def item(**options):
 @pytest.mark.parametrize('options, deadline, traceback', [
     ({}, 45, 20), ({'timeout': 120, 'traceback_timeout': 110}, 120, 110),
 ])
-def test_native_deadlines_keep_fatal_capture(monkeypatch, options, deadline, traceback):
+@pytest.mark.parametrize('platform', ['win32', 'darwin', 'linux'])
+def test_native_deadlines_keep_fatal_capture(monkeypatch, options, deadline, traceback, platform):
     monkeypatch.delenv('PIPELINE_GUI_TEST_CHILD', raising=False)
+    monkeypatch.setattr(conftest, 'sys', SimpleNamespace(platform=platform, executable=sys.executable,
+                                                       stderr=sys.stderr))
     calls = []
     def run(command, **kwargs):
         calls.append((command, kwargs))
@@ -24,7 +28,8 @@ def test_native_deadlines_keep_fatal_capture(monkeypatch, options, deadline, tra
     assert conftest.pytest_pyfunc_call(item(**options)) is True
     command, options = calls[0]
     assert command[1:3] == ['-X', 'faulthandler']
-    assert f'faulthandler_timeout={traceback}' in command
+    expected_traceback = 0 if platform == 'win32' else traceback
+    assert f'faulthandler_timeout={expected_traceback}' in command
     assert options['timeout'] == deadline
     assert options['env']['PIPELINE_GUI_TEST_CHILD'] == '1'
 

@@ -4,7 +4,7 @@
 pipeline inputs, an offline deterministic generator, two independent references, expected
 results, interval/overlap/crossing ledgers, preview maps and executable intent checks.
 Application comparisons are recorded separately from the independent references.
-Latest comparison against the fingerprinted application sources: **10,250 checks, 0 mismatches**, including exports.
+No complete application comparison matches the current source and fixture fingerprints; rerun `suite.py compare`.
 
 ## Run
 
@@ -104,9 +104,9 @@ Transverse crossing angles: 89.773014–89.975667 degrees; each event is in the 
 
 | Scope | Original m | US survey mi | Pairwise qualifying m | Savings m | Adjusted m |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Combined | 3,771.350000 | 2.343404 | 5,700 | 1,865 | 1,906.350000 |
-| NM | 1,676.665000 | 1.041829 | 425 | 425 | 1,251.665000 |
-| TX | 2,094.685000 | 1.301574 | 425 | 425 | 1,669.685000 |
+| Combined | 3,771.350000 | 2.343404 | 5,730 | 1,870 | 1,901.350000 |
+| NM | 1,676.665000 | 1.041829 | 430 | 430 | 1,246.665000 |
+| TX | 2,094.685000 | 1.301574 | 430 | 430 | 1,664.685000 |
 
 Transverse crossing angles: 90.000000–90.000000 degrees; each event is in the crossing ledger.
 
@@ -162,7 +162,7 @@ remain understandable. No finite collection proves universal correctness.
 
 The [application report](validation/application_comparison.json) is produced only after
 independent expectations are fixed. All original/state mileage and exact savings comparisons
-are checked within their stated bounds. Latest comparison against the fingerprinted application sources: **10,250 checks, 0 mismatches**, including exports.
+are checked within their stated bounds. No complete application comparison matches the current source and fixture fingerprints; rerun `suite.py compare`.
 
 The initial application baseline exposed two defect classes. The retained reproductions
 document that history; the current receipt above determines whether they still occur:
@@ -213,13 +213,7 @@ for allocation-only states is documented but not exercised by these main cases.
 
 ## Optional stress profile
 
-The saved 24-group profile contains **96 sources, 27,120 samples,
-135.895 km and 96 qualifying sections**.
-It saves 74,640 m and completed application analysis in
-8.11 s on the recorded host, including profiling overhead.
-The [stress report](validation/stress_report.json) records actual candidate/neighbor counts,
-hardware, process peak memory, runtime and independent/application agreement. These values
-are machine-specific observations, not a performance guarantee.
+No complete stress measurement matches the current assets; run the stress wrapper to measure them.
 
 The generator accepts `--profile stress --stress-groups N`; the measured wrapper accepts
 `--groups N` for 2–64 groups. Each group contains overlapping branches, not just isolated

@@ -28,11 +28,11 @@ from pipeline_calculator.gui.repair_ui import RepairWorkflow
 
 def _legacy_version() -> str:
     try:
-        from pipeline_calculator import __version__
+        from pipeline_calculator.versioning import get_display_version
 
-        return str(__version__)
+        return get_display_version()
     except Exception:
-        return "4.0-dev.unknown"
+        return "5.0"
 
 
 class PipelineCalculatorGUI:

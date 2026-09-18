@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
-APP_PATH="${1:-${REPO_DIR}/dist/Pipeline_Calculator.app}"
+APP_PATH="${1:-${REPO_DIR}/dist/Pipeline_Calculator_v5.app}"
 
 ts() { date -u '+%Y-%m-%dT%H:%M:%SZ'; }
 log() { printf '[%s] %s\n' "$(ts)" "$*"; }
@@ -79,9 +79,14 @@ log "Signing app with identity: ${IDENTITY}"
 codesign --force --options runtime --timestamp --sign "${IDENTITY}" --keychain "${KEYCHAIN}" --deep "${APP_PATH}"
 codesign --verify --deep --strict --verbose=2 "${APP_PATH}"
 
+VERSION="$(/usr/libexec/PlistBuddy -c 'Print :PipelineCalculatorVersion' "${APP_PATH}/Contents/Info.plist")"
+log "Verifying the signed app still launches and analyzes offline..."
+"${REPO_DIR}/.venv/bin/python" "${REPO_DIR}/scripts/validation/check_packaged_smoke.py" "${APP_PATH}" \
+  --expected-version "${VERSION}" \
+  --output-directory "${REPO_DIR}/.validation-output/packaged-smoke-signed"
+
 log "Packaging DMG..."
 bash "${REPO_DIR}/scripts/macos/package_dmg.sh" "${APP_PATH}"
-VERSION="$(/usr/libexec/PlistBuddy -c 'Print :PipelineCalculatorVersion' "${APP_PATH}/Contents/Info.plist")"
-DMG_PATH="${REPO_DIR}/dist/Pipeline_Calculator_v${VERSION}.dmg"
+DMG_PATH="${REPO_DIR}/dist/Pipeline_Calculator_v${VERSION}${ARTIFACT_ARCH:+_${ARTIFACT_ARCH}}.dmg"
 
 log "Distribution artifact ready (signed app inside DMG; not notarized): ${DMG_PATH}"

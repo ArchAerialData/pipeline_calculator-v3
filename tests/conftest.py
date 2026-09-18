@@ -37,10 +37,13 @@ def pytest_pyfunc_call(pyfuncitem):
             and 0 < traceback_timeout < timeout):
         raise pytest.UsageError('native_gui requires 0 < traceback_timeout < timeout')
     env = dict(os.environ, PIPELINE_GUI_TEST_CHILD='1')
+    # The Windows CPython 3.11 timed dump can crash while inspecting native-call
+    # frames. Keep -X faulthandler; run_gui still enforces the child's hard limit.
+    diagnostic_timeout = 0 if sys.platform == 'win32' else traceback_timeout
     try:
         result = run_gui(
             [sys.executable, '-X', 'faulthandler', '-m', 'pytest', '-vv', '-s', '-o',
-             f'faulthandler_timeout={traceback_timeout}', pyfuncitem.nodeid],
+             f'faulthandler_timeout={diagnostic_timeout}', pyfuncitem.nodeid],
             cwd=REPO_ROOT, env=env, timeout=timeout,
         )
     except subprocess.TimeoutExpired as exc:

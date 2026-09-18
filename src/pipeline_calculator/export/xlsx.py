@@ -239,6 +239,23 @@ def build_analysis_workbook(current_results):
     from pipeline_calculator.export.repair_provenance import add_repair_details
     add_repair_details(wb, current_results)
     add_corridor_details(wb, current_results)
+    if current_results.get('application_version'):
+        if 'Analysis Details' in wb:
+            build_sheet = wb['Analysis Details']
+        else:
+            build_sheet = wb.create_sheet('Analysis Details')
+            build_sheet.append(['Detail', 'Value'])
+            build_sheet.freeze_panes = 'A2'
+            build_sheet.column_dimensions['A'].width = 45
+            build_sheet.column_dimensions['B'].width = 110
+            for cell in build_sheet[1]:
+                cell.font = header_font
+                cell.fill = gray
+        build_sheet.append(['Application build', str(current_results['application_version'])])
+        for cell in build_sheet[build_sheet.max_row]:
+            cell.font = body_font
+            cell.alignment = left
+        build_sheet.auto_filter.ref = build_sheet.dimensions
 
     # Source names/IDs/diagnostics are data, even if they begin with '='.
     # Preserve only the totals formula that this exporter intentionally creates.

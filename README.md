@@ -1,4 +1,4 @@
-# Pipeline Calculator v4.0 - With Overlap Analysis
+# Pipeline Calculator v5.0 - With Overlap Analysis
 
 A comprehensive GUI application for calculating pipeline lengths and analyzing overlaps from KMZ/KML files. Designed for GIS professionals and aerial survey planning to optimize flight paths by identifying bundled pipeline sections.
 
@@ -6,32 +6,39 @@ A comprehensive GUI application for calculating pipeline lengths and analyzing o
 
 ## Automatic build versions
 
-The app and package filenames share a Git-derived version. No version-bump commit
-is created. Baseline `fc4cc05108dda7ae2f61be4a763eb34f5f1ebb0e` represents **4.0**.
+The first commit introducing `MAJOR = 5` on a branch's first-parent history
+establishes version **5.0**. A normal merge introducing v5 into main starts main
+at 5.0 even if the feature branch had multiple preview commits. Later main
+first-parent commits advance to 5.1, 5.2, and so on; rebuilding does not increment.
+Use a normal or squash merge for the first 5.0 release. Fast-forward/rebase merges
+retain the feature branch's counter and can introduce several increments.
 
-- Each main first-parent commit after the baseline adds one: `4.1`, `4.2`, through
-  `4.9`, then `4.10`. These are version components, not decimal numbers.
-- Normal merge commits and squash merges count once per merged PR. Fast-forward
-  and rebase merges may advance several numbers. Prefer normal merge commits or
-  squash merges for one increment per PR.
-- Pushing alone does not increment anything. Rebuilding a clean main commit gives
-  the same version; pushing several main commits at once can skip build numbers.
-- Branch/PR builds use `4.N-dev.<12-character-commit-hash>`. Their count follows
-  their own first-parent history and does not reserve a future release number.
-  Branches can share numeric prefixes; hashes distinguish commits. PR context
-  always produces a preview, even for a commit also on main. Branches forked before
-  the baseline stay previews; update from main before relying on the count.
-- Uncommitted changes, including untracked files, add `.dirty`. Different dirty
-  edits can share the same version: commit before sharing reproducible builds.
-  CI main/tag builds reject dirty trees.
-- Detached builds get release versions only on `origin/main` first-parent history.
-  Fetch first so this reference is current; other detached commits are previews.
+The application title shows the clean numeric version. Run details, Excel
+Analysis Details, JSON results, repair provenance and embedded metadata retain
+the full build identifier. Branch/PR artifact filenames retain the
+`5.N-dev.<commit>` suffix; uncommitted changes add `.dirty`. An uncommitted major
+bump starts a 5.0 preview. CI main/tag builds reject dirty trees. Detached releases
+must be on origin/main's first-parent history; tags must exactly match the version.
+Full Git history is required. Do not rewrite main or reuse published tags.
 
-Windows downloads use `Pipeline_Calculator_v4.N.exe`; macOS downloads use
-`Pipeline_Calculator_v4.N.dmg`, including preview suffixes when applicable.
-The macOS bundle remains `Pipeline_Calculator.app`, with updated display name and
-version metadata. DMG packaging reads the actual app's embedded version, preserving
+Windows downloads use `Pipeline_Calculator_v5.N.exe`; macOS downloads use
+`Pipeline_Calculator_v5.N_arm64.dmg` (Apple Silicon), including preview suffixes when applicable.
+CI builds on macOS 15 and verifies the same archived app on macOS 26 and 27.
+Sales uses Apple Silicon; Intel is outside this rollout's verification scope. Local packaging without
+`ARTIFACT_ARCH` retains the unsuffixed `.dmg` filename.
+The macOS bundle is `Pipeline_Calculator_v5.app`, with a clean display name and
+version metadata. Its bundle identifier and user settings locations are unchanged. DMG packaging reads the actual app's embedded version, preserving
 it even after switching branches. Pass the exact DMG path to notarization.
+The optional app download is a `.app.zip` archive that preserves executable
+permissions. CI verifies offline analysis before and after Developer ID signing;
+notarization and stapling remain a separate required step before macOS rollout.
+
+Each Mac build inventories its bundled native libraries and records their actual
+minimum macOS version in the app's `LSMinimumSystemVersion` and the CI test report.
+Setting `MACOSX_DEPLOYMENT_TARGET` alone cannot make newer prebuilt libraries run
+on an older OS. The macOS 27 runner currently uses GitHub's `xcode-27` preview
+label; verification asserts its actual OS major version and retains its OS build
+number. A newer SDK alone does not establish runtime compatibility.
 
 ### Building and publishing safely
 
@@ -44,20 +51,27 @@ it even after switching branches. Pass the exact DMG path to notarization.
    against force pushes/history rewrites, which can change or reuse version numbers.
    Do not move the baseline to renumber releases. Deleting merged branches does not
    affect numbering because main's history remains intact.
-4. Tag the exact clean main commit as `v4.N`, matching the version command's output,
+4. Tag the exact clean main commit as `v5.N`, matching the version command's output,
    then push the tag. CI rejects mismatched tags and tags off main's first-parent
    history. Never move/reuse published tags. Existing main/PR/tag/manual triggers
    remain in effect; this does not add CI builds on every feature-branch push.
 
-Major versions remain intentional: to start 5.0, update `MAJOR` and `BASELINE` in
-`src/pipeline_calculator/versioning.py`, along with tests and documentation.
-Generated metadata stays in ignored `build/`; no tracked version file is rewritten.
-Installed apps read bundled metadata and need no Git. Source runs without usable
-Git/history show `4.0-dev.unknown`; packaging fails rather than shipping that fallback.
-For a given clean commit and build context the version is deterministic.
+Future major releases change `MAJOR` in `src/pipeline_calculator/versioning.py`.
+Update the stable major-specific macOS bundle name and its packaging checks too.
+The introducing commit automatically establishes the new baseline, including when
+merged into main. Generated metadata stays in ignored `build/`. Installed apps
+need no Git. Source runs without metadata/history display 5.0 and retain
+`5.0-dev.unknown` in build details; packaging fails rather than shipping that fallback.
+For a given clean commit/context, the version is deterministic.
 
 References: [Git first-parent traversal](https://git-scm.com/docs/git-rev-list)
 and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-information.html#using-file).
+
+### New in v5.0
+- State mileage breakdowns and scoped overlaps.
+- Verified geometry-preserving input repair and provenance.
+- Improved corridor maps, exports, and responsive result views.
+- Verified Windows and Apple Silicon builds, including macOS 27.
 
 ### New in v4.0
 - **Parser hardening**: Supports multipart LineStrings, local KMZ NetworkLinks, and gx:Track/gx:MultiTrack paths
@@ -143,8 +157,8 @@ The overlap analysis feature helps optimize aerial survey planning by:
 
 ### Option 1: Download Pre-built Executables
 Download the latest release from the GitHub releases page:
-- **Windows**: `Pipeline_Calculator_v4.N.exe`
-- **macOS**: `Pipeline_Calculator_v4.N.dmg`
+- **Windows**: `Pipeline_Calculator_v5.N.exe`
+- **Apple Silicon Mac**: `Pipeline_Calculator_v5.N_arm64.dmg`
 
 ### Option 2: Run from Source
 Builds and automated validation use Python 3.11. Use the platform setup scripts to prepare that environment.
@@ -254,11 +268,17 @@ pipeline-calculator-v4/
 
 4. **Create a release** to trigger builds:
    ```bash
-   git tag v4.N  # Replace N with the generated version; see Automatic build versions
-   git push origin v4.N
+   git tag v5.N  # Replace N with the generated version; see Automatic build versions
+   git push origin v5.N
    ```
 
-The GitHub Actions workflow will automatically build executables for Windows and macOS when you push to main or create a tagged release.
+The GitHub Actions workflow builds Windows and Apple Silicon macOS artifacts on
+main pushes, pull requests, and tags. The same Mac app must pass native execution
+on Sequoia (15), Tahoe (26), and Golden Gate (27). A tag creates a **draft** release.
+Before publishing it, notarize and staple the signed DMG with
+`scripts/macos/notarize_dmg.sh`, replace the draft's DMG asset with that verified
+file, and check its launch on the target Macs. This keeps pre-notarized builds
+from being automatically offered as the latest sales release.
 
 ## 🔬 Technical Details
 

@@ -163,7 +163,8 @@ def test_summary_repeated_returns_remain_visible_and_fast():
             pages.set('Summary')
             root.update()
             (reflow_times if index % 20 == 0 else times).append(time.perf_counter() - started)
-            assert view.winfo_viewable() and view.inner.winfo_viewable()
+            from pipeline_calculator.smoke import _visibility_details
+            assert view.winfo_viewable() and view.inner.winfo_viewable(), _visibility_details(view)
             canvas = view._parent_canvas
             assert view.inner.winfo_rooty() < canvas.winfo_rooty() + canvas.winfo_height()
             assert view.inner.winfo_rooty() + view.inner.winfo_height() > canvas.winfo_rooty()

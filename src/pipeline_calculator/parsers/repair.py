@@ -592,15 +592,23 @@ def verify_document(original: bytes, candidate: bytes, edits, *, source="", cont
     return DocumentRepair(source, original, candidate, edits, rules)
 
 
-def inspect_geometry(data_or_root, *, source="", context=None):
-    """Independent, ordered projection for the app's supported line/point model.
+def inspect_geometry_structure(data_or_root, *, source="", context=None, ordinary=False):
+    """Find structures that extraction could silently omit or count more than once.
 
-    Names remain empty where the application uses a graph-wide generated name.
-    No mutation or omission is concealed: findings block repaired-source coverage.
+    Ordinary input retains legacy/namespace-free KML support. Repair verification
+    requires explicit KML 2.2 names and additionally rejects signed XML. Neither
+    path rewrites, reconnects, or infers any geometry.
     """
     root = safe_xml_root(data_or_root, context=context) if isinstance(data_or_root, bytes) else data_or_root
-    result = {"pipelines": [], "points": [], "features": [], "findings": [], "counts": {"placemarks": 0, "paths": 0, "vertices": 0, "element_count": 0}}
+    result = {"findings": [], "element_count": 0}
     parents = {child: parent for parent in root.iter() for child in parent}
+    def structural_tag(element):
+        uri, local = _split(element.tag)
+        if ordinary and uri in {"", "http://earth.google.com/kml/2.0",
+                                 "http://earth.google.com/kml/2.1", "http://earth.google.com/kml/2.2"}:
+            uri = KML_NS
+        return uri, local
+
     reserved = {name.lower(): name for name in _RESERVED}
     gx_reserved = {name.lower(): name for name in _GX_RESERVED}
 
@@ -614,11 +622,11 @@ def inspect_geometry(data_or_root, *, source="", context=None):
         result["findings"].append(entry)
 
     for number, element in enumerate(root.iter()):
-        result["counts"]["element_count"] += 1
+        result["element_count"] += 1
         if number % 128 == 0:
             _check(context)
-        uri, local = _split(element.tag)
-        if uri in {"http://www.w3.org/2001/XInclude", "http://www.w3.org/2000/09/xmldsig#"}:
+        uri, local = structural_tag(element)
+        if uri == "http://www.w3.org/2001/XInclude" or (not ordinary and uri == "http://www.w3.org/2000/09/xmldsig#"):
             issue("unsupported_signed_or_included_xml", "This document contains signed XML or XInclude references; a complete unchanged source cannot be certified without interpreting unsupported dependencies.")
         if (uri, local) == (KML_NS, "Update"):
             issue("unsupported_update_geometry", "A KML Update contains changes to another document, rather than an independently complete static system; the effective geometry cannot be verified.")
@@ -630,7 +638,7 @@ def inspect_geometry(data_or_root, *, source="", context=None):
         if local in _GX_RESERVED and uri != GX_NS:
             issue("geometry_namespace_ambiguity", f"Element '{local}' uses an unsupported track namespace.")
         parent = parents.get(element)
-        parent_tag = _split(parent.tag) if parent is not None else ("", "")
+        parent_tag = structural_tag(parent) if parent is not None else ("", "")
         if local == "coordinates" and parent_tag not in {(KML_NS, "LineString"), (KML_NS, "LinearRing"), (KML_NS, "Point")}:
             issue("unknown_coordinate_structure", "A coordinate element occurs outside a recognized geometry structure.")
         if (local == "coordinates" or (uri, local) == (GX_NS, "coord")) and len(element):
@@ -644,23 +652,69 @@ def inspect_geometry(data_or_root, *, source="", context=None):
             if parent_tag not in {(KML_NS, "kml"), (KML_NS, "Document"), (KML_NS, "Folder")}:
                 issue("ambiguous_feature_membership", f"Feature '{local}' occurs outside a supported document or folder position.")
         if (uri, local) == (KML_NS, "NetworkLink"):
+            if ordinary:
+                # An unrelated visual resource base does not affect mileage.
+                # A base on/in this NetworkLink or its ancestors can silently
+                # redirect it to a different, equally valid local document.
+                ancestors = []
+                ancestor = parent
+                while ancestor is not None:
+                    ancestors.append(ancestor)
+                    ancestor = parents.get(ancestor)
+                if any(e.get(f"{{{XML_NS}}}base", "").strip()
+                       for e in [*ancestors, *element.iter()]):
+                    issue("unsupported_xml_base", "A NetworkLink uses xml:base, whose inherited link resolution is unsupported. The intended linked geometry cannot be interpreted safely.")
             links = [child for child in element if _local(child.tag).lower() in {"link", "url"}]
-            if len(links) != 1 or _split(links[0].tag) not in {(KML_NS, "Link"), (KML_NS, "Url")}:
+            if len(links) != 1 or structural_tag(links[0]) not in {(KML_NS, "Link"), (KML_NS, "Url")}:
                 issue("ambiguous_network_link", "A NetworkLink does not contain exactly one correctly named KML Link or Url; its intended source cannot be verified.")
             else:
                 hrefs = [child for child in links[0] if _local(child.tag).lower() == "href"]
-                if len(hrefs) != 1 or hrefs[0].tag != f"{{{KML_NS}}}href" or len(hrefs[0]):
+                if len(hrefs) != 1 or structural_tag(hrefs[0]) != (KML_NS, "href") or len(hrefs[0]):
                     issue("ambiguous_network_link", "A NetworkLink href has ambiguous case, namespace, multiplicity, or nested content; its complete target cannot be verified.")
         if (uri, local) == (KML_NS, "Placemark"):
             ancestor = parent
             while ancestor is not None:
-                if _split(ancestor.tag) == (KML_NS, "Placemark"):
+                if structural_tag(ancestor) == (KML_NS, "Placemark"):
                     issue("nested_placemark", "Nested Placemarks have ambiguous feature membership.")
                     break
                 ancestor = parents.get(ancestor)
         if local in (_GEOMETRY - {"LinearRing"}) or (uri == GX_NS and local in {"Track", "MultiTrack"}):
             if parent_tag not in {(KML_NS, "Placemark"), (KML_NS, "MultiGeometry"), (GX_NS, "MultiTrack")}:
                 issue("ambiguous_geometry_membership", f"Geometry '{local}' occurs outside a supported feature/container position.")
+
+    if len(result["findings"]) == MAX_FINDINGS:
+        result["findings"][-1] = _finding("inspection_findings_truncated", "Further findings were not collected because the inspection limit was reached.", source, category="limit")
+    return result
+
+
+def validate_geometry_structure(root, *, source="", context=None):
+    """Reject ambiguous ordinary input before presenting any mileage as usable."""
+    findings = inspect_geometry_structure(root, source=source, context=context, ordinary=True)["findings"]
+    if findings:
+        raise RepairFailure("The file structure is ambiguous; complete pipeline geometry cannot be read safely.",
+                            findings=findings)
+
+
+def inspect_geometry(data_or_root, *, source="", context=None):
+    """Independent, ordered projection for the app's supported line/point model.
+
+    Names remain empty where the application uses a graph-wide generated name.
+    No mutation or omission is concealed: findings block repaired-source coverage.
+    """
+    root = safe_xml_root(data_or_root, context=context) if isinstance(data_or_root, bytes) else data_or_root
+    result = {"pipelines": [], "points": [], "features": [], "findings": [], "counts": {"placemarks": 0, "paths": 0, "vertices": 0, "element_count": 0}}
+    structure = inspect_geometry_structure(root, source=source, context=context)
+    result["findings"].extend(structure["findings"])
+    result["counts"]["element_count"] = structure["element_count"]
+
+    def issue(code, message, ordinal=None, **details):
+        if len(result["findings"]) >= MAX_FINDINGS:
+            return
+        entry = _finding(code, message, source, action="Correct this issue in the original GIS dataset and re-export the complete system without deleting or reconnecting geometry.")
+        if ordinal:
+            entry["feature_ordinal"] = ordinal
+        entry.update(details)
+        result["findings"].append(entry)
 
     def direct(element, name):
         return next((child for child in element if _local(child.tag) == name), None)

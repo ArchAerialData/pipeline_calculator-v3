@@ -9,7 +9,7 @@ VENV_DIR="${REPO_DIR}/.venv"
 
 # Optional overrides:
 #   BUNDLE_ID=com.yourorg.pipelinecalculator
-#   APP_DISPLAY_NAME="Pipeline Calculator v4"
+#   APP_DISPLAY_NAME="Pipeline Calculator v5.0"
 #   PIPELINE_CALCULATOR_BUILD_IMPL=new|legacy  (default: new)
 # Default to a reverse-DNS style bundle identifier so the generated Info.plist is valid.
 # Override by exporting BUNDLE_ID=... in your environment/CI.
@@ -86,7 +86,8 @@ fi
 
 rm -rf build dist
 VERSION="$(python src/pipeline_calculator/versioning.py --output build/version.json)"
-APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v${VERSION}}"
+DISPLAY_VERSION="$(python -c 'import json; print(json.load(open("build/version.json"))["numeric_version"])')"
+APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v${DISPLAY_VERSION}}"
 
 # Bash 3.2 (macOS default) + `set -u` errors on empty array expansions.
 # Use the `${arr[@]+"${arr[@]}"} ` pattern so empty arrays expand safely.
@@ -111,11 +112,11 @@ pyinstaller --noconfirm --clean \
   "${ENTRY_SCRIPT}"
 
 if [[ -d "dist/${APP_DISPLAY_NAME}.app" ]]; then
-  rm -rf "dist/Pipeline_Calculator.app"
-  mv "dist/${APP_DISPLAY_NAME}.app" "dist/Pipeline_Calculator.app"
+  rm -rf "dist/Pipeline_Calculator_v5.app"
+  mv "dist/${APP_DISPLAY_NAME}.app" "dist/Pipeline_Calculator_v5.app"
 fi
 
-APP_PATH="dist/Pipeline_Calculator.app"
+APP_PATH="dist/Pipeline_Calculator_v5.app"
 if [[ ! -d "${APP_PATH}" ]]; then
   echo "Build failed: ${APP_PATH} not found."
   exit 1
@@ -135,4 +136,14 @@ info["PipelineCalculatorVersion"] = metadata["version"]
 with path.open("wb") as stream:
     plistlib.dump(info, stream)
 PY
+# A deployment-target variable cannot lower the minimum OS of prebuilt wheels.
+# Check every bundled native library and stamp its actual required OS before signing.
+python scripts/macos/validate_bundle.py "${APP_PATH}" \
+  --architecture "${ARTIFACT_ARCH:-$(python -c 'import platform; print(platform.machine())')}" \
+  --output ".validation-output/macos-bundle.json"
+# Both plist stamps invalidate PyInstaller's original ad-hoc bundle seal.
+# Restore a valid seal for secretless preview builds and the first frozen gate.
+# CI replaces it with the Developer ID signature when credentials are present.
+codesign --force --deep --sign - "${APP_PATH}"
+codesign --verify --deep --strict "${APP_PATH}"
 echo "Build complete: ${APP_PATH}"

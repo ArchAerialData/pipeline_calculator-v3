@@ -36,7 +36,8 @@ def show(
 
     root.title(f"Pipeline Calculator v{version} - Results")
     ActionBar(root, [("Export Results", on_export), ("Adjust Parameters", on_reanalyze),
-                     ("Import New File", on_new_file), ("Exit", on_exit)]).pack(
+                     ("Import New File", on_new_file), ("Exit", on_exit)],
+              compact_labels=('Export', 'Adjust', 'Import', 'Exit')).pack(
                          side="bottom", fill="x", padx=10, pady=6)
 
     header_frame = ctk.CTkFrame(root)
@@ -66,12 +67,15 @@ def show(
         displayed = dict(scopes[name])
         displayed['_geography'] = geography
         displayed.setdefault('analysis_parameters', current_results.get('analysis_parameters'))
+        displayed.setdefault('application_version', current_results.get('application_version'))
         state_view = name != 'Combined'
         summary_tab = tabview.add('Summary')
         create_summary_tab(summary_tab, displayed, on_select_state=select_scope)
         if displayed.get('pipelines'):
             create_pipelines_tab(tabview.add('Pipelines'), displayed)
-        if displayed.get('overlap_analysis') or state_view:
+        overlap_failed = any(item.get('code') == 'overlap_analysis_failed'
+                             for item in (displayed.get('diagnostics') or []))
+        if displayed.get('overlap_analysis') or state_view or overlap_failed:
             create_overlap_tab(tabview.add('Overlap Analysis'), displayed, on_open_corridor=on_open_corridor)
         if current_results.get('placemarks'):
             placemark_tab = tabview.add('Placemarks')

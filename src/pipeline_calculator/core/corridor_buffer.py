@@ -482,11 +482,16 @@ def _chunk_polygons(points, geod, options, work):
 
 
 def _construction_paths(points, geod, work):
-    """Canonical direction and reversal cuts preserve the exact generating set.
+    """Canonical direction and junction cuts preserve the exact generating set.
 
     Splitting at an about-face avoids microscopic duplicated buffer edges caused
-    by oppositely interpolated versions of the same geodesic. Both halves retain
-    the turning vertex, so their round-buffer union equals the unsplit support.
+    by oppositely interpolated versions of the same geodesic. Split at *every*
+    occurrence of a repeated vertex too: a closed loop followed by a partial
+    retrace otherwise leaves microscopic buffer slivers which can become invalid
+    during coordinate conversion. Cutting only the later occurrence would miss
+    reversed traversal. Both halves retain each junction, so the union of their
+    round buffers has exactly the unsplit generating support. No coordinates are
+    snapped and every resulting piece still passes the neighborhood certificate.
     """
     cleaned = []
     for point in points:
@@ -498,6 +503,17 @@ def _construction_paths(points, geod, work):
     if len(points) < 2:
         raise _MapFailure('corridor_geometry_invalid', 'Qualified source run has no positive extent')
     points = min(points, points[::-1])
+
+    def vertex_key(point):
+        # The two dateline spellings denote the same vertex; keep the original
+        # spelling in the generating paths themselves.
+        return (180.0 if abs(point[0]) == 180 else point[0], point[1])
+
+    occurrences = {}
+    for point in points:
+        work.check()
+        key = vertex_key(point)
+        occurrences[key] = occurrences.get(key, 0) + 1
     start = 0
     for index in range(1, len(points) - 1):
         work.check()
@@ -505,7 +521,7 @@ def _construction_paths(points, geod, work):
         incoming = geod.inv(*a, *b)[1] + 180
         outgoing = geod.inv(*b, *c)[0]
         turn = abs((outgoing - incoming + 180) % 360 - 180)
-        if turn > 179.999999:
+        if occurrences[vertex_key(b)] > 1 or turn > 179.999999:
             yield points[start:index + 1]
             start = index
     yield points[start:]
@@ -568,7 +584,15 @@ def _union_components(shapes, work):
     result = []
     for group in groups.values():
         while len(group) > 1:
-            batch = group[:work.job.max_native_operands]
+            batch, vertices = [], 0
+            for shape in group[:work.job.max_native_operands]:
+                count = int(get_num_coordinates(shape))
+                if vertices + count > work.job.max_native_vertices:
+                    break
+                batch.append(shape)
+                vertices += count
+            if len(batch) < 2:
+                raise _MapFailure('corridor_buffer_limit', 'Corridor union operands exceed the native vertex limit')
             estimate = _overlay_bound(batch, work)
             merged = work.output(unary_union(batch), estimate)
             work.native([merged])

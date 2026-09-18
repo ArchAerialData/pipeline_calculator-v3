@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pipeline Calculator with Overlap Analysis - KMZ/KML Pipeline Calculator
-Compatibility entrypoint for Pipeline Calculator v4
+Compatibility entrypoint for Pipeline Calculator v5
 Version: derived from Git or embedded build metadata
 """
 
@@ -34,10 +34,11 @@ import math
 from xml.sax.saxutils import escape as _xml_escape
 
 # Version info
+from pipeline_calculator.versioning import get_display_version
 try:
     from pipeline_calculator import __version__ as __version__
 except Exception:
-    __version__ = "4.0-dev.unknown"
+    __version__ = "5.0-dev.unknown"
 __author__ = "Pipeline Calculator Team"
 
 # Default analysis parameters
@@ -260,7 +261,7 @@ class PipelineCalculatorGUI:
             pass
     
     def setup_gui(self):
-        self.root.title(f"Pipeline Calculator v{__version__}")
+        self.root.title(f"Pipeline Calculator v{get_display_version()}")
         self.show_file_selection()
         self.root.initialize_size()
         self.root.deiconify()
@@ -393,7 +394,7 @@ class PipelineCalculatorGUI:
         if not self.current_results:
             return self.show_file_selection()
         from pipeline_calculator.gui.pages.results_page import show
-        show(self.root, version=__version__, current_file=self.current_file, current_results=self.current_results,
+        show(self.root, version=get_display_version(), current_file=self.current_file, current_results=self.current_results,
              on_export=self.export_results, on_reanalyze=self.reanalyze, on_new_file=self.import_new_file,
              on_exit=self.close, on_open_corridor=self.view_overlap_kml, state_preference=self.state_preference,
              repair_workflow=getattr(self, 'repair_workflow', None))

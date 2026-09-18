@@ -176,7 +176,12 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                 fill='x', padx=12, pady=(0, 6))
         CorridorTable(parent, sections, on_open_corridor).pack(fill='both', expand=True, padx=4)
     else:
-        failed = current_results.get('state_code') and current_results.get('adjusted_total_meters') is None
-        WrappedLabel(parent, text=('State overlap analysis is unavailable. See Diagnostics for details.' if failed else
+        state_failed = current_results.get('state_code') and current_results.get('adjusted_total_meters') is None
+        combined_failed = current_results.get('overlap_analysis') is None and any(
+            item.get('code') == 'overlap_analysis_failed'
+            for item in (current_results.get('diagnostics') or []))
+        failed = state_failed or combined_failed
+        scope = 'State overlap' if current_results.get('state_code') else 'Overlap'
+        WrappedLabel(parent, text=(f'{scope} analysis is unavailable. See Diagnostics for details.' if failed else
                                   'No bundled sections found with current parameters'),
-                     font=('Arial', 14)).pack(pady=20)
+                     font=('Arial', 14)).pack(fill='x', padx=16, pady=20)
