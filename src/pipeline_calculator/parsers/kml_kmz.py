@@ -320,7 +320,8 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
     try:
         if state.context is not None:
             state.context.check()
-        root = ET.fromstring(data)
+        from pipeline_calculator.parsers.repair import safe_xml_root
+        root = safe_xml_root(data, context=state.context)
         if state.context is not None:
             state.context.check()
     except ET.ParseError as e:

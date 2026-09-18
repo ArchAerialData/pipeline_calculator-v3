@@ -1,0 +1,91 @@
+{
+  "sample": "Pipelines August 2023.kmz",
+  "sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+  "pipelines": 42,
+  "paths": 44,
+  "vertices": 2139,
+  "meters": 920747.8695152604,
+  "US_survey_miles": 572.1250571784351,
+  "original_unchanged": true,
+  "repair": {
+    "schema_version": 1,
+    "version": 1,
+    "verifier_version": 1,
+    "app_version": "4.22-dev.97989716af38.dirty",
+    "status": "verified",
+    "original_name": "Pipelines August 2023.kmz",
+    "source_filename": "Pipelines August 2023.kmz",
+    "source_sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+    "original_sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+    "source_manifest_sha256": "14e43778bd8cac50e93a7b768e151c20fbe3c5bc608a00e8f92e3c5831aa8578",
+    "supplied_extension": ".kmz",
+    "effective_format": "kmz",
+    "rules": [
+      "missing_xsi_schema_namespace_v1"
+    ],
+    "edit_count": 1,
+    "edit_byte_count": 54,
+    "original_preserved": true,
+    "geometry_verification": "verified",
+    "coverage": {
+      "status": "complete",
+      "pipeline_count": 42,
+      "point_count": 0,
+      "path_count": 44,
+      "vertex_count": 2139
+    },
+    "primary": "doc.kml",
+    "documents": [
+      {
+        "source": "doc.kml",
+        "original_sha256": "f3fcd300acb40327b853b24acc47f088fa6d97c35123c48f1d393010e64fa3ad",
+        "effective_sha256": "dfc81e02a7f48f7075c9355db76dad4971998ec7e47652e711e40184adb93d09",
+        "rules": [
+          "missing_xsi_schema_namespace_v1"
+        ],
+        "edits": [
+          {
+            "rule": "missing_xsi_schema_namespace_v1",
+            "byte_offset": 211,
+            "removed": "",
+            "inserted": " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+            "removed_bytes": 0,
+            "inserted_bytes": 54
+          }
+        ],
+        "byte_preservation": "passed",
+        "status": "repaired"
+      }
+    ],
+    "manifest": [
+      {
+        "source": "doc.kml",
+        "original_sha256": "f3fcd300acb40327b853b24acc47f088fa6d97c35123c48f1d393010e64fa3ad",
+        "effective_sha256": "dfc81e02a7f48f7075c9355db76dad4971998ec7e47652e711e40184adb93d09"
+      }
+    ],
+    "parsed_documents": [
+      "doc.kml"
+    ],
+    "archive_members": [
+      {
+        "source": "doc.kml",
+        "sha256": "f3fcd300acb40327b853b24acc47f088fa6d97c35123c48f1d393010e64fa3ad",
+        "bytes": 174966,
+        "xml_inspected": true
+      }
+    ],
+    "uninspected_documents": [],
+    "findings": [],
+    "save_unavailable_reason": "",
+    "external_visual_assets_verified": false,
+    "limits": {
+      "source_bytes": 268435456,
+      "package_bytes": 268435456,
+      "document_bytes": 67108864,
+      "patches": 10000,
+      "xml_elements": 500000
+    }
+  },
+  "scope": "Production preparation/approval/geometry verification and original mileage; no overlap/state run in this check."
+}

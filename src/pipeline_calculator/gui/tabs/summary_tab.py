@@ -345,7 +345,7 @@ class SummaryView(AutoScrollFrame):
             text_label(self.inner, 'No state mileage is available for this input.', pady=(0, 8))
             return
         table = create_table(self.inner, ('State', 'Original (mi)', 'Adjusted (mi)', 'Removed (mi)', 'Status'),
-                             (160, 130, 130, 130, 150), vertical_padding=0)
+                             (160, 130, 130, 130, 150), vertical_padding=0, compact=True)
         table.configure(height=min(6, max(1, len(states))))
         self.state_table = table
         self.state_rows = {}

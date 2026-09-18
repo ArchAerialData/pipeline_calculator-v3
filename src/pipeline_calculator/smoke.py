@@ -125,6 +125,40 @@ def _check_geography_packaging(directory):
     }
 
 
+def _check_repair_packaging(directory):
+    """Prove frozen repair imports, explicit approval and safe-source reimport."""
+    from pipeline_calculator.gui.controllers.analysis_controller import analyze_file, RepairRequired
+    from pipeline_calculator.gui.state import AnalysisParameters
+    from pipeline_calculator.core.analyzer import PipelineAnalyzer
+    from pipeline_calculator.export.xlsx import build_analysis_workbook
+
+    original = Path(directory) / 'repair-input.kml'
+    payload = (b'<kml xmlns="http://www.opengis.net/kml/2.2">'
+               b'<Document xsi:schemaLocation="http://www.opengis.net/kml/2.2 schema.xsd">'
+               b'<Placemark><LineString><coordinates>-100,40 -100,40.001</coordinates>'
+               b'</LineString></Placemark></Document></kml>')
+    original.write_bytes(payload)
+    try:
+        analyze_file(str(original), AnalysisParameters(), prepare_repair=True)
+    except RepairRequired as decision:
+        source = decision.source_session
+    else:
+        raise AssertionError('Invalid input did not await repair approval')
+    assert not source.verified
+    result = analyze_file(str(original), AnalysisParameters(), source_session=source, approve_repair=True)
+    assert source.verified and result['input_repair']['status'] == 'verified'
+    assert original.read_bytes() == payload
+    saved = Path(directory) / 'repair-saved.kml'
+    source.save(saved)
+    reopened = PipelineAnalyzer().analyze_complete(saved)
+    assert reopened['total_meters'] == result['total_meters']
+    workbook = build_analysis_workbook(result)
+    assert 'Analysis Details' in workbook.sheetnames
+    workbook.save(Path(directory) / 'repair-report.xlsx')
+    return {'approval_required': True, 'source_unchanged': True,
+            'geometry_verified': True, 'saved_copy_roundtrip': True, 'provenance_exported': True}
+
+
 def run(output_path, *, implementation='new'):
     from pipeline_calculator.versioning import get_version
     from pipeline_calculator.gui.resources import icon_path, resource_root
@@ -158,6 +192,7 @@ def run(output_path, *, implementation='new'):
                 p['Placemark_ID'] for p in result['pipelines']]
             workbook.save(Path(directory)/'result.xlsx')
             geography_report = _check_geography_packaging(directory)
+            repair_report = _check_repair_packaging(directory)
         ui_report = _check_live_results(result, implementation)
         icon=icon_path()
         assert icon is not None and icon.exists()
@@ -169,6 +204,7 @@ def run(output_path, *, implementation='new'):
                 'placemark_ids': [p['Placemark_ID'] for p in result['pipelines']],
                 'original_miles': result['total_miles'],
                 'geography': geography_report,
+                'repair': repair_report,
                 'adjusted_miles': (result.get('overlap_analysis') or {}).get('effective_total_miles')}
     except Exception as exc:
         report={'status':'failed','implementation':implementation,'error':str(exc)}

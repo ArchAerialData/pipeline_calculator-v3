@@ -184,6 +184,31 @@ class PipelineAnalyzer:
                              if context is not None and options.state_breakdown else context)
             parsed = extract_features_from_file_with_diagnostics(
                 file_path, progress_callback=progress_callback, context=parse_context)
+            combined = self.analyze_parsed(parsed, progress_callback, context=context, options=options)
+            if callback_context is not None:
+                callback_context.report('Complete', 1, 1, fraction=1.0)
+            return combined
+        except AnalysisCancelled:
+            raise
+        except Exception as exc:
+            raise ValueError(f'Analysis failed: {exc}') from exc
+
+    def analyze_parsed(self, parsed, progress_callback=None, *, context=None, options=None):
+        """Analyze fresh normalized source records, without reopening source files.
+
+        Callers own these mutable records. Retained source sessions must supply a
+        fresh copy for every run because overlap calculations cache segments.
+        """
+        options = options or AnalysisOptions()
+        if not isinstance(options, AnalysisOptions):
+            raise TypeError('options must be AnalysisOptions')
+        callback_context = None
+        if options.state_breakdown and progress_callback is not None:
+            callback_context = CallbackExecutionContext(
+                context if context is not None else ExecutionContext(), progress_callback)
+            context = callback_context
+            progress_callback = None
+        try:
             combined_context = (ScopedExecutionContext(context, .03, .43, 'Combined')
                                 if context is not None and options.state_breakdown else context)
             combined = self.analyze_features(

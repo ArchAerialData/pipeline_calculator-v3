@@ -27,6 +27,7 @@ def show(
     on_exit,
     on_open_corridor,
     state_preference=None,
+    repair_workflow=None,
 ) -> None:
     """Render the results screen."""
 
@@ -47,6 +48,8 @@ def show(
     file_label.insert(0, file_name)
     file_label.configure(state="readonly")
     file_label.pack(side="left", fill="x", expand=True, padx=(0, 8), pady=4)
+    if repair_workflow is not None:
+        repair_workflow.add_notice(root, padx=18, pady=(0, 4))
     if state_preference is not None:
         state_preference.add_notice(root, padx=18, pady=(0, 4))
 

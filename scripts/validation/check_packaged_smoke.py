@@ -63,6 +63,12 @@ def validate_report(report, implementation, expected_version=None):
         "geography reconciliation": geography.get("reconciliation_passed") is True,
         "package map roundtrips": geography.get("package_map_roundtrips") is True,
     })
+    repair = report.get('repair')
+    if not isinstance(repair, dict):
+        repair = {}
+    checks.update({f'repair {key}': repair.get(key) is True for key in (
+        'approval_required', 'source_unchanged', 'geometry_verified',
+        'saved_copy_roundtrip', 'provenance_exported')})
     if expected_version is not None:
         checks["artifact version"] = report.get("version") == expected_version
     failed = [name for name, passed in checks.items() if not passed]

@@ -1,0 +1,2416 @@
+{
+  "summary": {
+    "source_name": "Pipelines August 2023.kmz",
+    "source_sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+    "zip_members": [
+      "doc.kml"
+    ],
+    "original_kml_sha256": "f3fcd300acb40327b853b24acc47f088fa6d97c35123c48f1d393010e64fa3ad",
+    "inserted_namespace_offset": 211,
+    "inserted_namespace_bytes": 54,
+    "original_bytes_preserved_except_namespace_insertion": true,
+    "geometry_tag_counts": {
+      "Placemark": 42,
+      "MultiGeometry": 41,
+      "LineString": 44,
+      "coordinates": 44
+    },
+    "records": 42,
+    "paths": 44,
+    "vertices": 2139,
+    "altitude_values": [
+      0.0
+    ],
+    "lon_range": [
+      -97.82776827399994,
+      -95.43604801999993
+    ],
+    "lat_range": [
+      27.56242544300005,
+      29.30803354800007
+    ],
+    "miles_fields": 42,
+    "stored_miles_sum_decimal": "648.601713",
+    "geodesic_grs80_meters": 920747.8695152602,
+    "geodesic_grs80_survey_miles": 572.1250571782797,
+    "geodesic_wgs84_survey_miles": 572.1250571817288,
+    "webmercator_survey_miles": 651.5342528174073,
+    "webmercator_international_miles": 651.5355558885191,
+    "max_abs_stored_minus_webmercator_survey_miles": 50.42547992397064,
+    "max_abs_stored_minus_webmercator_international_miles": 50.425471179401,
+    "max_abs_stored_minus_grs80_miles": 50.9864969694504,
+    "independent_vincenty_meters": 920747.8694979899,
+    "independent_vincenty_max_iterations": 5,
+    "independent_vincenty_max_path_meter_discrepancy": 1.799577148631215e-06,
+    "independent_vincenty_total_meter_discrepancy": -1.7270401617253128e-05,
+    "outlier_records": [
+      34,
+      36,
+      41,
+      42
+    ],
+    "outlier_total_miles_discrepancy": 76.44848646947625,
+    "other_38_total_miles_discrepancy": 0.028169352244095405,
+    "other_38_max_record_mile_discrepancy": 0.005657425481739864
+  },
+  "records": [
+    {
+      "record": 1,
+      "name": "30_INGLESIDE, 8\" C2",
+      "placemark_id": "ID_00000",
+      "paths": 1,
+      "vertices": 133,
+      "stored_miles": 29.13183,
+      "stored_feet": 153816.064137,
+      "geodesic_grs80_meters": 46874.917168840875,
+      "geodesic_grs80_survey_miles": 29.126664913782598,
+      "geodesic_wgs84_survey_miles": 29.126664913874787,
+      "webmercator_meters": 53069.7872512422,
+      "webmercator_survey_miles": 32.97597102401208,
+      "webmercator_international_miles": 32.976036976086036,
+      "stored_minus_grs80_miles": 0.005165086217402859,
+      "stored_minus_webmercator_survey_miles": -3.8441410240120817,
+      "stored_minus_webmercator_international_miles": -3.844206976086035,
+      "stored_to_grs80_ratio": 1.000177331878974,
+      "metadata": {
+        "SEG_ID": "CC15",
+        "IMP_Name": "8\" Ingleside C2",
+        "SYS_NM": "21 INGLESIDE (30)",
+        "SUBSYS_NM": "30_INGLESIDE, 8\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "153816.064137",
+        "MILES": "29.13183"
+      },
+      "independent_vincenty_meters": 46874.91716770828,
+      "paths_details": [
+        {
+          "vertex_count": 133,
+          "first_lon_lat_alt": [
+            -97.23813601299992,
+            27.88574699800006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5806805329999,
+            27.81332272900005,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58078002999991,
+            -97.23793454799994
+          ],
+          "lat_bounds": [
+            27.81332272900005,
+            27.91167119800008
+          ],
+          "vincenty_meters": 46874.91716770828,
+          "vincenty_survey_miles": 29.126664913078834,
+          "pyproj_meters": 46874.917168840875
+        }
+      ]
+    },
+    {
+      "record": 2,
+      "name": "31_CORPUS TO WOODSBORO, 8\"",
+      "placemark_id": "ID_00000",
+      "paths": 1,
+      "vertices": 143,
+      "stored_miles": 36.356771,
+      "stored_feet": 191963.749108,
+      "geodesic_grs80_meters": 58502.81514244328,
+      "geodesic_grs80_survey_miles": 36.35189129037235,
+      "geodesic_wgs84_survey_miles": 36.35189129078326,
+      "webmercator_meters": 66407.76665818939,
+      "webmercator_survey_miles": 41.26379061447153,
+      "webmercator_international_miles": 41.26387314221781,
+      "stored_minus_grs80_miles": 0.004879709627651607,
+      "stored_minus_webmercator_survey_miles": -4.90701961447153,
+      "stored_minus_webmercator_international_miles": -4.907102142217809,
+      "stored_to_grs80_ratio": 1.0001342353713778,
+      "metadata": {
+        "SEG_ID": "CC12",
+        "IMP_Name": "8\" Corpus - Woodsboro",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "31_CORPUS TO WOODSBORO, 8\"",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "191963.749108",
+        "MILES": "36.356771"
+      },
+      "independent_vincenty_meters": 58502.81514142637,
+      "paths_details": [
+        {
+          "vertex_count": 143,
+          "first_lon_lat_alt": [
+            -97.25558423799993,
+            28.18937452000006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58064956599992,
+            27.81324832800004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58064956599992,
+            -97.25558423799993
+          ],
+          "lat_bounds": [
+            27.81317114800004,
+            28.18937452000006
+          ],
+          "vincenty_meters": 58502.81514142637,
+          "vincenty_survey_miles": 36.35189128974047,
+          "pyproj_meters": 58502.81514244328
+        }
+      ]
+    },
+    {
+      "record": 3,
+      "name": "31_GREEN LAKE LATERAL (IDLE), 4\" C2",
+      "placemark_id": "ID_00001",
+      "paths": 1,
+      "vertices": 5,
+      "stored_miles": 0.174699,
+      "stored_feet": 922.411068,
+      "geodesic_grs80_meters": 281.16613351882216,
+      "geodesic_grs80_survey_miles": 0.17470818618428077,
+      "geodesic_wgs84_survey_miles": 0.17470818618628872,
+      "webmercator_meters": 320.83539313132,
+      "webmercator_survey_miles": 0.1993574720262006,
+      "webmercator_international_miles": 0.19935787074194206,
+      "stored_minus_grs80_miles": -9.186184280779441e-06,
+      "stored_minus_webmercator_survey_miles": -0.024658472026200612,
+      "stored_minus_webmercator_international_miles": -0.024658870741942063,
+      "stored_to_grs80_ratio": 0.9999474198405844,
+      "metadata": {
+        "SEG_ID": "CC03",
+        "IMP_Name": "Green Lake Ethylene Lateral",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "31_GREEN LAKE LATERAL (IDLE), 4\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "922.411068",
+        "MILES": "0.174699"
+      },
+      "independent_vincenty_meters": 281.1661335123864,
+      "paths_details": [
+        {
+          "vertex_count": 5,
+          "first_lon_lat_alt": [
+            -96.83692931999991,
+            28.58610725100004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.8388839129999,
+            28.58699357500007,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.8388839129999,
+            -96.83692931999991
+          ],
+          "lat_bounds": [
+            28.58610725100004,
+            28.58743824700008
+          ],
+          "vincenty_meters": 281.1661335123864,
+          "vincenty_survey_miles": 0.17470818618028178,
+          "pyproj_meters": 281.16613351882216
+        }
+      ]
+    },
+    {
+      "record": 4,
+      "name": "31_PLACEDO TO MARKHAM, 8\" C2",
+      "placemark_id": "ID_00007",
+      "paths": 1,
+      "vertices": 126,
+      "stored_miles": 45.561615,
+      "stored_feet": 240565.329207,
+      "geodesic_grs80_meters": 73331.70506029917,
+      "geodesic_grs80_survey_miles": 45.566117869696626,
+      "geodesic_wgs84_survey_miles": 45.56611786985982,
+      "webmercator_meters": 83779.0484771278,
+      "webmercator_survey_miles": 52.05778312096783,
+      "webmercator_international_miles": 52.057887236742296,
+      "stored_minus_grs80_miles": -0.004502869696622724,
+      "stored_minus_webmercator_survey_miles": -6.496168120967823,
+      "stored_minus_webmercator_international_miles": -6.496272236742293,
+      "stored_to_grs80_ratio": 0.9999011794309645,
+      "metadata": {
+        "SEG_ID": "CC13",
+        "IMP_Name": "8\" Placedo - Markham C2",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "31_PLACEDO TO MARKHAM, 8\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "240565.329207",
+        "MILES": "45.561615"
+      },
+      "independent_vincenty_meters": 73331.70505849959,
+      "paths_details": [
+        {
+          "vertex_count": 126,
+          "first_lon_lat_alt": [
+            -96.14356294499993,
+            28.98478675500007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.77074735799994,
+            28.65341015600006,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.77074735799994,
+            -96.14356294499993
+          ],
+          "lat_bounds": [
+            28.65341015600006,
+            28.98478675500007
+          ],
+          "vincenty_meters": 73331.70505849959,
+          "vincenty_survey_miles": 45.566117868578424,
+          "pyproj_meters": 73331.70506029917
+        }
+      ]
+    },
+    {
+      "record": 5,
+      "name": "31_TIVOLI TO PLACEDO, 8\"",
+      "placemark_id": "ID_00008",
+      "paths": 1,
+      "vertices": 40,
+      "stored_miles": 16.508505,
+      "stored_feet": 87164.906169,
+      "geodesic_grs80_meters": 26569.129836424207,
+      "geodesic_grs80_survey_miles": 16.509258864583668,
+      "geodesic_wgs84_survey_miles": 16.5092588647804,
+      "webmercator_meters": 30324.18283988594,
+      "webmercator_survey_miles": 18.842535959695542,
+      "webmercator_international_miles": 18.84257364484283,
+      "stored_minus_grs80_miles": -0.0007538645836682178,
+      "stored_minus_webmercator_survey_miles": -2.334030959695543,
+      "stored_minus_webmercator_international_miles": -2.33406864484283,
+      "stored_to_grs80_ratio": 0.9999543368609184,
+      "metadata": {
+        "SEG_ID": "CC13.1",
+        "IMP_Name": "8\" Tivoli - Placedo",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "31_TIVOLI TO PLACEDO, 8\"",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "87164.906169",
+        "MILES": "16.508505"
+      },
+      "independent_vincenty_meters": 26569.12983600373,
+      "paths_details": [
+        {
+          "vertex_count": 40,
+          "first_lon_lat_alt": [
+            -96.77074735799994,
+            28.65341015600006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.93290600199994,
+            28.46696014400004,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.93290600199994,
+            -96.77074735799994
+          ],
+          "lat_bounds": [
+            28.46696014400004,
+            28.65341015600006
+          ],
+          "vincenty_meters": 26569.12983600373,
+          "vincenty_survey_miles": 16.509258864322394,
+          "pyproj_meters": 26569.129836424207
+        }
+      ]
+    },
+    {
+      "record": 6,
+      "name": "31_WOODSBORO TO TIVOLI, 8\"",
+      "placemark_id": "ID_00009",
+      "paths": 1,
+      "vertices": 62,
+      "stored_miles": 27.658047,
+      "stored_feet": 146034.489628,
+      "geodesic_grs80_meters": 44510.629016616855,
+      "geodesic_grs80_survey_miles": 27.65756730404365,
+      "geodesic_wgs84_survey_miles": 27.657567304284445,
+      "webmercator_meters": 50656.61351306924,
+      "webmercator_survey_miles": 31.476497380201014,
+      "webmercator_international_miles": 31.476560333321675,
+      "stored_minus_grs80_miles": 0.00047969595635066753,
+      "stored_minus_webmercator_survey_miles": -3.818450380201014,
+      "stored_minus_webmercator_international_miles": -3.8185133333216754,
+      "stored_to_grs80_ratio": 1.0000173441124116,
+      "metadata": {
+        "SEG_ID": "CC12.1",
+        "IMP_Name": "8\" Woodsboro - Tivoli",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "31_WOODSBORO TO TIVOLI, 8\"",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "146034.489628",
+        "MILES": "27.658047"
+      },
+      "independent_vincenty_meters": 44510.62901585695,
+      "paths_details": [
+        {
+          "vertex_count": 62,
+          "first_lon_lat_alt": [
+            -96.93290600199994,
+            28.46696014400004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.25558423799993,
+            28.18937452000006,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.25558423799993,
+            -96.93290600199994
+          ],
+          "lat_bounds": [
+            28.18937452000006,
+            28.46696014400004
+          ],
+          "vincenty_meters": 44510.62901585695,
+          "vincenty_survey_miles": 27.657567303571472,
+          "pyproj_meters": 44510.629016616855
+        }
+      ]
+    },
+    {
+      "record": 7,
+      "name": "32_CORPUS TO VIDAURI, 6\" C3",
+      "placemark_id": "ID_00005",
+      "paths": 1,
+      "vertices": 171,
+      "stored_miles": 47.580535,
+      "stored_feet": 251225.226545,
+      "geodesic_grs80_meters": 76564.98744188812,
+      "geodesic_grs80_survey_miles": 47.57518237984747,
+      "geodesic_wgs84_survey_miles": 47.575182380347904,
+      "webmercator_meters": 86948.56082648048,
+      "webmercator_survey_miles": 54.02722284940872,
+      "webmercator_international_miles": 54.027330904070524,
+      "stored_minus_grs80_miles": 0.0053526201525286865,
+      "stored_minus_webmercator_survey_miles": -6.446687849408725,
+      "stored_minus_webmercator_international_miles": -6.446795904070527,
+      "stored_to_grs80_ratio": 1.0001125086628107,
+      "metadata": {
+        "SEG_ID": "CC05",
+        "IMP_Name": "6\" Corpus - Vidauri C3",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "32_CORPUS TO VIDAURI, 6\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "251225.226545",
+        "MILES": "47.580535"
+      },
+      "independent_vincenty_meters": 76564.98744055425,
+      "paths_details": [
+        {
+          "vertex_count": 171,
+          "first_lon_lat_alt": [
+            -97.1256500149999,
+            28.30145990300008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58062518999992,
+            27.81324386300008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58062518999992,
+            -97.1256500149999
+          ],
+          "lat_bounds": [
+            27.81316014800007,
+            28.30145990300008
+          ],
+          "vincenty_meters": 76564.98744055425,
+          "vincenty_survey_miles": 47.57518237901864,
+          "pyproj_meters": 76564.98744188812
+        }
+      ]
+    },
+    {
+      "record": 8,
+      "name": "32_GARCITAS TO MARKHAM, 6\" C3",
+      "placemark_id": "ID_00006",
+      "paths": 1,
+      "vertices": 107,
+      "stored_miles": 36.70548,
+      "stored_feet": 193804.933155,
+      "geodesic_grs80_meters": 59078.03551892781,
+      "geodesic_grs80_survey_miles": 36.70931594665701,
+      "geodesic_wgs84_survey_miles": 36.709315946764754,
+      "webmercator_meters": 67504.67849817414,
+      "webmercator_survey_miles": 41.94537866908327,
+      "webmercator_international_miles": 41.94546256000839,
+      "stored_minus_grs80_miles": -0.0038359466570057066,
+      "stored_minus_webmercator_survey_miles": -5.239898669083267,
+      "stored_minus_webmercator_international_miles": -5.239982560008386,
+      "stored_to_grs80_ratio": 0.9998955048178348,
+      "metadata": {
+        "SEG_ID": "CC06",
+        "IMP_Name": "6\" Garcitas - Markham C3",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "32_GARCITAS TO MARKHAM, 6\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "193804.933155",
+        "MILES": "36.70548"
+      },
+      "independent_vincenty_meters": 59078.0355174564,
+      "paths_details": [
+        {
+          "vertex_count": 107,
+          "first_lon_lat_alt": [
+            -96.14356360599993,
+            28.98477538900005,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.66235000799992,
+            28.73836000000006,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.66235000799992,
+            -96.14356360599993
+          ],
+          "lat_bounds": [
+            28.73836000000006,
+            28.98477658900005
+          ],
+          "vincenty_meters": 59078.0355174564,
+          "vincenty_survey_miles": 36.709315945742716,
+          "pyproj_meters": 59078.03551892781
+        }
+      ]
+    },
+    {
+      "record": 9,
+      "name": "32_GREEN LAKE LATERAL (IDLE), 4\" C3",
+      "placemark_id": "ID_00002",
+      "paths": 1,
+      "vertices": 7,
+      "stored_miles": 0.188156,
+      "stored_feet": 993.46602,
+      "geodesic_grs80_meters": 302.82485028135693,
+      "geodesic_grs80_survey_miles": 0.1881662619251424,
+      "geodesic_wgs84_survey_miles": 0.1881662619253453,
+      "webmercator_meters": 345.54714901764027,
+      "webmercator_survey_miles": 0.21471261453321494,
+      "webmercator_international_miles": 0.21471304395930282,
+      "stored_minus_grs80_miles": -1.0261925142418526e-05,
+      "stored_minus_webmercator_survey_miles": -0.02655661453321495,
+      "stored_minus_webmercator_international_miles": -0.026557043959302834,
+      "stored_to_grs80_ratio": 0.9999454635223264,
+      "metadata": {
+        "SEG_ID": "CC04",
+        "IMP_Name": "Green Lake Propylene Lateral",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "32_GREEN LAKE LATERAL (IDLE), 4\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "993.46602",
+        "MILES": "0.188156"
+      },
+      "independent_vincenty_meters": 302.8248502399396,
+      "paths_details": [
+        {
+          "vertex_count": 7,
+          "first_lon_lat_alt": [
+            -96.83708146499993,
+            28.58590603800008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.83884544599994,
+            28.58704354800005,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.83884544599994,
+            -96.83693818999991
+          ],
+          "lat_bounds": [
+            28.58590603800008,
+            28.58742523000007
+          ],
+          "vincenty_meters": 302.8248502399396,
+          "vincenty_survey_miles": 0.18816626189940694,
+          "pyproj_meters": 302.82485028135693
+        }
+      ]
+    },
+    {
+      "record": 10,
+      "name": "33_VICTORIA LATERAL, 8\" C2",
+      "placemark_id": "ID_00003",
+      "paths": 1,
+      "vertices": 48,
+      "stored_miles": 11.50453,
+      "stored_feet": 60743.916117,
+      "geodesic_grs80_meters": 18515.964231836646,
+      "geodesic_grs80_survey_miles": 11.50526375958663,
+      "geodesic_wgs84_survey_miles": 11.505263759679668,
+      "webmercator_meters": 21133.176696806197,
+      "webmercator_survey_miles": 13.13152093676231,
+      "webmercator_international_miles": 13.131547199856708,
+      "stored_minus_grs80_miles": -0.0007337595866285795,
+      "stored_minus_webmercator_survey_miles": -1.6269909367623097,
+      "stored_minus_webmercator_international_miles": -1.6270171998567076,
+      "stored_to_grs80_ratio": 0.9999362240099869,
+      "metadata": {
+        "SEG_ID": "CC18",
+        "IMP_Name": "8\" Victoria Lateral",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "33_VICTORIA LATERAL, 8\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "60743.916117",
+        "MILES": "11.50453"
+      },
+      "independent_vincenty_meters": 18515.964231481168,
+      "paths_details": [
+        {
+          "vertex_count": 48,
+          "first_lon_lat_alt": [
+            -96.9467000099999,
+            28.68210999300004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.83832390299996,
+            28.58747678500004,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.94743000599993,
+            -96.83832390299996
+          ],
+          "lat_bounds": [
+            28.58747678500004,
+            28.68943999900006
+          ],
+          "vincenty_meters": 18515.964231481168,
+          "vincenty_survey_miles": 11.505263759365745,
+          "pyproj_meters": 18515.964231836646
+        }
+      ]
+    },
+    {
+      "record": 11,
+      "name": "155AC_EQU(VCT4)-FORMOSA(VCT5), 6\" C2",
+      "placemark_id": "ID_00004",
+      "paths": 1,
+      "vertices": 59,
+      "stored_miles": 9.160709,
+      "stored_feet": 48368.543945,
+      "geodesic_grs80_meters": 14744.00993373294,
+      "geodesic_grs80_survey_miles": 9.16148470787667,
+      "geodesic_wgs84_survey_miles": 9.161484708073502,
+      "webmercator_meters": 16889.295540767667,
+      "webmercator_survey_miles": 10.494500717172082,
+      "webmercator_international_miles": 10.494521706215494,
+      "stored_minus_grs80_miles": -0.0007757078766701397,
+      "stored_minus_webmercator_survey_miles": -1.3337917171720814,
+      "stored_minus_webmercator_international_miles": -1.3338127062154932,
+      "stored_to_grs80_ratio": 0.9999153294578985,
+      "metadata": {
+        "SEG_ID": "CC21",
+        "IMP_Name": "155 AC Equistar (VCT4) - Formosa Plastics (VCT5)",
+        "SYS_NM": "22 CROSS COUNTRY SOUTH (31, 32, 33, 155)",
+        "SUBSYS_NM": "155AC_EQU(VCT4)-FORMOSA(VCT5), 6\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "48368.543945",
+        "MILES": "9.160709"
+      },
+      "independent_vincenty_meters": 14744.00993369884,
+      "paths_details": [
+        {
+          "vertex_count": 59,
+          "first_lon_lat_alt": [
+            -96.55149660999989,
+            28.68465711900008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.55661061299993,
+            28.81540583500004,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.55661061299993,
+            -96.55149660999989
+          ],
+          "lat_bounds": [
+            28.68464271200008,
+            28.81540583500004
+          ],
+          "vincenty_meters": 14744.00993369884,
+          "vincenty_survey_miles": 9.161484707855482,
+          "pyproj_meters": 14744.00993373294
+        }
+      ]
+    },
+    {
+      "record": 12,
+      "name": "2_CORPUS INTER LN2, (IDLE), 4\"",
+      "placemark_id": "ID_00000",
+      "paths": 1,
+      "vertices": 7,
+      "stored_miles": 2.659427,
+      "stored_feet": 14041.776682,
+      "geodesic_grs80_meters": 4279.047556914607,
+      "geodesic_grs80_survey_miles": 2.6588715643265166,
+      "geodesic_wgs84_survey_miles": 2.6588715643830234,
+      "webmercator_meters": 4859.17143032408,
+      "webmercator_survey_miles": 3.019343106247775,
+      "webmercator_international_miles": 3.0193491449460645,
+      "stored_minus_grs80_miles": 0.0005554356734833732,
+      "stored_minus_webmercator_survey_miles": -0.35991610624777515,
+      "stored_minus_webmercator_international_miles": -0.35992214494606456,
+      "stored_to_grs80_ratio": 1.0002088990235314,
+      "metadata": {
+        "SEG_ID": "CI03B",
+        "IMP_Name": "Corpus Interconnect Line # 2",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "2_CORPUS INTER LN2, (IDLE), 4\"",
+        "CMDTY_DESC": "ISOBUTANE",
+        "FEET": "14041.776682",
+        "MILES": "2.659427"
+      },
+      "independent_vincenty_meters": 4279.0475569029195,
+      "paths_details": [
+        {
+          "vertex_count": 7,
+          "first_lon_lat_alt": [
+            -97.51635570899994,
+            27.83910470400008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51873841399991,
+            27.80142779600004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5189927159999,
+            -97.51635570899994
+          ],
+          "lat_bounds": [
+            27.80142779600004,
+            27.83910470400008
+          ],
+          "vincenty_meters": 4279.0475569029195,
+          "vincenty_survey_miles": 2.6588715643192544,
+          "pyproj_meters": 4279.047556914607
+        }
+      ]
+    },
+    {
+      "record": 13,
+      "name": "2_CORPUS INTERCON LN2, 4\" C3",
+      "placemark_id": "ID_00015",
+      "paths": 1,
+      "vertices": 13,
+      "stored_miles": 4.189148,
+      "stored_feet": 22118.701378,
+      "geodesic_grs80_meters": 6740.32687154425,
+      "geodesic_grs80_survey_miles": 4.188236567750902,
+      "geodesic_wgs84_survey_miles": 4.188236567753975,
+      "webmercator_meters": 7620.779750180226,
+      "webmercator_survey_miles": 4.735323528481621,
+      "webmercator_international_miles": 4.735332999147619,
+      "stored_minus_grs80_miles": 0.0009114322490981763,
+      "stored_minus_webmercator_survey_miles": -0.546175528481621,
+      "stored_minus_webmercator_international_miles": -0.5461849991476191,
+      "stored_to_grs80_ratio": 1.00021761718431,
+      "metadata": {
+        "SEG_ID": "CI03",
+        "IMP_Name": "Corpus Interconnect Line # 2",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "2_CORPUS INTERCON LN2, 4\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "22118.701378",
+        "MILES": "4.189148"
+      },
+      "independent_vincenty_meters": 6740.326871485857,
+      "paths_details": [
+        {
+          "vertex_count": 13,
+          "first_lon_lat_alt": [
+            -97.51893791099991,
+            27.80147017800005,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58077415899993,
+            27.8121303810001,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58077415899993,
+            -97.51893681199995
+          ],
+          "lat_bounds": [
+            27.79904021800007,
+            27.8121303810001
+          ],
+          "vincenty_meters": 6740.326871485857,
+          "vincenty_survey_miles": 4.188236567714618,
+          "pyproj_meters": 6740.32687154425
+        }
+      ]
+    },
+    {
+      "record": 14,
+      "name": "3_CORPUS INTER LN3, 6\" CRUDE C4",
+      "placemark_id": "ID_00001",
+      "paths": 1,
+      "vertices": 19,
+      "stored_miles": 6.855729,
+      "stored_feet": 36198.249652,
+      "geodesic_grs80_meters": 11030.884704279304,
+      "geodesic_grs80_survey_miles": 6.854260271582643,
+      "geodesic_wgs84_survey_miles": 6.854260271644426,
+      "webmercator_meters": 12492.90227803068,
+      "webmercator_survey_miles": 7.762714057545264,
+      "webmercator_international_miles": 7.762729583004429,
+      "stored_minus_grs80_miles": 0.0014687284173575677,
+      "stored_minus_webmercator_survey_miles": -0.9069850575452634,
+      "stored_minus_webmercator_international_miles": -0.9070005830044288,
+      "stored_to_grs80_ratio": 1.0002142796391096,
+      "metadata": {
+        "SEG_ID": "CI07",
+        "IMP_Name": "Corpus Interconnect Line # 3",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "3_CORPUS INTER LN3, 6\" CRUDE C4",
+        "CMDTY_DESC": "CRUDE C4",
+        "FEET": "36198.249652",
+        "MILES": "6.855729"
+      },
+      "independent_vincenty_meters": 11030.884704215678,
+      "paths_details": [
+        {
+          "vertex_count": 19,
+          "first_lon_lat_alt": [
+            -97.51634771199991,
+            27.83910293600007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58077763099993,
+            27.81212559700009,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58077763099993,
+            -97.51634771199991
+          ],
+          "lat_bounds": [
+            27.79903453400004,
+            27.83910293600007
+          ],
+          "vincenty_meters": 11030.884704215678,
+          "vincenty_survey_miles": 6.854260271543107,
+          "pyproj_meters": 11030.884704279304
+        }
+      ]
+    },
+    {
+      "record": 15,
+      "name": "4_CORPUS INTER LN4 (IDLE), 4\"",
+      "placemark_id": "ID_00002",
+      "paths": 2,
+      "vertices": 19,
+      "stored_miles": 6.858251,
+      "stored_feet": 36211.567685,
+      "geodesic_grs80_meters": 11034.943139413928,
+      "geodesic_grs80_survey_miles": 6.856782061217272,
+      "geodesic_wgs84_survey_miles": 6.856782061275919,
+      "webmercator_meters": 12497.519625832869,
+      "webmercator_survey_miles": 7.76558313871591,
+      "webmercator_international_miles": 7.765598669913249,
+      "stored_minus_grs80_miles": 0.0014689387827280243,
+      "stored_minus_webmercator_survey_miles": -0.9073321387159101,
+      "stored_minus_webmercator_international_miles": -0.907347669913249,
+      "stored_to_grs80_ratio": 1.0002142315111686,
+      "metadata": {
+        "SEG_ID": "CI04",
+        "IMP_Name": "Corpus Interconnect Line # 4",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "4_CORPUS INTER LN4 (IDLE), 4\"",
+        "CMDTY_DESC": "GASOLINE",
+        "FEET": "36211.567685",
+        "MILES": "6.858251"
+      },
+      "independent_vincenty_meters": 11034.943139342931,
+      "paths_details": [
+        {
+          "vertex_count": 7,
+          "first_lon_lat_alt": [
+            -97.51634171399992,
+            27.83909881100004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51872530599991,
+            27.80142394400008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51897917499991,
+            -97.51634171399992
+          ],
+          "lat_bounds": [
+            27.80142394400008,
+            27.83909881100004
+          ],
+          "vincenty_meters": 4278.679713321278,
+          "vincenty_survey_miles": 2.6586429973715076,
+          "pyproj_meters": 4278.679713331744
+        },
+        {
+          "vertex_count": 12,
+          "first_lon_lat_alt": [
+            -97.51874936599991,
+            27.80147407200008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5807830359999,
+            27.81212217800004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5807830359999,
+            -97.51874936599991
+          ],
+          "lat_bounds": [
+            27.79902884800003,
+            27.81212217800004
+          ],
+          "vincenty_meters": 6756.263426021654,
+          "vincenty_survey_miles": 4.19813906380165,
+          "pyproj_meters": 6756.263426082184
+        }
+      ]
+    },
+    {
+      "record": 16,
+      "name": "5_CORPUS INTER LN5, 8\" BUTANE",
+      "placemark_id": "ID_00003",
+      "paths": 1,
+      "vertices": 12,
+      "stored_miles": 4.198969,
+      "stored_feet": 22170.555866,
+      "geodesic_grs80_meters": 6756.128658772445,
+      "geodesic_grs80_survey_miles": 4.198055323482816,
+      "geodesic_wgs84_survey_miles": 4.198055323483498,
+      "webmercator_meters": 7638.610307446954,
+      "webmercator_survey_miles": 4.7464029009499145,
+      "webmercator_international_miles": 4.746412393774702,
+      "stored_minus_grs80_miles": 0.0009136765171842143,
+      "stored_minus_webmercator_survey_miles": -0.5474339009499145,
+      "stored_minus_webmercator_international_miles": -0.5474433937747021,
+      "stored_to_grs80_ratio": 1.0002176428004828,
+      "metadata": {
+        "SEG_ID": "CI11",
+        "IMP_Name": "Corpus Interconnect Line # 5",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "5_CORPUS INTER LN5, 8\" BUTANE",
+        "CMDTY_DESC": "BUTANE",
+        "FEET": "22170.555866",
+        "MILES": "4.198969"
+      },
+      "independent_vincenty_meters": 6756.128658712779,
+      "paths_details": [
+        {
+          "vertex_count": 12,
+          "first_lon_lat_alt": [
+            -97.51875027999994,
+            27.80147019800006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58078612099989,
+            27.81211671100004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58078612099989,
+            -97.51875027999994
+          ],
+          "lat_bounds": [
+            27.79902261800004,
+            27.81211671100004
+          ],
+          "vincenty_meters": 6756.128658712779,
+          "vincenty_survey_miles": 4.1980553234457405,
+          "pyproj_meters": 6756.128658772445
+        }
+      ]
+    },
+    {
+      "record": 17,
+      "name": "5_CORPUS INTER LN5 VS-1 (IDLE), 8\"",
+      "placemark_id": "ID_00004",
+      "paths": 1,
+      "vertices": 7,
+      "stored_miles": 2.65542,
+      "stored_feet": 14020.618618,
+      "geodesic_grs80_meters": 4272.599948916917,
+      "geodesic_grs80_survey_miles": 2.654865214470629,
+      "geodesic_wgs84_survey_miles": 2.6548652145273013,
+      "webmercator_meters": 4851.851225611768,
+      "webmercator_survey_miles": 3.0147945510153935,
+      "webmercator_international_miles": 3.0148005806165545,
+      "stored_minus_grs80_miles": 0.0005547855293710491,
+      "stored_minus_webmercator_survey_miles": -0.3593745510153936,
+      "stored_minus_webmercator_international_miles": -0.35938058061655465,
+      "stored_to_grs80_ratio": 1.0002089693768057,
+      "metadata": {
+        "SEG_ID": "CI11.1",
+        "IMP_Name": "Corpus Interconnect Line # 5 VS-1 to Docks",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "5_CORPUS INTER LN5 VS-1 (IDLE), 8\"",
+        "CMDTY_DESC": "ISOBUTANE",
+        "FEET": "14020.618618",
+        "MILES": "2.65542"
+      },
+      "independent_vincenty_meters": 4272.599948907708,
+      "paths_details": [
+        {
+          "vertex_count": 7,
+          "first_lon_lat_alt": [
+            -97.5163356549999,
+            27.83909524500007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51872015799988,
+            27.80147460200004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51897263399991,
+            -97.5163356549999
+          ],
+          "lat_bounds": [
+            27.80147460200004,
+            27.83909524500007
+          ],
+          "vincenty_meters": 4272.599948907708,
+          "vincenty_survey_miles": 2.6548652144649063,
+          "pyproj_meters": 4272.599948916917
+        }
+      ]
+    },
+    {
+      "record": 18,
+      "name": "6_CORPUS INTER LN6 DOCK (IDLE), 6\"",
+      "placemark_id": "ID_00005",
+      "paths": 2,
+      "vertices": 21,
+      "stored_miles": 6.858723,
+      "stored_feet": 36214.054979,
+      "geodesic_grs80_meters": 11035.701061106744,
+      "geodesic_grs80_survey_miles": 6.857253010981259,
+      "geodesic_wgs84_survey_miles": 6.857253011042045,
+      "webmercator_meters": 12498.34307486825,
+      "webmercator_survey_miles": 7.766094805201436,
+      "webmercator_international_miles": 7.76611033742211,
+      "stored_minus_grs80_miles": 0.0014699890187417353,
+      "stored_minus_webmercator_survey_miles": -0.9073718052014357,
+      "stored_minus_webmercator_international_miles": -0.9073873374221098,
+      "stored_to_grs80_ratio": 1.0002143699549058,
+      "metadata": {
+        "SEG_ID": "CI08",
+        "IMP_Name": "Corpus Interconnect Line # 6 Dock Lateral",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "6_CORPUS INTER LN6 DOCK (IDLE), 6\"",
+        "CMDTY_DESC": "PENTANE",
+        "FEET": "36214.054979",
+        "MILES": "6.858723"
+      },
+      "independent_vincenty_meters": 11035.701061041129,
+      "paths_details": [
+        {
+          "vertex_count": 9,
+          "first_lon_lat_alt": [
+            -97.5163277769999,
+            27.83909278900006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51900004499993,
+            27.80147301200009,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51900004499993,
+            -97.5163277769999
+          ],
+          "lat_bounds": [
+            27.80146394600007,
+            27.83909278900006
+          ],
+          "vincenty_meters": 4302.388230531182,
+          "vincenty_survey_miles": 2.6733747575128257,
+          "pyproj_meters": 4302.388230541621
+        },
+        {
+          "vertex_count": 12,
+          "first_lon_lat_alt": [
+            -97.51898372099993,
+            27.80147238500007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5807911399999,
+            27.81211295000009,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5807911399999,
+            -97.51898372099993
+          ],
+          "lat_bounds": [
+            27.79901724700005,
+            27.81211295000009
+          ],
+          "vincenty_meters": 6733.312830509947,
+          "vincenty_survey_miles": 4.183878253427662,
+          "pyproj_meters": 6733.312830565123
+        }
+      ]
+    },
+    {
+      "record": 19,
+      "name": "6_CORPUS INTER LN6 MAIN, 6\" C3",
+      "placemark_id": "ID_00006",
+      "paths": 1,
+      "vertices": 22,
+      "stored_miles": 4.155667,
+      "stored_feet": 21941.924229,
+      "geodesic_grs80_meters": 6686.457903081111,
+      "geodesic_grs80_survey_miles": 4.154764009537616,
+      "geodesic_wgs84_survey_miles": 4.154764009534286,
+      "webmercator_meters": 7558.5110964278565,
+      "webmercator_survey_miles": 4.696631658244393,
+      "webmercator_international_miles": 4.696641051526496,
+      "stored_minus_grs80_miles": 0.0009029904623840679,
+      "stored_minus_webmercator_survey_miles": -0.540964658244393,
+      "stored_minus_webmercator_international_miles": -0.5409740515264954,
+      "stored_to_grs80_ratio": 1.0002173385685231,
+      "metadata": {
+        "SEG_ID": "CI09",
+        "IMP_Name": "Corpus Interconnect Line # 6 Main Line",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "6_CORPUS INTER LN6 MAIN, 6\" C3",
+        "CMDTY_DESC": "PROPYLENE (RGP)",
+        "FEET": "21941.924229",
+        "MILES": "4.155667"
+      },
+      "independent_vincenty_meters": 6686.4579029683655,
+      "paths_details": [
+        {
+          "vertex_count": 22,
+          "first_lon_lat_alt": [
+            -97.45818630899993,
+            27.80613901300006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51895270099995,
+            27.80147079700004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51895270099995,
+            -97.45818630899993
+          ],
+          "lat_bounds": [
+            27.80037740600005,
+            27.80629293200008
+          ],
+          "vincenty_meters": 6686.4579029683655,
+          "vincenty_survey_miles": 4.154764009467559,
+          "pyproj_meters": 6686.457903081111
+        }
+      ]
+    },
+    {
+      "record": 20,
+      "name": "6_CORPUS INTERCON LN6 MAIN(IDLE), 6\"",
+      "placemark_id": "ID_00016",
+      "paths": 1,
+      "vertices": 25,
+      "stored_miles": 2.14653,
+      "stored_feet": 11333.675995,
+      "geodesic_grs80_meters": 3453.765821294519,
+      "geodesic_grs80_survey_miles": 2.1460662939451582,
+      "geodesic_wgs84_survey_miles": 2.1460662939555544,
+      "webmercator_meters": 3909.5629465847164,
+      "webmercator_survey_miles": 2.4292849306666713,
+      "webmercator_international_miles": 2.4292897892462495,
+      "stored_minus_grs80_miles": 0.0004637060548415839,
+      "stored_minus_webmercator_survey_miles": -0.28275493066667146,
+      "stored_minus_webmercator_international_miles": -0.28275978924624967,
+      "stored_to_grs80_ratio": 1.0002160725678186,
+      "metadata": {
+        "SEG_ID": "CI09B",
+        "IMP_Name": "Corpus Interconnect Line # 6 Main Line",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "6_CORPUS INTERCON LN6 MAIN(IDLE), 6\"",
+        "CMDTY_DESC": "PROPYLENE (RGP)",
+        "FEET": "11333.675995",
+        "MILES": "2.14653"
+      },
+      "independent_vincenty_meters": 3453.7658211972903,
+      "paths_details": [
+        {
+          "vertex_count": 25,
+          "first_lon_lat_alt": [
+            -97.43224219799993,
+            27.80869092800009,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.45818630899993,
+            27.80613901300006,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.45818630899993,
+            -97.43224219799993
+          ],
+          "lat_bounds": [
+            27.80331930300008,
+            27.80907553700007
+          ],
+          "vincenty_meters": 3453.7658211972903,
+          "vincenty_survey_miles": 2.146066293884743,
+          "pyproj_meters": 3453.765821294519
+        }
+      ]
+    },
+    {
+      "record": 21,
+      "name": "7_CORPUS INTERCON WATER EFFLUENT, 12\"",
+      "placemark_id": "ID_00018",
+      "paths": 1,
+      "vertices": 49,
+      "stored_miles": 8.096824,
+      "stored_feet": 42751.231309,
+      "geodesic_grs80_meters": 13027.77186711934,
+      "geodesic_grs80_survey_miles": 8.095065947103668,
+      "geodesic_wgs84_survey_miles": 8.09506594712013,
+      "webmercator_meters": 14734.481494484688,
+      "webmercator_survey_miles": 9.155564022062219,
+      "webmercator_international_miles": 9.155582333226885,
+      "stored_minus_grs80_miles": 0.0017580528963314634,
+      "stored_minus_webmercator_survey_miles": -1.058740022062219,
+      "stored_minus_webmercator_international_miles": -1.0587583332268853,
+      "stored_to_grs80_ratio": 1.0002171758584575,
+      "metadata": {
+        "SEG_ID": "N/A",
+        "IMP_Name": "12\" Corpus Intercon Water Effluent",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)",
+        "SUBSYS_NM": "7_CORPUS INTERCON WATER EFFLUENT, 12\"",
+        "CMDTY_DESC": "WATER EFFLUENT",
+        "FEET": "42751.231309",
+        "MILES": "8.096824"
+      },
+      "independent_vincenty_meters": 13027.771866902129,
+      "paths_details": [
+        {
+          "vertex_count": 49,
+          "first_lon_lat_alt": [
+            -97.47431004999994,
+            27.81760687100007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5807948449999,
+            27.81210853300007,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5807948449999,
+            -97.47372951099993
+          ],
+          "lat_bounds": [
+            27.79901031400004,
+            27.81760687100007
+          ],
+          "vincenty_meters": 13027.771866902129,
+          "vincenty_survey_miles": 8.0950659469687,
+          "pyproj_meters": 13027.77186711934
+        }
+      ]
+    },
+    {
+      "record": 22,
+      "name": "8_CORPUS INTER L8 CCO-VS01, 6\" PROPANE",
+      "placemark_id": "ID_00008",
+      "paths": 1,
+      "vertices": 16,
+      "stored_miles": 4.18883,
+      "stored_feet": 22117.023563,
+      "geodesic_grs80_meters": 6739.815490112515,
+      "geodesic_grs80_survey_miles": 4.187918810696492,
+      "geodesic_wgs84_survey_miles": 4.187918810698975,
+      "webmercator_meters": 7620.195510702498,
+      "webmercator_survey_miles": 4.734960499626852,
+      "webmercator_international_miles": 4.734969969566791,
+      "stored_minus_grs80_miles": 0.0009111893035083085,
+      "stored_minus_webmercator_survey_miles": -0.5461304996268517,
+      "stored_minus_webmercator_international_miles": -0.5461399695667906,
+      "stored_to_grs80_ratio": 1.0002175756848917,
+      "metadata": {
+        "SEG_ID": "CI10",
+        "IMP_Name": "Corpus Interconnect Line # 8 CCO to VS-1",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "8_CORPUS INTER L8 CCO-VS01, 6\" PROPANE",
+        "CMDTY_DESC": "PROPANE",
+        "FEET": "22117.023563",
+        "MILES": "4.18883"
+      },
+      "independent_vincenty_meters": 6739.81548998599,
+      "paths_details": [
+        {
+          "vertex_count": 16,
+          "first_lon_lat_alt": [
+            -97.51895742099993,
+            27.80145809800007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58079824899994,
+            27.81210525800009,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58079824899994,
+            -97.51895742099993
+          ],
+          "lat_bounds": [
+            27.79900399400009,
+            27.81210525800009
+          ],
+          "vincenty_meters": 6739.81548998599,
+          "vincenty_survey_miles": 4.187918810617873,
+          "pyproj_meters": 6739.815490112515
+        }
+      ]
+    },
+    {
+      "record": 23,
+      "name": "8_CORPUS INTER L8 VS-1 TO CIT (IDLE), 6\"",
+      "placemark_id": "ID_00007",
+      "paths": 1,
+      "vertices": 45,
+      "stored_miles": 6.298435,
+      "stored_feet": 33255.739004,
+      "geodesic_grs80_meters": 10134.171279497104,
+      "geodesic_grs80_survey_miles": 6.297069496114284,
+      "geodesic_wgs84_survey_miles": 6.297069496125868,
+      "webmercator_meters": 11461.218903472367,
+      "webmercator_survey_miles": 7.121657011201186,
+      "webmercator_international_miles": 7.121671254543694,
+      "stored_minus_grs80_miles": 0.0013655038857152135,
+      "stored_minus_webmercator_survey_miles": -0.8232220112011861,
+      "stored_minus_webmercator_international_miles": -0.8232362545436942,
+      "stored_to_grs80_ratio": 1.0002168475171758,
+      "metadata": {
+        "SEG_ID": "CI10.1",
+        "IMP_Name": "Corpus Interconnect Line # 8 VS-1 to Citgo",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "8_CORPUS INTER L8 VS-1 TO CIT (IDLE), 6\"",
+        "CMDTY_DESC": "ISOBUTANE",
+        "FEET": "33255.739004",
+        "MILES": "6.298435"
+      },
+      "independent_vincenty_meters": 10134.171279288326,
+      "paths_details": [
+        {
+          "vertex_count": 45,
+          "first_lon_lat_alt": [
+            -97.43224823199995,
+            27.80868454600004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51892959399993,
+            27.80145622300006,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51892959399993,
+            -97.43224823199995
+          ],
+          "lat_bounds": [
+            27.80036592400006,
+            27.80906808600008
+          ],
+          "vincenty_meters": 10134.171279288326,
+          "vincenty_survey_miles": 6.297069495984555,
+          "pyproj_meters": 10134.171279497104
+        }
+      ]
+    },
+    {
+      "record": 24,
+      "name": "9_CORPUS INTERC LN9, 6\" HYDROGEN [1:LineString]",
+      "placemark_id": "ID_00017",
+      "paths": 1,
+      "vertices": 55,
+      "stored_miles": 10.486014,
+      "stored_feet": 55366.154764,
+      "geodesic_grs80_meters": 16871.97308192641,
+      "geodesic_grs80_survey_miles": 10.483737061796763,
+      "geodesic_wgs84_survey_miles": 10.483737061809808,
+      "webmercator_meters": 19079.112460056618,
+      "webmercator_survey_miles": 11.855187145713844,
+      "webmercator_international_miles": 11.855210856135555,
+      "stored_minus_grs80_miles": 0.0022769382032379326,
+      "stored_minus_webmercator_survey_miles": -1.3691731457138427,
+      "stored_minus_webmercator_international_miles": -1.369196856135554,
+      "stored_to_grs80_ratio": 1.0002171876488142,
+      "metadata": {
+        "SEG_ID": "CI12",
+        "IMP_Name": "Corpus Interconnect Line # 9",
+        "SYS_NM": "23 CORPUS CHRISTI INTERCONNECT",
+        "SUBSYS_NM": "9_CORPUS INTERC LN9, 6\" HYDROGEN",
+        "CMDTY_DESC": "HYDROGEN GAS",
+        "FEET": "55366.154764",
+        "MILES": "10.486014"
+      },
+      "independent_vincenty_meters": 16871.973081663124,
+      "paths_details": [
+        {
+          "vertex_count": 55,
+          "first_lon_lat_alt": [
+            -97.43225426499993,
+            27.80867816500006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5808019289999,
+            27.81210106600007,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5808019289999,
+            -97.43225426499993
+          ],
+          "lat_bounds": [
+            27.79899837500005,
+            27.81210106600007
+          ],
+          "vincenty_meters": 16871.973081663124,
+          "vincenty_survey_miles": 10.483737061633164,
+          "pyproj_meters": 16871.97308192641
+        }
+      ]
+    },
+    {
+      "record": 25,
+      "name": "10_CORPUS INTER LN10, 6\" GASOLINE",
+      "placemark_id": "ID_00009",
+      "paths": 1,
+      "vertices": 55,
+      "stored_miles": 10.486723,
+      "stored_feet": 55369.894901,
+      "geodesic_grs80_meters": 16873.112777060644,
+      "geodesic_grs80_survey_miles": 10.48444523410476,
+      "geodesic_wgs84_survey_miles": 10.48444523411573,
+      "webmercator_meters": 19080.409300534637,
+      "webmercator_survey_miles": 11.855992963416172,
+      "webmercator_international_miles": 11.856016675449522,
+      "stored_minus_grs80_miles": 0.0022777658952399804,
+      "stored_minus_webmercator_survey_miles": -1.3692699634161727,
+      "stored_minus_webmercator_international_miles": -1.3692936754495229,
+      "stored_to_grs80_ratio": 1.000217251923624,
+      "metadata": {
+        "SEG_ID": "CI06",
+        "IMP_Name": "Corpus Interconnect Line # 10",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "10_CORPUS INTER LN10, 6\" GASOLINE",
+        "CMDTY_DESC": "GASOLINE",
+        "FEET": "55369.894901",
+        "MILES": "10.486723"
+      },
+      "independent_vincenty_meters": 16873.11277679735,
+      "paths_details": [
+        {
+          "vertex_count": 55,
+          "first_lon_lat_alt": [
+            -97.43226083999991,
+            27.80867124100007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.5808095569999,
+            27.81209733600008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.5808095569999,
+            -97.43226083999991
+          ],
+          "lat_bounds": [
+            27.79899336400007,
+            27.81209733600008
+          ],
+          "vincenty_meters": 16873.11277679735,
+          "vincenty_survey_miles": 10.484445233941155,
+          "pyproj_meters": 16873.112777060644
+        }
+      ]
+    },
+    {
+      "record": 26,
+      "name": "11_CORPUS INTER LN11, 10\" CONDENSATE",
+      "placemark_id": "ID_00010",
+      "paths": 1,
+      "vertices": 55,
+      "stored_miles": 10.487846,
+      "stored_feet": 55375.825424,
+      "geodesic_grs80_meters": 16874.919960780804,
+      "geodesic_grs80_survey_miles": 10.485568163761684,
+      "geodesic_wgs84_survey_miles": 10.485568163783038,
+      "webmercator_meters": 19082.45084327774,
+      "webmercator_survey_miles": 11.857261516727347,
+      "webmercator_international_miles": 11.857285231297809,
+      "stored_minus_grs80_miles": 0.002277836238315345,
+      "stored_minus_webmercator_survey_miles": -1.3694155167273472,
+      "stored_minus_webmercator_international_miles": -1.3694392312978092,
+      "stored_to_grs80_ratio": 1.0002172353660517,
+      "metadata": {
+        "SEG_ID": "CI01",
+        "IMP_Name": "Corpus Interconnect Line # 11",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "11_CORPUS INTER LN11, 10\" CONDENSATE",
+        "CMDTY_DESC": "GAS OIL",
+        "FEET": "55375.825424",
+        "MILES": "10.487846"
+      },
+      "independent_vincenty_meters": 16874.919960525185,
+      "paths_details": [
+        {
+          "vertex_count": 55,
+          "first_lon_lat_alt": [
+            -97.43226653999994,
+            27.80866520300009,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58081477499991,
+            27.81209378900007,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58081477499991,
+            -97.43226653999994
+          ],
+          "lat_bounds": [
+            27.79898707000007,
+            27.81209378900007
+          ],
+          "vincenty_meters": 16874.919960525185,
+          "vincenty_survey_miles": 10.48556816360285,
+          "pyproj_meters": 16874.919960780804
+        }
+      ]
+    },
+    {
+      "record": 27,
+      "name": "11_CORPUS LAT VS 9 LN11, 8\" CONDENSATE",
+      "placemark_id": "ID_00019",
+      "paths": 1,
+      "vertices": 2,
+      "stored_miles": 0.006577,
+      "stored_feet": 34.729188,
+      "geodesic_grs80_meters": 10.583195284242779,
+      "geodesic_grs80_survey_miles": 0.006576079519265123,
+      "geodesic_wgs84_survey_miles": 0.006576079519350574,
+      "webmercator_meters": 12.004620760312463,
+      "webmercator_survey_miles": 0.007459310595541378,
+      "webmercator_international_miles": 0.007459325514192405,
+      "stored_minus_grs80_miles": 9.204807348769939e-07,
+      "stored_minus_webmercator_survey_miles": -0.0008823105955413774,
+      "stored_minus_webmercator_international_miles": -0.0008823255141924046,
+      "stored_to_grs80_ratio": 1.000139974088236,
+      "metadata": {
+        "SEG_ID": "CI01.1",
+        "IMP_Name": "Corpus Interconnect Line # 11 / 8\" Lateral - VS-9",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "11_CORPUS LAT VS 9 LN11, 8\" CONDENSATE",
+        "CMDTY_DESC": "GAS OIL",
+        "FEET": "34.729188",
+        "MILES": "0.006577"
+      },
+      "independent_vincenty_meters": 10.58319528314761,
+      "paths_details": [
+        {
+          "vertex_count": 2,
+          "first_lon_lat_alt": [
+            -97.4382101619999,
+            27.80600655600006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.43815869299993,
+            27.80609037800008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.4382101619999,
+            -97.43815869299993
+          ],
+          "lat_bounds": [
+            27.80600655600006,
+            27.80609037800008
+          ],
+          "vincenty_meters": 10.58319528314761,
+          "vincenty_survey_miles": 0.006576079518584618,
+          "pyproj_meters": 10.583195284242779
+        }
+      ]
+    },
+    {
+      "record": 28,
+      "name": "12_CORPUS INTER LN12, 10\" CONDENSATE",
+      "placemark_id": "ID_00011",
+      "paths": 1,
+      "vertices": 56,
+      "stored_miles": 10.487688,
+      "stored_feet": 55374.994863,
+      "geodesic_grs80_meters": 16874.66680902728,
+      "geodesic_grs80_survey_miles": 10.485410862869381,
+      "geodesic_wgs84_survey_miles": 10.485410862883388,
+      "webmercator_meters": 19082.162397830456,
+      "webmercator_survey_miles": 11.857082285394336,
+      "webmercator_international_miles": 11.857105999606334,
+      "stored_minus_grs80_miles": 0.0022771371306191668,
+      "stored_minus_webmercator_survey_miles": -1.3693942853943355,
+      "stored_minus_webmercator_international_miles": -1.369417999606334,
+      "stored_to_grs80_ratio": 1.0002171719506656,
+      "metadata": {
+        "SEG_ID": "CI02",
+        "IMP_Name": "Corpus Interconnect Line # 12",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "12_CORPUS INTER LN12, 10\" CONDENSATE",
+        "CMDTY_DESC": "CONDENSATE",
+        "FEET": "55374.994863",
+        "MILES": "10.487688"
+      },
+      "independent_vincenty_meters": 16874.666808763064,
+      "paths_details": [
+        {
+          "vertex_count": 56,
+          "first_lon_lat_alt": [
+            -97.43227070899991,
+            27.80865850000004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58082071399991,
+            27.81208760900006,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58082071399991,
+            -97.43227070899991
+          ],
+          "lat_bounds": [
+            27.79898127800004,
+            27.81208760900006
+          ],
+          "vincenty_meters": 16874.666808763064,
+          "vincenty_survey_miles": 10.485410862705207,
+          "pyproj_meters": 16874.66680902728
+        }
+      ]
+    },
+    {
+      "record": 29,
+      "name": "12_CORPUS LAT VS 9 LN12, 8\" CONDENSATE",
+      "placemark_id": "ID_00020",
+      "paths": 1,
+      "vertices": 2,
+      "stored_miles": 0.006055,
+      "stored_feet": 31.972057,
+      "geodesic_grs80_meters": 9.743001191485996,
+      "geodesic_grs80_survey_miles": 0.006054008158282886,
+      "geodesic_wgs84_survey_miles": 0.006054008158361104,
+      "webmercator_meters": 11.052235519434623,
+      "webmercator_survey_miles": 0.006867527026517379,
+      "webmercator_international_miles": 0.006867540761598901,
+      "stored_minus_grs80_miles": 9.918417171132093e-07,
+      "stored_minus_webmercator_survey_miles": -0.000812527026517379,
+      "stored_minus_webmercator_international_miles": -0.0008125407615989016,
+      "stored_to_grs80_ratio": 1.000163832239928,
+      "metadata": {
+        "SEG_ID": "CI02.1",
+        "IMP_Name": "Corpus Interconnect Line # 12 / 8\" Lateral - VS-9",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "12_CORPUS LAT VS 9 LN12, 8\" CONDENSATE",
+        "CMDTY_DESC": "GAS OIL",
+        "FEET": "31.972057",
+        "MILES": "0.006055"
+      },
+      "independent_vincenty_meters": 9.74300119183411,
+      "paths_details": [
+        {
+          "vertex_count": 2,
+          "first_lon_lat_alt": [
+            -97.43820044199992,
+            27.80600332900008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.43815424099996,
+            27.80608106100004,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.43820044199992,
+            -97.43815424099996
+          ],
+          "lat_bounds": [
+            27.80600332900008,
+            27.80608106100004
+          ],
+          "vincenty_meters": 9.74300119183411,
+          "vincenty_survey_miles": 0.006054008158499194,
+          "pyproj_meters": 9.743001191485996
+        }
+      ]
+    },
+    {
+      "record": 30,
+      "name": "13_CORPUS INTERCON POTABLE WATER, 3\"",
+      "placemark_id": "ID_00021",
+      "paths": 1,
+      "vertices": 9,
+      "stored_miles": 1.070537,
+      "stored_feet": 5652.434965,
+      "geodesic_grs80_meters": 1722.514351267796,
+      "geodesic_grs80_survey_miles": 1.0703186554515962,
+      "geodesic_wgs84_survey_miles": 1.0703186554717845,
+      "webmercator_meters": 1955.6993300170939,
+      "webmercator_survey_miles": 1.2152127939200283,
+      "webmercator_international_miles": 1.2152152243504768,
+      "stored_minus_grs80_miles": 0.0002183445484038593,
+      "stored_minus_webmercator_survey_miles": -0.14467579392002827,
+      "stored_minus_webmercator_international_miles": -0.14467822435047673,
+      "stored_to_grs80_ratio": 1.0002039995727363,
+      "metadata": {
+        "SEG_ID": "",
+        "IMP_Name": "3\" Corpus Intercon Potable Water",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "13_CORPUS INTERCON POTABLE WATER, 3\"",
+        "CMDTY_DESC": "WATER",
+        "FEET": "5652.434965",
+        "MILES": "1.070537"
+      },
+      "independent_vincenty_meters": 1722.5143512132702,
+      "paths_details": [
+        {
+          "vertex_count": 9,
+          "first_lon_lat_alt": [
+            -97.51627433599991,
+            27.83913430600006,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.51878528499992,
+            27.82444003900008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.51878528499992,
+            -97.51627433599991
+          ],
+          "lat_bounds": [
+            27.82444003900008,
+            27.83913430600006
+          ],
+          "vincenty_meters": 1722.5143512132702,
+          "vincenty_survey_miles": 1.0703186554177155,
+          "pyproj_meters": 1722.514351267796
+        }
+      ]
+    },
+    {
+      "record": 31,
+      "name": "15_TICONA LAT CCO - VS2 (CELAN), 4\" C2",
+      "placemark_id": "ID_00012",
+      "paths": 1,
+      "vertices": 41,
+      "stored_miles": 8.445366,
+      "stored_feet": 44591.532643,
+      "geodesic_grs80_meters": 13588.265654824367,
+      "geodesic_grs80_survey_miles": 8.443339943662174,
+      "geodesic_wgs84_survey_miles": 8.443339943844322,
+      "webmercator_meters": 15421.960133915592,
+      "webmercator_survey_miles": 9.582742589524257,
+      "webmercator_international_miles": 9.582761755047766,
+      "stored_minus_grs80_miles": 0.002026056337825821,
+      "stored_minus_webmercator_survey_miles": -1.1373765895242567,
+      "stored_minus_webmercator_international_miles": -1.1373957550477662,
+      "stored_to_grs80_ratio": 1.000239959109943,
+      "metadata": {
+        "SEG_ID": "CC01",
+        "IMP_Name": "4\" Celanese Bishop C2 4X8",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "15_TICONA LAT CCO - VS2 (CELAN), 4\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "44591.532643",
+        "MILES": "8.445366"
+      },
+      "independent_vincenty_meters": 13588.265654669514,
+      "paths_details": [
+        {
+          "vertex_count": 41,
+          "first_lon_lat_alt": [
+            -97.5793549839999,
+            27.69433540200004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.58063655199993,
+            27.81324834000009,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.58123750199991,
+            -97.57858581099994
+          ],
+          "lat_bounds": [
+            27.69433540200004,
+            27.81324834000009
+          ],
+          "vincenty_meters": 13588.265654669514,
+          "vincenty_survey_miles": 8.443339943565954,
+          "pyproj_meters": 13588.265654824367
+        }
+      ]
+    },
+    {
+      "record": 32,
+      "name": "15_TICONA LAT VS2-PLANT, 4\" C2",
+      "placemark_id": "ID_00013",
+      "paths": 1,
+      "vertices": 56,
+      "stored_miles": 18.474051,
+      "stored_feet": 97542.987948,
+      "geodesic_grs80_meters": 29722.057832905175,
+      "geodesic_grs80_survey_miles": 18.46839357451826,
+      "geodesic_wgs84_survey_miles": 18.46839357460271,
+      "webmercator_meters": 33575.6255095061,
+      "webmercator_survey_miles": 20.862884727103143,
+      "webmercator_international_miles": 20.86292645295605,
+      "stored_minus_grs80_miles": 0.005657425481739864,
+      "stored_minus_webmercator_survey_miles": -2.388833727103144,
+      "stored_minus_webmercator_international_miles": -2.38887545295605,
+      "stored_to_grs80_ratio": 1.0003063301341784,
+      "metadata": {
+        "SEG_ID": "CC01.1",
+        "IMP_Name": "4\" Celanese Bishop C2 4X24",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "15_TICONA LAT VS2-PLANT, 4\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "97542.987948",
+        "MILES": "18.474051"
+      },
+      "independent_vincenty_meters": 29722.05783217812,
+      "paths_details": [
+        {
+          "vertex_count": 56,
+          "first_lon_lat_alt": [
+            -97.5793549839999,
+            27.69433540200004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.82776827399994,
+            27.56307815100007,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.82776827399994,
+            -97.5793549839999
+          ],
+          "lat_bounds": [
+            27.56242544300005,
+            27.69433540200004
+          ],
+          "vincenty_meters": 29722.05783217812,
+          "vincenty_survey_miles": 18.46839357406649,
+          "pyproj_meters": 29722.057832905175
+        }
+      ]
+    },
+    {
+      "record": 33,
+      "name": "16_CORPUS, ETHANE IMPORT (IDLE), 6\"",
+      "placemark_id": "ID_00014",
+      "paths": 1,
+      "vertices": 20,
+      "stored_miles": 2.286821,
+      "stored_feet": 12074.414128,
+      "geodesic_grs80_meters": 3679.501288570635,
+      "geodesic_grs80_survey_miles": 2.286331529845737,
+      "geodesic_wgs84_survey_miles": 2.2863315298482925,
+      "webmercator_meters": 4161.041004538282,
+      "webmercator_survey_miles": 2.5855458388363664,
+      "webmercator_international_miles": 2.5855510099383863,
+      "stored_minus_grs80_miles": 0.0004894701542630386,
+      "stored_minus_webmercator_survey_miles": -0.29872483883636614,
+      "stored_minus_webmercator_international_miles": -0.29873000993838605,
+      "stored_to_grs80_ratio": 1.000214085379952,
+      "metadata": {
+        "SEG_ID": "CI05",
+        "IMP_Name": "6\" Corpus Ethane Import",
+        "SYS_NM": "23 CORPUS CHRISTI (INTERC., TICONA (15)*",
+        "SUBSYS_NM": "16_CORPUS, ETHANE IMPORT (IDLE), 6\"",
+        "CMDTY_DESC": "ETHANE",
+        "FEET": "12074.414128",
+        "MILES": "2.286821"
+      },
+      "independent_vincenty_meters": 3679.501288374545,
+      "paths_details": [
+        {
+          "vertex_count": 20,
+          "first_lon_lat_alt": [
+            -97.59711875499994,
+            27.81391436000007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -97.6286121629999,
+            27.80950858300008,
+            0.0
+          ],
+          "lon_bounds": [
+            -97.6286121629999,
+            -97.59711875499994
+          ],
+          "lat_bounds": [
+            27.80803487700007,
+            27.81409810200006
+          ],
+          "vincenty_meters": 3679.501288374545,
+          "vincenty_survey_miles": 2.286331529723893,
+          "pyproj_meters": 3679.501288570635
+        }
+      ]
+    },
+    {
+      "record": 34,
+      "name": "31_MARKHAM TO RAMSEY, 8\" C2",
+      "placemark_id": "ID_00009",
+      "paths": 1,
+      "vertices": 137,
+      "stored_miles": 48.522005,
+      "stored_feet": 256196.185642,
+      "geodesic_grs80_meters": 67061.37013176354,
+      "geodesic_grs80_survey_miles": 41.66992017183603,
+      "geodesic_wgs84_survey_miles": 41.66992017200587,
+      "webmercator_meters": 76846.30680590149,
+      "webmercator_survey_miles": 47.749985778856406,
+      "webmercator_international_miles": 47.75008127901896,
+      "stored_minus_grs80_miles": 6.852084828163967,
+      "stored_minus_webmercator_survey_miles": 0.7720192211435943,
+      "stored_minus_webmercator_international_miles": 0.771923720981043,
+      "stored_to_grs80_ratio": 1.1644371959415265,
+      "metadata": {
+        "SEG_ID": "CC16",
+        "IMP_Name": "8\" Markham - Ramsey C2",
+        "SYS_NM": "25 CROSS COUNTRY NORTH (31, 32, 56)",
+        "SUBSYS_NM": "31_MARKHAM TO RAMSEY, 8\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "256196.185642",
+        "MILES": "48.522005"
+      },
+      "independent_vincenty_meters": 67061.3701300728,
+      "paths_details": [
+        {
+          "vertex_count": 137,
+          "first_lon_lat_alt": [
+            -95.5798711729999,
+            29.30803354800007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.14353639899991,
+            28.98478626200004,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.14353639899991,
+            -95.5798711729999
+          ],
+          "lat_bounds": [
+            28.98478626200004,
+            29.30803354800007
+          ],
+          "vincenty_meters": 67061.3701300728,
+          "vincenty_survey_miles": 41.66992017078545,
+          "pyproj_meters": 67061.37013176354
+        }
+      ]
+    },
+    {
+      "record": 35,
+      "name": "32_MARKHAM TO RAMSEY, 6\" C3",
+      "placemark_id": "ID_00005",
+      "paths": 1,
+      "vertices": 122,
+      "stored_miles": 37.767731,
+      "stored_feet": 199413.621348,
+      "geodesic_grs80_meters": 60789.25497928664,
+      "geodesic_grs80_survey_miles": 37.77261629631495,
+      "geodesic_wgs84_survey_miles": 37.77261629648379,
+      "webmercator_meters": 69650.6854561967,
+      "webmercator_survey_miles": 43.27884290420556,
+      "webmercator_international_miles": 43.27892946206448,
+      "stored_minus_grs80_miles": -0.004885296314952825,
+      "stored_minus_webmercator_survey_miles": -5.511111904205563,
+      "stored_minus_webmercator_international_miles": -5.511198462064485,
+      "stored_to_grs80_ratio": 0.9998706656622186,
+      "metadata": {
+        "SEG_ID": "CC08",
+        "IMP_Name": "6\" Markham - Ramsey C3",
+        "SYS_NM": "25 CROSS COUNTRY NORTH (31, 32, 56)",
+        "SUBSYS_NM": "32_MARKHAM TO RAMSEY, 6\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "199413.621348",
+        "MILES": "37.767731"
+      },
+      "independent_vincenty_meters": 60789.25497777554,
+      "paths_details": [
+        {
+          "vertex_count": 122,
+          "first_lon_lat_alt": [
+            -95.63526154499995,
+            29.28054889000003,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.14353473699991,
+            28.98477395200007,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.14353473699991,
+            -95.63526154499995
+          ],
+          "lat_bounds": [
+            28.98477395200007,
+            29.28054889000003
+          ],
+          "vincenty_meters": 60789.25497777554,
+          "vincenty_survey_miles": 37.772616295376,
+          "pyproj_meters": 60789.25497928664
+        }
+      ]
+    },
+    {
+      "record": 36,
+      "name": "32_RAMSEY TO DEER PARK, 6\" C3",
+      "placemark_id": "ID_00006",
+      "paths": 1,
+      "vertices": 16,
+      "stored_miles": 54.797756,
+      "stored_feet": 289332.152903,
+      "geodesic_grs80_meters": 6133.639120539056,
+      "geodesic_grs80_survey_miles": 3.8112590305496004,
+      "geodesic_wgs84_survey_miles": 3.811259030557214,
+      "webmercator_meters": 7036.510342322075,
+      "webmercator_survey_miles": 4.372276076029358,
+      "webmercator_international_miles": 4.372284820598999,
+      "stored_minus_grs80_miles": 50.9864969694504,
+      "stored_minus_webmercator_survey_miles": 50.42547992397064,
+      "stored_minus_webmercator_international_miles": 50.425471179401,
+      "stored_to_grs80_ratio": 14.377861898328627,
+      "metadata": {
+        "SEG_ID": "CC09",
+        "IMP_Name": "6\" Ramsey - Deer Park C3",
+        "SYS_NM": "25 CROSS COUNTRY NORTH (31, 32, 56)",
+        "SUBSYS_NM": "32_RAMSEY TO DEER PARK, 6\" C3",
+        "CMDTY_DESC": "PROPYLENE",
+        "FEET": "289332.152903",
+        "MILES": "54.797756"
+      },
+      "independent_vincenty_meters": 6133.639120358539,
+      "paths_details": [
+        {
+          "vertex_count": 16,
+          "first_lon_lat_alt": [
+            -95.58084209399993,
+            29.30711734600004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -95.63526154499995,
+            29.28054889000003,
+            0.0
+          ],
+          "lon_bounds": [
+            -95.63526154499995,
+            -95.58084209399993
+          ],
+          "lat_bounds": [
+            29.28054889000003,
+            29.30711734600004
+          ],
+          "vincenty_meters": 6133.639120358539,
+          "vincenty_survey_miles": 3.811259030437432,
+          "pyproj_meters": 6133.639120539056
+        }
+      ]
+    },
+    {
+      "record": 37,
+      "name": "50_CELAN BC TO MKO (COMMON), 10\" C2",
+      "placemark_id": "ID_00010",
+      "paths": 1,
+      "vertices": 47,
+      "stored_miles": 13.047901,
+      "stored_feet": 68892.914829,
+      "geodesic_grs80_meters": 21000.89819280112,
+      "geodesic_grs80_survey_miles": 13.049327049409408,
+      "geodesic_wgs84_survey_miles": 13.049327049550909,
+      "webmercator_meters": 24042.345656569578,
+      "webmercator_survey_miles": 14.939191106362758,
+      "webmercator_international_miles": 14.939220984804725,
+      "stored_minus_grs80_miles": -0.001426049409408492,
+      "stored_minus_webmercator_survey_miles": -1.8912901063627583,
+      "stored_minus_webmercator_international_miles": -1.891319984804726,
+      "stored_to_grs80_ratio": 0.99989071854786,
+      "metadata": {
+        "SEG_ID": "CB02.2",
+        "IMP_Name": "10\" Celanese BC - MKO (Common)",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "50_CELAN BC TO MKO (COMMON), 10\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "68892.914829",
+        "MILES": "13.047901"
+      },
+      "independent_vincenty_meters": 21000.89819259115,
+      "paths_details": [
+        {
+          "vertex_count": 47,
+          "first_lon_lat_alt": [
+            -96.01668257099992,
+            28.86815018000004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.14344605899993,
+            28.98471456900006,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.14344605899993,
+            -96.01668257099992
+          ],
+          "lat_bounds": [
+            28.86545043400008,
+            28.98472630100008
+          ],
+          "vincenty_meters": 21000.89819259115,
+          "vincenty_survey_miles": 13.04932704927894,
+          "pyproj_meters": 21000.89819280112
+        }
+      ]
+    },
+    {
+      "record": 38,
+      "name": "50_MATAGORDA (MTO) LATERAL, 6\" C2",
+      "placemark_id": "ID_00001",
+      "paths": 1,
+      "vertices": 9,
+      "stored_miles": 0.738434,
+      "stored_feet": 3898.930496,
+      "geodesic_grs80_meters": 1188.5064108775482,
+      "geodesic_grs80_survey_miles": 0.7385021685014058,
+      "geodesic_wgs84_survey_miles": 0.7385021685088233,
+      "webmercator_meters": 1357.8937263965356,
+      "webmercator_survey_miles": 0.8437543561905242,
+      "webmercator_international_miles": 0.8437560437026115,
+      "stored_minus_grs80_miles": -6.816850140578534e-05,
+      "stored_minus_webmercator_survey_miles": -0.10532035619052416,
+      "stored_minus_webmercator_international_miles": -0.10532204370261145,
+      "stored_to_grs80_ratio": 0.9999076935663654,
+      "metadata": {
+        "SEG_ID": "CB11",
+        "IMP_Name": "6\" Matagorda Lateral",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "50_MATAGORDA (MTO) LATERAL, 6\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "3898.930496",
+        "MILES": "0.738434"
+      },
+      "independent_vincenty_meters": 1188.506410809602,
+      "paths_details": [
+        {
+          "vertex_count": 9,
+          "first_lon_lat_alt": [
+            -95.94086286099991,
+            28.79138503800004,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -95.93315000599993,
+            28.79588999300006,
+            0.0
+          ],
+          "lon_bounds": [
+            -95.94093000099991,
+            -95.93315000599993
+          ],
+          "lat_bounds": [
+            28.79138383000009,
+            28.79595000000007
+          ],
+          "vincenty_meters": 1188.506410809602,
+          "vincenty_survey_miles": 0.738502168459186,
+          "pyproj_meters": 1188.5064108775482
+        }
+      ]
+    },
+    {
+      "record": 39,
+      "name": "50_MATAGORDA (MTO) LATERAL, 8\" C2",
+      "placemark_id": "ID_00002",
+      "paths": 1,
+      "vertices": 10,
+      "stored_miles": 0.73209,
+      "stored_feet": 3865.433346,
+      "geodesic_grs80_meters": 1178.2955063389836,
+      "geodesic_grs80_survey_miles": 0.7321574192639803,
+      "geodesic_wgs84_survey_miles": 0.7321574192702527,
+      "webmercator_meters": 1346.1609318089634,
+      "webmercator_survey_miles": 0.8364639502102098,
+      "webmercator_international_miles": 0.836465623141456,
+      "stored_minus_grs80_miles": -6.741926398023956e-05,
+      "stored_minus_webmercator_survey_miles": -0.10437395021020979,
+      "stored_minus_webmercator_international_miles": -0.10437562314145599,
+      "stored_to_grs80_ratio": 0.9999079169831427,
+      "metadata": {
+        "SEG_ID": "CB15",
+        "IMP_Name": "8\" Matagorda Lateral",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "50_MATAGORDA (MTO) LATERAL, 8\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "3865.433346",
+        "MILES": "0.73209"
+      },
+      "independent_vincenty_meters": 1178.2955062870542,
+      "paths_details": [
+        {
+          "vertex_count": 10,
+          "first_lon_lat_alt": [
+            -95.9407196389999,
+            28.79147021900008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -95.93317100699994,
+            28.79585599200004,
+            0.0
+          ],
+          "lon_bounds": [
+            -95.94088800099989,
+            -95.93317100699994
+          ],
+          "lat_bounds": [
+            28.79146721700005,
+            28.79590099600006
+          ],
+          "vincenty_meters": 1178.2955062870542,
+          "vincenty_survey_miles": 0.7321574192317128,
+          "pyproj_meters": 1178.2955063389836
+        }
+      ]
+    },
+    {
+      "record": 40,
+      "name": "50_MKO TO CELANESE, 10\" C2",
+      "placemark_id": "ID_00012",
+      "paths": 1,
+      "vertices": 50,
+      "stored_miles": 8.947096,
+      "stored_feet": 47240.667538,
+      "geodesic_grs80_meters": 14400.410821421037,
+      "geodesic_grs80_survey_miles": 8.947982544812914,
+      "geodesic_wgs84_survey_miles": 8.947982544900144,
+      "webmercator_meters": 16470.889109847612,
+      "webmercator_survey_miles": 10.234515534322925,
+      "webmercator_international_miles": 10.23453600339493,
+      "stored_minus_grs80_miles": -0.0008865448129142806,
+      "stored_minus_webmercator_survey_miles": -1.2874195343229253,
+      "stored_minus_webmercator_international_miles": -1.2874400033949307,
+      "stored_to_grs80_ratio": 0.9999009223801595,
+      "metadata": {
+        "SEG_ID": "CB02",
+        "IMP_Name": "10\" Markham - Celanese C2",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "50_MKO TO CELANESE, 10\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "47240.667538",
+        "MILES": "8.947096"
+      },
+      "independent_vincenty_meters": 14400.410821168283,
+      "paths_details": [
+        {
+          "vertex_count": 50,
+          "first_lon_lat_alt": [
+            -95.9331861289999,
+            28.79593213800007,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.01668257099992,
+            28.86815018000004,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.01668257099992,
+            -95.9329154639999
+          ],
+          "lat_bounds": [
+            28.79593213800007,
+            28.87127294600009
+          ],
+          "vincenty_meters": 14400.410821168283,
+          "vincenty_survey_miles": 8.947982544655861,
+          "pyproj_meters": 14400.410821421037
+        }
+      ]
+    },
+    {
+      "record": 41,
+      "name": "50_SR - HWY 60, 10\" C2",
+      "placemark_id": "ID_00000",
+      "paths": 1,
+      "vertices": 113,
+      "stored_miles": 43.037097,
+      "stored_feet": 227235.872523,
+      "geodesic_grs80_meters": 58958.706189663266,
+      "geodesic_grs80_survey_miles": 36.63516828735863,
+      "geodesic_wgs84_survey_miles": 36.635168287453816,
+      "webmercator_meters": 67383.86668792703,
+      "webmercator_survey_miles": 41.87030984065163,
+      "webmercator_international_miles": 41.87039358143879,
+      "stored_minus_grs80_miles": 6.4019287126413715,
+      "stored_minus_webmercator_survey_miles": 1.1667871593483738,
+      "stored_minus_webmercator_international_miles": 1.1667034185612124,
+      "stored_to_grs80_ratio": 1.1747481726418172,
+      "metadata": {
+        "SEG_ID": "CB03",
+        "IMP_Name": "10\" SR - HWY 60 C2",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "50_SR - HWY 60, 10\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "227235.872523",
+        "MILES": "43.037097"
+      },
+      "independent_vincenty_meters": 58958.70618918698,
+      "paths_details": [
+        {
+          "vertex_count": 113,
+          "first_lon_lat_alt": [
+            -95.43604801999993,
+            29.00408359000005,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -95.9331861289999,
+            28.79593213800007,
+            0.0
+          ],
+          "lon_bounds": [
+            -95.93331000999989,
+            -95.43604801999993
+          ],
+          "lat_bounds": [
+            28.79498309100006,
+            29.00408359000005
+          ],
+          "vincenty_meters": 58958.70618918698,
+          "vincenty_survey_miles": 36.63516828706268,
+          "pyproj_meters": 58958.706189663266
+        }
+      ]
+    },
+    {
+      "record": 42,
+      "name": "51_STRAT RIDGE TO BAY CITY (IDLE), 4\" C2",
+      "placemark_id": "ID_00003",
+      "paths": 1,
+      "vertices": 128,
+      "stored_miles": 49.081095,
+      "stored_feet": 259148.181961,
+      "geodesic_grs80_meters": 59341.65157286736,
+      "geodesic_grs80_survey_miles": 36.873119040779486,
+      "geodesic_wgs84_survey_miles": 36.87311904085601,
+      "webmercator_meters": 67826.02061506758,
+      "webmercator_survey_miles": 42.14505100402795,
+      "webmercator_international_miles": 42.145135294298534,
+      "stored_minus_grs80_miles": 12.207975959220512,
+      "stored_minus_webmercator_survey_miles": 6.9360439959720495,
+      "stored_minus_webmercator_international_miles": 6.935959705701464,
+      "stored_to_grs80_ratio": 1.3310806429398938,
+      "metadata": {
+        "SEG_ID": "CB17",
+        "IMP_Name": "4\" Straton Ridge to Bay City",
+        "SYS_NM": "26 CHOCOLATE BAYOU SOUTH (50, 51, 52, 5*",
+        "SUBSYS_NM": "51_STRAT RIDGE TO BAY CITY (IDLE), 4\" C2",
+        "CMDTY_DESC": "ETHYLENE",
+        "FEET": "259148.181961",
+        "MILES": "49.081095"
+      },
+      "independent_vincenty_meters": 59341.65157169175,
+      "paths_details": [
+        {
+          "vertex_count": 128,
+          "first_lon_lat_alt": [
+            -95.52975867899994,
+            29.03935557300008,
+            0.0
+          ],
+          "last_lon_lat_alt": [
+            -96.01688482799996,
+            28.86798821100007,
+            0.0
+          ],
+          "lon_bounds": [
+            -96.01688482799996,
+            -95.52975867899994
+          ],
+          "lat_bounds": [
+            28.86798821100007,
+            29.03935557300008
+          ],
+          "vincenty_meters": 59341.65157169175,
+          "vincenty_survey_miles": 36.873119040049,
+          "pyproj_meters": 59341.65157286736
+        }
+      ]
+    }
+  ]
+}

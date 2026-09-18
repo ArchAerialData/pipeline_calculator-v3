@@ -52,7 +52,7 @@ def test_preference_save_failure_keeps_current_session_enabled(tmp_path, monkeyp
 
 def test_job_snapshots_options_before_start(monkeypatch):
     received = []
-    def analyze(path, params, *, context, options):
+    def analyze(path, params, *, context, options, **kwargs):
         received.append(options)
         return {'total_miles': 1}
     monkeypatch.setattr(controller, 'analyze_file', analyze)

@@ -9,11 +9,11 @@ def dark_style(widget):
     return style
 
 
-def table_styles(widget, factor, row_height):
+def table_styles(widget, factor, row_height, *, compact=False):
     style = dark_style(widget)
     pixels = (round(13 * factor), round(row_height * factor), round(14 * factor),
-              round(8 * factor), round(5 * factor))
-    name = 'Pipeline' + '_'.join(map(str, pixels))
+              round((12 if compact else 8) * factor), round(5 * factor))
+    name = 'Pipeline' + '_'.join(map(str, pixels)) + ('Compact' if compact else '')
     root = widget._root()
     configured = root.__dict__.setdefault('_pipeline_table_styles', set())
     if name not in configured:
@@ -24,6 +24,16 @@ def table_styles(widget, factor, row_height):
         style.configure(tree + '.Heading', background='#343434', foreground='#EEEEEE', relief='solid',
                         borderwidth=1, bordercolor='#535B65', lightcolor='#535B65', darkcolor='#535B65',
                         font=('Arial', -pixels[0], 'bold'), padding=(pixels[3], pixels[4]))
+        if compact:
+            # Data cells have a built-in text inset. Account for it so their
+            # text aligns with the heading's border and padding.
+            style.configure(tree + '.Cell', padding=(max(0, pixels[3] - 1), pixels[4]),
+                            font=('Arial', -pixels[0]))
+            style.layout(tree + '.Cell', [
+                ('Treeitem.padding', {'sticky': 'nswe', 'children': [
+                    ('Treeitem.text', {'sticky': 'we'}),
+                ]}),
+            ])
         style.layout(tree + '.Heading', [
             ('Treeheading.cell', {'sticky': 'nswe'}),
             ('Treeheading.border', {'sticky': 'nswe', 'children': [

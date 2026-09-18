@@ -1,0 +1,363 @@
+{
+  "scope": "Synthetic mechanism evidence only; no production repair detector or verifier exists.",
+  "limits": "No prevalence estimate, schema validation, overlap/state analysis, archive fuzzing, or GUI test.",
+  "parser_sha256": "9783d6c08b5253156d36184b2b0f322b64abf6a12cbddf5798f56df0902135b0",
+  "golden_sha256": "c5614a0443eba0b6abbb61dddf4474cfc768b268924ad1f6c226ae2133d31b16",
+  "geometry_sha256": "ac9f38dd3cd03bb007ec3cb3786da7bf754a7e623711af3516c084f451fe15b3",
+  "repair_probes": [
+    {
+      "case": "leading_whitespace",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 0,
+          "before": " \t\r\n",
+          "after": ""
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "leading_whitespace",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 0,
+          "before": " \t\r\n",
+          "after": ""
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "bom_then_whitespace",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 3,
+          "before": " \t\r\n",
+          "after": ""
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "bom_then_whitespace",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 3,
+          "before": " \t\r\n",
+          "after": ""
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "name_ampersand",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: not well-formed (invalid token): line 4, column 37",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 294,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "name_ampersand",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: not well-formed (invalid token): line 4, column 37",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 294,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "description_ampersand",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: not well-formed (invalid token): line 4, column 70",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 327,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "description_ampersand",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: not well-formed (invalid token): line 4, column 70",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 327,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "snippet_ampersand",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: not well-formed (invalid token): line 4, column 119",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 376,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "snippet_ampersand",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: not well-formed (invalid token): line 4, column 119",
+      "patches": [
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 376,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "combined_allowlisted_defects",
+      "container": ".kml",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 0,
+          "before": " \t\r\n",
+          "after": ""
+        },
+        {
+          "rule": "missing_xsi_schema_namespace_v1",
+          "original_byte_offset": 86,
+          "before": "",
+          "after": " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 244,
+          "before": "&",
+          "after": "&amp;"
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 273,
+          "before": "&",
+          "after": "&amp;"
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 318,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "case": "combined_allowlisted_defects",
+      "container": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in doc.kml: XML or text declaration not at start of entity: line 2, column 0",
+      "patches": [
+        {
+          "rule": "leading_xml_whitespace_v1",
+          "original_byte_offset": 0,
+          "before": " \t\r\n",
+          "after": ""
+        },
+        {
+          "rule": "missing_xsi_schema_namespace_v1",
+          "original_byte_offset": 86,
+          "before": "",
+          "after": " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 244,
+          "before": "&",
+          "after": "&amp;"
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 273,
+          "before": "&",
+          "after": "&amp;"
+        },
+        {
+          "rule": "literal_metadata_ampersand_v1",
+          "original_byte_offset": 318,
+          "before": "&",
+          "after": "&amp;"
+        }
+      ],
+      "inverse_exact": true,
+      "source_unchanged": true,
+      "geometry_bytes_identical": true,
+      "golden_projection_and_mileage_equal": true
+    }
+  ],
+  "format_probes": [
+    {
+      "named_as": ".kmz",
+      "actual_format": ".kml",
+      "original_error": "Error parsing KML data: File is not a zip file",
+      "source_and_saved_content_byte_identical": true,
+      "golden_projection_and_mileage_equal": true
+    },
+    {
+      "named_as": ".kml",
+      "actual_format": ".kmz",
+      "original_error": "Error parsing KML data: Invalid KML data in <source>: not well-formed (invalid token): line 1, column 2",
+      "source_and_saved_content_byte_identical": true,
+      "golden_projection_and_mileage_equal": true
+    }
+  ],
+  "already_valid_probes": [
+    {
+      "case": "single_bom",
+      "ordinary_parser_accepts_without_edit": true
+    },
+    {
+      "case": "trailing_xml_whitespace",
+      "ordinary_parser_accepts_without_edit": true
+    },
+    {
+      "case": "leading_whitespace_without_declaration",
+      "ordinary_parser_accepts_without_edit": true
+    },
+    {
+      "case": "valid_entities_cdata_comments",
+      "ordinary_parser_accepts_without_edit": true
+    },
+    {
+      "case": "utf16_declared_with_bom",
+      "ordinary_parser_accepts_without_edit": true
+    }
+  ],
+  "refused_defect_observations": [
+    {
+      "case": "truncated_document",
+      "current_parser": {
+        "error": "Error parsing KML data: Invalid KML data in <source>: unclosed token: line 15, column 0"
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "undefined_named_entity",
+      "current_parser": {
+        "error": "Error parsing KML data: Invalid KML data in <source>: undefined entity: line 4, column 36"
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "unfinished_entity",
+      "current_parser": {
+        "error": "Error parsing KML data: Invalid KML data in <source>: not well-formed (invalid token): line 4, column 40"
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "second_root",
+      "current_parser": {
+        "error": "Error parsing KML data: Invalid KML data in <source>: junk after document element: line 16, column 0"
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "missing_geometry_namespace",
+      "current_parser": {
+        "error": "Error parsing KML data: Invalid KML data in <source>: unbound prefix: line 11, column 103"
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "invalid_coordinate",
+      "current_parser": {
+        "diagnostic_codes": [
+          "invalid_coordinate",
+          "short_linestring",
+          "ignored_non_centerline_geometry"
+        ],
+        "projection_matches_golden": false
+      },
+      "repair_attempted": false
+    },
+    {
+      "case": "wrong_geometry_tag_case",
+      "current_parser": {
+        "diagnostic_codes": [],
+        "projection_matches_golden": false
+      },
+      "repair_attempted": false
+    }
+  ],
+  "baseline": {
+    "pipelines": 2,
+    "paths": 3,
+    "vertices": 7,
+    "meters": 4920.12954896006,
+    "US_survey_miles": 3.0572206493467515
+  }
+}

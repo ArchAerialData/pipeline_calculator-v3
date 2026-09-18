@@ -219,6 +219,9 @@ def build_analysis_workbook(current_results):
         from pipeline_calculator.export.geography_xlsx import add_geography_sheets
         add_geography_sheets(wb, current_results)
 
+    from pipeline_calculator.export.repair_provenance import add_repair_details
+    add_repair_details(wb, current_results)
+
     # Source names/IDs/diagnostics are data, even if they begin with '='.
     # Preserve only the totals formula that this exporter intentionally creates.
     totals_formula = ws.cell(row=2, column=4)

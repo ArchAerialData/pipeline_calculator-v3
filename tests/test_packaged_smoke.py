@@ -16,6 +16,8 @@ def passed_report(implementation):
         "ui_reliability": {"summary_returns": 20, "callback_errors": []},
         "geography": {"boundary_jurisdictions": 51, "state_codes": ["OK", "TX"],
                       "reconciliation_passed": True, "package_map_roundtrips": True},
+        "repair": {key: True for key in ('approval_required', 'source_unchanged',
+                   'geometry_verified', 'saved_copy_roundtrip', 'provenance_exported')},
     }
 
 
@@ -71,7 +73,7 @@ def test_offline_frozen_gate_runs_both_implementations_and_saves_reports(tmp_pat
 
 
 @pytest.mark.parametrize("defect", ["source_only", "wrong_implementation", "bad_reconciliation", "bad_roundtrip",
-                                  "wrong_jurisdictions", "wrong_states", "wrong_version", "failed_status"])
+                                  "wrong_jurisdictions", "wrong_states", "wrong_version", "failed_status", "missing_repair"])
 def test_report_validation_rejects_incomplete_evidence(defect):
     report = passed_report("new")
     if defect == "source_only":
@@ -88,6 +90,8 @@ def test_report_validation_rejects_incomplete_evidence(defect):
         report["geography"]["state_codes"] = ["TX"]
     elif defect == "wrong_version":
         report["version"] = "4.15"
+    elif defect == 'missing_repair':
+        del report['repair']
     else:
         report["status"] = "failed"
     with pytest.raises(ValueError, match="Packaged smoke failed"):

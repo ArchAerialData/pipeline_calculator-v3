@@ -38,6 +38,8 @@ def export_analysis_package(results, output_parent, current_file=None, *, includ
     """
     if not isinstance(results.get("geography"), dict):
         raise ValueError("A state breakdown result is required to export a geography package")
+    from pipeline_calculator.export.repair_provenance import validate_input_repair
+    validate_input_repair(results)
     parent = Path(output_parent).resolve(strict=True)
     if not parent.is_dir():
         raise ValueError("Choose an existing folder for the export package")

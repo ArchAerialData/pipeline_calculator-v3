@@ -15,6 +15,8 @@ def default_export_filename(current_file: str | None) -> str:
 
 
 def export_results_to_path(current_results: dict[str, Any], save_path: str) -> None:
+    from pipeline_calculator.export.repair_provenance import validate_input_repair
+    validate_input_repair(current_results)
     if save_path.lower().endswith(".json"):
         with open(save_path, "w", encoding="utf-8") as f:
             json.dump(current_results, f, indent=2, default=str)
