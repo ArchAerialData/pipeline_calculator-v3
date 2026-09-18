@@ -48,7 +48,11 @@ def test_tree_unmap_during_shrink_recovers_and_hidden_table_cancels_callbacks(mo
         settle(root)
         assert table._position_id is None
         assert pending not in root.tk.splitlist(root.tk.call('after', 'info'))
-        assert calls == []
+        # Native platforms may dispatch an already-due callback before Unmap;
+        # after hiding settles there must be no pending or repeated layout work.
+        hidden_calls = len(calls)
+        settle(root)
+        assert len(calls) == hidden_calls
 
         table.pack(fill='both', expand=True)
         settle(root, .2)
