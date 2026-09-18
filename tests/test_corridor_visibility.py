@@ -32,17 +32,20 @@ def test_omitted_corridor_row_is_labelled_and_disabled():
                 for status in ('omitted', 'ready')]
     sections[1]['visualization_polygons'] = [
         {'outer': [[0, 0], [1, 0], [0, 1], [0, 0]], 'holes': []}]
+    sections.append({'pipeline_1': 'C', 'pipeline_2': 'D',
+                     'visualization_schema_version': 1, 'visualization_status': 'ready'})
     launches = []
     table = CorridorTable(root, sections, lambda *args: launches.append(args))
     try:
         table.pack(fill='both', expand=True)
         root.update()
-        first, second = table.tree.get_children()
-        assert table.row_buttons[first].cget('text') == 'Map unavailable'
-        assert table.row_buttons[first].instate(['disabled'])
-        table.tree.selection_set(first)
-        table._open_selected()
-        table.row_buttons[first].invoke()
+        first, second, missing = table.tree.get_children()
+        for item in (first, missing):
+            assert table.row_buttons[item].cget('text') == 'Map unavailable'
+            assert table.row_buttons[item].instate(['disabled'])
+            table.tree.selection_set(item)
+            table._open_selected()
+            table.row_buttons[item].invoke()
         assert launches == []
         assert table.row_buttons[second].cget('text') == 'View Corridor'
         assert table.row_buttons[second].instate(['!disabled'])

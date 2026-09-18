@@ -8,6 +8,62 @@ from unittest.mock import patch
 import pytest
 
 from pipeline_calculator.gui.actions import open_kml_action as action
+from pipeline_calculator.gui.actions import corridor_launch as launcher
+
+
+@pytest.mark.parametrize('geometry', [
+    {}, {'visualization_polygons': None}, {'visualization_polygons': []},
+    {'visualization_polygons': {}}, {'clipped_polygons': None},
+    {'clipped_polygons': [], 'visualization_polygons': [{'outer': [[0, 0], [1, 0], [0, 1], [0, 0]], 'holes': []}]},
+])
+@pytest.mark.parametrize('use_dialog', [False, True])
+def test_ready_without_canonical_polygons_disables_every_launch_route(geometry, use_dialog, monkeypatch):
+    from pipeline_calculator.gui import config
+    from pipeline_calculator.gui.tabs.overlap_tab import CorridorTable
+    from pipeline_calculator.gui.dialogs import corridor_dialog
+
+    section = dict(geometry, visualization_schema_version=1, visualization_status='ready',
+                   bbox={'min_lon': -100, 'max_lon': -99, 'min_lat': 30, 'max_lat': 31})
+    monkeypatch.setattr(config, 'SHOW_CORRIDOR_LAUNCH_DIALOG', use_dialog)
+    with patch.object(launcher, 'DirectCorridorLaunch') as direct, \
+         patch.object(corridor_dialog, 'CorridorDialog') as dialog, \
+         patch.object(action, 'open_path') as opened:
+        assert launcher.corridor_is_omitted(section)
+        table = SimpleNamespace(item_map={'row': (section, 1)}, on_open_corridor=direct)
+        CorridorTable._open(table, 'row')
+        with pytest.raises(ValueError, match='map is unavailable'):
+            launcher.launch_corridor(None, section, 1)
+        direct.assert_not_called()
+        dialog.assert_not_called()
+        # The serializer also rejects these payloads before any file is opened.
+        with pytest.raises(ValueError):
+            action.create_and_launch_corridor(section, 1)
+        opened.assert_not_called()
+
+
+@pytest.mark.parametrize('clipped', [False, True])
+def test_canonical_multipart_with_holes_remains_available(clipped):
+    from xml.etree import ElementTree as ET
+
+    polygons = [
+        {'outer': [[0, 0], [2, 0], [2, 2], [0, 2], [0, 0]],
+         'holes': [[[.5, .5], [.5, 1], [1, 1], [1, .5], [.5, .5]]]},
+        {'outer': [[3, 0], [4, 0], [4, 1], [3, 1], [3, 0]], 'holes': []},
+    ]
+    section = {'visualization_schema_version': 1, 'visualization_status': 'ready',
+               'visualization_polygons': polygons}
+    if clipped:
+        section.update(clipped_polygons=polygons, visualization_polygons=[])
+    assert not launcher.corridor_is_omitted(section)
+    root = ET.fromstring(action.build_overlap_corridor_kml(section, 1))
+    ns = {'k': 'http://www.opengis.net/kml/2.2'}
+    assert len(root.findall('.//k:Polygon', ns)) == 2
+    assert len(root.findall('.//k:innerBoundaryIs', ns)) == 1
+
+
+def test_legacy_geometry_without_canonical_decision_remains_available():
+    section = {'bbox': {'min_lon': -100, 'max_lon': -99, 'min_lat': 30, 'max_lat': 31}}
+    assert not launcher.corridor_is_omitted(section)
 
 
 def test_nonzero_exit_and_timeout_preserve_path():
