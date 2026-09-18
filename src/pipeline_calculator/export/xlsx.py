@@ -199,6 +199,42 @@ def build_analysis_workbook(current_results):
     ws2.cell(row=2, column=4).alignment = center
     ws2.cell(row=2, column=4).number_format = '0.000'
 
+    # An explicit empty list records a measured zero. Older snapshots without a
+    # point inventory keep their previous workbook structure.
+    point_pins = current_results.get('placemarks')
+    if isinstance(point_pins, list) and not current_results.get('state_code'):
+        point_sheet = wb.create_sheet('Point Pins')
+        point_sheet.append(['Point pins', 'Value'])
+        point_sheet.append(['Total point pins', len(point_pins)])
+        point_sheet.append(['Scope', 'Combined: valid KML Point geometries in loaded source documents.'])
+        point_sheet.append(['Coverage', 'Skipped or unreferenced documents and invalid Point geometries are excluded. '
+                             'Line and polygon vertices are not pins.'])
+        run_complete = current_results.get('analysis_complete')
+        run_status = ('Complete' if run_complete is True else
+                      'Incomplete; review Diagnostics for failed analysis stages or skipped input.'
+                      if run_complete is False else 'Not recorded')
+        point_sheet.append(['Overall run status', run_status])
+        point_sheet.append([])
+        point_sheet.append(['Placemark ID', 'Name', 'Count'])
+        for pin in point_pins:
+            point_sheet.append([pin.get('Placemark_ID'), pin.get('Name', ''), pin.get('Count', 1)])
+        point_sheet.freeze_panes = 'A8'
+        point_sheet.auto_filter.ref = f'A7:C{max(7, point_sheet.max_row)}'
+        for column, width in [('A', 28), ('B', 80), ('C', 12)]:
+            point_sheet.column_dimensions[column].width = width
+        for row in point_sheet:
+            for cell in row:
+                cell.font = body_font
+                cell.alignment = Alignment(horizontal='left', vertical='top', wrap_text=True)
+        for row_number in (1, 7):
+            for cell in point_sheet[row_number]:
+                cell.font = header_font
+                cell.fill = gray
+        point_sheet['B2'].number_format = '0'
+        point_sheet['B2'].font = Font(name='Aptos Narrow', size=11, bold=True)
+        for row in point_sheet.iter_rows(min_row=8, min_col=3, max_col=3):
+            row[0].number_format = '0'
+
     diagnostics = list(current_results.get('diagnostics', []) or [])
     if diagnostics:
         ws3 = wb.create_sheet("Diagnostics")

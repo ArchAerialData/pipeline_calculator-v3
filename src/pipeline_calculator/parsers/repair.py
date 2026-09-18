@@ -767,6 +767,7 @@ def inspect_geometry(data_or_root, *, source="", context=None):
         line_index = track_index = 0
         first_point_valid = False
         first_point_seen = False
+        point_count = 0
         for element in placemark.iter():
             if element.tag == f"{{{KML_NS}}}LineString":
                 line_index += 1
@@ -792,20 +793,26 @@ def inspect_geometry(data_or_root, *, source="", context=None):
                         issue("missing_point_coordinate", "A Point has no coordinate tuple.", ordinal, geometry="Point")
                     elif valid and len(path) != 1:
                         issue("ambiguous_point_coordinate", "A Point contains multiple coordinate tuples; its geometry semantics are ambiguous.", ordinal, geometry="Point")
+                    elif valid:
+                        point_count += 1
         paths = line_paths + track_paths
-        common = {"name": name, "objectid": objectid, "feature_ordinal": ordinal}
+        # Multiple pins and line/point siblings share their source feature's
+        # name. Preserve the historical generated-name slot independently of
+        # the number of Point geometries now exposed by that feature.
+        common = {"name": name, "objectid": objectid, "feature_ordinal": ordinal,
+                  "legacy_name_slot": bool(paths or first_point_valid)}
         if paths:
             record = dict(common, placemark_id=(placemark.get("id") or "").strip() or "N/A", coordinate_paths=paths)
             result["pipelines"].append(record)
             result["features"].append(dict(record, kind="pipeline"))
             result["counts"]["paths"] += len(paths)
             result["counts"]["vertices"] += sum(map(len, paths))
-        else:
-            if first_point_valid:
-                result["points"].append(common)
-                result["features"].append(dict(common, kind="point"))
-            elif not (line_index or track_index or first_point_seen) and not any(_local(e.tag) in {"Polygon", "LinearRing", "Model"} for e in placemark.iter()):
-                issue("no_supported_geometry", "A Placemark contains no supported pipeline or point geometry.", ordinal)
+        for _ in range(point_count):
+            _check(context)
+            result["points"].append(dict(common))
+            result["features"].append(dict(common, kind="point"))
+        if not (line_index or track_index or first_point_seen) and not any(_local(e.tag) in {"Polygon", "LinearRing", "Model"} for e in placemark.iter()):
+            issue("no_supported_geometry", "A Placemark contains no supported pipeline or point geometry.", ordinal)
     if len(result["findings"]) == MAX_FINDINGS:
         result["findings"][-1] = _finding("inspection_findings_truncated", "Further findings were not collected because the inspection limit was reached.", source, category="limit")
     return result

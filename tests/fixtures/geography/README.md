@@ -14,7 +14,9 @@ classification describes polygon coverage; it is not pipeline-mileage analysis.
 
 Use this archive to guard against accidentally counting polygon outlines as
 pipeline centerlines. The existing parser returns zero pipelines and zero mileage,
-with `unsupported_geometry` warnings and a `no_supported_features` error. Analysis
+with one informational `unsupported_geometry` notice covering all 281 features
+and a `no_supported_features` error. Routine exclusions are grouped per document
+and category so a large boundary inventory cannot exhaust diagnostic limits. Analysis
 must be marked incomplete, and the UI should explain the unsupported input clearly.
 Do not convert these rings to LineStrings or save current perimeter lengths as
 expected pipeline mileage.

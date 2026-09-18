@@ -39,6 +39,7 @@ CHUNK_BYTES = 1024 * 1024
 FORMAT_RULE = "filename_format_mismatch_v1"
 _COVERAGE_CODES = parser.INCOMPLETE_CODES | {
     "invalid_coordinate", "invalid_gx_coord", "no_supported_geometry",
+    "missing_point_coordinate", "ambiguous_point_coordinate",
 }
 _SAFE_EXTRA_IDS = {0x0001, 0x000A, 0x5455, 0x7075, 0x6375}
 
@@ -305,6 +306,7 @@ def _coverage(state, documents, context=None):
     """Compare the independent semantic inventory with the ordinary extraction."""
     expected_pipelines = []
     expected_points = []
+    expected_name_slots = 0
     findings = []
     for source, document in documents:
         _check(context)
@@ -320,9 +322,14 @@ def _coverage(state, documents, context=None):
             })
         inventory = inspect_geometry(root, source=source, context=context)
         findings.extend(inventory["findings"])
+        previous_ordinal = None
         for feature in inventory["features"]:
+            _check(context)
             kind = feature["kind"]
-            name = feature["name"] or f"Item_{len(expected_pipelines) + len(expected_points) + 1}"
+            if feature["feature_ordinal"] != previous_ordinal:
+                name = feature["name"] or f"Item_{expected_name_slots + 1}"
+                expected_name_slots += int(feature["legacy_name_slot"])
+                previous_ordinal = feature["feature_ordinal"]
             if kind == "pipeline":
                 paths = feature["coordinate_paths"]
                 expected_pipelines.append({
@@ -337,7 +344,8 @@ def _coverage(state, documents, context=None):
     # The independent inventory identifies coordinate/path causes precisely. The
     # application emits secondary "short" warnings after rejecting coordinates;
     # do not repeat those as claims that the original path had too few vertices.
-    inventory_codes = {"invalid_coordinate", "invalid_gx_coord", "short_linestring", "short_gx_track", "no_supported_geometry"}
+    inventory_codes = {"invalid_coordinate", "invalid_gx_coord", "short_linestring", "short_gx_track",
+                       "no_supported_geometry", "missing_point_coordinate", "ambiguous_point_coordinate"}
     for item in state.diagnostics:
         if item["code"] in _COVERAGE_CODES - inventory_codes:
             findings.append({"code": item["code"], "category": "source",
