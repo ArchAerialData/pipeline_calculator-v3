@@ -5,16 +5,24 @@ from tkinter import messagebox
 
 from pipeline_calculator.gui import config
 from pipeline_calculator.gui.actions import open_kml_action
+from pipeline_calculator.core.corridor_geometry import has_canonical_geometry
 
 
 def corridor_is_omitted(section):
-    return (section.get('visualization_status') == 'omitted'
-            or section.get('clipped_polygons') == []
-            or section.get('visualization_polygons') == []
-            or ('visualization_schema_version' in section and
-                (type(section['visualization_schema_version']) is not int or
-                 section['visualization_schema_version'] != 1 or
-                 section.get('visualization_status') != 'ready')))
+    """Check the completed decision cheaply; topology stays off the UI thread."""
+    if not has_canonical_geometry(section):
+        return False  # Legacy sections may construct a rectangle approximation.
+    if ('visualization_status' in section and section['visualization_status'] != 'ready'):
+        return True
+    if ('visualization_schema_version' in section and
+            (type(section['visualization_schema_version']) is not int or
+             section['visualization_schema_version'] != 1 or
+             section.get('visualization_status') != 'ready')):
+        return True
+    # Match the serializer's precedence: a state clip is authoritative, even
+    # when its value is null/empty. Never replace it with uncut or legacy geometry.
+    polygons = section.get('clipped_polygons', section.get('visualization_polygons'))
+    return type(polygons) is not list or not polygons
 
 
 def launch_corridor(root, section, index):
