@@ -1,0 +1,52 @@
+{
+  "scenario": "failure",
+  "scale": 1,
+  "logical_client_size": [
+    900,
+    650
+  ],
+  "actual_client_size": [
+    900,
+    650
+  ],
+  "image_size": [
+    900,
+    650
+  ],
+  "file": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\repair-layout\\screenshots\\failure-900x650-100pct.png",
+  "synthetic_data": true,
+  "window_only_capture": true,
+  "callback_errors": [],
+  "actions": [
+    {
+      "text": "Copy client request",
+      "visible": true,
+      "bounds": [
+        109,
+        393,
+        220,
+        34
+      ]
+    },
+    {
+      "text": "Choose another file",
+      "visible": true,
+      "bounds": [
+        339,
+        393,
+        221,
+        34
+      ]
+    },
+    {
+      "text": "Cancel",
+      "visible": true,
+      "bounds": [
+        570,
+        393,
+        221,
+        34
+      ]
+    }
+  ]
+}

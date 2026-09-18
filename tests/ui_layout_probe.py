@@ -221,6 +221,10 @@ def run(scale, width, height, capture=None, legacy=False):
         session = AnalysisSession(root, lambda job: None, SimpleNamespace(start=lambda *args: job))
         session.start('Q3 - WWM Pipelines.kmz', AnalysisParameters())
         check('caution')
+        if session.guidance_columns == 1:
+            for card in session.guidance_cards:
+                assert abs(card.winfo_width() - session.guidance.winfo_width()) <= 2, \
+                    'Single-column guidance must use the available width'
         assert session.continue_button.winfo_viewable()
         assert not session.bar.winfo_viewable(), 'No progress animation while waiting for a decision'
         if width >= 800 and height >= 600:
@@ -248,6 +252,10 @@ def run(scale, width, height, capture=None, legacy=False):
         session.filename_label.configure(text='Extremely long input filename ' * 30 + '.kmz')
         settle()
         check('caution-long')
+        if session.guidance_columns == 1:
+            for card in session.guidance_cards:
+                assert abs(card.winfo_width() - session.guidance.winfo_width()) <= 2, \
+                    'Long guidance must not reserve an empty second column'
         session.close()
         return {'scale': scale, 'logical_size': [width, height], 'legacy': legacy, 'status': 'passed'}
     finally:

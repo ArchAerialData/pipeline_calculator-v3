@@ -329,8 +329,8 @@ a conservative heuristic, not a flight-route optimization.
 Nearby finite segment tangents are compared so that offset sampling positions do
 not hide overlaps. Their endpoints must overlap longitudinally; lines merely
 meeting end-to-end are not bundled. Segment length still controls approximation
-at endpoints and bends. Corridor centers and polygons use local geodesic
-coordinates, including across the dateline.
+at endpoints and bends. Corridor polygons use local geodesic coordinates,
+including across the dateline.
 
 If a LineString or gx:Track contains an invalid coordinate, that geometry is
 rejected rather than connecting across the missing vertex. Other valid geometries
@@ -392,15 +392,21 @@ If opening fails, the dialog retains the generated file and offers **Copy Path**
 Earth rendered the file. Temporary files remain available after closing the dialog;
 use Save As for a lasting copy because the operating system may clean temp storage.
 
-Corridors are approximate visualizations of sampled paths, not surveyed boundaries.
-KML descriptions identify rectangle fallbacks and invalid preferred geometry.
-Non-finite, out-of-range, collapsed and unusable rings are rejected. All ring sizes
-receive local-plane topology checks within 100,000 raw points and 250,000 active-edge
-inspections; a shape that exceeds either budget uses a disclosed simpler outline.
-Point limits apply before projection/sorting, including duplicate coordinates. Right-angle,
-hairpin and loop examples can require broad rectangles enclosing the qualified
-samples. End padding helps outlines show the ends of sampled sections. These
-visual changes preserve original pipeline distance and sampled overlap/savings rules.
+Corridor maps follow the path portions that qualified for overlap, with **5 m
+padding** and rounded ends and bends. They preserve separate pieces and open
+centers. Padding is independent of Detection Range and does not change pipeline
+mileage, overlap qualification or savings. These are approximate display areas,
+not surveyed boundaries or rights-of-way. State maps are clipped to their state.
+
+The completed analysis prepares each map before displaying results. If a map
+cannot be constructed and verified within the accuracy and resource limits, its
+row shows **Map unavailable** and Diagnostics explains why. Mileage and savings
+remain available. New maps never substitute broad rectangles or silently drop
+components. Previews and package exports preserve every polygon and hole, without
+adding extra centerlines that could be counted as pipeline mileage on reimport.
+
+See [corridor implementation and verification](docs/validation/corridor-buffer-implementation.md)
+for the current geometry policy, comparisons, resource limits and sample exports.
 
 See [automated improvement verification](docs/validation/automated-improvements.md),
 [subsequent workload/corridor hardening](docs/validation/workload-corridor-hardening.md),

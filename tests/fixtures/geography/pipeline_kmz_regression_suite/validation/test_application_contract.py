@@ -221,6 +221,36 @@ class IntervalAndExportCheckerTests(unittest.TestCase):
                 self.assertTrue(any('cover qualified path samples' in label and passed for label, passed in checks))
                 self.assertTrue(any('one-to-one' in label and not passed for label, passed in checks))
 
+    def test_fixed_radius_contract_rejects_broad_but_local_geometry(self):
+        expected, sources, metadata = self.corridor_case()
+        def geographic(shape):
+            points = []
+            for x, y in shape.exterior.coords:
+                point = GEOD.Direct(self.a[1], self.a[0], math.degrees(math.atan2(x, y)), math.hypot(x, y))
+                points.append((point['lon2'], point['lat2']))
+            return Polygon(points)
+        capsule = geographic(LineString([(0, 0), (300, 0)]).buffer(5, quad_segs=128))
+        broad = geographic(box(-40, -40, 340, 40))
+        for shape, should_pass in ((capsule, True), (broad, False)):
+            checks, check = recorder()
+            compare_export_corridors(check, 'Combined', [dict(metadata=metadata, polygons=[shape])],
+                                     expected, sources, {1: 'A', 2: 'B'}, padding_m=5.0)
+            radius = [passed for label, passed in checks if 'fixed-radius bounds' in label]
+            self.assertEqual(radius, [should_pass])
+            self.assertTrue(any('independent section bounds' in label and passed for label, passed in checks))
+
+    def test_fixed_radius_contract_rejects_local_extra_island(self):
+        expected, sources, metadata = self.corridor_case()
+        line = LineString([self.a, self.b])
+        # A small appendage can fit the conservative legacy bounds yet be far
+        # beyond 5 m from its generating paths. The new upper bound must fail.
+        shapes = [line.buffer(.00005), box(self.a[0]+.001, self.a[1]+.0003,
+                                           self.a[0]+.00101, self.a[1]+.00031)]
+        checks, check = recorder()
+        compare_export_corridors(check, 'Combined', [dict(metadata=metadata, polygons=shapes)],
+                                 expected, sources, {1: 'A', 2: 'B'}, padding_m=5.0)
+        self.assertTrue(any('fixed-radius bounds' in label and not passed for label, passed in checks))
+
 
 class KnownDefectClassificationTests(unittest.TestCase):
     def baseline(self):

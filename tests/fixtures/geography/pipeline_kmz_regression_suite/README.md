@@ -4,7 +4,7 @@
 pipeline inputs, an offline deterministic generator, two independent references, expected
 results, interval/overlap/crossing ledgers, preview maps and executable intent checks.
 Application comparisons are recorded separately from the independent references.
-Latest comparison against the fingerprinted application sources: **10,175 checks, 0 mismatches**, including exports.
+Latest comparison against the fingerprinted application sources: **10,250 checks, 0 mismatches**, including exports.
 
 ## Run
 
@@ -162,7 +162,7 @@ remain understandable. No finite collection proves universal correctness.
 
 The [application report](validation/application_comparison.json) is produced only after
 independent expectations are fixed. All original/state mileage and exact savings comparisons
-are checked within their stated bounds. Latest comparison against the fingerprinted application sources: **10,175 checks, 0 mismatches**, including exports.
+are checked within their stated bounds. Latest comparison against the fingerprinted application sources: **10,250 checks, 0 mismatches**, including exports.
 
 The initial application baseline exposed two defect classes. The retained reproductions
 document that history; the current receipt above determines whether they still occur:
@@ -216,7 +216,7 @@ for allocation-only states is documented but not exercised by these main cases.
 The saved 24-group profile contains **96 sources, 27,120 samples,
 135.895 km and 96 qualifying sections**.
 It saves 74,640 m and completed application analysis in
-7.18 s on the recorded host, including profiling overhead.
+8.11 s on the recorded host, including profiling overhead.
 The [stress report](validation/stress_report.json) records actual candidate/neighbor counts,
 hardware, process peak memory, runtime and independent/application agreement. These values
 are machine-specific observations, not a performance guarantee.

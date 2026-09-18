@@ -1,6 +1,8 @@
 # Corridor geometry implementation runbook
 
-**Status: Reviewed implementation plan; production implementation has not started.**
+**Status: Implemented, verified and published locally on Windows, September 18, 2026.**
+The macOS distribution gate remains open. Evidence and platform limits are tracked in
+[the implementation report](docs/validation/corridor-buffer-implementation.md).
 Prepared September 18, 2026 against repository commit
 `552191dac8e723d32819e38f6c1647d039d6038b`.
 
@@ -14,7 +16,7 @@ reconciliation calculations unchanged.
 
 This runbook covers implementation order, data contracts, geometry construction,
 failure handling, UI/export migration, acceptance tests and local distribution.
-It does not authorize implementation during this planning task. No new product
+The subsequent user instruction authorized implementation. No new product
 decision is required to start the ordered implementation below; the defaults are
 explicit and their visual review is a release gate.
 
@@ -139,6 +141,10 @@ cases explicitly; do not hide differences under broad comparator exclusions.
   index, consecutive sample range, start/end chainage and immutable coordinates.
   In state inputs, path index refers to that state's fragment path list; do not
   label it as the original document path index without an explicit mapping.
+  When a single-state result reuses Combined geometry, the recorded generating
+  scope remains `Combined`: zero-length paths can disappear from state inputs
+  and shift their indices. The enclosing state metadata identifies the clipping
+  destination; it does not relabel the generating run's source indices.
 - `build_buffered_corridor(runs, *, geod, options, budget, context)` returns one
   JSON-native visualization decision, separate from numeric section fields.
 - One geometry budget is shared across Combined and all states for the job; one
@@ -327,6 +333,7 @@ Centralize named limits with the builder's versioned policy. Initial ceilings:
 | One native buffer/union batch | At most 4,096 input vertices and 32 polygon operands, also checking intermediate output complexity |
 | Cumulative job construction work | 2,000,000 processed/generated vertices and 10,000 charts across Combined and all states |
 | Cumulative retained output | 1,000,000 polygon vertices across the complete result |
+| Immutable boundary verification | Separately cap reference geometry at 2,000,000 vertices and 10,000 full-boundary queries per job. These checks certify containment against the original resource; generated geometry and local overlays retain the 4,096-vertex cap. |
 
 These are conservative starting caps to verify with memory/time evidence, not
 promised capacity. Count vertices across phases, retries, holes, intermediate
@@ -359,6 +366,17 @@ stress set, with retained timings. If a capped native operation defeats that gat
 reduce the cap/split work; use an isolated worker process only if necessary to
 meet the bound. Do not declare cancellation bounded solely because checkpoints
 exist. Cancel publishes no partial analysis snapshot.
+
+Implementation review refined the state-clipping procedure: retain original
+boundary-edge endpoints in local masks, since shortening edges at a query box
+can perturb their represented slope. If GEOS leaves floating-point overlay
+residue, permit at most eight further intersections with the same authoritative
+mask, charged to the work budget. Each refinement must remain within one
+nanodegree of the previous shape, with an area bound as well; the final outside
+difference must still be empty. This is not permission to expand a state, snap
+source geometry, or accept a nonempty outside sliver. The immutable-boundary
+exception above is measured separately: all 51 bundled states were exercised,
+and the largest observed native verification call took 5.21 ms in this environment.
 
 Use one existing background analysis job and scoped progress. Add a stage such as
 “Building corridor maps” with section progress inside its allocated scope. Worker
@@ -533,8 +551,8 @@ this plan itself.
 
 ## 10. Execution commands and proof artifacts
 
-Commands are run from the repository root. The new test/script filenames below
-are to be created in their assigned tasks; do not claim them as existing tests.
+Commands are run from the repository root. The implementation now provides the
+test/script filenames below; actual run receipts are in the implementation report.
 
 Baseline command already executed:
 
@@ -616,18 +634,19 @@ new public fixture set.
 ## 11. Readiness and completion checklist
 
 Planning review found no unresolved product choice preventing implementation.
-Technical exit gates remain work to perform, not claims already proven:
+Windows exit gates are now verified by the linked implementation evidence;
+macOS distribution still requires its own platform verification:
 
-- [ ] T0 numerical and environment baseline frozen.
-- [ ] T1 geometry failures cannot alter accounting; cancellation still aborts.
-- [ ] T2 every consumer respects canonical holes/multipart and omission.
-- [ ] T3 all qualified runs extracted without bridging paths/gaps or adding tails.
-- [ ] T4 independent geometric accuracy, tightness, seams and resource limits pass.
-- [ ] T5 state clipping and numerical parity pass on realistic datasets.
-- [ ] T6 polished UI, workbook/JSON and preview/package contracts pass.
-- [ ] T7 gallery and sample export reviewed, including holes, disjoint pieces and
+- [x] T0 numerical and environment baseline frozen.
+- [x] T1 geometry failures cannot alter accounting; cancellation still aborts.
+- [x] T2 every consumer respects canonical holes/multipart and omission.
+- [x] T3 all qualified runs extracted without bridging paths/gaps or adding tails.
+- [x] T4 independent geometric accuracy, tightness, seams and resource limits pass.
+- [x] T5 state clipping and numerical parity pass on realistic datasets.
+- [x] T6 polished UI, workbook/JSON and preview/package contracts pass.
+- [x] T7 gallery and sample export reviewed, including holes, disjoint pieces and
       an unavailable-map case; native small-window/high-DPI checks pass.
-- [ ] T8 tested Windows executable published locally with matching hashes.
+- [x] T8 tested Windows executable published locally with matching hashes.
 - [ ] macOS platform build/test gate completed before macOS distribution.
 
 Stop a task at a failed correctness gate and repair the cause. Do not enlarge
@@ -648,6 +667,7 @@ native output expansion; bound every Excel geometry cell; migrate progress stage
 and run adversarial/stress audits with no known-failure allowance for release.
 
 The planning baseline and source fingerprints are retained with the feasibility
-evidence. Production code, current test expectations and local distribution were
-not changed by this planning task. All implementation/release checkboxes above
-remain open deliberately.
+evidence. The planning task itself did not change production code, tests or the
+local distribution. The subsequently authorized implementation updates the
+checkboxes above as its gates pass; current receipts live in the implementation
+report.

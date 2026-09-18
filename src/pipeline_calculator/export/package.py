@@ -12,6 +12,7 @@ import tempfile
 from pipeline_calculator.export.geography_kmz import write_geography_kmz
 from pipeline_calculator.export.xlsx import build_analysis_workbook
 from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+from pipeline_calculator.export.corridor_metadata import validate_corridor_results
 
 
 def prepare_export_snapshot(results):
@@ -40,6 +41,7 @@ def export_analysis_package(results, output_parent, current_file=None, *, includ
         raise ValueError("A state breakdown result is required to export a geography package")
     from pipeline_calculator.export.repair_provenance import validate_input_repair
     validate_input_repair(results)
+    validate_corridor_results(results)
     parent = Path(output_parent).resolve(strict=True)
     if not parent.is_dir():
         raise ValueError("Choose an existing folder for the export package")

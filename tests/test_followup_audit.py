@@ -50,14 +50,22 @@ def test_end_to_end_lines_are_not_bundled():
 
 
 @pytest.mark.parametrize('start,bearing', [((179.999, 60), 90), ((-179.999, 60), 270), ((0, 89.99), 90)])
-def test_corridor_center_and_vertices_stay_near_source(start, bearing):
+def test_corridor_parts_and_vertices_stay_near_source(start, bearing):
     analyzer = PipelineAnalyzer()
     result = calculate(analyzer, pipes(analyzer, [0, 2], start, bearing))
     section = result['bundled_sections'][0]
-    assert analyzer.geod.inv(*start, section['center_lon'], section['center_lat'])[2] < 350
-    for point in section['corridor_polygon']:
-        assert -180 <= point[0] <= 180 and -90 <= point[1] <= 90
-        assert analyzer.geod.inv(*start, *point)[2] < 400
+    from shapely.geometry import Polygon
+    assert section['visualization_status'] == 'ready'
+    assert section['visualization_polygons']
+    for spec in section['visualization_polygons']:
+        shape = Polygon(spec['outer'], spec['holes'])
+        assert shape.is_valid
+        point = shape.representative_point()
+        assert analyzer.geod.inv(*start, point.x, point.y)[2] < 350
+        for ring in (spec['outer'], *spec['holes']):
+            for point in ring:
+                assert -180 <= point[0] <= 180 and -90 <= point[1] <= 90
+                assert analyzer.geod.inv(*start, *point)[2] < 400
 
 
 @pytest.mark.parametrize('linked', [None, 'not xml'])

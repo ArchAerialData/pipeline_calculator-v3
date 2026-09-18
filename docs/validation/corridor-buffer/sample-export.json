@@ -1,0 +1,151 @@
+{
+  "input": "tests/fixtures/geography/pipeline_kmz_regression_suite/fixtures/03_parallel_corridors_crossing_borders.kmz",
+  "input_sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+  "package": ".validation-output/corridor-buffer/sample-exports/03_parallel_corridors_crossing_borders_analysis_20260918_095427",
+  "analysis_complete": true,
+  "geography_status": "complete",
+  "states": [
+    "New Mexico",
+    "Oklahoma",
+    "Texas"
+  ],
+  "files": [
+    {
+      "path": "analysis.json",
+      "bytes": 941091,
+      "sha256": "0bb5838b25ec36aa22dc96098859d10970101dcc0b6f1a8f513da08cf6e4fc9f"
+    },
+    {
+      "path": "analysis.xlsx",
+      "bytes": 38128,
+      "sha256": "4aad859b2db8c7b05dc617cc3ee2c5df7379a9780f4f3d20f348bffb1527db3a"
+    },
+    {
+      "path": "Combined/analysis.kmz",
+      "bytes": 30817,
+      "sha256": "88efee93c25d6504ce940c762a9e1f3fa902f11e109153b527ab4eac42eb9feb"
+    },
+    {
+      "path": "States/New Mexico/analysis.kmz",
+      "bytes": 10084,
+      "sha256": "5ecac6258aa347e29c6bc08781e5a47960b1543349b365883c304e6a5953e90b"
+    },
+    {
+      "path": "States/Oklahoma/analysis.kmz",
+      "bytes": 4253,
+      "sha256": "5444ca12da50d1fc9658c1312d80896203cf74b7b9f85cdb69c8f9d46d406e75"
+    },
+    {
+      "path": "States/Texas/analysis.kmz",
+      "bytes": 13516,
+      "sha256": "12680fa189858b6c366264938e313b9d94a0589248a972c9164a611a8cd7f2f0"
+    }
+  ],
+  "worksheets": [
+    {
+      "name": "State Summary",
+      "rows": 15,
+      "columns": 8,
+      "headers": [
+        "State",
+        "Code",
+        "Interior mileage (mi)",
+        "Shared allocation (mi)",
+        "Original attributed mileage (mi)",
+        "Interior mileage removed (mi)",
+        "Adjusted attributed mileage (mi)",
+        "Status"
+      ],
+      "longest_text": 146
+    },
+    {
+      "name": "Pipeline Length Analysis",
+      "rows": 21,
+      "columns": 4,
+      "headers": [
+        "Placemark ID",
+        "Polyline Name (if available)",
+        "Pipeline Lengths (US Survey)",
+        "TOTAL MILEAGE"
+      ],
+      "longest_text": 28
+    },
+    {
+      "name": "Pipeline Overlap Analysis",
+      "rows": 11,
+      "columns": 14,
+      "headers": [
+        "Pipeline 1",
+        "Pipeline 2",
+        "Bundled Length (mi)",
+        "TOTAL MILEAGE REMOVED",
+        "Bundled Length (m)",
+        "Average Separation",
+        "Segment Count",
+        "Center (Long)",
+        "Center (Lat)",
+        "bbox",
+        "oriented_polygon",
+        "oriented_width_m",
+        "corridor_polygon",
+        "Corridor Map"
+      ],
+      "longest_text": 8170
+    },
+    {
+      "name": "State Pipeline Lengths",
+      "rows": 34,
+      "columns": 7,
+      "headers": [
+        "State",
+        "Source ID",
+        "Placemark ID",
+        "Pipeline name",
+        "Interior mileage (mi)",
+        "Shared allocation (mi)",
+        "Original attributed mileage (mi)"
+      ],
+      "longest_text": 32
+    },
+    {
+      "name": "State Overlap Analysis",
+      "rows": 12,
+      "columns": 10,
+      "headers": [
+        "State",
+        "Source 1 ID",
+        "Pipeline 1",
+        "Source 2 ID",
+        "Pipeline 2",
+        "Bundled length (mi)",
+        "Bundled length (m)",
+        "Average separation (m)",
+        "Segment count",
+        "Corridor Map"
+      ],
+      "longest_text": 28
+    },
+    {
+      "name": "Analysis Details",
+      "rows": 44,
+      "columns": 2,
+      "headers": [
+        "Detail",
+        "Value"
+      ],
+      "longest_text": 16719
+    },
+    {
+      "name": "Diagnostics",
+      "rows": 5,
+      "columns": 4,
+      "headers": [
+        "Level",
+        "Code",
+        "Message",
+        "Context"
+      ],
+      "longest_text": 57
+    }
+  ]
+}

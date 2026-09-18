@@ -113,8 +113,11 @@ def _state_rows(fragments, sources, code, survey_mile):
     return rows
 
 
-def build_state_breakdown(analyzer, pipelines, combined, *, context=None, boundaries=None):
+def build_state_breakdown(analyzer, pipelines, combined, *, context=None, boundaries=None,
+                          corridor_options=None, corridor_budget=None):
     """Build all state scopes, retaining combined results on optional failures."""
+    from pipeline_calculator.core.corridor_buffer import CorridorGeometryBudget
+    corridor_budget = corridor_budget or CorridorGeometryBudget()
     total = combined['total_meters']
     geography = {
         'schema_version': 1, 'status': 'unavailable', 'analysis_complete': False,
@@ -142,14 +145,22 @@ def build_state_breakdown(analyzer, pipelines, combined, *, context=None, bounda
         codes = sorted({code for f in fragments if f['kind'] in ('state', 'shared')
                         for code in f['state_codes']}, key=lambda c: (names[c], c))
         input_diagnostics = [d for d in combined.get('diagnostics', [])
-                             if d.get('code') != 'overlap_analysis_failed']
+                             if d.get('code') != 'overlap_analysis_failed'
+                             and d.get('code') not in {
+                                 'corridor_geometry_fallback', 'corridor_visualization_omitted',
+                                 'corridor_buffer_limit', 'corridor_projection_unavailable',
+                                 'corridor_geometry_invalid', 'corridor_coverage_failed', 'state_corridor_omitted',
+                                 'state_corridor_unavailable'}]
         # Do not infer single-state identity merely from the bounding box.
         single_state = len(codes) == 1 and all(
             f['kind'] == 'state' and f['state_codes'] == codes for f in fragments)
         for index, code in enumerate(codes):
-            state_context = _scope(context, .66 + .32*index/len(codes),
-                                   .66 + .32*(index+1)/len(codes),
-                                   f'Analyzing {names[code]} ({index+1} of {len(codes)})')
+            start = .66 + .32*index/len(codes)
+            end = .66 + .32*(index+1)/len(codes)
+            clip_start = start + (end-start)*.94
+            label = f'Analyzing {names[code]} ({index+1} of {len(codes)})'
+            state_context = _scope(context, start, clip_start, label)
+            clip_context = _scope(context, clip_start, end, label)
             if state_context is not None:
                 state_context.check()
             inputs = _state_inputs(fragments, sources, code)
@@ -159,7 +170,8 @@ def build_state_breakdown(analyzer, pipelines, combined, *, context=None, bounda
             try:
                 state = (deepcopy(combined) if single_state else analyzer.analyze_features(
                     inputs, diagnostics=input_diagnostics, parsed_kml_files=combined.get('parsed_kml_files'),
-                    context=state_context))
+                    context=state_context, corridor_options=corridor_options,
+                    corridor_budget=corridor_budget, corridor_scope=code))
                 if abs(state['total_meters']-interior) > max(.001, interior*1e-10):
                     raise ValueError('Clipped geometry length does not agree with its source intervals')
             except AnalysisCancelled:
@@ -185,16 +197,19 @@ def build_state_breakdown(analyzer, pipelines, combined, *, context=None, bounda
                                effective_total_meters=adjusted, effective_total_miles=adjusted/analyzer.survey_mile,
                                computation_method='state_interior_qualified_segment_coverage_v1')
                 clipped_sections = []
-                for section_index, section in enumerate(overlap.get('bundled_sections', [])):
-                    if state_context is not None:
-                        state_context.checkpoint()
+                sections = overlap.get('bundled_sections', [])
+                for section_index, section in enumerate(sections):
+                    if clip_context is not None:
+                        clip_context.report('Clipping overlap maps', section_index, len(sections))
                     try:
                         clipped = clip_state_corridor(section, code, boundaries, analyzer.geod,
-                                                      context=state_context)
+                                                      context=clip_context, budget=corridor_budget,
+                                                      replace_retained=not single_state)
                     except AnalysisCancelled:
                         raise
                     except Exception as exc:
-                        clipped = dict(section, clipped_polygons=[], diagnostics=[_diagnostic(
+                        clipped = dict(section, clipped_polygons=[], visualization_polygons=[],
+                                       visualization_status='omitted', diagnostics=[_diagnostic(
                             'state_corridor_unavailable', 'A state corridor visualization was omitted.',
                             level='warning', state=code, section=section_index, error=str(exc))])
                     clipped['state_code'], clipped['state_name'] = code, names[code]
@@ -211,9 +226,11 @@ def build_state_breakdown(analyzer, pipelines, combined, *, context=None, bounda
             )
             for pipeline in inputs:
                 pipeline.pop('segments', None)
+            from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+            state = prepare_scope_visualizations(state, state_code=code, context=clip_context)
             geography['states'].append(state)
-            if state_context is not None:
-                state_context.finish()
+            if clip_context is not None:
+                clip_context.finish()
         geography['reconciliation'] = _reconcile(
             fragments, total, math.fsum(s['total_meters'] for s in geography['states']))
         if partition.get('reconciliation', {}).get('passed') is not True:

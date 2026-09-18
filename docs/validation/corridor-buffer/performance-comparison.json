@@ -1,0 +1,75 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "id": "ordinary_corridors",
+      "baseline_median_seconds": 0.17969920008908957,
+      "candidate_median_seconds": 0.3472988000139594,
+      "time_ceiling_seconds": 1.1796992000890896,
+      "baseline_peak_memory_bytes": 89669632,
+      "candidate_peak_memory_bytes": 91238400,
+      "memory_ceiling_bytes": 112087040.0,
+      "numeric_equal": true,
+      "time_passed": true,
+      "memory_passed": true,
+      "three_runs_each": true,
+      "numeric_stable": true
+    },
+    {
+      "id": "state_corridors",
+      "baseline_median_seconds": 1.263421699986793,
+      "candidate_median_seconds": 1.547443800023757,
+      "time_ceiling_seconds": 2.263421699986793,
+      "baseline_peak_memory_bytes": 167280640,
+      "candidate_peak_memory_bytes": 162095104,
+      "memory_ceiling_bytes": 209100800.0,
+      "numeric_equal": true,
+      "time_passed": true,
+      "memory_passed": true,
+      "three_runs_each": true,
+      "numeric_stable": true
+    },
+    {
+      "id": "state_disconnected",
+      "baseline_median_seconds": 1.467085300013423,
+      "candidate_median_seconds": 1.8272638999624178,
+      "time_ceiling_seconds": 2.467085300013423,
+      "baseline_peak_memory_bytes": 169504768,
+      "candidate_peak_memory_bytes": 162693120,
+      "memory_ceiling_bytes": 211880960.0,
+      "numeric_equal": true,
+      "time_passed": true,
+      "memory_passed": true,
+      "three_runs_each": true,
+      "numeric_stable": true
+    },
+    {
+      "id": "state_stress",
+      "baseline_median_seconds": 3.965296999900602,
+      "candidate_median_seconds": 4.1881999999750406,
+      "time_ceiling_seconds": 4.965296999900602,
+      "baseline_peak_memory_bytes": 177758208,
+      "candidate_peak_memory_bytes": 175448064,
+      "memory_ceiling_bytes": 222197760.0,
+      "numeric_equal": true,
+      "time_passed": true,
+      "memory_passed": true,
+      "three_runs_each": true,
+      "numeric_stable": true
+    },
+    {
+      "id": "state_centerlines",
+      "baseline_median_seconds": 19.476748899905942,
+      "candidate_median_seconds": 18.643549200030975,
+      "time_ceiling_seconds": 24.345936124882428,
+      "baseline_peak_memory_bytes": 381140992,
+      "candidate_peak_memory_bytes": 383356928,
+      "memory_ceiling_bytes": 476426240.0,
+      "numeric_equal": true,
+      "time_passed": true,
+      "memory_passed": true,
+      "three_runs_each": true,
+      "numeric_stable": true
+    }
+  ]
+}

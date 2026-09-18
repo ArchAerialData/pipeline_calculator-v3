@@ -18,6 +18,9 @@ def passed_report(implementation):
                       "reconciliation_passed": True, "package_map_roundtrips": True},
         "repair": {key: True for key in ('approval_required', 'source_unchanged',
                    'geometry_verified', 'saved_copy_roundtrip', 'provenance_exported')},
+        "corridors": {'policy': 'qualified_path_buffer_v1', **{key: True for key in (
+            'curved_geometry', 'holes_preserved', 'multipart_preserved', 'polygon_only_preview',
+            'state_containment', 'numeric_parity', 'map_roundtrips')}},
     }
 
 
@@ -73,7 +76,8 @@ def test_offline_frozen_gate_runs_both_implementations_and_saves_reports(tmp_pat
 
 
 @pytest.mark.parametrize("defect", ["source_only", "wrong_implementation", "bad_reconciliation", "bad_roundtrip",
-                                  "wrong_jurisdictions", "wrong_states", "wrong_version", "failed_status", "missing_repair"])
+                                  "wrong_jurisdictions", "wrong_states", "wrong_version", "failed_status", "missing_repair",
+                                  'missing_corridors', 'wrong_corridor_policy', 'malformed_corridors'])
 def test_report_validation_rejects_incomplete_evidence(defect):
     report = passed_report("new")
     if defect == "source_only":
@@ -92,10 +96,25 @@ def test_report_validation_rejects_incomplete_evidence(defect):
         report["version"] = "4.15"
     elif defect == 'missing_repair':
         del report['repair']
+    elif defect == 'missing_corridors':
+        del report['corridors']
+    elif defect == 'malformed_corridors':
+        report['corridors'] = True
+    elif defect == 'wrong_corridor_policy':
+        report['corridors']['policy'] = 'legacy_rectangle'
     else:
         report["status"] = "failed"
     with pytest.raises(ValueError, match="Packaged smoke failed"):
         smoke.validate_report(report, "new", "4.16-test")
+
+
+@pytest.mark.parametrize('flag', ['curved_geometry', 'holes_preserved', 'multipart_preserved',
+                                 'polygon_only_preview', 'state_containment', 'numeric_parity', 'map_roundtrips'])
+def test_each_new_corridor_smoke_flag_is_required(flag):
+    report = passed_report('new')
+    del report['corridors'][flag]
+    with pytest.raises(ValueError, match=flag):
+        smoke.validate_report(report, 'new', '4.16-test')
 
 
 @pytest.mark.parametrize("failure", ["missing_report", "malformed_report", "nonzero_exit", "timeout"])

@@ -8,6 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile
 
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
 from pipeline_calculator.core.corridor_geometry import GEOD, prepare_corridor, prepare_scope_visualizations
+from pipeline_calculator.export.corridor_metadata import corridor_detail_text, is_versioned_corridor
 
 KML_NS = "http://www.opengis.net/kml/2.2"
 ET.register_namespace("", KML_NS)
@@ -86,8 +87,10 @@ def append_corridor(parent, section, index, *, require_clipped=False):
         return
     placemark = element(parent, "Placemark")
     element(placemark, "name", f"Corridor {index}: {section.get('pipeline_1', '')} + {section.get('pipeline_2', '')}")
+    description = (corridor_detail_text({'overlap_analysis': {'bundled_sections': [prepared]}})
+                   if is_versioned_corridor(prepared) else prepared.get('visualization_approximation', ''))
     element(placemark, "description", "Approximate overlap area; polygon geometry is not included in line mileage. "
-            + prepared.get('visualization_approximation', ''))
+            + description)
     element(placemark, "styleUrl", "#corridor")
     source_ids = {key: section[key] for key in ("pipeline_1_id", "pipeline_2_id") if key in section}
     if source_ids:

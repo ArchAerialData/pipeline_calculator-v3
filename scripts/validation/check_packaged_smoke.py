@@ -69,6 +69,13 @@ def validate_report(report, implementation, expected_version=None):
     checks.update({f'repair {key}': repair.get(key) is True for key in (
         'approval_required', 'source_unchanged', 'geometry_verified',
         'saved_copy_roundtrip', 'provenance_exported')})
+    corridors = report.get('corridors')
+    if not isinstance(corridors, dict):
+        corridors = {}
+    checks['corridor policy'] = corridors.get('policy') == 'qualified_path_buffer_v1'
+    checks.update({f'corridor {key}': corridors.get(key) is True for key in (
+        'curved_geometry', 'holes_preserved', 'multipart_preserved', 'polygon_only_preview',
+        'state_containment', 'numeric_parity', 'map_roundtrips')})
     if expected_version is not None:
         checks["artifact version"] = report.get("version") == expected_version
     failed = [name for name, passed in checks.items() if not passed]

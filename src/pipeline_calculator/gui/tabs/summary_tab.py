@@ -8,6 +8,7 @@ from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.scrolling import AutoScrollFrame
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
 from pipeline_calculator.gui.tables import create_table
+from pipeline_calculator.export.corridor_metadata import corridor_detail_text, has_corridor_metadata
 
 BACKGROUND = '#20252C'
 CARD = '#272D35'
@@ -284,6 +285,9 @@ class SummaryView(AutoScrollFrame):
                                  ('Angular tolerance', 'angular_tolerance', '°')]:
             value = params.get(key)
             text_label(self.details, f'{title}: {value} {unit}' if value is not None else f'{title}: Not recorded', pady=2)
+        if has_corridor_metadata(self.results):
+            text_label(self.details, 'Corridor maps', size=16, color=TEXT, bold=True, pady=(20, 8))
+            text_label(self.details, corridor_detail_text(self.results), pady=2)
         text_label(self.details, 'Run details', size=16, color=TEXT, bold=True, pady=(20, 8))
         counts = {level: sum(d.get('level') == level for d in diagnostics) for level in ('error', 'warning', 'info')}
         text_label(self.details, f'Diagnostics: {counts["error"]} errors · {counts["warning"]} warnings · {counts["info"]} informational', pady=2)

@@ -3,7 +3,8 @@ from __future__ import annotations
 from xml.sax.saxutils import escape as _xml_escape
 from xml.etree import ElementTree as ET
 from pipeline_calculator.export.geometry_validation import prepare_geometry
-from pipeline_calculator.core.corridor_geometry import normalize_polygons, prepare_corridor
+from pipeline_calculator.core.corridor_geometry import has_canonical_geometry, normalize_polygons, prepare_corridor
+from pipeline_calculator.export.corridor_metadata import validate_corridor_results
 
 
 def build_overlap_corridor_kml(section, index):
@@ -12,13 +13,18 @@ def build_overlap_corridor_kml(section, index):
     Separated from GUI side-effects (tempfile + open) so it can be unit-tested
     and reused by both the legacy monolith and the refactored package modules.
     """
-    if "clipped_polygons" in section:
+    if has_canonical_geometry(section):
         from pipeline_calculator.export.geography_kmz import append_corridor, document
-        prepared = prepare_corridor(section, require_clipped=True)
+        validate_corridor_results({'overlap_analysis': {'bundled_sections': [section]}})
+        state_scope = 'clipped_polygons' in section or bool(section.get('state_code'))
+        prepared = prepare_corridor(section, require_clipped=state_scope)
         if prepared['visualization_status'] == 'omitted':
-            raise ValueError("No usable clipped corridor geometry is available")
-        root, doc = document("State overlap corridor", "Approximate overlap geometry clipped to the selected state.")
-        append_corridor(doc, prepared, index, require_clipped=True)
+            shape_scope = 'clipped corridor' if state_scope else 'corridor map'
+            raise ValueError(f"No usable {shape_scope} geometry is available. See Diagnostics for details.")
+        root, doc = document("State overlap corridor" if state_scope else "Overlap corridor",
+                             "Approximate overlap geometry clipped to the selected state." if state_scope else
+                             "Approximate overlap area. Polygon geometry does not affect pipeline mileage.")
+        append_corridor(doc, prepared, index, require_clipped=state_scope)
         return ET.tostring(root, encoding="unicode", xml_declaration=True)
 
     coords_list, center, geometry_kind, approximation = prepare_geometry(section)

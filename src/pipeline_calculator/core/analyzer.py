@@ -139,7 +139,8 @@ class PipelineAnalyzer:
             context=self._context,
         )
 
-    def calculate_overlap_results(self, pipelines, parallel_groups, progress_callback=None):
+    def calculate_overlap_results(self, pipelines, parallel_groups, progress_callback=None, *,
+                                  corridor_options=None, corridor_budget=None, corridor_scope='Combined'):
         return calculate_overlap_results(
             pipelines,
             parallel_groups,
@@ -151,6 +152,9 @@ class PipelineAnalyzer:
             angular_tolerance=self.angular_tolerance,
             progress_callback=progress_callback,
             context=self._context,
+            corridor_options=corridor_options,
+            corridor_budget=corridor_budget,
+            corridor_scope=corridor_scope,
         )
 
     def compute_effective_length_by_clusters(self, pipelines, per_pipeline_total_meters, progress_callback=None):
@@ -202,6 +206,8 @@ class PipelineAnalyzer:
         options = options or AnalysisOptions()
         if not isinstance(options, AnalysisOptions):
             raise TypeError('options must be AnalysisOptions')
+        from pipeline_calculator.core.corridor_buffer import CorridorGeometryBudget
+        corridor_budget = CorridorGeometryBudget()
         callback_context = None
         if options.state_breakdown and progress_callback is not None:
             callback_context = CallbackExecutionContext(
@@ -214,7 +220,8 @@ class PipelineAnalyzer:
             combined = self.analyze_features(
                 parsed.pipelines, parsed.placemarks, diagnostics=parsed.diagnostics,
                 parsed_kml_files=parsed.parsed_kml_files, progress_callback=progress_callback,
-                context=combined_context)
+                context=combined_context, corridor_options=options.corridor_display,
+                corridor_budget=corridor_budget)
             if options.state_breakdown:
                 # These samples belong to the completed combined pass. State
                 # runs produce their own; retaining both doubles peak memory.
@@ -222,11 +229,10 @@ class PipelineAnalyzer:
                     pipeline.pop('segments', None)
                 from pipeline_calculator.core.state_analysis import build_state_breakdown
                 combined['geography'] = build_state_breakdown(
-                    self, parsed.pipelines, combined, context=context)
-                from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
-                # Prepare Combined visuals after state analysis so their optional
-                # display diagnostics are not inherited as state input errors.
-                combined = prepare_scope_visualizations(combined, context=context)
+                    self, parsed.pipelines, combined, context=context,
+                    corridor_options=options.corridor_display, corridor_budget=corridor_budget)
+            from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+            combined = prepare_scope_visualizations(combined, context=context)
             if callback_context is not None:
                 # Optional geography failures still yield a finished, explicitly
                 # incomplete result. Cancellation raises before completion.
@@ -238,7 +244,8 @@ class PipelineAnalyzer:
             raise ValueError(f'Analysis failed: {exc}') from exc
 
     def analyze_features(self, pipelines, placemarks=None, *, diagnostics=None,
-                         parsed_kml_files=None, progress_callback=None, context=None):
+                         parsed_kml_files=None, progress_callback=None, context=None,
+                         corridor_options=None, corridor_budget=None, corridor_scope='Combined'):
         """Analyze normalized features without XML round trips or identity changes."""
         previous_context = self._context
         self._context = context
@@ -253,7 +260,10 @@ class PipelineAnalyzer:
                     if self._estimated_segments > MAX_ANALYSIS_SEGMENTS:
                         raise ValueError('Analysis segment limit exceeded; split the dataset or increase segment length')
                     parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
-                    overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
+                    overlap_results = self.calculate_overlap_results(
+                        pipelines, parallel_groups, progress_callback,
+                        corridor_options=corridor_options, corridor_budget=corridor_budget,
+                        corridor_scope=corridor_scope)
                     eff_total_m = total_meters - overlap_results["savings_meters"]
 
                     eff_total_m = max(0.0, min(float(total_meters), float(eff_total_m)))
@@ -280,7 +290,7 @@ class PipelineAnalyzer:
 
             if context is not None:
                 context.report("Finalizing results")
-            return {
+            result = {
                 "pipelines": pipeline_data,
                 "placemarks": list(placemarks or []),
                 "total_meters": total_meters,
@@ -296,6 +306,10 @@ class PipelineAnalyzer:
                     "angular_tolerance": self.angular_tolerance,
                 },
             }
+            if corridor_scope == 'Combined':
+                from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+                result = prepare_scope_visualizations(result, context=context)
+            return result
         except AnalysisCancelled:
             raise
         except Exception as e:

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import os
 import logging
-from tkinter import StringVar, ttk
+from tkinter import StringVar
 
 import customtkinter as ctk
 from pipeline_calculator.gui.layout import ActionBar, ResultPages, WrappedLabel
-from pipeline_calculator.gui.styles import scope_style
+from pipeline_calculator.gui.results_header import ResultsContextHeader
 
 from pipeline_calculator.gui.tabs.overlap_tab import create as create_overlap_tab
 from pipeline_calculator.gui.tabs.pipelines_tab import create as create_pipelines_tab
@@ -48,11 +48,6 @@ def show(
     file_label.insert(0, file_name)
     file_label.configure(state="readonly")
     file_label.pack(side="left", fill="x", expand=True, padx=(0, 8), pady=4)
-    if repair_workflow is not None:
-        repair_workflow.add_notice(root, padx=18, pady=(0, 4))
-    if state_preference is not None:
-        state_preference.add_notice(root, padx=18, pady=(0, 4))
-
     geography = current_results.get('geography')
     states = sorted((geography or {}).get('states') or [], key=lambda row: row['state_name'])
     scopes = {'Combined': current_results, **{row['state_name']: row for row in states}}
@@ -128,32 +123,9 @@ def show(
         current_scope = name
         selection.set(name)
 
-    if geography is not None:
-        scope_bar = ctk.CTkFrame(root, fg_color='transparent')
-        scope_bar.pack(fill='x', padx=18, pady=(4, 0))
-        scope_bar.grid_columnconfigure(1, weight=1)
-        ctk.CTkLabel(scope_bar, text='View:', text_color='#A9D9FF',
-                     font=('Arial', 14, 'bold')).grid(row=0, column=0, padx=(0, 8), sticky='w')
-        selector = ttk.Combobox(scope_bar, textvariable=selection, values=list(scopes),
-                                state='readonly', width=25, takefocus=True)
-        last_scale = [None]
-        def scale_selector(event=None):
-            factor = ctk.ScalingTracker.get_widget_scaling(scope_bar)
-            if factor != last_scale[0]:
-                last_scale[0] = factor
-                font = ('Arial', -round(14 * factor))
-                selector.configure(font=font, style=scope_style(selector, factor))
-                # Style the actual popup, without changing other windows' fonts.
-                popup = selector.tk.call('ttk::combobox::PopdownWindow', selector)
-                selector.tk.call(f'{popup}.f.l', 'configure', '-font', font,
-                                 '-background', '#242424', '-foreground', '#F1F4F8',
-                                 '-selectbackground', '#1F538D', '-selectforeground', '#FFFFFF')
-        scope_bar.bind('<Configure>', scale_selector, add='+')
-        scale_selector()
-        selector.grid(row=0, column=1, sticky='w', padx=(0, 8), pady=4)
-        WrappedLabel(scope_bar, text='Use the dropdown to view individual state statistics.',
-                     text_color='#B8C8D8', font=('Arial', 13), anchor='w', justify='left',
-                     wrap_padding=8).grid(row=1, column=0, columnspan=2, sticky='ew', pady=(0, 4))
-        selector.bind('<<ComboboxSelected>>', lambda event: select_scope(selection.get()))
+    context_header = ResultsContextHeader(root, after=header_frame,
+        scopes=scopes if geography is not None else None, selection=selection, on_select=select_scope,
+        repair_workflow=repair_workflow, state_preference=state_preference)
+    selector = context_header.selector
     select_scope('Combined')
 

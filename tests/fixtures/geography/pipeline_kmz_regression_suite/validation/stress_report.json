@@ -8,7 +8,7 @@
   ],
   "application_complete": true,
   "application_original_meters": 135895.15892252495,
-  "application_runtime_seconds": 7.179869499988854,
+  "application_runtime_seconds": 8.112618500017561,
   "application_savings_meters": 74640.0,
   "checks": [
     {
@@ -46188,11 +46188,15 @@
   "contract_provenance": {
     "baseline_contract_unchanged": false,
     "changed_contract_files": [
+      "src/pipeline_calculator/core/analyzer.py",
       "src/pipeline_calculator/core/geography/boundaries.py",
-      "src/pipeline_calculator/core/geography/partition.py"
+      "src/pipeline_calculator/core/geography/partition.py",
+      "src/pipeline_calculator/core/overlap.py",
+      "src/pipeline_calculator/core/state_analysis.py",
+      "src/pipeline_calculator/parsers/kml_kmz.py"
     ],
     "contract_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
-    "working_commit": "26d585c06f1faa39f730a3fba2ccf81e4c9092eb"
+    "working_commit": "9aa8698da15097eea60ee5fe5890a79042252186"
   },
   "diagnostics": [
     {
@@ -46236,18 +46240,18 @@
   "logical_cpu_count": 24,
   "measurement_note": "Application time includes sys.setprofile return-counter instrumentation and map preparation; excludes independent reference validation and post-run sample checks. Memory is process-wide.",
   "memory_bytes": {
-    "nonpaged_pool": 55600,
-    "num_page_faults": 1069900,
+    "nonpaged_pool": 54104,
+    "num_page_faults": 919403,
     "paged_pool": 398600,
-    "pagefile": 1699311616,
-    "peak_nonpaged_pool": 56280,
+    "pagefile": 1687207936,
+    "peak_nonpaged_pool": 54784,
     "peak_paged_pool": 399880,
-    "peak_pagefile": 1708744704,
-    "peak_wset": 187777024,
-    "private": 1699311616,
-    "rss": 178155520,
-    "vms": 1699311616,
-    "wset": 178155520
+    "peak_pagefile": 1696522240,
+    "peak_wset": 175546368,
+    "private": 1687207936,
+    "rss": 166039552,
+    "vms": 1687207936,
+    "wset": 166039552
   },
   "mode": "validate-existing",
   "passed": true,
@@ -46260,7 +46264,7 @@
     "positive_savings_in_every_group": true,
     "state_inputs_equal_complete_paths": true
   },
-  "reference_runtime_seconds": 5.946881800075062,
+  "reference_runtime_seconds": 6.18929789995309,
   "reference_verification": {
     "deterministic_archive_checked": true,
     "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
@@ -46270,7 +46274,7 @@
     "source_count": 96,
     "status": "reference-verified"
   },
-  "sample_and_partition_verification_seconds": 1.5030330999288708,
+  "sample_and_partition_verification_seconds": 1.5301685000304133,
   "sample_contract_checked": true,
   "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
   "source_count": 96,

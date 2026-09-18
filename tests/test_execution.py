@@ -24,7 +24,7 @@ def fixture(tmp_path):
 
 @pytest.mark.parametrize('stage', ['Reading documents', 'Calculating source lengths',
     'Segmenting paths', 'Segmenting path', 'Building spatial index', 'Searching neighbors',
-    'Qualifying sections', 'Building corridors', 'Building group graph',
+    'Qualifying sections', 'Recording bundled sections', 'Building corridor maps', 'Building group graph',
     'Sorting group candidates', 'Calculating savings', 'Finalizing results'])
 def test_cancellation_bypasses_all_error_boundaries(tmp_path, stage):
     class CancelAtStage(ExecutionContext):

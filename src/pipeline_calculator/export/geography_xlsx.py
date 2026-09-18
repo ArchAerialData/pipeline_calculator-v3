@@ -5,6 +5,7 @@ import json
 import math
 
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
+from pipeline_calculator.export.corridor_metadata import corridor_map_status, has_corridor_metadata
 
 
 def _miles(value):
@@ -24,6 +25,7 @@ def add_geography_sheets(workbook, results):
 
     geography = results["geography"]
     states = sorted(geography.get("states", []), key=lambda s: s["state_name"])
+    include_map_status = has_corridor_metadata(results)
 
     def table(name, headers, rows, *, numeric=(), widths=None):
         sheet = workbook.create_sheet(name)
@@ -127,14 +129,23 @@ def add_geography_sheets(workbook, results):
                 section.get("bundled_length_meters", 0), section.get("average_separation", 0),
                 section.get("segment_count", 0),
             ])
+            if include_map_status:
+                overlap_rows[-1].append(corridor_map_status(section))
     table("State Pipeline Lengths", [
         "State", "Source ID", "Placemark ID", "Pipeline name", "Interior mileage (mi)",
         "Shared allocation (mi)", "Original attributed mileage (mi)",
     ], pipeline_rows, numeric=(5, 6, 7))
-    table("State Overlap Analysis", [
+    overlap_headers = [
         "State", "Source 1 ID", "Pipeline 1", "Source 2 ID", "Pipeline 2", "Bundled length (mi)",
         "Bundled length (m)", "Average separation (m)", "Segment count",
-    ], overlap_rows, numeric=(6,))
+    ]
+    if include_map_status:
+        overlap_headers.append('Corridor Map')
+    state_overlap = table("State Overlap Analysis", overlap_headers, overlap_rows, numeric=(6,))
+    if include_map_status:
+        state_overlap.column_dimensions['J'].width = 36
+        for row in state_overlap.iter_rows(min_row=2):
+            row[-1].alignment = Alignment(vertical='center', wrap_text=True)
 
     shared = [fragment for fragment in geography.get("fragments", [])
               if fragment.get("kind") == "shared"]

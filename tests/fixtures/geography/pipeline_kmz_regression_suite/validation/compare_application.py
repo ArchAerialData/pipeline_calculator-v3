@@ -21,6 +21,8 @@ SUITE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(SUITE.parent))
 from pipeline_kmz_regression_suite.suite import REPO, BOUNDARIES, MILE, digest, dump, environment, select_fixtures, read_json
 sys.path.insert(0, str(REPO / 'src'))
+sys.path.insert(0, str(REPO))
+from scripts.validation.corridor_numeric import VISUAL_DIAGNOSTICS
 from pipeline_calculator.core.analyzer import PipelineAnalyzer
 from pipeline_calculator.core.bundling import qualifying_sections
 from pipeline_calculator.core.options import AnalysisOptions
@@ -84,9 +86,9 @@ def compare(path, expected, reference, boundaries, export_check=True):
     check('Combined analysis complete', result['analysis_complete'], True)
     check('Geography status', geo.get('status'), 'complete')
     check('crossing events', geo.get('crossing_count'), expected['geometry']['crossing_count'])
-    check('Combined diagnostics', dict(Counter(d['code'] for d in result['diagnostics'])),
+    check('Combined diagnostics', dict(Counter(d['code'] for d in result['diagnostics'] if d['code'] not in VISUAL_DIAGNOSTICS)),
           expected['expected_application_status']['combined_diagnostic_counts'])
-    check('Geography diagnostics', dict(Counter(d['code'] for d in geo.get('diagnostics', []))),
+    check('Geography diagnostics', dict(Counter(d['code'] for d in geo.get('diagnostics', []) if d['code'] not in VISUAL_DIAGNOSTICS)),
           expected['expected_application_status']['geography_diagnostic_counts'])
     check('source identity count', len(result['pipelines']), expected['archive']['source_count'])
     check('represented states', sorted(s['state_code'] for s in geo.get('states', [])), sorted(expected['geometry']['states']))
@@ -139,7 +141,7 @@ def compare(path, expected, reference, boundaries, export_check=True):
         endpoint_bound = math.fsum(2 * f.get('cut_error_bound_meters', .01) for f in intervals)
         tolerance = max(.001, endpoint_bound)
         check(f'{code}: complete', state['analysis_complete'], True)
-        check(f'{code}: diagnostics', dict(Counter(d['code'] for d in state.get('diagnostics', []))),
+        check(f'{code}: diagnostics', dict(Counter(d['code'] for d in state.get('diagnostics', []) if d['code'] not in VISUAL_DIAGNOSTICS)),
               expected['expected_application_status']['combined_diagnostic_counts'])
         check(f'{code}: interior', state['interior_meters'], accounting['interior_meters'], tolerance)
         check(f'{code}: shared allocation', state['shared_allocation_meters'], accounting['shared_allocation_meters'], tolerance)
@@ -191,7 +193,15 @@ def compare(path, expected, reference, boundaries, export_check=True):
                 write_geography_kmz(result, destination, code)
                 sources, polygons, ids, meters, corridors = exported_geometry(destination, include_corridors=True)
                 scoped_sources = list(originals.values()) if code is None else expected['geometry']['state_inputs'][code]
-                compare_export_corridors(check, label, corridors, expected['analyses'][label], scoped_sources, id_to_key)
+                scope = result if code is None else next(s for s in geo['states'] if s['state_code'] == code)
+                sections = (scope.get('overlap_analysis') or {}).get('bundled_sections', [])
+                check(f'{label}: every expected corridor map is ready',
+                      all(s.get('visualization_status') == 'ready' for s in sections), True)
+                check(f'{label}: fixed-radius map policy',
+                      all(s.get('visualization_metadata', {}).get('policy') == 'qualified_path_buffer_v1' and
+                          s.get('visualization_metadata', {}).get('padding_m') == 5.0 for s in sections), True)
+                compare_export_corridors(check, label, corridors, expected['analyses'][label], scoped_sources, id_to_key,
+                                         padding_m=5.0, clip_boundary=boundaries[code] if code else None)
                 endpoint_bound = math.fsum(2*f['cut_error_bound_meters'] for f in expected['geometry']['intervals']
                                           if code is None or (f['kind'] == 'interior' and f['state_codes'] == [code]))
                 check(f'{label}: exported line mileage', meters, target, max(.001, endpoint_bound))
@@ -212,6 +222,7 @@ def compare(path, expected, reference, boundaries, export_check=True):
                     check(f'{label}: polygons contained within canonical state and numeric boundary strip',
                           all(row['passed'] for row in polygon_checks), True)
                 exports.append({'scope': label, 'line_meters': meters, 'source_fragment_count': len(sources),
+                                'omitted_map_count': sum(s.get('visualization_status') == 'omitted' for s in sections),
                                 'polygon_count': len(polygons), 'polygon_containment': polygon_checks,
                                 'line_verification': 'Independent stable source/path interval spans and original geodesic membership'})
     process = psutil.Process()

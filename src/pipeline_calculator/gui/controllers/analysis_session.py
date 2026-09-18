@@ -160,7 +160,11 @@ class AnalysisSession:
         if columns != self.guidance_columns:
             self.guidance_columns = columns
             for index in range(2):
-                self.guidance.grid_columnconfigure(index, weight=int(index < columns), uniform='guidance')
+                # An empty column in a uniform group still reserves a share of
+                # the width. At narrow/high-DPI sizes that feeds label wrapping
+                # back into grid's natural widths and keep Tk recomputing layout.
+                self.guidance.grid_columnconfigure(index, weight=int(index < columns),
+                                                   uniform='guidance' if index < columns else '')
             for index, section in enumerate(self.guidance_cards):
                 section.grid(row=index // columns, column=index % columns, sticky='new',
                              padx=(0, 24) if columns == 2 and index == 0 else 0,

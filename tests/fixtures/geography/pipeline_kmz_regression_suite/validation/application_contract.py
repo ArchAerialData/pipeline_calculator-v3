@@ -308,7 +308,7 @@ def _distinct_section_assignment(candidates, section_count):
             all(assign(corridor, set()) for corridor in range(len(candidates))))
 
 
-def compare_export_corridors(check, label, corridors, expected, sources, id_to_key):
+def compare_export_corridors(check, label, corridors, expected, sources, id_to_key, *, padding_m=None, clip_boundary=None):
     """Each section needs its own bounded exported area covering its samples.
 
     A union across every section of a source pair is insufficient: a duplicated
@@ -330,23 +330,32 @@ def compare_export_corridors(check, label, corridors, expected, sources, id_to_k
     inputs = {source['key']: source for source in sources}
     lines = {}
     evidence = defaultdict(list)
+    source_runs = defaultdict(list)
     for section in sections:
         evidence[tuple(section['source_keys'])].append(
             _section_corridor_evidence(section, inputs, lines, expected.get('profile', {})))
+        if padding_m is not None:
+            from scripts.validation.corridor_audit import path_span
+            step = expected.get('profile', {}).get('segment_meters', 5.0)
+            paths = [path_span(inputs[key]['paths'][path], start*step, end*step)
+                     for key, path, ranges in zip(section['source_keys'], section['path_indices'], section['coverage_ranges'])
+                     for start, end in ranges]
+            source_runs[tuple(section['source_keys'])].append(paths)
     valid = all(polygons and all(not p.is_empty and p.is_valid and
                                 all(math.isfinite(value) for value in p.bounds) for p in polygons)
                 for maps in by_pair.values() for polygons in maps)
     check(f'{label}: exported corridor polygons valid', valid, True)
     missing = 0
-    bounded, matched = True, True
+    bounded, matched, radius_matched = True, True, True
     for pair in sorted(set(by_pair) | set(evidence)):
-        candidates = []
+        candidates, radius_candidates = [], []
         targets = evidence[pair]
         best_missing = [len(midpoints) for _, midpoints, _ in targets]
         for polygons in by_pair[pair]:
-            eligible, has_bound = [], False
+            eligible, radius_eligible, has_bound = [], [], False
             if not polygons or any(p.is_empty or not p.is_valid for p in polygons):
                 candidates.append(eligible)
+                radius_candidates.append(radius_eligible)
                 bounded = False
                 continue
             for index, (envelope, midpoints, anchor) in enumerate(targets):
@@ -362,10 +371,23 @@ def compare_export_corridors(check, label, corridors, expected, sources, id_to_k
                 best_missing[index] = min(best_missing[index], absent)
                 if contained and not absent:
                     eligible.append(index)
+                    if padding_m is not None:
+                        from scripts.validation.corridor_audit import inspect_document
+                        specs = [{'outer': list(p.exterior.coords), 'holes': [list(r.coords) for r in p.interiors]}
+                                 for p in polygons]
+                        verified, _, _ = inspect_document(specs, source_runs[pair][index],
+                                                         padding_m=padding_m, clip_geometry=clip_boundary)
+                        if verified['passed']:
+                            radius_eligible.append(index)
             bounded &= has_bound
             candidates.append(eligible)
+            radius_candidates.append(radius_eligible)
         missing += sum(best_missing)
         matched &= _distinct_section_assignment(candidates, len(targets))
+        if padding_m is not None:
+            radius_matched &= _distinct_section_assignment(radius_candidates, len(targets))
     check(f'{label}: exported corridors cover qualified path samples', missing, 0)
     check(f'{label}: exported corridors stay within independent section bounds', bounded, True)
     check(f'{label}: exported corridors match independent sections one-to-one', matched, True)
+    if padding_m is not None:
+        check(f'{label}: complete source runs and inner/outer fixed-radius bounds', radius_matched, True)

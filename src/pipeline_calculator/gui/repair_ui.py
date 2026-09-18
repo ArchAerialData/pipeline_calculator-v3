@@ -36,10 +36,31 @@ def _keyboard_button(button):
     tk.Misc.bind(button, '<FocusOut>', lambda event: button.configure(border_width=0), add='+')
 
 
+class RepairActionFooter(ctk.CTkFrame):
+    """Keep repair approval below the reversible choices at every window size."""
+
+    def __init__(self, parent, actions, primary_action):
+        super().__init__(parent, fg_color='transparent')
+        self.secondary = ActionBar(self, actions)
+        self.secondary.pack(fill='x')
+        for button in self.secondary.buttons:
+            button.configure(fg_color='#394553', hover_color='#4A5A6C')
+        label, command = primary_action
+        self.primary_button = ctk.CTkButton(self, text=label, command=command,
+            height=38, font=ctk.CTkFont(size=14, weight='bold'),
+            fg_color='#237A45', hover_color='#195C33', text_color='white')
+        self.primary_button.pack(fill='x', padx=5, pady=(8, 4))
+        # Preserve the approval-first action interface used by both entrypoints;
+        # keyboard traversal follows the actual visual order independently.
+        self.buttons = [self.primary_button, *self.secondary.buttons]
+        self.visual_buttons = [*self.secondary.buttons, self.primary_button]
+
+
 class RepairPanel:
     """One scrollable body and a permanently reachable responsive action footer."""
 
-    def __init__(self, root, *, title, message, filename='', details='', actions=(), on_cancel=None):
+    def __init__(self, root, *, title, message, filename='', details='', actions=(),
+                 primary_action=None, on_cancel=None):
         self.root = root
         self.closed = False
         self.on_cancel = on_cancel
@@ -48,7 +69,8 @@ class RepairPanel:
         self.previous_focus = root.focus_get()
         self.surface = ModalSurface(root)
         self.card = self.surface.card
-        self.footer = ActionBar(self.card, actions)
+        self.footer = (RepairActionFooter(self.card, actions, primary_action)
+                       if primary_action is not None else ActionBar(self.card, actions))
         self.footer.pack(side='bottom', fill='x', padx=14, pady=(8, 14))
         self.body = ModalBody(self.card)
         self.body.pack(fill='both', expand=True, padx=22, pady=(20, 4))
@@ -63,15 +85,18 @@ class RepairPanel:
         self.detail_text = _details(details) if details else ''
         self.detail_box = None
         self.detail_button = None
-        self.focus_controls = list(self.footer.buttons)
+        self.focus_controls = list(self.footer.visual_buttons if primary_action is not None
+                                   else self.footer.buttons)
+        self.initial_focus = self.focus_controls[0] if self.focus_controls else None
         if self.detail_text:
             self.detail_button = ctk.CTkButton(self.body, text='Show details', width=150,
                                               fg_color='#394553', command=self.toggle_details)
             self.detail_button.pack(anchor='w', pady=(0, 8))
             self.focus_controls.append(self.detail_button)
-        for index, button in enumerate(self.footer.buttons):
-            if index:
-                button.configure(fg_color='#394553', hover_color='#4A5A6C')
+        if primary_action is None:
+            for index, button in enumerate(self.footer.buttons):
+                if index:
+                    button.configure(fg_color='#394553', hover_color='#4A5A6C')
         for button in self.focus_controls:
             _keyboard_button(button)
         self.bindings.append(('<Escape>', root.bind('<Escape>', self._escape, add='+')))
@@ -82,8 +107,8 @@ class RepairPanel:
         self.surface.show((720, 340))
         self._queue_resize()
         self.surface.grab_set()
-        if self.focus_controls:
-            tk.Misc.focus_set(self.focus_controls[0])
+        if self.initial_focus is not None:
+            tk.Misc.focus_set(self.initial_focus)
 
     def _escape(self, event=None):
         if self.on_cancel is not None:
@@ -148,8 +173,8 @@ class RepairPanel:
     def restore(self):
         self.surface.show(self.surface._preferred_size)
         self.surface.grab_set()
-        if self.focus_controls:
-            tk.Misc.focus_set(self.focus_controls[0])
+        if self.initial_focus is not None:
+            tk.Misc.focus_set(self.initial_focus)
 
     def close(self):
         if self.closed:
@@ -269,8 +294,9 @@ class RepairWorkflow:
             filename=source.display_name,
             message=('We’ll verify that its geometry is unchanged before analyzing it.' if format_only else
                      'This file has a formatting error that may be safely repairable. We’ll verify that its geometry is unchanged before analyzing it.'),
-            details=report, actions=[('Repair & analyze', approve), ('Choose another file', self.choose_another),
-                                    ('Cancel', self.cancel_decision)], on_cancel=self.cancel_decision)
+            details=report, actions=[('Cancel', self.cancel_decision),
+                                    ('Choose another file', self.choose_another)],
+            primary_action=('Repair & analyze', approve), on_cancel=self.cancel_decision)
 
     def show_failure(self, error):
         category = getattr(error, 'category', '')

@@ -97,7 +97,22 @@ def validated_ring(points, *, max_points=MAX_RING_POINTS, topology_budget=TOPOLO
 
 def prepare_geometry(section, *, validator=None, context=None):
     """Compatibility tuple for ordinary previews, backed by the common selector."""
+    if has_canonical_geometry(section):
+        prepared = prepare_corridor(section, context=context)
+        polygons = prepared['visualization_polygons']
+        if prepared['visualization_status'] != 'ready' or len(polygons) != 1 or polygons[0]['holes']:
+            raise ValueError('Canonical corridor requires the multipart polygon serializer')
+        ring = polygons[0]['outer']
+        return ring, ring[0], prepared['visualization_kind'], prepared['visualization_approximation']
     return _select_geometry(section, validator=validator, context=context)[:4]
+
+
+def has_canonical_geometry(section):
+    """Even an empty or future representation forbids legacy reconstruction."""
+    return any(key in section for key in (
+        'visualization_schema_version', 'visualization_status',
+        'visualization_polygons', 'clipped_polygons',
+    ))
 
 
 def _select_geometry(section, *, validator=None, context=None):
@@ -258,6 +273,12 @@ def prepare_corridor(section, *, require_clipped=False, context=None):
     try:
         if context is not None:
             context.check()
+        if ('visualization_schema_version' in section
+                and (type(section['visualization_schema_version']) is not int
+                     or section['visualization_schema_version'] != 1)):
+            raise ValueError('Unsupported corridor visualization schema version')
+        if 'visualization_status' in section and section['visualization_status'] != 'ready':
+            raise ValueError('Corridor visualization is unavailable')
         key = ('clipped_polygons' if 'clipped_polygons' in section else
                'visualization_polygons' if 'visualization_polygons' in section else None)
         if require_clipped and key != 'clipped_polygons':
@@ -268,6 +289,8 @@ def prepare_corridor(section, *, require_clipped=False, context=None):
             reason = section.get('visualization_approximation',
                                  'Approximate visualization; not a surveyed boundary.')
         else:
+            if has_canonical_geometry(section):
+                raise ValueError('Canonical corridor lacks polygon geometry')
             _, _, kind, reason, polygons, errors = _select_geometry(section, context=context)
             if kind != 'sampled_curve' or errors:
                 diagnostics.append(_visual_diagnostic(
@@ -278,13 +301,21 @@ def prepare_corridor(section, *, require_clipped=False, context=None):
                       visualization_kind=kind, visualization_approximation=reason)
     except AnalysisCancelled:
         raise
-    except (ValueError, TypeError, KeyError, OverflowError, GEOSException) as error:
+    except Exception as error:
         result.update(visualization_polygons=[], visualization_status='omitted')
+        if 'clipped_polygons' in result:
+            result['clipped_polygons'] = []
+        if 'visualization_schema_version' in result:
+            result['corridor_polygon'] = []
+            if isinstance(result.get('visualization_metadata'), dict):
+                result['visualization_metadata'] = dict(result['visualization_metadata'],
+                    part_count=0, hole_count=0, vertex_count=0)
         if not any(str(d.get('code', '')).endswith('omitted') or
                    d.get('code') == 'state_corridor_unavailable' for d in diagnostics):
             diagnostics.append(_visual_diagnostic(
                 'corridor_visualization_omitted',
-                'A corridor visualization was omitted; mileage is unaffected.', error=str(error)))
+                'A corridor visualization was omitted; mileage is unaffected.',
+                error=str(error), error_type=type(error).__name__))
     return result
 
 

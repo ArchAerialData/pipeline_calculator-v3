@@ -9,6 +9,7 @@ from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
 from pipeline_calculator.gui.tabs.summary_tab import number
 from pipeline_calculator.gui.styles import corridor_button_style
 from pipeline_calculator.gui.actions.corridor_launch import corridor_is_omitted
+from pipeline_calculator.export.corridor_metadata import MAP_NOTE, UNAVAILABLE_NOTE, has_corridor_metadata
 
 
 class CorridorTable(ctk.CTkFrame):
@@ -167,6 +168,12 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                      text_color='#B6C0CE').pack(fill='x', padx=12, pady=8)
     sections = (current_results.get('overlap_analysis') or {}).get('bundled_sections') or []
     if sections:
+        if has_corridor_metadata(current_results):
+            WrappedLabel(parent, text=MAP_NOTE, text_color='#B6C0CE', justify='left').pack(
+                fill='x', padx=12, pady=(4, 6))
+        if any(corridor_is_omitted(section) for section in sections):
+            WrappedLabel(parent, text=UNAVAILABLE_NOTE, text_color='#FFB993', justify='left').pack(
+                fill='x', padx=12, pady=(0, 6))
         CorridorTable(parent, sections, on_open_corridor).pack(fill='both', expand=True, padx=4)
     else:
         failed = current_results.get('state_code') and current_results.get('adjusted_total_meters') is None

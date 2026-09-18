@@ -41,7 +41,7 @@ def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
 
     wb = build_analysis_workbook(results)
 
-    assert wb.sheetnames == ["Pipeline Length Analysis", "Pipeline Overlap Analysis"]
+    assert wb.sheetnames == ["Pipeline Length Analysis", "Pipeline Overlap Analysis", "Analysis Details"]
 
     ws = wb["Pipeline Length Analysis"]
     assert [c.value for c in ws[1]] == [
@@ -62,6 +62,8 @@ def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
     # CI/export expects a numeric savings value in D2.
     assert isinstance(ws2.cell(row=2, column=4).value, (int, float))
     assert ws2.cell(row=2, column=4).number_format == "0.000"
+    assert ws2['N1'].value == 'Corridor Map'
+    assert str(ws2['N2'].value).startswith('Available (')
 
 
 def test_build_analysis_workbook_header_fills() -> None:
@@ -74,6 +76,9 @@ def test_build_analysis_workbook_header_fills() -> None:
     }
 
     wb = build_analysis_workbook(results)
+    # Older result dictionaries keep the ordinary two-sheet/13-column contract.
+    assert wb.sheetnames == ["Pipeline Length Analysis", "Pipeline Overlap Analysis"]
+    assert wb['Pipeline Overlap Analysis'].max_column == 13
     ws = wb["Pipeline Length Analysis"]
     ws2 = wb["Pipeline Overlap Analysis"]
 

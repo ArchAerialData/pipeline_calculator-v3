@@ -58,7 +58,9 @@ def test_default_dateline_analysis_exports_valid_maps_and_reimports(tmp_path, re
     assert (output / 'analysis.xlsx').is_file() and (output / 'analysis.json').is_file()
     root = read_map(output / 'Combined' / 'analysis.kmz')
     shapes = polygons(root)
-    assert len(shapes) == 2 and all(shape.is_valid for shape in shapes)
+    # Paths are ~11 m apart: their two 5 m buffers stay separate, with each
+    # split once at the dateline. Do not auto-widen to connect the gap.
+    assert len(shapes) == 4 and all(shape.is_valid for shape in shapes)
     for points in root.findall('.//k:coordinates', NS):
         xy = [tuple(map(float, p.split(',')[:2])) for p in points.text.split()]
         assert all(abs(a[0]-b[0]) <= 180 for a, b in zip(xy, xy[1:]))
@@ -66,10 +68,10 @@ def test_default_dateline_analysis_exports_valid_maps_and_reimports(tmp_path, re
     assert reimported['total_meters'] == pytest.approx(result['total_meters'], abs=.001)
     section = result['overlap_analysis']['bundled_sections'][0]
     preview_shapes = polygons(ET.fromstring(build_overlap_corridor_kml(section, 1)))
-    assert len(preview_shapes) == 2
-    # Ordinary previews preserve their seven-decimal serialization contract.
+    assert len(preview_shapes) == 4
+    # Canonical previews preserve the package's full-precision polygon vertices.
     for preview, exported in zip(preview_shapes, shapes):
-        assert preview.hausdorff_distance(exported) <= 1e-7
+        assert preview.equals_exact(exported, 0)
 
 
 @pytest.mark.parametrize('representation', ['bad_preferred', 'bbox'])
@@ -164,6 +166,7 @@ def test_combined_omission_is_available_to_ui_before_export(tmp_path, monkeypatc
         for section in (result.get('overlap_analysis') or {}).get('bundled_sections', []):
             for key in ('corridor_polygon', 'oriented_polygon', 'bbox'):
                 section.pop(key, None)
+            section['visualization_polygons'] = []
         return result
     monkeypatch.setattr(PipelineAnalyzer, 'analyze_features', inject)
     source = tmp_path / 'pipelines.kml'

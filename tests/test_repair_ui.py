@@ -91,8 +91,15 @@ def test_approval_uses_captured_request_once_and_cancel_restores_input(monkeypat
     job = SimpleNamespace(source_session=token, state='repair_required', error=None,
         file_path='sample.kmz', params=AnalysisParameters(), options=AnalysisOptions(state_breakdown=False))
     try:
+        settle(root)
         assert flow.handle_done(job)
         settle(root)
+        primary = flow.panel.footer.primary_button
+        cancel, choose = flow.panel.footer.secondary.buttons
+        assert primary is flow.panel.footer.buttons[0]
+        assert [button.cget('text') for button in (cancel, choose)] == ['Cancel', 'Choose another file']
+        assert primary.cget('fg_color') == '#237A45'
+        assert root.focus_get() is cancel
         approve = flow.panel.footer.buttons[0]._command
         approve()
         approve()
@@ -107,12 +114,83 @@ def test_approval_uses_captured_request_once_and_cancel_restores_input(monkeypat
         flow.choose_another()
         assert flow.panel is panel and flow.source is token
         assert root.grab_current() is panel.surface
+        assert root.focus_get() is panel.footer.secondary.buttons[0]
         flow.cancel_decision()
         assert flow.source is None and flow.panel is None
         assert calls[-2:] == [('busy', False), ('return',)]
         assert root.grab_current() is None
     finally:
         flow.close()
+        root.destroy()
+
+
+@pytest.mark.native_gui
+def test_repair_primary_stays_below_secondary_actions_and_details_scroll():
+    import tkinter as tk
+    ctk.ScalingTracker.get_window_dpi_scaling = classmethod(lambda cls, window: 1)
+    root = ctk.CTk()
+    root.geometry('760x600')
+    calls, errors = [], []
+    root.report_callback_exception = lambda *args: errors.append(args)
+    panel = None
+    try:
+        settle(root)
+        panel = RepairPanel(root, title='This file may be safely repairable',
+            filename='Long client pipeline name ' * 12 + '.kmz',
+            message='We will verify that geometry is unchanged before analyzing it.',
+            details='Original coordinates and repair verification details.\n' * 150,
+            actions=[('Cancel', lambda: calls.append('cancel')),
+                     ('Choose another file', lambda: calls.append('choose'))],
+            primary_action=('Repair & analyze', lambda: calls.append('repair')),
+            on_cancel=lambda: calls.append('escape'))
+        primary = panel.footer.primary_button
+        cancel, choose = panel.footer.secondary.buttons
+        assert primary.cget('text_color') == 'white'
+        assert primary.cget('font').cget('weight') == 'bold'
+        assert cancel.cget('fg_color') == choose.cget('fg_color') == '#394553'
+        for scale, width, height in ((1, 760, 600), (1, 390, 600),
+                                     (1.5, 500, 340), (2.5, 512, 288)):
+            ctk.set_widget_scaling(scale)
+            ctk.set_window_scaling(scale)
+            root.geometry(f'{width}x{height}')
+            settle(root, .25)
+            for expanded in (False, True):
+                if bool(panel.detail_box and panel.detail_box.winfo_manager()) != expanded:
+                    panel.toggle_details()
+                    settle(root, .2)
+                assert primary.winfo_rooty() >= max(button.winfo_rooty()+button.winfo_height()
+                                                   for button in (cancel, choose))
+                assert abs(primary.winfo_width() - (panel.footer.winfo_width()-10*scale)) <= 2
+                for button in panel.footer.buttons:
+                    assert button.winfo_viewable()
+                    assert button.winfo_rootx() >= root.winfo_rootx()
+                    assert button.winfo_rooty() >= root.winfo_rooty()
+                    assert button.winfo_rootx()+button.winfo_width() <= root.winfo_rootx()+root.winfo_width()
+                    assert button.winfo_rooty()+button.winfo_height() <= root.winfo_rooty()+root.winfo_height()
+                    assert button._text_label.winfo_reqwidth() <= button.winfo_width()-8*scale
+                if expanded:
+                    assert panel.detail_box.winfo_viewable(), (scale, width, height,
+                        panel.detail_box.winfo_manager(), panel.body.winfo_geometry(),
+                        panel.body.winfo_reqheight(), panel.body._parent_canvas.winfo_geometry(),
+                        panel.detail_box.winfo_geometry())
+                    overflow = panel.body.winfo_reqheight() > panel.body._parent_canvas.winfo_height()+1
+                    assert bool(panel.body._scrollbar.winfo_manager()) == overflow
+        assert not calls, 'Showing, resizing or expanding details must not approve a repair'
+        tk.Misc.focus_set(cancel)
+        cancel.event_generate('<Tab>')
+        assert root.focus_get() is choose
+        choose.event_generate('<Tab>')
+        assert root.focus_get() is primary
+        primary.event_generate('<Return>')
+        primary.event_generate('<Shift-Tab>')
+        assert root.focus_get() is choose
+        choose.event_generate('<space>')
+        choose.event_generate('<Escape>')
+        assert calls == ['repair', 'choose', 'escape']
+        assert not errors
+    finally:
+        if panel is not None:
+            panel.close()
         root.destroy()
 
 
