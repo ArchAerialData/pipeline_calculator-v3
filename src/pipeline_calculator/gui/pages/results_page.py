@@ -55,7 +55,6 @@ def show(
     selection = StringVar(root, value='Combined')
     tabview = None
     current_scope = None
-    selector = None
     failed_scope = [None]
     error_frame = ctk.CTkFrame(root)
     error_label = WrappedLabel(error_frame, text='', text_color='#FFB993', justify='left')
@@ -90,46 +89,38 @@ def show(
         if diagnostics:
             create_diagnostics_tab(tabview.add('Diagnostics'), {'diagnostics': diagnostics})
     def select_scope(name):
-        nonlocal tabview, current_scope
+        nonlocal current_scope
         if name not in scopes:
             return
         if name == current_scope:
             selection.set(current_scope)
             error_frame.pack_forget()
             return
-        previous = tabview.selector.get() if tabview is not None else 'Summary'
-        replacement = ResultPages(root)
+        previous = tabview.selector.get()
+        replacement = tabview.create_content()
         try:
             populate_scope(replacement, name)
-            if previous in replacement.pages:
-                replacement.set(previous)
         except Exception:
             replacement.destroy()
             logging.getLogger(__name__).exception('Could not render results scope %s', name)
             failed_scope[0] = name
             selection.set(current_scope or 'Combined')
             error_label.configure(text=f'Could not display {name}. ' +
-                                  ('Your previous results are still available.' if tabview is not None else
+                                  ('Your previous results are still available.' if current_scope is not None else
                                    'Your analysis is still available to export.'))
-            error_frame.pack(fill='x', padx=18, pady=4, **({'before': tabview} if tabview else {}))
+            error_frame.pack(fill='x', padx=18, pady=4, before=tabview)
             return
         error_frame.pack_forget()
-        if tabview is not None:
-            tabview.pack_forget()
-        # Do not retain pack(before=old_view): CTk replays pack options on DPI
-        # changes, after old_view has been destroyed.
-        replacement.pack(fill='both', expand=True, padx=10, pady=5)
-        if tabview is not None:
-            tabview.destroy()
-            if selector is not None:
-                selector.focus_set()
-        tabview = replacement
+        tabview.replace_content(replacement, selected_name=previous)
+        if current_scope is not None and tabview.scope_selector is not None:
+            tabview.scope_selector.focus_set()
         current_scope = name
         selection.set(name)
 
-    context_header = ResultsContextHeader(root, after=header_frame,
-        scopes=scopes if geography is not None else None, selection=selection, on_select=select_scope,
+    ResultsContextHeader(root, after=header_frame,
         repair_workflow=repair_workflow, state_preference=state_preference)
-    selector = context_header.selector
+    tabview = ResultPages(root, scopes=scopes if geography is not None else None,
+                          selection=selection, on_select_scope=select_scope)
+    tabview.pack(fill='both', expand=True, padx=10, pady=5)
     select_scope('Combined')
 

@@ -292,10 +292,9 @@ class PipelineCalculatorGUI:
             preference.set_busy(busy)
     
     def browse_file(self):
+        """Open the native file picker above the visible application."""
         if getattr(self, "_processing", False):
             return
-        """Handle file browsing."""
-        self.root.withdraw()  # Hide main window temporarily
         
         try:
             filetypes = [
@@ -304,14 +303,13 @@ class PipelineCalculatorGUI:
                 ("KML files", "*.kml"),
                 ("All files", "*.*")
             ]
-            file_path = filedialog.askopenfilename(filetypes=filetypes)
+            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a KML or KMZ file",
+                                                   filetypes=filetypes)
             
             if file_path:
                 self.process_file(file_path)
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to browse file: {str(e)}")
-        finally:
-            self.root.deiconify()  # Show main window again
+            messagebox.showerror("Error", f"Failed to browse file: {str(e)}", parent=self.root)
     
     def process_file(self, file_path, *, reuse_source=False):
         if getattr(self, '_processing', False) or getattr(self, '_closing', False):

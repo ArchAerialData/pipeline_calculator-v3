@@ -107,7 +107,6 @@ class PipelineCalculatorGUI:
     def browse_file(self) -> None:
         if self._processing:
             return
-        self.root.withdraw()
         try:
             filetypes = [
                 ("All supported", "*.kmz *.kml"),
@@ -115,13 +114,13 @@ class PipelineCalculatorGUI:
                 ("KML files", "*.kml"),
                 ("All files", "*.*"),
             ]
-            file_path = filedialog.askopenfilename(filetypes=filetypes)
+            # Native ownership keeps the picker above the visible app on each OS.
+            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a KML or KMZ file",
+                                                   filetypes=filetypes)
             if file_path:
                 self.process_file(file_path)
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to browse file: {str(e)}")
-        finally:
-            self.root.deiconify()
+            messagebox.showerror("Error", f"Failed to browse file: {str(e)}", parent=self.root)
 
     def _get_parameters(self) -> AnalysisParameters:
         params, corrections = AnalysisParameters.from_strings(
