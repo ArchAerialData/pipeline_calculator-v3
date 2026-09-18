@@ -4,6 +4,7 @@ from pipeline_calculator.core.execution import AnalysisCancelled
 
 from dataclasses import dataclass, field
 from collections import deque
+import math
 from pathlib import Path, PurePosixPath
 import zipfile
 import xml.etree.ElementTree as ET
@@ -23,6 +24,7 @@ INCOMPLETE_CODES = {
     "remote_network_link_skipped", "unsupported_network_link_target",
     "network_link_outside_base_skipped", "malformed_placemark",
     "no_supported_features", "short_linestring", "short_gx_track",
+    "missing_point_coordinate", "ambiguous_point_coordinate",
 }
 
 
@@ -43,6 +45,7 @@ class _ParserState:
     parsed_kml_files: list[str] = field(default_factory=list)
     pipeline_count: int = 0
     placemark_count: int = 0
+    legacy_feature_count: int = 0
     bytes_read: int = 0
     documents_read: int = 0
 
@@ -264,17 +267,57 @@ def _extract_track_coordinate_paths(placemark, state: _ParserState, *, source: s
 
 
 def _extract_point_coords(placemark, state: _ParserState, *, source: str, feature_name: str):
-    point_elem = next(_iter_desc(placemark, "Point", context=state.context), None)
-    if point_elem is None:
-        return []
-    coords_elem = _find_child(point_elem, "coordinates")
-    return _parse_coordinates_text(
-        _text(coords_elem),
-        state,
-        source=source,
-        feature_name=feature_name,
-        geometry="Point",
-    )
+    """Collect actual Point geometries, never the vertices of other shapes.
+
+    The second return value preserves the old first-Point acceptance rule only
+    for generated feature names. Expanding pin records must not rename later
+    unnamed pipelines, including when a formerly accepted Point is malformed.
+    """
+    points = []
+    first_point_legacy_accepted = False
+    for point_index, point_elem in enumerate(_iter_desc(placemark, "Point", context=state.context)):
+        coords_text = _text(_find_child(point_elem, "coordinates"))
+        coords = _parse_coordinates_text(
+            coords_text,
+            state,
+            source=source,
+            feature_name=feature_name,
+            geometry="Point",
+        )
+        if point_index == 0:
+            first_point_legacy_accepted = bool(coords)
+        tokens = coords_text.split()
+        if len(tokens) != 1:
+            _diag(
+                state,
+                "missing_point_coordinate" if not tokens else "ambiguous_point_coordinate",
+                "Skipped a Point without a coordinate tuple." if not tokens else
+                "Skipped a Point containing multiple coordinate tuples; a pin must have exactly one location.",
+                source=source,
+                feature_name=feature_name,
+                geometry="Point",
+            )
+            continue
+        if not coords:
+            continue
+        parts = tokens[0].split(",")
+        try:
+            valid_tuple = len(parts) in (2, 3) and (len(parts) == 2 or math.isfinite(float(parts[2])))
+        except ValueError:
+            valid_tuple = False
+        if not valid_tuple:
+            _diag(
+                state,
+                "invalid_coordinate",
+                "Skipped a Point with an invalid coordinate tuple or altitude.",
+                level="error",
+                source=source,
+                feature_name=feature_name,
+                geometry="Point",
+            )
+            continue
+        points.append(coords[0])
+    return points, first_point_legacy_accepted
 
 
 def _unsupported_geometry_names(placemark, *, context=None) -> list[str]:
@@ -344,13 +387,14 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
         validate_geometry_structure(root, source=source, context=state.context)
 
     state.parsed_kml_files.append(source)
+    excluded_features = {}
 
     for placemark in _iter_desc(root, "Placemark", context=state.context):
         if state.context is not None:
             state.context.checkpoint()
         try:
             name = _text(_find_child(placemark, "name"))
-            item_index = state.pipeline_count + state.placemark_count + 1
+            item_index = state.legacy_feature_count + 1
             if not name:
                 name = f"Item_{item_index}"
 
@@ -359,17 +403,22 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
             track_paths = _extract_track_coordinate_paths(placemark, state, source=source, feature_name=name)
             coordinate_paths = line_paths + track_paths
             unsupported = _unsupported_geometry_names(placemark, context=state.context)
+            point_coords, first_point_legacy_accepted = _extract_point_coords(
+                placemark, state, source=source, feature_name=name,
+            )
+
+            # Historical naming counted one pipeline, or the first accepted
+            # Point in a feature without a pipeline. Keep that namespace stable.
+            if coordinate_paths or first_point_legacy_accepted:
+                state.legacy_feature_count += 1
+
+            if unsupported:
+                code = "ignored_non_centerline_geometry" if coordinate_paths else "unsupported_geometry"
+                summary = excluded_features.setdefault(code, {"feature_count": 0, "geometry_types": set()})
+                summary["feature_count"] += 1
+                summary["geometry_types"].update(unsupported)
 
             if coordinate_paths:
-                if unsupported:
-                    _diag(
-                        state,
-                        "ignored_non_centerline_geometry",
-                        "Ignored non-centerline geometry in a Placemark that also has pipeline path geometry.",
-                        source=source,
-                        feature_name=name,
-                        geometry_types=unsupported,
-                    )
                 state.pipeline_count += 1
                 state.pipelines.append(
                     {
@@ -382,10 +431,10 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                         "source_kml": source,
                     }
                 )
-                continue
 
-            point_coords = _extract_point_coords(placemark, state, source=source, feature_name=name)
-            if point_coords:
+            for _ in point_coords:
+                if state.context is not None:
+                    state.context.checkpoint()
                 state.placemark_count += 1
                 state.placemarks.append(
                     {
@@ -394,18 +443,8 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                         "Count": 1,
                     }
                 )
-                continue
 
-            if unsupported:
-                _diag(
-                    state,
-                    "unsupported_geometry",
-                    "Skipped non-centerline geometry; it was not counted as pipeline mileage.",
-                    source=source,
-                    feature_name=name,
-                    geometry_types=unsupported,
-                )
-            else:
+            if not (coordinate_paths or point_coords or unsupported):
                 _diag(
                     state,
                     "no_supported_geometry",
@@ -422,6 +461,17 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                 f"Skipped malformed Placemark: {str(e)}",
                 source=source,
             )
+
+    for code, summary in excluded_features.items():
+        _diag(
+            state,
+            code,
+            f"Excluded non-centerline geometry in {summary['feature_count']} Placemark(s) from pipeline mileage.",
+            level="info",
+            source=source,
+            feature_count=summary["feature_count"],
+            geometry_types=sorted(summary["geometry_types"]),
+        )
 
     return _extract_network_links(root, state, source=source)
 
@@ -662,7 +712,7 @@ def _parse_kml_file(path: str, state: _ParserState) -> None:
 
 
 def extract_features_from_file_with_diagnostics(file_path, progress_callback=None, *, context=None) -> ParseResult:
-    """Extract pipelines, point placemarks, and parser diagnostics from KMZ/KML."""
+    """Extract pipelines, one row per valid Point pin, and KMZ/KML diagnostics."""
     state = _ParserState(context=context)
     if context is not None:
         context.report("Reading documents")
@@ -699,7 +749,9 @@ def extract_features_from_file(file_path, progress_callback=None, *, context=Non
       pipelines: list[dict] with keys {id, placemark_id, objectid, name, coordinates, coordinate_paths}
         id is the internal analysis index; placemark_id is the source Placemark's
         id attribute, or N/A when absent. Other identifiers are not substituted.
-      placemarks: list[dict] with keys {Placemark_ID, Name, Count}
+      placemarks: one row per valid Point geometry with keys {Placemark_ID, Name, Count}.
+        Multiple pins may share their source Placemark's name and OBJECTID; every
+        Count is 1. Vertices in lines, polygons and rings are never point records.
     """
     result = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=context)
     return result.pipelines, result.placemarks

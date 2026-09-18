@@ -14,6 +14,12 @@ MAX_CLIP_VERTICES = 4096
 MAX_CLIP_PARTS = 4096
 
 
+class _StateCorridorLimit(ValueError):
+    """A structured resource reason, distinct from invalid state geometry."""
+
+    code = 'corridor_buffer_limit'
+
+
 def _vertices(shape):
     return int(get_num_coordinates(shape))
 
@@ -46,7 +52,7 @@ def _outside_is_empty(shape, boundary, context, budget):
     if context is not None:
         context.check()
     if _vertices(difference) > _limits(budget)[0]:
-        raise ValueError('Boundary containment check output exceeds its work limit')
+        raise _StateCorridorLimit('Boundary containment check output exceeds its work limit')
     return difference.is_empty
 
 
@@ -64,7 +70,7 @@ def _local_boundary(shape, state_code, dataset, context, budget=None):
     boundary = dataset.geometries[state_code]
     cap, operands = _limits(budget)
     if operands < 1:
-        raise ValueError('State corridor native operand limit exceeded')
+        raise _StateCorridorLimit('State corridor native operand limit exceeded')
     if _vertices(boundary) <= cap:
         return boundary
     lo, bottom, hi, top = shape.bounds
@@ -78,7 +84,7 @@ def _local_boundary(shape, state_code, dataset, context, budget=None):
         if context is not None:
             context.check()
         if 2*(len(lines)+1) + 5 > cap:
-            raise ValueError('Local state boundary exceeds the corridor clipping work limit')
+            raise _StateCorridorLimit('Local state boundary exceeds the corridor clipping work limit')
         segment = LineString(edge)
         if not segment.intersects(window):
             continue
@@ -131,10 +137,10 @@ def _local_boundary(shape, state_code, dataset, context, budget=None):
             budget.charge(len(hits))
         candidates += sum(int(other) > index for other in hits)
         if count + 4*candidates > cap:
-            raise ValueError('State boundary noding exceeds the corridor clipping work limit')
+            raise _StateCorridorLimit('State boundary noding exceeds the corridor clipping work limit')
     expansion = count + 4*candidates
     if expansion > cap:
-        raise ValueError('State boundary noding exceeds the corridor clipping work limit')
+        raise _StateCorridorLimit('State boundary noding exceeds the corridor clipping work limit')
     if budget is not None:
         budget.preflight(count+expansion)
         budget.charge(count)
@@ -143,7 +149,7 @@ def _local_boundary(shape, state_code, dataset, context, budget=None):
     # One bounded linework operand, with explicit output capacity.
     noded = unary_union(MultiLineString(lines))
     if _vertices(noded) > cap:
-        raise ValueError('State boundary noding output exceeds its work limit')
+        raise _StateCorridorLimit('State boundary noding output exceeds its work limit')
     if budget is not None:
         budget.charge(_vertices(noded))
     faces = []
@@ -151,22 +157,22 @@ def _local_boundary(shape, state_code, dataset, context, budget=None):
         if context is not None:
             context.check()
         if _vertices(face) > cap:
-            raise ValueError('Local state face exceeds its work limit')
+            raise _StateCorridorLimit('Local state face exceeds its work limit')
         sample = _bounded_intersection(face, window, context, budget)
         if (not sample.is_empty and sample.area > 0
                 and _boundary_covers(boundary, sample.representative_point(), context, budget)):
             faces.append(face)
         if len(faces) > operands:
-            raise ValueError('Local state boundary has too many faces')
+            raise _StateCorridorLimit('Local state boundary has too many faces')
     count = sum(_vertices(face) for face in faces)
     if count > cap:
-        raise ValueError('Local state boundary exceeds the corridor clipping work limit')
+        raise _StateCorridorLimit('Local state boundary exceeds the corridor clipping work limit')
     if budget is not None:
         budget.preflight(count*2)
         budget.charge(count)
     result = unary_union(faces)
     if _vertices(result) > cap:
-        raise ValueError('Local state mask output exceeds its work limit')
+        raise _StateCorridorLimit('Local state mask output exceeds its work limit')
     if budget is not None:
         budget.charge(_vertices(result))
     return result
@@ -177,14 +183,14 @@ def _bounded_intersection(polygon, mask, context, budget=None):
     from shapely.strtree import STRtree
     cap, operands = _limits(budget)
     if operands < 2:
-        raise ValueError('State corridor native operand limit exceeded')
+        raise _StateCorridorLimit('State corridor native operand limit exceeded')
     edges = []
     for part in polygon_parts(mask):
         for ring in (part.exterior, *part.interiors):
             edges.extend(LineString((a, b)) for a, b in zip(ring.coords, list(ring.coords)[1:]))
     count = _vertices(polygon) + _vertices(mask)
     if count > cap:
-        raise ValueError('State corridor overlay input exceeds its work limit')
+        raise _StateCorridorLimit('State corridor overlay input exceeds its work limit')
     tree = STRtree(edges)
     crossing_bound = 0
     for ring in (polygon.exterior, *polygon.interiors):
@@ -193,7 +199,7 @@ def _bounded_intersection(polygon, mask, context, budget=None):
                 context.check()
             crossing_bound += len(tree.query(LineString((a, b))))
             if count + 4*crossing_bound > cap:
-                raise ValueError('State corridor overlay expansion exceeds its work limit')
+                raise _StateCorridorLimit('State corridor overlay expansion exceeds its work limit')
     if budget is not None:
         budget.preflight(2*count + 4*crossing_bound)
         budget.charge(count)
@@ -203,7 +209,7 @@ def _bounded_intersection(polygon, mask, context, budget=None):
     if context is not None:
         context.check()
     if _vertices(result) > cap:
-        raise ValueError('State corridor overlay output exceeds its work limit')
+        raise _StateCorridorLimit('State corridor overlay output exceeds its work limit')
     if budget is not None:
         budget.charge(_vertices(result))
     return result
@@ -249,10 +255,10 @@ boundary model. They never participate in mileage accounting.
             if context is not None:
                 context.check()
             if len(spec['outer']) + sum(len(h) for h in spec['holes']) > cap:
-                raise ValueError('State corridor polygon exceeds its clipping work limit')
+                raise _StateCorridorLimit('State corridor polygon exceeds its clipping work limit')
             polygon = Polygon(spec['outer'], spec['holes'])
             if _vertices(polygon) > cap or operands < 1:
-                raise ValueError('State corridor polygon exceeds its clipping work limit')
+                raise _StateCorridorLimit('State corridor polygon exceeds its clipping work limit')
             if budget is not None:
                 budget.charge(_vertices(polygon))
             if _boundary_covers(boundary, polygon, context, budget):
@@ -275,7 +281,7 @@ boundary model. They never participate in mileage accounting.
                     output_rings += 1 + len(part.interiors)
                     if (len(pieces) > part_limit
                             or output_rings > ring_limit or output_vertices > output_limit):
-                        raise ValueError('State corridor output exceeds its part/ring/vertex limits')
+                        raise _StateCorridorLimit('State corridor output exceeds its part/ring/vertex limits')
                     continue
                 if mask is None or attempt >= 8:
                     raise ValueError('Corridor containment verification failed')
@@ -290,16 +296,17 @@ boundary model. They never participate in mileage accounting.
                 # One nanodegree is <0.12 mm everywhere, well below the map's
                 # error budget. Check full area as well as boundary displacement.
                 roundoff_degrees = 1e-9
-                if (_vertices(part) + _vertices(refined) > cap
-                        or part.hausdorff_distance(refined) > roundoff_degrees
+                if _vertices(part) + _vertices(refined) > cap:
+                    raise _StateCorridorLimit('Corridor containment refinement changed more than numerical roundoff')
+                if (part.hausdorff_distance(refined) > roundoff_degrees
                         or abs(part.area-refined.area) > part.length*roundoff_degrees):
                     raise ValueError('Corridor containment refinement changed more than numerical roundoff')
                 refinement_passes += 1
                 pending.extend((piece, attempt+1) for piece in polygon_parts(refined))
                 if len(pending) + len(pieces) > part_limit:
-                    raise ValueError('State corridor has too many polygon parts')
+                    raise _StateCorridorLimit('State corridor has too many polygon parts')
             if len(pieces) > part_limit:
-                raise ValueError('State corridor has too many polygon parts')
+                raise _StateCorridorLimit('State corridor has too many polygon parts')
         for part in pieces:
             if context is not None:
                 context.check()
@@ -342,5 +349,6 @@ boundary model. They never participate in mileage accounting.
                                    if d.get('code') != 'corridor_visualization_omitted'],
                                  {"level": "warning", "code": "state_corridor_omitted",
                                   "message": "A state corridor visualization was omitted; mileage is unaffected.",
-                                  "context": {"state_code": state_code, "error": str(error)}}]
+                                  "context": {"state_code": state_code, "error": str(error),
+                                              "reason_code": getattr(error, 'code', 'state_corridor_geometry_invalid')}}]
     return result

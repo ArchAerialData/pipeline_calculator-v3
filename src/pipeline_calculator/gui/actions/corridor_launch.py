@@ -5,29 +5,15 @@ from tkinter import messagebox
 
 from pipeline_calculator.gui import config
 from pipeline_calculator.gui.actions import open_kml_action
-from pipeline_calculator.core.corridor_geometry import has_canonical_geometry
-
-
-def corridor_is_omitted(section):
-    """Check the completed decision cheaply; topology stays off the UI thread."""
-    if not has_canonical_geometry(section):
-        return False  # Legacy sections may construct a rectangle approximation.
-    if ('visualization_status' in section and section['visualization_status'] != 'ready'):
-        return True
-    if ('visualization_schema_version' in section and
-            (type(section['visualization_schema_version']) is not int or
-             section['visualization_schema_version'] != 1 or
-             section.get('visualization_status') != 'ready')):
-        return True
-    # Match the serializer's precedence: a state clip is authoritative, even
-    # when its value is null/empty. Never replace it with uncut or legacy geometry.
-    polygons = section.get('clipped_polygons', section.get('visualization_polygons'))
-    return type(polygons) is not list or not polygons
+from pipeline_calculator.gui.corridor_presentation import (
+    corridor_is_omitted, corridor_unavailable_reason, MAP_OMISSION_NOTE,
+)
 
 
 def launch_corridor(root, section, index):
     if corridor_is_omitted(section):
-        raise ValueError('This corridor map is unavailable. See Diagnostics for details.')
+        raise ValueError(f'This corridor map is unavailable. {corridor_unavailable_reason(section)} '
+                         f'{MAP_OMISSION_NOTE}')
     if config.SHOW_CORRIDOR_LAUNCH_DIALOG:
         from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
         return CorridorDialog(root, section, index)

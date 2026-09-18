@@ -58,7 +58,10 @@ class CorridorGeometryBudget:
     retained. Preflight reservations are checked before allocation, actual work
     is charged after the operation, and unused reservation is released.
     """
-    max_work_vertices: int = 2_000_000
+    # Cumulative processing/checking work, not distinct vertices or RAM usage.
+    # The measured multi-state capacity case needs 7,263,267 work units; retain
+    # separate per-operation, section and output guards at their existing caps.
+    max_work_vertices: int = 10_000_000
     max_charts: int = 10_000
     max_retained_vertices: int = 1_000_000
     max_section_points: int = 100_000

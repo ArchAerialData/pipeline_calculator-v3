@@ -48,7 +48,7 @@ def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
 
     wb = build_analysis_workbook(results)
 
-    assert wb.sheetnames == ["Pipeline Length Analysis", "Pipeline Overlap Analysis", "Analysis Details"]
+    assert wb.sheetnames == ["Pipeline Length Analysis", "Pipeline Overlap Analysis", "Point Pins", "Analysis Details"]
 
     ws = wb["Pipeline Length Analysis"]
     assert [c.value for c in ws[1]] == [

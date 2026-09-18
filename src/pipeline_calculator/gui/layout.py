@@ -2,7 +2,9 @@
 import customtkinter as ctk
 import math
 import tkinter as tk
+from tkinter import ttk
 from pipeline_calculator.gui.bindings import ConfigureBinding
+from pipeline_calculator.gui.styles import scope_style
 
 
 class WrappedLabel(ctk.CTkLabel):
@@ -155,44 +157,89 @@ def parameter_fields(parent, variables, *, compact=False):
         arrange()
 
 
-class ResultPages(ctk.CTkFrame):
-    """Show tabs when their measured labels fit; use a menu on narrow windows."""
+class _ResultContent(ctk.CTkFrame):
+    """Stage a scope's pages before replacing the currently displayed content."""
     def __init__(self, master):
-        super().__init__(master, height=100)
+        super().__init__(master, fg_color='transparent', height=1, width=1)
+        self.pack_propagate(False)
         self.pages = {}
+
+    def add(self, name):
+        page = ctk.CTkFrame(self, height=1, width=1)
+        self.pages[name] = page
+        return page
+
+
+class ResultPages(ctk.CTkFrame):
+    """Persistent scope/navigation row with replaceable content below it."""
+    def __init__(self, master, *, scopes=None, selection=None, on_select_scope=None):
+        super().__init__(master, height=100)
         self._selected = None
         self._navigation_id = None
         self._compact_navigation = None
-        self.navigation = ctk.CTkFrame(self, fg_color='transparent')
-        self.navigation.pack(fill='x', pady=8)
+        self._scope_scale = None
+        # The former tab row occupied 34 + 8 + 8 logical pixels. Reserve that
+        # same space explicitly so scope controls can never expand the header.
+        self.navigation = ctk.CTkFrame(self, fg_color='transparent', height=50, width=1)
+        self.navigation.pack(fill='x')
+        self.navigation.pack_propagate(False)
+        self.scope = self.scope_selector = self.scope_helper = None
+        if scopes is not None:
+            self.scope = ctk.CTkFrame(self.navigation, fg_color='transparent', width=300, height=50)
+            self.view_label = ctk.CTkLabel(self.scope, text='View:', font=('Arial', 14, 'bold'),
+                                          width=40, height=28, anchor='w')
+            self.scope_selector = ttk.Combobox(self.scope, textvariable=selection, values=list(scopes),
+                                                state='readonly', takefocus=True)
+            self.scope_selector.bind('<<ComboboxSelected>>',
+                lambda event: on_select_scope(self.scope_selector.get()) if on_select_scope else None)
+            self.scope_helper = ctk.CTkLabel(self.scope, text='Combined or individual state statistics',
+                font=('Arial', 12), text_color='#B8C0CC', height=15, width=1, anchor='w')
         self.tab_font = ctk.CTkFont(size=14)
         self.tabs = ctk.CTkSegmentedButton(self.navigation, values=[], command=self.set,
                                           font=self.tab_font, height=34)
         self.selector = ctk.CTkOptionMenu(self.navigation, values=["Summary"], command=self.set, width=200,
                                          font=self.tab_font, height=34)
-        self.selector.pack()
         self.navigation.bind('<Configure>', self._queue_navigation, add='+')
         self.bind('<Configure>', self._queue_navigation, add='+')
-        self.content = ctk.CTkFrame(self, fg_color="transparent", height=1, width=1)
+        self.content = self.create_content()
+        self.pages = self.content.pages
         self.content.pack(fill="both", expand=True)
-        self.content.pack_propagate(False)
+
+    def create_content(self):
+        return _ResultContent(self)
+
+    def replace_content(self, content, selected_name='Summary'):
+        """Commit a completely rendered scope without replacing its controls."""
+        previous = self.content
+        previous.pack_forget()
+        self.content = content
+        self.pages = content.pages
+        self._selected = None
+        self._update_values()
+        name = selected_name if selected_name in self.pages else next(iter(self.pages), None)
+        if name is not None:
+            self.set(name)
+        content.pack(fill='both', expand=True)
+        previous.destroy()
 
     def add(self, name):
-        page = ctk.CTkFrame(self.content, height=1, width=1)
-        self.pages[name] = page
-        self.selector.configure(values=list(self.pages))
-        self.tabs.configure(values=list(self.pages))
+        page = self.content.add(name)
+        self._update_values()
         if len(self.pages) == 1:
             self.set(name)
-        else:
-            self.tabs.set(self.selector.get())
+        return page
+
+    def _update_values(self):
+        self.selector.configure(values=list(self.pages))
+        self.tabs.configure(values=list(self.pages))
+        if self._selected in self.pages:
+            self.tabs.set(self._selected)
         self._arrange_navigation()
         # CTk recreates its tab buttons when values change. Measure them once
         # Tk has calculated their requested sizes, including DPI/font scaling.
         if self._navigation_id is not None:
             self.after_cancel(self._navigation_id)
         self._navigation_id = self.after(20, self._refresh_navigation)
-        return page
 
     def _refresh_navigation(self):
         self._navigation_id = None
@@ -208,17 +255,62 @@ class ResultPages(ctk.CTkFrame):
         scale = ctk.ScalingTracker.get_widget_scaling(self)
         root = self.winfo_toplevel()
         compact = root.winfo_height() / ctk.ScalingTracker.get_window_scaling(root) < 280
+        height = 34 if compact else 50
         if compact != self._compact_navigation:
             self._compact_navigation = compact
-            self.navigation.pack(fill='x', pady=0 if compact else 8)
+            self.navigation.configure(height=height)
         width = self.navigation.winfo_width() / scale
-        required = self.tabs.winfo_reqwidth() / scale + 24
-        show_tabs = bool(self.pages) and width >= required
+        if width <= 1:
+            return
+        left = 8
+        available = max(1, width - 16)
+        if self.scope is not None:
+            scope_width = min(300, available * .44)
+            self._arrange_scope(scope_width, height, scale)
+            left += scope_width + 12
+            available = max(1, width - left - 8)
+        required = self.tabs.winfo_reqwidth() / scale
+        show_tabs = bool(self.pages) and available >= required + 8
         visible, hidden = (self.tabs, self.selector) if show_tabs else (self.selector, self.tabs)
         if hidden.winfo_manager():
-            hidden.pack_forget()
-        if not visible.winfo_manager():
-            visible.pack()
+            hidden.place_forget()
+        control_width = required if show_tabs else min(200, available)
+        if not show_tabs:
+            self.selector.configure(width=control_width)
+        # Center the tabs in the window when there is room, then shift right
+        # only as much as the pinned scope requires. Never add a second row.
+        visible.place(x=max(left, (width - control_width) / 2), y=(height - 34) / 2)
+
+    def _arrange_scope(self, width, height, scale):
+        if scale != self._scope_scale:
+            self._scope_scale = scale
+            font = ('Arial', -round(14 * scale))
+            self.scope_selector.configure(font=font, style=scope_style(self.scope_selector, scale))
+            popup = self.tk.call('ttk::combobox::PopdownWindow', self.scope_selector)
+            self.tk.call(f'{popup}.f.l', 'configure', '-font', font,
+                         '-background', '#242424', '-foreground', '#F1F4F8',
+                         '-selectbackground', '#1F538D', '-selectforeground', '#FFFFFF')
+        self.scope.configure(width=width, height=height)
+        self.scope.place(x=8, y=0)
+        # Center the complete selector/helper group within the existing row.
+        # Measure the native ttk control instead of fixing it to 30 pixels;
+        # its tighter vertical padding leaves room above and below the group.
+        control_height = max(24, self.scope_selector.winfo_reqheight() / scale)
+        helper_height = self.scope_helper.winfo_reqheight() / scale
+        gap = 2
+        group_height = control_height + gap + helper_height
+        helper_fits = (height == 50 and self.scope_helper.winfo_reqwidth() / scale <= width
+                       and group_height <= height - 8)
+        top = (height - (group_height if helper_fits else control_height)) / 2
+        self.view_label.configure(height=control_height)
+        self.view_label.place(x=0, y=top)
+        # ttk uses physical pixels; CustomTkinter scales its own place options.
+        self.scope_selector.place(x=round(44 * scale), y=round(top * scale),
+                                  width=max(1, round((width - 44) * scale)), height=round(control_height * scale))
+        if helper_fits:
+            self.scope_helper.place(x=0, y=top + control_height + gap)
+        else:
+            self.scope_helper.place_forget()
 
     def set(self, name):
         if name not in self.pages or self._selected == name:
@@ -247,7 +339,7 @@ class ResultPages(ctk.CTkFrame):
         if self._navigation_id is not None:
             self.after_cancel(self._navigation_id)
         # CTk 5.2's DropdownMenu.destroy omits its scaling registration cleanup.
-        # State switches replace this view; a later DPI change must not address
+        # Reopening results replaces this view; a later DPI change must not address
         # any destroyed native menus. remove_widget is safe if already removed.
         menu = self.selector._dropdown_menu
         ctk.ScalingTracker.remove_widget(menu._set_scaling, menu)

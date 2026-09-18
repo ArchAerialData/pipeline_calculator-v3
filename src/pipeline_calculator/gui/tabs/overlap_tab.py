@@ -1,15 +1,17 @@
 """Paged corridor table with native, keyboard-accessible row actions."""
 from __future__ import annotations
 
-from tkinter import ttk
+from tkinter import ttk, messagebox
 import customtkinter as ctk
 from pipeline_calculator.gui.tables import create_table
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.sorting import HeaderSorter, sort_records
 from pipeline_calculator.gui.tabs.summary_tab import number
 from pipeline_calculator.gui.styles import corridor_button_style
-from pipeline_calculator.gui.actions.corridor_launch import corridor_is_omitted
-from pipeline_calculator.export.corridor_metadata import MAP_NOTE, UNAVAILABLE_NOTE, has_corridor_metadata
+from pipeline_calculator.gui.corridor_presentation import (
+    corridor_is_omitted, corridor_unavailable_reason, MAP_OMISSION_NOTE,
+)
+from pipeline_calculator.export.corridor_metadata import MAP_NOTE, has_corridor_metadata
 
 
 class CorridorTable(ctk.CTkFrame):
@@ -25,6 +27,9 @@ class CorridorTable(ctk.CTkFrame):
         self._position_id = None
         self._callback_host = self.winfo_toplevel()
         self._compact = None
+        self._map_reason = ''
+        self._details_compact = False
+        self._explanation_layout = None
         navigation = ctk.CTkFrame(self, fg_color='transparent')
         self.navigation = navigation
         navigation.pack(side='bottom', fill='x', padx=8, pady=(8, 4))
@@ -34,9 +39,14 @@ class CorridorTable(ctk.CTkFrame):
         self.next_button.pack(side='right', padx=(8, 0))
         self.page_label = WrappedLabel(navigation, text='', anchor='center')
         self.page_label.pack(fill='x', expand=True)
+        self.map_explanation = WrappedLabel(self, text='', anchor='w', justify='left',
+                                            text_color='#FFB993')
         self.tree = create_table(self, ('Pipeline Pair', 'Length (miles)', 'Avg Sep (m)', 'Action'),
                                  (440, 145, 130, 155), vertical_padding=0)
         self.button_style = corridor_button_style(self.tree, ctk.ScalingTracker.get_widget_scaling(self))
+        self.map_details = ttk.Button(navigation, text='Map details', style=self.button_style,
+                                      command=self._show_map_details, takefocus=True)
+        self.map_details.bind('<Return>', lambda event: self._show_map_details())
         self._position_style = None
         for column in self.tree['columns']:
             self.tree.heading(column, anchor='w')
@@ -49,10 +59,14 @@ class CorridorTable(ctk.CTkFrame):
             self.tree.configure(**{axis+'scrollcommand': scrolled})
         self.tree.bind('<Configure>', self._queue_position, add='+')
         self.tree.bind('<Map>', self._queue_position, add='+')
-        self.tree.bind('<Unmap>', self._cancel_position, add='+')
+        # A short viewport can squeeze the tree out of view while this table
+        # remains visible. Its pending layout must still switch inline details
+        # to the compact action and give the tree its space back.
+        self.bind('<Unmap>', self._cancel_position, add='+')
         self.tree.bind('<ButtonRelease-1>', self._queue_position, add='+')
         self.tree.bind('<Double-1>', self._double_click)
         self.tree.bind('<Return>', self._open_selected)
+        self.tree.bind('<<TreeviewSelect>>', self._show_selected_explanation, add='+')
         self.bind('<Configure>', self._queue_position, add='+')
         self.sorter = HeaderSorter(self.tree, ('Pipeline Pair', 'Length (miles)', 'Avg Sep (m)'), self._sort)
         self.load_page()
@@ -71,6 +85,9 @@ class CorridorTable(ctk.CTkFrame):
             section, index = self.item_map[item]
             if not corridor_is_omitted(section):
                 self.on_open_corridor(section, index)
+            elif getattr(self, '_details_compact', False):
+                self._select_for_explanation(item)
+                self._show_map_details()
 
     def _double_click(self, event):
         if self.tree.identify_region(event.x, event.y) == 'cell':
@@ -80,6 +97,50 @@ class CorridorTable(ctk.CTkFrame):
         if self.tree.selection():
             self._open(self.tree.selection()[0])
         return 'break'
+
+    def _select_for_explanation(self, item):
+        self.tree.selection_set(item)
+        self.tree.focus(item)
+        self.tree.focus_set()
+        self._show_selected_explanation()
+
+    def _show_selected_explanation(self, event=None):
+        selection = self.tree.selection()
+        record = self.item_map.get(selection[0]) if selection else None
+        reason = corridor_unavailable_reason(record[0]) if record else ''
+        self._map_reason = reason
+        if reason:
+            self.map_explanation.configure(text=f'Map unavailable: {reason} {MAP_OMISSION_NOTE}')
+        self._layout_explanation()
+        self._queue_position()
+
+    def _layout_explanation(self):
+        scale = ctk.ScalingTracker.get_widget_scaling(self)
+        self._details_compact = self.winfo_height() / scale < 210
+        layout = (bool(self._map_reason), self._details_compact)
+        if layout == self._explanation_layout:
+            return
+        self._explanation_layout = layout
+        if self._map_reason and not self._details_compact:
+            self._hide_map_details()
+            self.map_explanation.pack(side='bottom', fill='x', padx=12, pady=(6, 2),
+                                      before=self.tree.master)
+        else:
+            self.map_explanation.pack_forget()
+            if self._map_reason:
+                self.map_details.pack(side='right', padx=4, before=self.page_label)
+            else:
+                self._hide_map_details()
+
+    def _hide_map_details(self):
+        if self.focus_get() is self.map_details:
+            self.tree.focus_set()
+        self.map_details.pack_forget()
+
+    def _show_map_details(self):
+        if self._map_reason:
+            messagebox.showinfo('Corridor map unavailable', f'{self._map_reason}\n\n{MAP_OMISSION_NOTE}', parent=self)
+        return 'break'  # Prevent a second native Return activation on some platforms.
 
     def load_page(self, delta=0):
         last = (len(self.sections)-1)//self.PAGE_SIZE
@@ -103,6 +164,9 @@ class CorridorTable(ctk.CTkFrame):
                                 command=lambda item=item: self._open(item), takefocus=True)
             if omitted:
                 button.configure(state='disabled')
+                # The map stays disabled, but clicking its label selects the row
+                # so the same explanation is reachable by pointer and keyboard.
+                button.bind('<Button-1>', lambda event, item=item: self._select_for_explanation(item))
             button.bind('<Return>', lambda event, item=item: self._activate_button(item))
             self.row_buttons[item] = button
         self.tree.yview_moveto(0)
@@ -113,6 +177,7 @@ class CorridorTable(ctk.CTkFrame):
         self.previous.configure(state='normal' if self.page else 'disabled')
         self.next_button.configure(state='normal' if self.page < last else 'disabled')
         self.page_label.configure(text=f'{first+1}–{end} of {len(self.sections)}')
+        self._show_selected_explanation()
         self._queue_position()
 
     def _activate_button(self, item):
@@ -127,6 +192,7 @@ class CorridorTable(ctk.CTkFrame):
         self._position_id = None
         if not self.winfo_viewable():
             return
+        self._layout_explanation()
         scale = ctk.ScalingTracker.get_widget_scaling(self)
         compact = self.winfo_height()/scale < 160
         if compact != self._compact:
@@ -136,6 +202,7 @@ class CorridorTable(ctk.CTkFrame):
             self._position_style = (scale, compact)
             self.tree.set_row_height(30 if compact else 40)
             self.button_style = corridor_button_style(self.tree, scale)
+            self.map_details.configure(style=self.button_style)
             for button in self.row_buttons.values():
                 button.configure(style=self.button_style)
             for column in ('Length (miles)', 'Avg Sep (m)', 'Action'):
@@ -168,12 +235,13 @@ def create(parent, current_results: dict, *, on_open_corridor) -> None:
                      text_color='#B6C0CE').pack(fill='x', padx=12, pady=8)
     sections = (current_results.get('overlap_analysis') or {}).get('bundled_sections') or []
     if sections:
-        if has_corridor_metadata(current_results):
+        if any(corridor_is_omitted(section) for section in sections):
+            WrappedLabel(parent, text='Maps are approximate. Select an unavailable row for details.',
+                         text_color='#FFB993', justify='left').pack(
+                fill='x', padx=12, pady=(4, 6))
+        elif has_corridor_metadata(current_results):
             WrappedLabel(parent, text=MAP_NOTE, text_color='#B6C0CE', justify='left').pack(
                 fill='x', padx=12, pady=(4, 6))
-        if any(corridor_is_omitted(section) for section in sections):
-            WrappedLabel(parent, text=UNAVAILABLE_NOTE, text_color='#FFB993', justify='left').pack(
-                fill='x', padx=12, pady=(0, 6))
         CorridorTable(parent, sections, on_open_corridor).pack(fill='both', expand=True, padx=4)
     else:
         state_failed = current_results.get('state_code') and current_results.get('adjusted_total_meters') is None

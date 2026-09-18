@@ -327,7 +327,10 @@ class SummaryView(AutoScrollFrame):
         text_label(self.details, f'Application build: {self.results.get("application_version") or "Not recorded"}', pady=2)
         counts = {level: sum(d.get('level') == level for d in diagnostics) for level in ('error', 'warning', 'info')}
         text_label(self.details, f'Diagnostics: {counts["error"]} errors · {counts["warning"]} warnings · {counts["info"]} informational', pady=2)
-        text_label(self.details, f'Placemarks: {len(self.results.get("placemarks") or []):,}', pady=2)
+        if self.state_view:
+            text_label(self.details, 'Point pins: available in the Combined view only.', pady=2)
+        elif isinstance(self.results.get('placemarks'), list):
+            text_label(self.details, f'Point pins: {len(self.results["placemarks"]):,}', pady=2)
         if self.results.get('parsed_kml_files') is not None:
             text_label(self.details, f'KML documents read: {len(self.results["parsed_kml_files"]):,}', pady=2)
         sections = (overlap or {}).get('bundled_sections') or []

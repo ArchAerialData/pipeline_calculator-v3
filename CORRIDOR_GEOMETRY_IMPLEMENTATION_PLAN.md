@@ -331,7 +331,7 @@ Centralize named limits with the builder's versioned policy. Initial ceilings:
 | Adaptive subdivision | Depth 20, checked together with point and chart budgets |
 | Chunks/charts per section | 1,024 |
 | One native buffer/union batch | At most 4,096 input vertices and 32 polygon operands, also checking intermediate output complexity |
-| Cumulative job construction work | 2,000,000 processed/generated vertices and 10,000 charts across Combined and all states |
+| Cumulative job construction work | 10,000,000 processed/generated vertices and 10,000 charts across Combined and all states |
 | Cumulative retained output | 1,000,000 polygon vertices across the complete result |
 | Immutable boundary verification | Separately cap reference geometry at 2,000,000 vertices and 10,000 full-boundary queries per job. These checks certify containment against the original resource; generated geometry and local overlays retain the 4,096-vertex cap. |
 
@@ -342,6 +342,12 @@ retained-output memory, but charge every operation performed. A section that
 exceeds its limit is omitted as a whole; later independent sections may continue.
 Job-budget exhaustion omits remaining map generation with one scope summary and
 bounded per-section detail. Preserve all numerical section rows.
+
+The cumulative construction allowance was increased from 2,000,000 to 10,000,000
+after the September 18 capacity review. The measured production input required
+7,263,267 work units for 190 complete Combined/state maps. The other limits and
+geometry checks remain unchanged. This is a work allowance, not a RAM ceiling;
+see the [capacity evidence](docs/validation/corridor-budget-capacity.md).
 
 Native union/intersection calls also need input preflight and bounded scheduling;
 merging a large accumulated operand is not magically bounded by a small batch of

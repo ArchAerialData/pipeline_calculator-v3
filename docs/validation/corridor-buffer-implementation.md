@@ -24,10 +24,16 @@ Single-state numerical reuse retains `source_runs.scope = "Combined"` to identif
 | Parts / total rings per section | 4,096 / 8,192 |
 | Charts per section / job | 1,024 / 10,000 |
 | New native construction operands / input vertices | 32 / 4,096 |
-| Job construction work / retained output vertices | 2,000,000 / 1,000,000 |
+| Job construction work / retained output vertices | 10,000,000 / 1,000,000 |
 | Immutable full-boundary certification vertices / queries | 2,000,000 / 10,000 |
 
 Budgets span Combined and states, charge failed work, preflight native output expansion, count ring-closing coordinates, and release replaced state output before retaining its clipped replacement. Full-boundary certification has separate explicit bounds and cancellation checks. Measured call times below are observations, not operating-system scheduling guarantees.
+
+The job construction allowance was subsequently increased from 2,000,000 to
+10,000,000 after the September 18 [capacity review](corridor-budget-capacity.md).
+The historical implementation receipts below used the original 2,000,000 cap.
+All other caps and geometric accuracy requirements are unchanged; the capacity
+revision has separate source verification and does not replace those build receipts.
 
 ## Baseline, fingerprints and numerical evidence
 
