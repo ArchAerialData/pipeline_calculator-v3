@@ -1,0 +1,10 @@
+# Reference environment: CPython 3.13.3. Install once; all suite commands are offline.
+numpy==2.2.6
+scipy==1.16.0
+shapely==2.0.7
+pyproj==3.7.1
+geographiclib==2.0
+matplotlib==3.10.3
+Pillow==12.3.0
+psutil==5.9.5
+pytest==8.4.1

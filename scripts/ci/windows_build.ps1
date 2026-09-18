@@ -23,6 +23,10 @@ if (Test-Path (Join-Path $RepoDir "requirements-dev.txt")) {
   if ($LASTEXITCODE -ne 0) { throw "Test dependencies installation failed ($LASTEXITCODE)" }
 }
 
+New-Item -ItemType Directory -Force -Path (Join-Path $RepoDir ".validation-output") | Out-Null
+& $Py -m pip freeze | Set-Content -LiteralPath (Join-Path $RepoDir ".validation-output/build-dependencies.txt")
+if ($LASTEXITCODE -ne 0) { throw "Dependency receipt failed ($LASTEXITCODE)" }
+
 & $Py (Join-Path $RepoDir "scripts/ci/check_tk.py")
 if ($LASTEXITCODE -ne 0) { throw "Tcl/Tk startup failed ($LASTEXITCODE)" }
 & $Py -m py_compile (Join-Path $RepoDir "src\\pipeline_calculator_v3.py")
@@ -31,8 +35,18 @@ if (Test-Path (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")) {
   & $Py -m py_compile (Join-Path $RepoDir "src\\pipeline_calculator_entry.py")
   if ($LASTEXITCODE -ne 0) { throw "Entrypoint compilation failed ($LASTEXITCODE)" }
 }
-& $Py -m pytest -vv -rA --tb=short -o faulthandler_timeout=30 --junitxml=.validation-output/ci-test-results.xml
+# CPython 3.11.9's timed traceback watchdog can access-violate during Shapely
+# calls on Windows. Keep pytest's crash handler and the workflow timeout;
+# disable only the asynchronous timed dump, not fault reporting or tests.
+& $Py -m pytest -vv -rA --tb=short -o faulthandler_timeout=0 --junitxml=.validation-output/ci-test-results.xml
 if ($LASTEXITCODE -ne 0) { throw "Tests failed ($LASTEXITCODE)" }
 
 powershell -ExecutionPolicy Bypass -File (Join-Path $RepoDir "scripts\\windows\\build_exe.ps1")
 if ($LASTEXITCODE -ne 0) { throw "Windows build failed ($LASTEXITCODE)" }
+
+$BuildMetadata = Get-Content -LiteralPath (Join-Path $RepoDir "build/version.json") -Raw | ConvertFrom-Json
+$ArtifactPath = Join-Path $RepoDir "dist/Pipeline_Calculator_v$($BuildMetadata.version).exe"
+& $Py (Join-Path $RepoDir "scripts/validation/check_packaged_smoke.py") $ArtifactPath `
+  --expected-version $BuildMetadata.version `
+  --output-directory (Join-Path $RepoDir ".validation-output/packaged-smoke")
+if ($LASTEXITCODE -ne 0) { throw "Frozen Windows smoke failed ($LASTEXITCODE)" }

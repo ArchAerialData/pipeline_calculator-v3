@@ -1,0 +1,192 @@
+{
+  "recorded_at_utc": "2026-09-14T21:56:13.872574+00:00",
+  "baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+  "status": "Windows validation passed; macOS release verification outstanding",
+  "full_suite": {
+    "tests": "366",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "time": "201.958",
+    "timestamp": "2026-09-14T16:47:57.084038-05:00"
+  },
+  "full_suite_report": ".validation-output/ui-reliability/full-suite.xml",
+  "reference_benchmarks": {
+    "background_export": {
+      "heartbeat_max_gap_ms": 20.07699996465817,
+      "worker_thread_verified": true,
+      "python": "3.11.9",
+      "platform": "Windows",
+      "tk": "8.6.12",
+      "customtkinter": "5.2.2",
+      "strict_performance_gate": true
+    },
+    "large_table": {
+      "rows": 20000,
+      "heartbeat_max_gap_ms": 14.227500010747463,
+      "python": "3.11.9",
+      "platform": "Windows",
+      "tk": "8.6.12",
+      "customtkinter": "5.2.2",
+      "strict_performance_gate": true
+    },
+    "scope_replacement": {
+      "cycles": 100,
+      "retained_retired_views": 0,
+      "max_ms": 518.6746999970637,
+      "style_variants": 1,
+      "callback_errors": [],
+      "heartbeat_max_gap_ms": 159.78870005346835,
+      "python": "3.11.9",
+      "platform": "Windows",
+      "tk": "8.6.12",
+      "customtkinter": "5.2.2",
+      "strict_performance_gate": true
+    },
+    "summary_returns": {
+      "cycles": 100,
+      "warm_cycles": 95,
+      "p95_ms": 42.60759998578578,
+      "max_ms": 45.38289998890832,
+      "callback_errors": [],
+      "resize_reflow_max_ms": 281.86720004305243,
+      "heartbeat_max_gap_ms": 97.83639997476712,
+      "measurement": "mapped content after event dispatch; not physical screen paint",
+      "python": "3.11.9",
+      "platform": "Windows",
+      "tk": "8.6.12",
+      "customtkinter": "5.2.2",
+      "strict_performance_gate": true
+    }
+  },
+  "benchmark_caveat": "Reference benchmark preceded final focus-transfer addition; that addition received a targeted native check. Timings measure mapped content and event dispatch, not physical screen paint. Functional suite uses a 2-second watchdog; reference benchmarks use strict UX thresholds.",
+  "packaged_smoke": {
+    "status": "passed",
+    "proj_network": "OFF",
+    "implementations": [
+      {
+        "implementation": "new",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "implementation": "legacy",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ],
+    "executable": ".validation-output/ui-reliability/package/dist/Pipeline_Calculator_v4.17-dev.a8640fd783e9.dirty.exe",
+    "reports": {
+      "new": {
+        "status": "passed",
+        "implementation": "new",
+        "frozen": true,
+        "version": "4.17-dev.a8640fd783e9.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true,
+        "live_results": true,
+        "ui_reliability": {
+          "summary_returns": 20,
+          "callback_errors": [],
+          "tk_patchlevel": "8.6.12"
+        },
+        "pipeline_count": 1,
+        "placemark_ids": [
+          "N/A"
+        ],
+        "original_miles": 0.06899359000605187,
+        "geography": {
+          "boundary_jurisdictions": 51,
+          "state_codes": [
+            "OK",
+            "TX"
+          ],
+          "boundary_vintage": "2025",
+          "reconciliation_passed": true,
+          "package_map_roundtrips": true
+        },
+        "adjusted_miles": null
+      },
+      "legacy": {
+        "status": "passed",
+        "implementation": "legacy",
+        "frozen": true,
+        "version": "4.17-dev.a8640fd783e9.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true,
+        "live_results": true,
+        "ui_reliability": {
+          "summary_returns": 20,
+          "callback_errors": [],
+          "tk_patchlevel": "8.6.12"
+        },
+        "pipeline_count": 1,
+        "placemark_ids": [
+          "N/A"
+        ],
+        "original_miles": 0.06899359000605187,
+        "geography": {
+          "boundary_jurisdictions": 51,
+          "state_codes": [
+            "OK",
+            "TX"
+          ],
+          "boundary_vintage": "2025",
+          "reconciliation_passed": true,
+          "package_map_roundtrips": true
+        },
+        "adjusted_miles": null
+      }
+    },
+    "stderr_empty": true
+  },
+  "artifact": {
+    "path": ".validation-output/ui-reliability/package/dist/Pipeline_Calculator_v4.17-dev.a8640fd783e9.dirty.exe",
+    "sha256": "6ccee9040da09f99e0cdf5131be2c315621cebc6d128f96e1c7e3886b7c5fdb9",
+    "bytes": 102471182,
+    "build_metadata": {
+      "version": "4.17-dev.a8640fd783e9.dirty",
+      "numeric_version": "4.17",
+      "commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+      "dirty": true
+    }
+  },
+  "source_sha256": {
+    "requirements.txt": "e2bd0661ef0ef747b0b6d8a74dc626897e0f4febeef5cf77aad78877eea57b84",
+    "scripts/validation/check_packaged_smoke.py": "e0c0cdf78a890df2f23d6f1ca1d27dffdbf60f2930cc19303c8017337c2a5050",
+    "src/pipeline_calculator/gui/actions/export_actions.py": "0e6175a8dd895a5d225c68147dd10112d58ff8de2a5aa5c258c479fe090351dd",
+    "src/pipeline_calculator/gui/background_action.py": "a46701c7a79625f47750b37b8ca125c8f2b43fe9fe6579adf499e26a5b9560f7",
+    "src/pipeline_calculator/gui/bindings.py": "91c3852af826da2e191a9f063fd10d0f3d3f913600211611ba9f82a79bdbae18",
+    "src/pipeline_calculator/gui/dialogs/corridor_dialog.py": "0942156388e3d294372befc2f9947c1a36e1abcdbba6e2f609462ff8396df024",
+    "src/pipeline_calculator/gui/dialogs/params_dialog.py": "a59d751e5d3eaa815cf61df8011bc0548b96fb139ea95c14b8ee3f8f00dc5a50",
+    "src/pipeline_calculator/gui/disclosure.py": "fe8201c038fdbc9cf340994ea3631b500df0136ae7a984ff6d7e618b9e6379a8",
+    "src/pipeline_calculator/gui/layout.py": "07d56797e718af9a6f62b049da46e62605adbadeb154d9cbe137eace1fd51591",
+    "src/pipeline_calculator/gui/pages/results_page.py": "b224a50cba21ab43203f714b511b83b95baeffbd6c98a460db6ea4cf294459c3",
+    "src/pipeline_calculator/gui/scrolling.py": "d0d697c39e75ffda8ec318d63acb96d0229e60fabab09d16c8c8d79270bdd7fe",
+    "src/pipeline_calculator/gui/settings_panel.py": "2d75b8de9bbedf0f0081bda9c1fc77856682dcd527eb16682073ff58b0123466",
+    "src/pipeline_calculator/gui/styles.py": "76260faae11da38e7fcb6b9259468454eebf7ef7481029b033e16fd818b3e85b",
+    "src/pipeline_calculator/gui/table_loading.py": "9055e0971e81058f2fa37c965935ae27f4dd94c3ec4eaabaa796d2ec268c01c3",
+    "src/pipeline_calculator/gui/tables.py": "0755f50f1cba049dfd30d31c2e826a7e5f9ed2a4e643a225a61d4ea2080886a2",
+    "src/pipeline_calculator/gui/tabs/diagnostics_tab.py": "b29858443967d1e7c212d0f8d942bcc330fce10aa179b4b4c0234b70ad7720c8",
+    "src/pipeline_calculator/gui/tabs/overlap_tab.py": "c1a5d27c7ded8a251225a02032c332ff51d07336c3cb4eceb63b4f8cfdc6f9c2",
+    "src/pipeline_calculator/gui/tabs/pipelines_tab.py": "3c729b61e6ae1c8e7d27299f2fa31b0fa386da1b3de156ca703e02ca67ac0690",
+    "src/pipeline_calculator/gui/tabs/placemarks_tab.py": "6422050e8d1cbb37189ea6f002bca3c31f816c995b470f72c946b5e644a923e5",
+    "src/pipeline_calculator/gui/tabs/summary_tab.py": "8b412a17d4f0b919a014671dd91a9a829f12047aa23b3c0605de224f5b6ffa2c",
+    "src/pipeline_calculator/smoke.py": "639ecdc8a1bc58ec66ebb9aeb802f2219fbb6c6dba85d1a01551c93f90eab7c4",
+    "tests/test_build_helpers.py": "1d251a87b48115471d76e82d8dc0f59e0e4c81418863ec44fe35a034c12dfa16",
+    "tests/test_packaged_smoke.py": "6d9b7d5275e32dd62244bb183163bb51fa903584ce9ef04d83f07cf0c8ca6936",
+    "tests/test_summary_tab.py": "1864aef931d8d70850f026b827abff06e519c23271fa36335c33ad73ef87f4c4",
+    "tests/test_ui_lifecycle.py": "a16596df7f385dcf27a0e15a15cf91e5af9f32444daaf5737b9ccc562cb732ad",
+    "tests/test_ui_shared_surfaces.py": "819ce02f0f42ab5b0485a3e23c1cf3deba8063be34ccf190523e10beda431bba"
+  },
+  "macos_verified": false,
+  "remaining_release_checks": [
+    "Identify original DMG, macOS version, architecture and KMZ",
+    "Build and validate this source on macOS",
+    "Verify native disclosure colors, trackpad, Retina changes, dialog return and repeated Summary navigation on macOS"
+  ]
+}

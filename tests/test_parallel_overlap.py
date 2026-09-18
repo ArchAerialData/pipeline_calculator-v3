@@ -29,8 +29,9 @@ def test_find_parallel_segments_and_overlap_results() -> None:
     assert section["pipeline_2"] in ("A", "B")
     assert float(section["bundled_length_meters"]) > 0.0
 
-    # Clamp is expected: oriented width never exceeds 2 * detection range.
-    assert float(section.get("oriented_width_m", 0.0)) <= 2.0 * analyzer.detection_range + 1e-6
+    # Display padding is fixed; detection range controls qualification only.
+    assert 'oriented_width_m' not in section
+    assert section['visualization_metadata']['padding_m'] == 5.0
 
     poly = section.get("corridor_polygon")
     assert isinstance(poly, list)

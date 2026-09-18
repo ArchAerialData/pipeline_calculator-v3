@@ -3,7 +3,8 @@
 This folder contains CI scripts used by the GitHub Actions workflow. The workflow file itself must live under `.github/workflows/` (GitHub requirement), but build/sign/package logic is kept here to reduce workflow clutter.
 
 ## Scripts
-- `macos_build.sh` — creates `.venv`, installs deps, validates imports, builds the `.app`.
+- `macos_build.sh` — creates `.venv`, installs deps, runs tests, builds the `.app`, and verifies both implementations in the frozen application.
+- `windows_build.ps1` — installs dependencies, runs tests, builds the versioned executable, and verifies both implementations in the frozen application.
 - `macos_package.sh` — packages the `.app` into a `.dmg`.
 - `macos_sign_and_package.sh` — signs the `.app` and creates a DMG containing the signed app (no notarization; only runs if secrets are provided).
 
@@ -12,6 +13,29 @@ CI defaults to building the modular (refactored) GUI by setting:
 - `PIPELINE_CALCULATOR_BUILD_IMPL=new`
 
 Set `PIPELINE_CALCULATOR_BUILD_IMPL=legacy` to build the original monolithic GUI instead.
+
+The CI frozen smoke gate requires the modular distribution, which contains both
+implementations and supports switching with `PIPELINE_CALCULATOR_IMPL`. A legacy-only
+build cannot pass its modular implementation check.
+
+## Packaged smoke gate
+
+After building, both CI scripts run `scripts/validation/check_packaged_smoke.py`.
+It launches the actual packaged executable twice, selecting `new` and `legacy`,
+with `PROJ_NETWORK=OFF`. Windows uses an isolated desktop; macOS uses its normal
+subprocess launch. The gate checks the frozen flag, 51 bundled jurisdictions,
+the Texas/Oklahoma crossing, mileage reconciliation, and combined/state KMZ
+roundtrips. Failure or timeout prevents distribution artifact upload.
+
+Reports, captured output, and the gate summary are saved in
+`.validation-output/packaged-smoke/` and uploaded alongside the test reports even
+when a smoke run fails. Re-run locally with:
+
+```bash
+python scripts/validation/check_packaged_smoke.py dist/Pipeline_Calculator_v5.app
+```
+
+On Windows, pass the exact `dist/Pipeline_Calculator_v<version>.exe` path instead.
 
 ## Secrets used by CI (optional for code signing)
 - `MACOS_CERT_P12` (base64 of Developer ID Application `.p12`)

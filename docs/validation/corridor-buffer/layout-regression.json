@@ -1,0 +1,127 @@
+{
+  "issue": "Intermittent narrow/high-DPI caution-modal layout loop; also reproduced on the immutable pre-feature baseline.",
+  "logical_window": [
+    512,
+    288
+  ],
+  "dpi_scale": 2.5,
+  "timeout_seconds": 30,
+  "desktop": "isolated",
+  "baseline_pass": {
+    "baseline": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\baseline\\checkout",
+    "probe_sha256": "723c1bda6efffdfcc2800f212d7686e173da1930d83bbe5aa51361ead4816545",
+    "command": [
+      "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\baseline\\checkout\\tests\\ui_layout_probe.py",
+      "2.5",
+      "512",
+      "288",
+      "-",
+      "new"
+    ],
+    "desktop": "isolated",
+    "timeout_seconds": 30,
+    "returncode": 0,
+    "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+    "stderr": "",
+    "status": "passed",
+    "elapsed_seconds": 7.260753999929875
+  },
+  "baseline_timeout": {
+    "baseline": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\baseline\\checkout",
+    "probe_sha256": "723c1bda6efffdfcc2800f212d7686e173da1930d83bbe5aa51361ead4816545",
+    "command": [
+      "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Scripts\\python.exe",
+      "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\baseline\\checkout\\tests\\ui_layout_probe.py",
+      "2.5",
+      "512",
+      "288",
+      "-",
+      "new"
+    ],
+    "desktop": "isolated",
+    "timeout_seconds": 30,
+    "runs": [
+      {
+        "repeat": 1,
+        "status": "timed_out",
+        "stdout": "",
+        "stderr": "",
+        "error": "Command '['C:\\\\Users\\\\rbake\\\\Desktop\\\\GitHub Shortcuts\\\\.vscode repos\\\\pipeline_calculator-v3\\\\.venv\\\\Scripts\\\\python.exe', 'C:\\\\Users\\\\rbake\\\\Desktop\\\\GitHub Shortcuts\\\\.vscode repos\\\\pipeline_calculator-v3\\\\.validation-output\\\\corridor-buffer\\\\baseline\\\\checkout\\\\tests\\\\ui_layout_probe.py', '2.5', '512', '288', '-', 'new']' timed out after 30 seconds",
+        "elapsed_seconds": 30.017541200038977
+      }
+    ]
+  },
+  "diagnosis": {
+    "stalled_stack": "AutoScrollFrame._set_scroll_position -> CTkScrollbar.set -> _draw -> tkinter.update_idletasks",
+    "configure_trace": "Caution content width stayed 1043 pixels while guidance card/label widths oscillated 422/710/739 pixels; one label exceeded 1200 Configure events.",
+    "cause": "The inactive second guidance grid column retained uniform=guidance in one-column mode, reserving width and feeding natural text widths back into wrapping.",
+    "fix": "Remove inactive columns from the uniform group; preserve normal two-column guidance."
+  },
+  "repeated_fixed_probes": [
+    {
+      "run": 0,
+      "implementation": "new",
+      "elapsed_seconds": 5.562999999965541,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+      "stderr": ""
+    },
+    {
+      "run": 1,
+      "implementation": "new",
+      "elapsed_seconds": 5.577999999979511,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+      "stderr": ""
+    },
+    {
+      "run": 2,
+      "implementation": "new",
+      "elapsed_seconds": 5.609000000054948,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+      "stderr": ""
+    },
+    {
+      "run": 3,
+      "implementation": "new",
+      "elapsed_seconds": 5.577999999979511,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+      "stderr": ""
+    },
+    {
+      "run": 4,
+      "implementation": "new",
+      "elapsed_seconds": 5.562999999965541,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": false, \"status\": \"passed\"}\n",
+      "stderr": ""
+    },
+    {
+      "run": 5,
+      "implementation": "legacy",
+      "elapsed_seconds": 5.906000000075437,
+      "returncode": 0,
+      "stdout": "{\"scale\": 2.5, \"logical_size\": [512, 288], \"legacy\": true, \"status\": \"passed\"}\n",
+      "stderr": ""
+    }
+  ],
+  "regression_assertions": "Both normal and unusually long caution content must give each single-column guidance card its full available container width.",
+  "full_layout_pytest": {
+    "status": "passed",
+    "command": ".venv/Scripts/python.exe -m pytest -q tests/test_ui_layout.py",
+    "passed": 31,
+    "elapsed_seconds": 59.18,
+    "local_log": ".validation-output/corridor-buffer/pytest-layout-final.log"
+  },
+  "source_sha256": {
+    "src/pipeline_calculator/gui/controllers/analysis_session.py": "d157563cc1612ece21a4685f891db716a893866acc00c428eeb1c64a5016e928",
+    "tests/ui_layout_probe.py": "043bafdeea431be72253a7ab7f6213e348bc02a941ee482515aa1639b3a8a27f"
+  },
+  "notes": [
+    "Temporary Configure/fault-handler instrumentation removed before fixed probes.",
+    "No timeout was increased; no global CTk monkeypatch was added."
+  ]
+}

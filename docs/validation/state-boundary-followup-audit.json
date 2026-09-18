@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-14",
+  "baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+  "audit_mode": "Isolated committed snapshot; no production or automated-test changes",
+  "fixture": {
+    "schema_version": 1,
+    "fixture": "adamas_ng_pipeline_row.kmz",
+    "purpose": "Real polygon-only input validation; not a positive pipeline-mileage fixture",
+    "source_filename": "Adamas - NG_PIPELINE_ROW.kmz",
+    "sha256": "bd2006ad9c3e673b1a2337409c0b84c3cf375b2f926656de2bee0dcca0aa4892",
+    "bytes": 3709955,
+    "source_preserved": true,
+    "xml_expectations": {
+      "Placemark": 281,
+      "Polygon": 281,
+      "LinearRing": 922,
+      "LineString": 0,
+      "Point": 0,
+      "Track": 0,
+      "MultiTrack": 0
+    },
+    "parser_expectations": {
+      "pipelines": 0,
+      "placemarks": 0,
+      "total_meters": 0.0,
+      "analysis_complete": false,
+      "diagnostic_counts": {
+        "selected_primary_kml": 1,
+        "unsupported_geometry": 281,
+        "no_supported_features": 1
+      }
+    },
+    "polygon_coverage_observations": {
+      "boundary_model": "2025 Census TIGER/Line bundled snapshot",
+      "boundary_resource_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+      "method": "Shapely covers on each complete original polygon against state polygons; separate from mileage partition",
+      "valid_polygons": 281,
+      "state_counts": {
+        "WY": 27,
+        "TX": 57,
+        "LA": 197
+      }
+    },
+    "audit_baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+    "positive_line_assignment_test": "Companion adamas_ng_pipeline_row_centerlines.kmz supplied and validated; automated regression implementation deferred until concurrent UI task finishes."
+  },
+  "confirmed_findings": [
+    {
+      "id": "SB-01",
+      "priority": "P2",
+      "summary": "Exact shared interval entirely unresolved",
+      "expected_shared_meters": 364.4392780854252,
+      "actual_unresolved_meters": 364.4392780854252,
+      "evidence": ".validation-output/state-boundary-audit-a8640fd/partition-audit/shared_projection_variants.json"
+    },
+    {
+      "id": "SB-02",
+      "priority": "P2",
+      "summary": "Shared endpoint roundoff creates direction-dependent unresolved tail",
+      "source_meters": 1115.0995456325722,
+      "unresolved_tail_meters": 2.2737367544323206e-13,
+      "evidence": ".validation-output/state-boundary-audit-a8640fd/partition-audit/real_shared_probe.json"
+    },
+    {
+      "id": "SB-03",
+      "priority": "P2",
+      "summary": "Default antimeridian map export aborts package",
+      "total_meters": 824.1352745413919,
+      "reconciliation": {
+        "source_meters": 824.1352745413919,
+        "interior_meters": 0.0,
+        "shared_meters": 0.0,
+        "outside_meters": 824.1352745413919,
+        "unresolved_meters": 0.0,
+        "attributed_state_meters": 0.0,
+        "delta_meters": 0.0,
+        "tolerance_meters": 0.001,
+        "passed": true
+      },
+      "error": "ValueError: Clipped corridor polygon is invalid",
+      "canonical_polygon_count": 2,
+      "line_roundtrip_delta_meters": 0.0,
+      "evidence": ".validation-output/state-boundary-audit-a8640fd/export-audit/antimeridian_end_to_end.json"
+    },
+    {
+      "id": "SB-04",
+      "priority": "P2",
+      "summary": "Usable state fallbacks omitted; Combined omission lacks diagnostic",
+      "reproduction_kind": "Injected partial/invalid visualization sections",
+      "evidence": ".validation-output/state-boundary-audit-a8640fd/export-audit/probe_results.json"
+    },
+    {
+      "id": "SB-05",
+      "priority": "P2",
+      "summary": "Public callback complete before geography starts",
+      "callback_at_partition_start": [
+        0.5,
+        0.625,
+        1.0
+      ],
+      "callback_after_job": [
+        0.5,
+        0.625,
+        1.0
+      ],
+      "desktop_context_progress_affected": false,
+      "evidence": ".validation-output/state-boundary-audit-a8640fd/contract-audit/contract-probe.json"
+    }
+  ],
+  "existing_test_runs": [
+    {
+      "report": ".validation-output/state-boundary-audit-a8640fd/partition-audit/geometry-tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "20",
+      "time": "1.524",
+      "timestamp": "2026-09-14T16:22:42.885617-05:00"
+    },
+    {
+      "report": ".validation-output/state-boundary-audit-a8640fd/contract-audit/contract-tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "38",
+      "time": "1.925",
+      "timestamp": "2026-09-14T16:19:53.300399-05:00"
+    },
+    {
+      "report": ".validation-output/state-boundary-audit-a8640fd/export-audit/existing-export-tests.xml",
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "10",
+      "time": "1.041",
+      "timestamp": "2026-09-14T16:21:36.095162-05:00"
+    }
+  ],
+  "unique_existing_test_cases": 68,
+  "cancellation_retry_probes": [
+    {
+      "target": "Loading state boundaries",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Splitting geometry",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Analyzing A State",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Analyzing B State",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Finalizing state results",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    }
+  ],
+  "unverified": [
+    "Native macOS operation",
+    "Concurrent task final GUI changes"
+  ],
+  "centerline_followup": {
+    "source": {
+      "schema_version": 1,
+      "fixture": "adamas_ng_pipeline_row_centerlines.kmz",
+      "source_filename": "Adamas - NG_PIPELINE_ROW-Centerlines.kmz",
+      "bytes": 515885,
+      "sha256": "c3095b793deaee49de963058a3399b39d79438f7aeb64d6c9056eae9af1127d6",
+      "source_preserved": true,
+      "xml_counts": {
+        "Placemark": 281,
+        "LineString": 4827,
+        "Polygon": 0,
+        "Point": 0,
+        "Track": 0,
+        "MultiTrack": 0
+      }
+    },
+    "independent_totals": {
+      "feature_count": 281,
+      "path_count": 4827,
+      "original_vertices": 48327,
+      "total_meters": 1965917.863199462,
+      "states": [
+        {
+          "state_code": "LA",
+          "state_name": "Louisiana",
+          "path_count": 3563,
+          "feature_count": 197,
+          "meters": 1255195.5030877413,
+          "us_survey_miles": 779.9407663599176
+        },
+        {
+          "state_code": "TX",
+          "state_name": "Texas",
+          "path_count": 452,
+          "feature_count": 57,
+          "meters": 335084.0137085223,
+          "us_survey_miles": 208.21113667462947
+        },
+        {
+          "state_code": "WY",
+          "state_name": "Wyoming",
+          "path_count": 812,
+          "feature_count": 27,
+          "meters": 375638.3464031983,
+          "us_survey_miles": 233.4103803329217
+        }
+      ],
+      "duplicate_xml_ids": {
+        "ID_00000": 281
+      },
+      "features_with_multiple_states": [],
+      "paths_requiring_review": []
+    },
+    "application": {
+      "baseline_commit": "a8640fd783e938cf7ea243196dc97bd82f608091",
+      "pipeline_count": 281,
+      "coordinate_paths": 4827,
+      "coordinate_count": 48327,
+      "parser_diagnostic_counts": {
+        "selected_primary_kml": 1
+      },
+      "parse_seconds": 0.09287140000378713,
+      "partition_seconds": 11.329484399990179,
+      "partition": {
+        "crossing_count": 0,
+        "reconciliation": {
+          "original_meters": 1965917.8631994629,
+          "partitioned_meters": 1965917.863199462,
+          "difference_meters": -9.313225746154785e-10,
+          "tolerance_meters": 0.001,
+          "passed": true,
+          "numerical_target_meters": 0.01
+        },
+        "fragment_kinds": {
+          "state": 4827
+        },
+        "diagnostic_counts": {}
+      },
+      "states": [
+        {
+          "code": "LA",
+          "name": "Louisiana",
+          "source_count": 197,
+          "fragments": 3563,
+          "original_meters": 1255195.5030877413,
+          "original_survey_miles": 779.9407663601295
+        },
+        {
+          "code": "TX",
+          "name": "Texas",
+          "source_count": 57,
+          "fragments": 452,
+          "original_meters": 335084.0137085223,
+          "original_survey_miles": 208.21113667468606
+        },
+        {
+          "code": "WY",
+          "name": "Wyoming",
+          "source_count": 27,
+          "fragments": 812,
+          "original_meters": 375638.3464031983,
+          "original_survey_miles": 233.4103803329851
+        }
+      ],
+      "full_analysis": {
+        "seconds": 20.628456700011156,
+        "combined_complete": true,
+        "geography_status": "complete",
+        "original_meters": 1965917.8631994629,
+        "original_survey_miles": 1221.5622833678003,
+        "reconciliation": {
+          "source_meters": 1965917.8631994629,
+          "interior_meters": 1965917.863199462,
+          "shared_meters": 0.0,
+          "outside_meters": 0.0,
+          "unresolved_meters": 0.0,
+          "attributed_state_meters": 1965917.863199462,
+          "delta_meters": -9.313225746154785e-10,
+          "tolerance_meters": 0.001,
+          "passed": true
+        },
+        "combined_diagnostic_counts": {
+          "selected_primary_kml": 1
+        },
+        "geography_diagnostic_counts": {},
+        "states": [
+          {
+            "state_code": "LA",
+            "analysis_complete": true,
+            "total_meters": 1255195.5030877413,
+            "interior_savings_meters": 0.0,
+            "adjusted_total_meters": 1255195.5030877413
+          },
+          {
+            "state_code": "TX",
+            "analysis_complete": true,
+            "total_meters": 335084.0137085223,
+            "interior_savings_meters": 0.0,
+            "adjusted_total_meters": 335084.0137085223
+          },
+          {
+            "state_code": "WY",
+            "analysis_complete": true,
+            "total_meters": 375638.3464031984,
+            "interior_savings_meters": 0.0,
+            "adjusted_total_meters": 375638.3464031984
+          }
+        ]
+      },
+      "export": {
+        "package": ".validation-output\\state-boundary-audit-a8640fd\\centerline-audit\\adamas_ng_pipeline_row_centerlines_analysis_20260914_164409",
+        "roundtrips": [
+          {
+            "scope": "Combined",
+            "expected_meters": 1965917.8631994629,
+            "reimported_meters": 1965917.8631994403,
+            "difference_meters": -2.2584572434425354e-08,
+            "passed": true
+          },
+          {
+            "scope": "LA",
+            "expected_meters": 1255195.5030877413,
+            "reimported_meters": 1255195.5030877378,
+            "difference_meters": -3.4924596548080444e-09,
+            "passed": true
+          },
+          {
+            "scope": "TX",
+            "expected_meters": 335084.0137085223,
+            "reimported_meters": 335084.0137085062,
+            "difference_meters": -1.6123522073030472e-08,
+            "passed": true
+          },
+          {
+            "scope": "WY",
+            "expected_meters": 375638.3464031984,
+            "reimported_meters": 375638.346403198,
+            "difference_meters": -3.4924596548080444e-10,
+            "passed": true
+          }
+        ],
+        "files": [
+          "analysis.json",
+          "analysis.xlsx",
+          "Combined\\analysis.kmz",
+          "States\\Louisiana\\analysis.kmz",
+          "States\\Texas\\analysis.kmz",
+          "States\\Wyoming\\analysis.kmz"
+        ]
+      }
+    },
+    "status": "Positive fixture blocker resolved; production fixes still deferred"
+  }
+}

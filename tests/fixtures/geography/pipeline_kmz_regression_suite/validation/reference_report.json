@@ -1,0 +1,394 @@
+{
+  "application_comparison": "separate validation/application_comparison.json",
+  "artifact_sha256": {
+    "expected/01_three_state_disconnected_networks.crossings.csv": "52e3a5ca99aee35080d28f04b939faf151e430c5b279203ea7345bcabe40a433",
+    "expected/01_three_state_disconnected_networks.expected.json": "0c10e1bed6d315abddcd4fcdd458856d8c5505b2d78e5e875079e9bc3d4d5ac0",
+    "expected/01_three_state_disconnected_networks.intervals.csv": "cbb2f27f2606ec668fe9a76cff92d7e7256735e373d1c739f7e5ae1f9d558e75",
+    "expected/01_three_state_disconnected_networks.overlaps.csv": "a8041fc5bec63a1efa9a1ca0da9d0f0cfb510a610d846954f0c1572ed299b0e4",
+    "expected/01_three_state_disconnected_networks__source_order.crossings.csv": "52e3a5ca99aee35080d28f04b939faf151e430c5b279203ea7345bcabe40a433",
+    "expected/01_three_state_disconnected_networks__source_order.expected.json": "85c9115dffa9d4f1e7dde7187e1bc18fe27f248c0af6ca178e3642484a83eb41",
+    "expected/01_three_state_disconnected_networks__source_order.intervals.csv": "1317881d76a4fc98abc78940c75a60cc5b5cddbc35ed6a634f092d08a5f48c26",
+    "expected/01_three_state_disconnected_networks__source_order.overlaps.csv": "a8041fc5bec63a1efa9a1ca0da9d0f0cfb510a610d846954f0c1572ed299b0e4",
+    "expected/02_three_state_transverse_crossings.crossings.csv": "fbadbeb0fa949e57fc7678d77d179d89e3d1a3501d3d2dc34ba57f935ef178e5",
+    "expected/02_three_state_transverse_crossings.expected.json": "fdedbf541d58b6f08c4dafe831a83bc80f3b90fa669120e06bc1f37b3176626d",
+    "expected/02_three_state_transverse_crossings.intervals.csv": "e58dc02b56da7325e6e0aaeb203ecb83d85189123d142dd8d94b1480963d3d5b",
+    "expected/02_three_state_transverse_crossings.overlaps.csv": "08e7da6d61035bd43da9ff40796c0e1625f6eb56a09c8474084cf6868001394b",
+    "expected/03_parallel_corridors_crossing_borders.crossings.csv": "872a3b918ef93e477dccfed1ef9fe6c2031e421731eccf2533182810a4b1f926",
+    "expected/03_parallel_corridors_crossing_borders.expected.json": "2b3bc489fd3183131dd47d911438ade03976fa809e24ca0710e7d9bff9808a0b",
+    "expected/03_parallel_corridors_crossing_borders.intervals.csv": "b58a3125d8641c19f1d370223cbd43133f315fe07a453e810f0a56248a1af489",
+    "expected/03_parallel_corridors_crossing_borders.overlaps.csv": "62a90a8da615c400ec96d0158baf07d62c57613d3c1491e918bf2adb3890b77b",
+    "expected/04_shared_border_and_near_border.crossings.csv": "1f9011a719bfc1f2a1461f76b69ab84789f7ef744cf1e251630654c1517b9f0a",
+    "expected/04_shared_border_and_near_border.expected.json": "1de9b122c2c441d3bb23aab7eb20f8db1894775cbdf4e6030fd8f3d032fe7fb9",
+    "expected/04_shared_border_and_near_border.intervals.csv": "8a6df73023c2dea264daaf45a7a38a29ef30259f7802c73cdb672c1a770a4ebd",
+    "expected/04_shared_border_and_near_border.overlaps.csv": "788bb5aa9063584f753549cf74f8e4d6df58412221252e78b0a94c12b8f05854",
+    "expected/04_shared_border_and_near_border__redundant_vertices.crossings.csv": "e1d25da1905422968ab3cef604712e034224e5af6d88b8a178bbf0cfbdb74035",
+    "expected/04_shared_border_and_near_border__redundant_vertices.expected.json": "450fc3692f5472978f3781c0935bb25d07067fe6fa70469c38c200eafa3f3ff9",
+    "expected/04_shared_border_and_near_border__redundant_vertices.intervals.csv": "83efb26b10458187f85885b64ca4aa411808131aab7eb8cc1b23bddebb8ebc25",
+    "expected/04_shared_border_and_near_border__redundant_vertices.overlaps.csv": "709b34d44f29496f6128b91c3788d31f05abecd48793c097f6dcadb874b490f7",
+    "expected/04_shared_border_and_near_border__reversed.crossings.csv": "17729f27641c4d6ff2d670a4af60e571dd029168a46cabb909cdeab297aa1a06",
+    "expected/04_shared_border_and_near_border__reversed.expected.json": "5aeb8b3fce0e9c4d60aa35ef9641b9f2acd76c8b1ca8cec9faec672f4e018814",
+    "expected/04_shared_border_and_near_border__reversed.intervals.csv": "70d3033e7bd14e57e463faf36ed1b1521e6ec683a3fd381fd59f8a4e335c66b5",
+    "expected/04_shared_border_and_near_border__reversed.overlaps.csv": "f76572a258c281a99842e48899ccac39accd2c014fa30dfb5381176fd7100712",
+    "expected/stress/stress_branching_network.expected.json": "09bebc711f44fe3f4c0ee19ac90600211da55011cfe1da9ed874e0d818039442",
+    "fixtures/01_three_state_disconnected_networks.kmz": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
+    "fixtures/02_three_state_transverse_crossings.kmz": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
+    "fixtures/03_parallel_corridors_crossing_borders.kmz": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+    "fixtures/04_shared_border_and_near_border.kmz": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
+    "fixtures/stress/stress_branching_network.kmz": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+    "fixtures/variants/01_three_state_disconnected_networks__source_order.kmz": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2",
+    "fixtures/variants/04_shared_border_and_near_border__redundant_vertices.kmz": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
+    "fixtures/variants/04_shared_border_and_near_border__reversed.kmz": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd",
+    "previews/01_three_state_disconnected_networks.png": "b8e1158b66e31b0f88307b3f04c18039c8a07cd0e86f6fabcfbba109d60a01ae",
+    "previews/02_three_state_transverse_crossings.png": "82c28b2cdcbe85470fd48ae03fd92a280cd330099832fa51461a28612a5aa700",
+    "previews/03_parallel_corridors_crossing_borders.png": "edce4f40d2634c24be3db91c51c261fef6689cfc670fbe22eb9fa7f4d71b0ae6",
+    "previews/04_shared_border_and_near_border.png": "9fbef573d9c2244065c05dad8560d6d5a7073d574df185d9515b27f372573942",
+    "previews/details/01_control_details.png": "90ce3770cae52e2fb8bc0ccc37310f1b558755974204c5f2039ee4eb677fc34f",
+    "previews/details/03_control_details.png": "3c220aa6dcc1ad6f0a869b986d1a1df37603727d3782ca8f5e204ae47362330d",
+    "previews/details/04_control_details.png": "576e1722daff325e5d363aba4abf808942fd5da04775044fcf0985c8288e0f9f",
+    "validation/design_manifest.json": "cc0ba96b528d22095e41e80b7bb1b4d4e267a62e5147829cdeca3074986c49af"
+  },
+  "baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+  "boundary_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+  "contract_provenance": {
+    "baseline_contract_unchanged": false,
+    "changed_contract_files": [
+      "src/pipeline_calculator/core/analyzer.py",
+      "src/pipeline_calculator/core/geography/boundaries.py",
+      "src/pipeline_calculator/core/geography/partition.py",
+      "src/pipeline_calculator/core/overlap.py",
+      "src/pipeline_calculator/core/segmentation.py",
+      "src/pipeline_calculator/core/state_analysis.py",
+      "src/pipeline_calculator/parsers/kml_kmz.py"
+    ],
+    "contract_baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+    "working_commit": "1562fa3d63c6662ea3f314b1bade3edae72dd52a"
+  },
+  "contract_source_sha256": {
+    "analyzer.py": "125eeda14c58f58b08c3be1073f55175e116a1272dc714dd6d268fd4f3331e12",
+    "angles.py": "4c09740586312cb337a89d9675003f871a16929adf8bf145df0bdc4548746abe",
+    "bundling.py": "5573b2ac187aa0aa1ee18c726531ecfb429b26d927ea97c47660780adc31f7c1",
+    "constants.py": "2d811258d93dc7405cbe0448d777b8f51b5dfd8e43b0d0fdaffa0453a7a19f0d",
+    "coordinates.py": "8ae867b2fa7eb72154f07f48acac2bd75f53b2d402792ffd237256296701120d",
+    "geography/boundaries.py": "f150b3abd67fb1107e69a7d9e965f069b63fb8f0310ffd43b9be6ed7072bfe4d",
+    "geography/partition.py": "df6ee63debdfa934d52a0b7477dd486a80f651dbfc83339951856e97895234db",
+    "overlap.py": "fcb50d55bfb738132b25c324780aba6b2693b35377228f3b1011c8f1c4434f66",
+    "segmentation.py": "232ff6db3224d0ab9ff223c532d50e2f6cf99c88252374e300e3dc6ca03e9a0f",
+    "state_analysis.py": "7a565e9fd7e75919d92df66a14d971968c8b388cebddbcff2fb00ee595141b54"
+  },
+  "deterministic_archive_checks": [
+    {
+      "file": "fixtures/01_three_state_disconnected_networks.kmz",
+      "passed": true,
+      "regenerated_sha256": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
+      "saved_sha256": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b"
+    },
+    {
+      "file": "fixtures/02_three_state_transverse_crossings.kmz",
+      "passed": true,
+      "regenerated_sha256": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
+      "saved_sha256": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592"
+    },
+    {
+      "file": "fixtures/03_parallel_corridors_crossing_borders.kmz",
+      "passed": true,
+      "regenerated_sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+      "saved_sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c"
+    },
+    {
+      "file": "fixtures/04_shared_border_and_near_border.kmz",
+      "passed": true,
+      "regenerated_sha256": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
+      "saved_sha256": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe"
+    },
+    {
+      "file": "fixtures/variants/01_three_state_disconnected_networks__source_order.kmz",
+      "passed": true,
+      "regenerated_sha256": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2",
+      "saved_sha256": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2"
+    },
+    {
+      "file": "fixtures/variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+      "passed": true,
+      "regenerated_sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
+      "saved_sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308"
+    },
+    {
+      "file": "fixtures/variants/04_shared_border_and_near_border__reversed.kmz",
+      "passed": true,
+      "regenerated_sha256": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd",
+      "saved_sha256": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd"
+    }
+  ],
+  "environment": {
+    "dependencies": {
+      "Pillow": "12.3.0",
+      "geographiclib": "2.0",
+      "matplotlib": "3.10.3",
+      "numpy": "2.2.6",
+      "psutil": "5.9.5",
+      "pyproj": "3.7.1",
+      "pytest": "8.4.1",
+      "scipy": "1.16.0",
+      "shapely": "2.0.7"
+    },
+    "platform": "Windows-10-10.0.19045-SP0",
+    "processor": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]"
+  },
+  "errors": [],
+  "fixtures": [
+    {
+      "coverage_assertion_count": 89,
+      "errors": [],
+      "fixture": "01_three_state_disconnected_networks.kmz",
+      "original_meters": 46211.085106293314,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.9157597000012174,
+      "sample_count": 9207,
+      "sha256": "540a35496488db48a5798e5fcd813025282549be293220c9d922218e60ae0a8b",
+      "source_count": 48
+    },
+    {
+      "coverage_assertion_count": 51,
+      "errors": [],
+      "fixture": "02_three_state_transverse_crossings.kmz",
+      "original_meters": 50359.47031512054,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 1.0967831000452861,
+      "sample_count": 10058,
+      "sha256": "f8d3e18f20a5dfd5d744d02e1b7fcfdd4ace00787ab80762a488d648ce908592",
+      "source_count": 20
+    },
+    {
+      "coverage_assertion_count": 52,
+      "errors": [],
+      "fixture": "03_parallel_corridors_crossing_borders.kmz",
+      "original_meters": 29873.95286459448,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.610571299912408,
+      "sample_count": 5965,
+      "sha256": "7feaa5e08ded0257528c6a141693187c2410044ba99488577ac2765bd327723c",
+      "source_count": 20
+    },
+    {
+      "coverage_assertion_count": 34,
+      "errors": [],
+      "fixture": "04_shared_border_and_near_border.kmz",
+      "original_meters": 3771.3499999982546,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.048760300036519766,
+      "sample_count": 753,
+      "sha256": "606242cbd38dd4bf7dc0462f40c0cb2d2761173017a22e7218f19d836112f8fe",
+      "source_count": 11
+    },
+    {
+      "coverage_assertion_count": 89,
+      "errors": [],
+      "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
+      "original_meters": 46211.085106293314,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.8444334000814706,
+      "sample_count": 9207,
+      "sha256": "3cdab7266013f09a2e8fa3407c9529976dc3671e27d19885f334b547a7b54bb2",
+      "source_count": 48
+    },
+    {
+      "coverage_assertion_count": 34,
+      "errors": [],
+      "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+      "original_meters": 3771.350000003886,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.1254960000514984,
+      "sample_count": 753,
+      "sha256": "d8ef3481933429d473cd7b9fba3d5d190d7dee7f490ba7483d804d00b10aa308",
+      "source_count": 11
+    },
+    {
+      "coverage_assertion_count": 34,
+      "errors": [],
+      "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
+      "original_meters": 3771.3499999982546,
+      "reference_status": "reference-verified",
+      "runtime_seconds": 0.04755979997571558,
+      "sample_count": 753,
+      "sha256": "8e5c9362bcae007a644e4b25409e9f112273aaf73d5c153beed007c92cb3b9dd",
+      "source_count": 11
+    }
+  ],
+  "hand_worked_checks": {
+    "aligned_pair": {
+      "all_source_order_permutations_equal": true,
+      "eligible_graph": "60 diagonal cells per eligible pair; no off-diagonal cells",
+      "expected_savings_meters": 300.0,
+      "fully_covered_samples_per_source": 60,
+      "group_size_counts": {
+        "2": 60
+      },
+      "measured_savings_meters": 300.0,
+      "passed": true,
+      "qualifying_pair_count": 1,
+      "qualifying_pairwise_meters": 300.0,
+      "qualifying_sample_meters_Q": 300.0
+    },
+    "all_compatible_trio": {
+      "all_source_order_permutations_equal": true,
+      "eligible_graph": "60 diagonal cells per eligible pair; no off-diagonal cells",
+      "expected_savings_meters": 600.0,
+      "fully_covered_samples_per_source": 60,
+      "group_size_counts": {
+        "3": 60
+      },
+      "measured_savings_meters": 600.0,
+      "passed": true,
+      "qualifying_pair_count": 3,
+      "qualifying_pairwise_meters": 900.0,
+      "qualifying_sample_meters_Q": 300.0
+    },
+    "bend_spanning_chord": {
+      "bearing_implementation_difference_degrees": 7.105427357601002e-15,
+      "independent_implementation": "GeographicLib GRS80",
+      "midpoint_implementation_difference_meters": 7.069288649764803e-10,
+      "original_meters": 8.299999998588145,
+      "passed": true,
+      "sample_bearing_degrees": 33.69006004252159,
+      "sample_chord_meters": 3.605550963335364,
+      "sampled_path_meters": 5.0
+    },
+    "disconnected_subthreshold": {
+      "passed": true,
+      "savings_meters": 0.0,
+      "section_meters": [
+        120.0,
+        120.0
+      ],
+      "summed_pairwise_candidate_meters": 240.0
+    },
+    "nonaligned_finite_tangents": {
+      "eligible_match_count": 119,
+      "group_size_counts": {
+        "2": 60
+      },
+      "longitudinal_phase_meters": 1.7,
+      "passed": true,
+      "savings_meters": 300.0
+    },
+    "opposite_direction_phase_safe_pair": {
+      "passed": true,
+      "sample_count": 120,
+      "savings_meters": 300.0,
+      "scope": "This 302.3 m two-meridian control only; reversal is not a universal savings invariant"
+    },
+    "redundant_geodesic_vertex": {
+      "inserted_chainage_meters": 82.1,
+      "passed": true,
+      "sample_count": 120,
+      "savings_meters": 300.0
+    },
+    "single_source_retrace": {
+      "passed": true,
+      "sample_count": 120,
+      "savings_meters": 0.0
+    },
+    "unequal_nonclique_chain": {
+      "all_source_order_permutations_equal": true,
+      "eligible_graph": "60 diagonal cells per eligible pair; no off-diagonal cells",
+      "expected_savings_meters": 300.0,
+      "fully_covered_samples_per_source": 60,
+      "group_size_counts": {
+        "1": 60,
+        "2": 60
+      },
+      "measured_savings_meters": 300.0,
+      "passed": true,
+      "qualifying_pair_count": 2,
+      "qualifying_pairwise_meters": 600.0,
+      "qualifying_sample_meters_Q": 300.0
+    }
+  },
+  "independent_module_audit": [
+    {
+      "file": "reference/__init__.py",
+      "sha256": "93f3497b7454e1bbcd3654fd7cc7a6ef514b7d358faa3ba2aeaab76161770ee7"
+    },
+    {
+      "file": "reference/geometry.py",
+      "sha256": "aea04c6790113c45cf15f09e235518edf1935ae2a29b9fd9a6ea0890b92588a8"
+    },
+    {
+      "file": "reference/sampled.py",
+      "sha256": "da110c70c9f223015ece06f253785ad731c1a804eab01f372d90e0666237a9e8"
+    },
+    {
+      "file": "generator/__init__.py",
+      "sha256": "fcf267a53b0a30eda300e766937249bdd30d41735997ef842aa0a626397237e5"
+    },
+    {
+      "file": "generator/generate.py",
+      "sha256": "a922c6891036e41a87bfb99c43d5f5d2153f3270934c96025040f912e804a06c"
+    },
+    {
+      "file": "validation/coverage_checks.py",
+      "sha256": "a4e190de9782b5d72374a40cd83b584cbfd60e35133141e540330982802700d9"
+    }
+  ],
+  "passed": true,
+  "runtime_seconds": 18.392483500065282,
+  "schema_version": "1.0.0",
+  "selection": "all_core",
+  "status": "complete",
+  "stress_reference": {
+    "deterministic_archive_checked": true,
+    "expectation_sha256": "09bebc711f44fe3f4c0ee19ac90600211da55011cfe1da9ed874e0d818039442",
+    "passed": true,
+    "sample_count": 27120,
+    "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+    "source_count": 96,
+    "status": "reference-verified"
+  },
+  "validator_sha256": "b08bb765b15475a0bf5c5b8a1e1eff369ea55fd658ff451fb35cd903cbc3e843",
+  "variant_checks": [
+    {
+      "base_fixture": "01_three_state_disconnected_networks.kmz",
+      "errors": [],
+      "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
+      "maximum_source_length_or_allocation_difference_meters": 0.0,
+      "passed": true,
+      "savings_difference_meters_by_scope": {
+        "Combined": 0.0,
+        "LA": 0.0,
+        "TX": 0.0,
+        "WY": 0.0
+      },
+      "savings_invariance_required": true,
+      "variation": "source_order"
+    },
+    {
+      "base_fixture": "04_shared_border_and_near_border.kmz",
+      "errors": [],
+      "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+      "maximum_source_length_or_allocation_difference_meters": 1.813816652429523e-09,
+      "passed": true,
+      "savings_difference_meters_by_scope": {
+        "Combined": 0.0,
+        "NM": 0.0,
+        "TX": 0.0
+      },
+      "savings_invariance_required": false,
+      "variation": "redundant_vertices"
+    },
+    {
+      "base_fixture": "04_shared_border_and_near_border.kmz",
+      "errors": [],
+      "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
+      "maximum_source_length_or_allocation_difference_meters": 0.0,
+      "passed": true,
+      "savings_difference_meters_by_scope": {
+        "Combined": 0.0,
+        "NM": 0.0,
+        "TX": 0.0
+      },
+      "savings_invariance_required": false,
+      "variation": "reversed"
+    }
+  ]
+}

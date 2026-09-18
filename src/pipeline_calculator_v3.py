@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Pipeline Calculator with Overlap Analysis - KMZ/KML Pipeline Calculator
-Compatibility entrypoint for Pipeline Calculator v4
+Compatibility entrypoint for Pipeline Calculator v5
 Version: derived from Git or embedded build metadata
 """
 
@@ -22,6 +22,7 @@ import platform
 import traceback
 import threading
 from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
+from pipeline_calculator.gui.repair_ui import RepairWorkflow
 import json
 from datetime import datetime
 import warnings
@@ -33,10 +34,11 @@ import math
 from xml.sax.saxutils import escape as _xml_escape
 
 # Version info
+from pipeline_calculator.versioning import get_display_version
 try:
     from pipeline_calculator import __version__ as __version__
 except Exception:
-    __version__ = "4.0-dev.unknown"
+    __version__ = "5.0-dev.unknown"
 __author__ = "Pipeline Calculator Team"
 
 # Default analysis parameters
@@ -132,7 +134,7 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
     
-    def analyze_complete(self, file_path, progress_callback=None, *, context=None):
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None):
         """Complete analysis of KMZ/KML file."""
         from pipeline_calculator.core.analyzer import PipelineAnalyzer as _CoreAnalyzer
 
@@ -144,7 +146,8 @@ class PipelineAnalyzer:
             segment_length=self.segment_length,
             angular_tolerance=self.angular_tolerance,
         )
-        return core.analyze_complete(file_path, progress_callback=progress_callback, context=context)
+        kwargs = {'options': options} if options is not None else {}
+        return core.analyze_complete(file_path, progress_callback=progress_callback, context=context, **kwargs)
 
 
 def build_analysis_workbook(current_results):
@@ -181,6 +184,8 @@ class PipelineCalculatorGUI:
         self.analyzer = PipelineAnalyzer()
         self.current_results = None
         self.current_file = None
+        from pipeline_calculator.gui.preferences import StateBreakdownPreference
+        self.state_preference = StateBreakdownPreference(self.root)
         
         # Analysis parameter variables
         # NOTE: CTkEntry's internal textvariable trace calls `.get()` while the user is typing.
@@ -194,6 +199,8 @@ class PipelineCalculatorGUI:
         self._processing = False
         self._closing = False
         self._analysis_session = None
+        self.repair_workflow = RepairWorkflow(self.root, set_busy=self._set_processing,
+            on_return=self.show_file_selection, on_replace=self.process_file, on_resume=self._start_analysis)
         self.root.protocol("WM_DELETE_WINDOW", self.close)
         self.setup_gui()
 
@@ -254,7 +261,7 @@ class PipelineCalculatorGUI:
             pass
     
     def setup_gui(self):
-        self.root.title(f"Pipeline Calculator v{__version__}")
+        self.root.title(f"Pipeline Calculator v{get_display_version()}")
         self.show_file_selection()
         self.root.initialize_size()
         self.root.deiconify()
@@ -266,7 +273,23 @@ class PipelineCalculatorGUI:
         show(self.root, title="Pipeline Calculator with Overlap Analysis",
              detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
              min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
-             on_browse=self.browse_file, on_file_selected=self.process_file, retry_path=self.current_file)
+             on_browse=self.browse_file, on_file_selected=self.process_file, retry_path=self.current_file,
+             state_preference=self.state_preference, repair_workflow=getattr(self, 'repair_workflow', None),
+             on_retry=lambda path: self.process_file(path, reuse_source=True))
+
+    def import_new_file(self):
+        if self._processing:
+            return
+        self.repair_workflow.retire_source()
+        self.current_file = None
+        self.current_results = None
+        self.show_file_selection()
+
+    def _set_processing(self, busy):
+        self._processing = busy
+        preference = getattr(self, 'state_preference', None)
+        if preference is not None:
+            preference.set_busy(busy)
     
     def browse_file(self):
         if getattr(self, "_processing", False):
@@ -290,10 +313,11 @@ class PipelineCalculatorGUI:
         finally:
             self.root.deiconify()  # Show main window again
     
-    def process_file(self, file_path):
+    def process_file(self, file_path, *, reuse_source=False):
         if getattr(self, '_processing', False) or getattr(self, '_closing', False):
             return
-        self._processing = True
+        self._set_processing(True)
+        preference = getattr(self, 'state_preference', None)
         try:
             self.current_results = None
             self.current_file = file_path
@@ -308,13 +332,36 @@ class PipelineCalculatorGUI:
                 if name in corrections:
                     variable.set(corrections[name])
                 setattr(self.analyzer, name, getattr(params, name))
-            self._analysis_session = AnalysisSession(self.root, self._analysis_done)
-            self._analysis_session.start(file_path, params)
+            options = preference.snapshot() if preference is not None else None
+            workflow = getattr(self, 'repair_workflow', None)
+            if workflow is not None and not reuse_source:
+                workflow.retire_source()
+            source = workflow.session_for(file_path) if workflow is not None else None
+            self._start_analysis(file_path, params, options=options, source_session=source)
         except Exception as e:
             self._processing = False
+            if preference is not None:
+                preference.set_busy(False)
             if getattr(self, '_analysis_session', None) is not None:
                 self._analysis_session.close()
             messagebox.showerror("Processing Error", str(e))
+            self.show_file_selection()
+
+    def _start_analysis(self, path, params, *, options=None, source_session=None, approve_repair=False):
+        self._set_processing(True)
+        kwargs = {'options': options} if options is not None else {}
+        if source_session is not None:
+            kwargs['source_session'] = source_session
+        if approve_repair:
+            kwargs['approve_repair'] = True
+        try:
+            self._analysis_session = AnalysisSession(self.root, self._analysis_done)
+            self._analysis_session.start(path, params, **kwargs)
+        except Exception as error:
+            if self._analysis_session is not None:
+                self._analysis_session.close()
+            self._set_processing(False)
+            messagebox.showerror('Processing Error', str(error), parent=self.root)
             self.show_file_selection()
 
     def _analysis_done(self, job):
@@ -322,28 +369,35 @@ class PipelineCalculatorGUI:
             return
         if self._analysis_session is None or self._analysis_session.job is not job:
             return
-        self._processing = False
+        workflow = getattr(self, 'repair_workflow', None)
+        if workflow is not None and workflow.handle_done(job):
+            return
+        self._set_processing(False)
         if job.state == 'completed':
             self.current_results = job.result
             self.show_results()
         else:
             if job.error is not None:
-                messagebox.showerror("Processing Error", str(job.error))
+                prefix = 'File repair verified. Analysis could not finish.\n\n' if workflow is not None and workflow.verified else ''
+                messagebox.showerror("Processing Error", prefix + str(job.error))
             self.show_file_selection()
 
     def close(self):
         self._closing = True
         if self._analysis_session is not None:
             self._analysis_session.close()
+        if getattr(self, 'repair_workflow', None) is not None:
+            self.repair_workflow.close()
         self.root.destroy()
 
     def show_results(self):
         if not self.current_results:
             return self.show_file_selection()
         from pipeline_calculator.gui.pages.results_page import show
-        show(self.root, version=__version__, current_file=self.current_file, current_results=self.current_results,
-             on_export=self.export_results, on_reanalyze=self.reanalyze, on_new_file=self.show_file_selection,
-             on_exit=self.close, on_open_corridor=self.view_overlap_kml)
+        show(self.root, version=get_display_version(), current_file=self.current_file, current_results=self.current_results,
+             on_export=self.export_results, on_reanalyze=self.reanalyze, on_new_file=self.import_new_file,
+             on_exit=self.close, on_open_corridor=self.view_overlap_kml, state_preference=self.state_preference,
+             repair_workflow=getattr(self, 'repair_workflow', None))
     
     def create_summary_tab(self, parent):
         from pipeline_calculator.gui.tabs.summary_tab import create
@@ -378,50 +432,15 @@ class PipelineCalculatorGUI:
         self._params_dialog = ParamsDialog(self.root,
             detection_range_var=self.detection_range_var, segment_length_var=self.segment_length_var,
             min_parallel_var=self.min_parallel_var, angular_tolerance_var=self.angular_tolerance_var,
-            on_apply=lambda: self.process_file(self.current_file) if self.current_file else None)
+            state_preference=self.state_preference,
+            on_apply=lambda: self.process_file(self.current_file, reuse_source=True) if self.current_file else None)
         self._params_dialog.show()
     
     def export_results(self):
-        if getattr(self, "_processing", False):
+        if getattr(self, "_processing", False) or not self.current_results:
             return
-        """Export analysis results.
-
-        Creates a single XLSX workbook with two sheets when `.xlsx` is selected:
-        - Pipeline Length Analysis
-        - Pipeline Overlap Analysis
-
-        JSON export remains available as an alternative.
-        """
-        try:
-            base_name = os.path.splitext(os.path.basename(self.current_file))[0]
-            
-            # Ask for save location
-            save_path = filedialog.asksaveasfilename(
-                defaultextension='.xlsx',
-                initialfile=f"{base_name}_analysis.xlsx",
-                filetypes=[('Excel Workbook', '*.xlsx'), ('JSON files', '*.json')]
-            )
-            
-            if not save_path:
-                return
-            
-            if save_path.endswith('.json'):
-                # Export as JSON
-                with open(save_path, 'w') as f:
-                    json.dump(self.current_results, f, indent=2, default=str)
-            else:
-                # Export as XLSX workbook with two sheets
-                try:
-                    wb = build_analysis_workbook(self.current_results)
-                except Exception as ex:
-                    messagebox.showerror("Export Error", str(ex))
-                    return
-                wb.save(save_path)
-            
-            messagebox.showinfo("Export Complete", f"Results exported to:\n{save_path}")
-            
-        except Exception as e:
-            messagebox.showerror("Export Error", f"Failed to export: {str(e)}")
+        from pipeline_calculator.gui.actions.export_actions import export_with_dialog
+        export_with_dialog(self.current_results, self.current_file)
     
     def run(self):
         """Start the application."""

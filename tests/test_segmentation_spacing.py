@@ -27,10 +27,11 @@ def test_segment_pipeline_midpoints_have_reasonable_spacing_on_long_edge() -> No
     seg_len = 5.0
     segments = segment_pipeline(geod, [start, end], seg_len)
 
-    # Expected: floor(total_len / seg_len) full segments.
+    # An authored integral length must stay integral across geodesic platforms;
+    # first prove its round-trip error is inside the terminal-only allowance.
     _, _, total_m = geod.inv(start[0], start[1], end[0], end[1])
-    expected = int(math.floor((abs(float(total_m)) + 1e-9) / seg_len))
-    assert len(segments) == expected
+    assert abs(abs(float(total_m))-10_000.0) < 1e-6
+    assert len(segments) == 2000
 
     mids = [s["midpoint"] for s in segments]
     dists = []

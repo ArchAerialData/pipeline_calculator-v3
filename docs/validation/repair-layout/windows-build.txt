@@ -1,0 +1,219 @@
+Build impl: new
+Entry script: C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\src\\pipeline_calculator_entry.py
+156 INFO: PyInstaller: 6.16.0, contrib hooks: 2025.8
+156 INFO: Python: 3.11.9
+167 INFO: Platform: Windows-10-10.0.19045-SP0
+167 INFO: Python environment: C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.venv
+168 INFO: wrote C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\build\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.spec
+170 INFO: Removing temporary files and cleaning cache in C:\Users\rbake\AppData\Local\pyinstaller
+616 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode '
+ 'repos\\pipeline_calculator-v3',
+ 'C:\\Users\\rbake\\AppData\\Local\\Programs\\Python\\Python311\\python311.zip',
+ 'C:\\Users\\rbake\\AppData\\Local\\Programs\\Python\\Python311\\DLLs',
+ 'C:\\Users\\rbake\\AppData\\Local\\Programs\\Python\\Python311\\Lib',
+ 'C:\\Users\\rbake\\AppData\\Local\\Programs\\Python\\Python311',
+ 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode '
+ 'repos\\pipeline_calculator-v3\\.venv',
+ 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode '
+ 'repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages',
+ 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode '
+ 'repos\\pipeline_calculator-v3\\src',
+ 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode '
+ 'repos\\pipeline_calculator-v3\\src']
+1147 INFO: Appending 'datas' from .spec
+1153 INFO: checking Analysis
+1153 INFO: Building Analysis because Analysis-00.toc is non existent
+1153 INFO: Looking for Python shared library...
+1153 INFO: Using Python shared library: C:\Users\rbake\AppData\Local\Programs\Python\Python311\python311.dll
+1153 INFO: Running Analysis Analysis-00.toc
+1153 INFO: Target bytecode optimization level: 0
+1153 INFO: Initializing module dependency graph...
+1154 INFO: Initializing module graph hook caches...
+1165 INFO: Analyzing modules for base_library.zip ...
+2056 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+2104 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+3148 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4015 INFO: Caching module dependency graph...
+4047 INFO: Analyzing C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\src\pipeline_calculator_entry.py
+4108 INFO: Processing standard module hook 'hook-xml.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4120 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4125 INFO: Processing standard module hook 'hook-numpy.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4441 INFO: Processing standard module hook 'hook-difflib.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4560 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+4817 INFO: Processing standard module hook 'hook-_ctypes.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+5069 INFO: Processing standard module hook 'hook-platform.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+5249 INFO: Processing standard module hook 'hook-sysconfig.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+6058 INFO: Processing standard module hook 'hook-pandas.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+7234 INFO: Processing standard module hook 'hook-pytz.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+7428 INFO: Processing standard module hook 'hook-scipy.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+7453 INFO: Processing standard module hook 'hook-pytest.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+7605 INFO: Processing standard module hook 'hook-pygments.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+8684 INFO: Processing standard module hook 'hook-py.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+8808 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+8809 INFO: SetuptoolsInfo: initializing cached setuptools info...
+9241 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+9357 INFO: Processing pre-safe-import-module hook 'hook-tomli.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+9870 INFO: Processing standard module hook 'hook-pkg_resources.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+11122 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+11229 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+11305 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+11517 INFO: Processing standard module hook 'hook-scipy.spatial._ckdtree.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+12284 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+12508 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+13210 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+15546 INFO: Processing standard module hook 'hook-pandas.io.formats.style.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+16990 INFO: Processing standard module hook 'hook-pandas.plotting.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+17261 INFO: Processing standard module hook 'hook-openpyxl.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+17719 INFO: Processing standard module hook 'hook-PIL.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+17772 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+18155 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+18920 INFO: Processing standard module hook 'hook-sqlite3.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+19208 INFO: Processing standard module hook 'hook-pandas.io.clipboard.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+19475 INFO: Processing standard module hook 'hook-dateutil.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+19552 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+19714 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+20016 INFO: Processing standard module hook 'hook-pyproj.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+20033 WARNING: Datas for pyproj not found at:
+C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.venv\Library\share\proj
+20041 INFO: Processing standard module hook 'hook-certifi.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+20135 INFO: Processing standard module hook 'hook-customtkinter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+20172 INFO: Processing pre-find-module-path hook 'hook-tkinter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+20172 INFO: TclTkInfo: initializing cached Tcl/Tk info...
+20355 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+20701 INFO: Processing standard module hook 'hook-tkinterdnd2.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\scripts\\pyinstaller_hooks'
+20817 INFO: Processing standard module hook 'hook-shapely.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+21274 INFO: Analyzing hidden import 'scipy._lib.messagestream'
+21275 INFO: Analyzing hidden import 'shapely._geos'
+21275 INFO: Analyzing hidden import 'shapely.conftest'
+21277 INFO: Analyzing hidden import 'shapely.geos'
+21277 INFO: Analyzing hidden import 'shapely.plotting'
+21280 INFO: Analyzing hidden import 'shapely.speedups'
+21280 INFO: Analyzing hidden import 'shapely.testing'
+21283 INFO: Analyzing hidden import 'shapely.tests'
+21284 INFO: Analyzing hidden import 'shapely.tests.common'
+21288 INFO: Analyzing hidden import 'shapely.tests.geometry'
+21289 INFO: Analyzing hidden import 'shapely.tests.geometry.test_collection'
+21292 INFO: Analyzing hidden import 'shapely.tests.geometry.test_coords'
+21296 INFO: Analyzing hidden import 'shapely.tests.geometry.test_decimal'
+21299 INFO: Analyzing hidden import 'shapely.tests.geometry.test_emptiness'
+21301 INFO: Analyzing hidden import 'shapely.tests.geometry.test_equality'
+21341 INFO: Analyzing hidden import 'shapely.tests.geometry.test_format'
+21344 INFO: Analyzing hidden import 'shapely.tests.geometry.test_geometry_base'
+21352 INFO: Analyzing hidden import 'shapely.tests.geometry.test_hash'
+21353 INFO: Analyzing hidden import 'shapely.tests.geometry.test_linestring'
+21358 INFO: Analyzing hidden import 'shapely.tests.geometry.test_multi'
+21359 INFO: Analyzing hidden import 'shapely.tests.geometry.test_multilinestring'
+21362 INFO: Analyzing hidden import 'shapely.tests.geometry.test_multipoint'
+21365 INFO: Analyzing hidden import 'shapely.tests.geometry.test_multipolygon'
+21368 INFO: Analyzing hidden import 'shapely.tests.geometry.test_point'
+21372 INFO: Analyzing hidden import 'shapely.tests.geometry.test_polygon'
+21385 INFO: Analyzing hidden import 'shapely.tests.legacy'
+21385 INFO: Analyzing hidden import 'shapely.tests.legacy.conftest'
+21386 INFO: Analyzing hidden import 'shapely.tests.legacy.test_affinity'
+21394 INFO: Analyzing hidden import 'shapely.tests.legacy.test_box'
+21395 INFO: Analyzing hidden import 'shapely.tests.legacy.test_buffer'
+21400 INFO: Analyzing hidden import 'shapely.tests.legacy.test_cga'
+21402 INFO: Analyzing hidden import 'shapely.tests.legacy.test_clip_by_rect'
+21404 INFO: Analyzing hidden import 'shapely.tests.legacy.test_create_inconsistent_dimensionality'
+21408 INFO: Analyzing hidden import 'shapely.tests.legacy.test_delaunay'
+21410 INFO: Analyzing hidden import 'shapely.tests.legacy.test_empty_polygons'
+21410 INFO: Analyzing hidden import 'shapely.tests.legacy.test_equality'
+21412 INFO: Analyzing hidden import 'shapely.tests.legacy.test_geointerface'
+21414 INFO: Analyzing hidden import 'shapely.tests.legacy.test_invalid_geometries'
+21415 INFO: Analyzing hidden import 'shapely.tests.legacy.test_linear_referencing'
+21417 INFO: Analyzing hidden import 'shapely.tests.legacy.test_linemerge'
+21419 INFO: Analyzing hidden import 'shapely.tests.legacy.test_locale'
+21420 INFO: Analyzing hidden import 'shapely.tests.legacy.test_make_valid'
+21422 INFO: Analyzing hidden import 'shapely.tests.legacy.test_mapping'
+21423 INFO: Analyzing hidden import 'shapely.tests.legacy.test_minimum_clearance'
+21423 INFO: Analyzing hidden import 'shapely.tests.legacy.test_ndarrays'
+21425 INFO: Analyzing hidden import 'shapely.tests.legacy.test_nearest'
+21425 INFO: Analyzing hidden import 'shapely.tests.legacy.test_operations'
+21428 INFO: Analyzing hidden import 'shapely.tests.legacy.test_operators'
+21430 INFO: Analyzing hidden import 'shapely.tests.legacy.test_orient'
+21433 INFO: Analyzing hidden import 'shapely.tests.legacy.test_parallel_offset'
+21435 INFO: Analyzing hidden import 'shapely.tests.legacy.test_persist'
+21436 INFO: Analyzing hidden import 'shapely.tests.legacy.test_pickle'
+21439 INFO: Analyzing hidden import 'shapely.tests.legacy.test_polygonize'
+21441 INFO: Analyzing hidden import 'shapely.tests.legacy.test_polylabel'
+21443 INFO: Analyzing hidden import 'shapely.tests.legacy.test_predicates'
+21446 INFO: Analyzing hidden import 'shapely.tests.legacy.test_prepared'
+21448 INFO: Analyzing hidden import 'shapely.tests.legacy.test_products_z'
+21449 INFO: Analyzing hidden import 'shapely.tests.legacy.test_shape'
+21450 INFO: Analyzing hidden import 'shapely.tests.legacy.test_shared_paths'
+21452 INFO: Analyzing hidden import 'shapely.tests.legacy.test_singularity'
+21453 INFO: Analyzing hidden import 'shapely.tests.legacy.test_snap'
+21454 INFO: Analyzing hidden import 'shapely.tests.legacy.test_split'
+21461 INFO: Analyzing hidden import 'shapely.tests.legacy.test_substring'
+21466 INFO: Analyzing hidden import 'shapely.tests.legacy.test_svg'
+21469 INFO: Analyzing hidden import 'shapely.tests.legacy.test_transform'
+21472 INFO: Analyzing hidden import 'shapely.tests.legacy.test_union'
+21475 INFO: Analyzing hidden import 'shapely.tests.legacy.test_validation'
+21476 INFO: Analyzing hidden import 'shapely.tests.legacy.test_vectorized'
+21480 INFO: Analyzing hidden import 'shapely.tests.legacy.test_voronoi_diagram'
+21483 INFO: Analyzing hidden import 'shapely.tests.legacy.test_wkb'
+21487 INFO: Analyzing hidden import 'shapely.tests.legacy.test_wkt'
+21488 INFO: Analyzing hidden import 'shapely.tests.legacy.threading_test'
+21489 INFO: Analyzing hidden import 'shapely.tests.test_constructive'
+21516 INFO: Analyzing hidden import 'shapely.tests.test_coordinates'
+21525 INFO: Analyzing hidden import 'shapely.tests.test_coverage'
+21530 INFO: Analyzing hidden import 'shapely.tests.test_creation'
+21545 INFO: Analyzing hidden import 'shapely.tests.test_creation_indices'
+21558 INFO: Analyzing hidden import 'shapely.tests.test_decorators'
+21561 INFO: Analyzing hidden import 'shapely.tests.test_geometry'
+21575 INFO: Analyzing hidden import 'shapely.tests.test_io'
+21629 INFO: Analyzing hidden import 'shapely.tests.test_linear'
+21634 INFO: Analyzing hidden import 'shapely.tests.test_measurement'
+21641 INFO: Analyzing hidden import 'shapely.tests.test_misc'
+21688 INFO: Analyzing hidden import 'shapely.tests.test_plotting'
+21692 INFO: Analyzing hidden import 'shapely.tests.test_predicates'
+21701 INFO: Analyzing hidden import 'shapely.tests.test_ragged_array'
+21712 INFO: Analyzing hidden import 'shapely.tests.test_set_operations'
+21723 INFO: Analyzing hidden import 'shapely.tests.test_strtree'
+21767 INFO: Analyzing hidden import 'shapely.tests.test_testing'
+21769 INFO: Processing module hooks (post-graph stage)...
+21854 WARNING: Hidden import "jinja2" not found!
+22004 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+22034 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+23756 WARNING: Hidden import "scipy.special._cdflib" not found!
+23758 INFO: Processing standard module hook 'hook-_tkinter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks'
+23777 INFO: Performing binary vs. data reclassification (1836 entries)
+23898 INFO: Looking for ctypes DLLs
+24100 WARNING: Ignoring AppKit.framework/AppKit imported from C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.venv\Lib\site-packages\darkdetect\_mac_detect.py - only basenames are supported with ctypes imports!
+24137 INFO: Analyzing run-time hooks ...
+24145 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+24146 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+24148 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+24149 INFO: Including run-time hook 'pyi_rth_pkgres.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+24151 INFO: Including run-time hook 'pyi_rth__tkinter.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+24152 INFO: Including run-time hook 'pyi_rth_pyproj.py' from 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\rthooks'
+24201 INFO: Creating base_library.zip...
+24216 INFO: Looking for dynamic libraries
+C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.venv\Lib\site-packages\PyInstaller\building\build_main.py:227: UserWarning: The numpy.array_api submodule is still experimental. See NEP 47.
+  __import__(package)
+25964 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\shapely.libs', 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\numpy\\.libs', 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\scipy.libs', 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\pyproj.libs', 'C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.venv\\Lib\\site-packages\\pandas.libs']
+25965 INFO: Extra DLL search directories (PATH): []
+27693 INFO: Warnings written to C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\build\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty\warn-Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.txt
+27841 INFO: Graph cross-reference written to C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\build\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty\xref-Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.html
+27908 INFO: checking PYZ
+27908 INFO: Building PYZ because PYZ-00.toc is non existent
+27908 INFO: Building PYZ (ZlibArchive) C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\build\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty\PYZ-00.pyz
+29132 INFO: Building PYZ (ZlibArchive) C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\build\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty\PYZ-00.pyz completed successfully.
+29178 INFO: checking PKG
+29179 INFO: Building PKG because PKG-00.toc is non existent
+29179 INFO: Building PKG (CArchive) Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.pkg
+45873 INFO: Building PKG (CArchive) Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.pkg completed successfully.
+45903 INFO: Bootloader C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.venv\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\runw.exe
+45903 INFO: checking EXE
+45903 INFO: Building EXE because EXE-00.toc is non existent
+45903 INFO: Building EXE from EXE-00.toc
+45903 INFO: Copying bootloader EXE to C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\dist\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.exe
+45941 INFO: Copying icon to EXE
+45975 INFO: Copying 0 resources to EXE
+45975 INFO: Embedding manifest in EXE
+46010 INFO: Appending PKG archive to EXE
+46067 INFO: Fixing EXE headers
+46457 INFO: Building EXE from EXE-00.toc completed successfully.
+46485 INFO: Build complete! The results are available in: C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\dist
+Build complete: C:\Users\rbake\Desktop\GitHub Shortcuts\.vscode repos\pipeline_calculator-v3\.validation-output\repair-layout\package\dist\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.exe

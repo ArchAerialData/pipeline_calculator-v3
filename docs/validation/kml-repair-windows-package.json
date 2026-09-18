@@ -1,0 +1,105 @@
+{
+  "checked_on": "2026-09-17",
+  "artifact": "dist/Pipeline_Calculator_v4.exe",
+  "versioned_artifact": "dist/Pipeline_Calculator_v4.22-dev.97989716af38.dirty.exe",
+  "size_bytes": 102572973,
+  "sha256": "9745fcdcdd406a58b00d9fee8cb8958fdc94c4654ad4cb0a7190973a73ec6f3b",
+  "summary": {
+    "status": "passed",
+    "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\kml-repair-20260917\\dist\\Pipeline_Calculator_v4.22-dev.97989716af38.dirty.exe",
+    "proj_network": "OFF",
+    "implementations": [
+      {
+        "implementation": "new",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "implementation": "legacy",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ]
+  },
+  "reports": {
+    "new": {
+      "status": "passed",
+      "implementation": "new",
+      "frozen": true,
+      "version": "4.22-dev.97989716af38.dirty",
+      "total_meters": 111.03464218395374,
+      "icon": "icon.ico",
+      "tk_widgets": true,
+      "dnd_loaded": true,
+      "live_results": true,
+      "ui_reliability": {
+        "summary_returns": 20,
+        "callback_errors": [],
+        "tk_patchlevel": "8.6.12"
+      },
+      "pipeline_count": 1,
+      "placemark_ids": [
+        "N/A"
+      ],
+      "original_miles": 0.06899359000605187,
+      "geography": {
+        "boundary_jurisdictions": 51,
+        "state_codes": [
+          "OK",
+          "TX"
+        ],
+        "boundary_vintage": "2025",
+        "reconciliation_passed": true,
+        "package_map_roundtrips": true
+      },
+      "repair": {
+        "approval_required": true,
+        "source_unchanged": true,
+        "geometry_verified": true,
+        "saved_copy_roundtrip": true,
+        "provenance_exported": true
+      },
+      "adjusted_miles": null
+    },
+    "legacy": {
+      "status": "passed",
+      "implementation": "legacy",
+      "frozen": true,
+      "version": "4.22-dev.97989716af38.dirty",
+      "total_meters": 111.03464218395374,
+      "icon": "icon.ico",
+      "tk_widgets": true,
+      "dnd_loaded": true,
+      "live_results": true,
+      "ui_reliability": {
+        "summary_returns": 20,
+        "callback_errors": [],
+        "tk_patchlevel": "8.6.12"
+      },
+      "pipeline_count": 1,
+      "placemark_ids": [
+        "N/A"
+      ],
+      "original_miles": 0.06899359000605187,
+      "geography": {
+        "boundary_jurisdictions": 51,
+        "state_codes": [
+          "OK",
+          "TX"
+        ],
+        "boundary_vintage": "2025",
+        "reconciliation_passed": true,
+        "package_map_roundtrips": true
+      },
+      "repair": {
+        "approval_required": true,
+        "source_unchanged": true,
+        "geometry_verified": true,
+        "saved_copy_roundtrip": true,
+        "provenance_exported": true
+      },
+      "adjusted_miles": null
+    }
+  },
+  "macos": "Not executed on this Windows host; remains a platform release gate."
+}

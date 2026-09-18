@@ -1,0 +1,33 @@
+{
+  "source_filename": "Pipelines August 2023.kmz",
+  "source_sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+  "archive_bytes": 34475,
+  "kml_bytes": 174966,
+  "original_error": "Error parsing KML data: Invalid KML data in doc.kml: unbound prefix: line 6, column 1",
+  "patch_offset_zero_based": 211,
+  "patch": " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+  "patch_bytes": 54,
+  "xsi_schemaLocation_attributes": 5,
+  "strict_xml_parse_passed": true,
+  "inverse_patch_recovers_exact_source": true,
+  "source_archive_unchanged": true,
+  "coordinate_blocks_byte_identical": 44,
+  "raw_path_sequence_equals_application_paths": true,
+  "pipelines": 42,
+  "paths": 44,
+  "vertices": 2139,
+  "point_placemarks": 0,
+  "total_meters": 920747.8695152604,
+  "total_US_survey_miles": 572.1250571784351,
+  "diagnostics": [
+    {
+      "level": "info",
+      "code": "selected_primary_kml",
+      "message": "Selected primary KML from KMZ archive.",
+      "context": {
+        "source": "doc.kml"
+      }
+    }
+  ],
+  "limits": "Parsing and original mileage only; overlap, state analysis, and full KML XSD validation were not run."
+}

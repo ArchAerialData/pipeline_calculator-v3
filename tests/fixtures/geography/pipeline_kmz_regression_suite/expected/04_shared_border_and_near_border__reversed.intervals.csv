@@ -1,0 +1,17 @@
+id,key,path_index,start_m,end_m,kind,state_codes,length_meters,start_error_bound_meters,end_error_bound_meters,cut_error_bound_meters
+04_interior_shared_interior:p0:i0,04_interior_shared_interior,0,0.0,160.00000000022018,interior,TX,160.00000000022018,0.0,2e-06,2e-06
+04_interior_shared_interior:p0:i1,04_interior_shared_interior,0,160.00000000022018,480.0000000010498,shared,NM|TX,320.00000000082963,2e-06,2e-06,2e-06
+04_interior_shared_interior:p0:i2,04_interior_shared_interior,0,480.0000000010498,640.0000000013017,interior,NM,160.00000000025187,2e-06,0.0,2e-06
+04_shared_long:p0:i0,04_shared_long,0,0.0,429.9999999997815,shared,NM|TX,429.9999999997815,2e-06,2e-06,2e-06
+04_near_east:p0:i0,04_near_east,0,0.0,429.99999999836876,interior,TX,429.99999999836876,0.0,0.0,0.0
+04_near_west:p0:i0,04_near_west,0,0.0,429.99999999836876,interior,NM,429.99999999836876,0.0,0.0,0.0
+04_centimeter_east:p0:i0,04_centimeter_east,0,0.0,430.00000000048766,interior,TX,430.00000000048766,0.0,0.0,0.0
+04_centimeter_west:p0:i0,04_centimeter_west,0,0.0,430.00000000048766,interior,NM,430.00000000048766,0.0,0.0,0.0
+04_shared_qualification_route:p0:i0,04_shared_qualification_route,0,0.0,63.999999999657845,interior,TX,63.999999999657845,0.0,2e-06,2e-06
+04_shared_qualification_route:p0:i1,04_shared_qualification_route,0,63.999999999657845,323.99999999968566,shared,NM|TX,260.0000000000278,2e-06,2e-06,2e-06
+04_shared_qualification_route:p0:i2,04_shared_qualification_route,0,323.99999999968566,387.99999999789986,interior,TX,63.999999998214236,2e-06,0.0,2e-06
+04_shared_qualification_partner:p0:i0,04_shared_qualification_partner,0,0.0,380.0000000011434,interior,TX,380.0000000011434,0.0,0.0,0.0
+04_shared_short:p0:i0,04_shared_short,0,0.0,123.24999999978863,shared,NM|TX,123.24999999978863,2e-06,2e-06,2e-06
+04_tiny_crossing:p0:i0,04_tiny_crossing,0,0.0,0.05999994284838842,interior,TX,0.05999994284838842,0.0,2.0953674317502594e-06,2.0953674317502594e-06
+04_tiny_crossing:p0:i1,04_tiny_crossing,0,0.05999994284838842,0.10000000011474579,interior,NM,0.040000057266357365,2.0953674317502594e-06,0.0,2.0953674317502594e-06
+04_endpoint_touch:p0:i0,04_endpoint_touch,0,0.0,90.00000000051196,interior,NM,90.00000000051196,2e-06,0.0,2e-06

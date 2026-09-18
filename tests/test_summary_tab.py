@@ -42,6 +42,8 @@ def test_summary_preserves_estimate_states():
             assert expected in shown
             assert ('Analysis incomplete.' in shown) == incomplete
             assert not view.details.winfo_manager()
+            assert not view.details.winfo_children()
+            view.toggle.invoke()
             assert 'Detection range: Not recorded' in '\n'.join(labels(view.details))
             view.destroy()
     finally:

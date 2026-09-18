@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-15",
+  "baseline_commit": "6bc6e5f7aa083604edbaa25f177f671f58ea15d6",
+  "status": "Concurrency hold cleared; independent core/export fixes ready; RV-01 native UI investigation required before integrated completion",
+  "initial_worktree_clean": true,
+  "core_parser_export_files_changed_since_audit": [],
+  "environment": {
+    "python": "3.11.9",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "customtkinter": "5.2.2",
+    "pyproj": "3.7.2",
+    "proj": "9.5.1",
+    "shapely": "2.1.2",
+    "tcl_patchlevel": "8.6.12",
+    "tk_api_version": 8.6
+  },
+  "original_findings": {
+    "SB-01": "Reproduced: 364.4392780854252m shared path entirely unresolved in both directions",
+    "SB-02": "Reproduced: 1115.0995456325722m TX/NM shared path has 2.2737367544323206e-13m unresolved tail in forward direction only",
+    "SB-03": "Reproduced: default maps-enabled antimeridian package export aborts; reports-only succeeds",
+    "SB-04": "Reproduced: constructed valid fallback omitted from state maps; unusable Combined visual omitted without diagnostic",
+    "SB-05": {
+      "reproduced": true,
+      "callback_at_partition_start": [
+        0.5,
+        0.625,
+        1.0
+      ],
+      "callback_after_job": [
+        0.5,
+        0.625,
+        1.0
+      ]
+    }
+  },
+  "new_validation_gate": {
+    "id": "RV-01",
+    "test": "tests/test_ui_lifecycle.py::test_scope_replacement_releases_views_and_recovers_from_failure",
+    "first_failure": "Windows access violation 3221225477 (0xC0000005), diagnostic trace in Tk/CTk canvas rendering",
+    "isolated_repeat": "Native child exceeded45-second timeout; trace in canvas text creation, CTk drawing and update_idletasks during scope replacement",
+    "root_cause": "unconfirmed",
+    "blocks": "Integrated UI/release acceptance; does not prevent independent core fixes"
+  },
+  "test_runs": [
+    {
+      "path": ".validation-output/state-boundary-readiness-6bc6e5f/geometry/geometry-tests.xml",
+      "tests": "20",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.599",
+      "timestamp": "2026-09-15T09:04:25.252378-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-readiness-6bc6e5f/export/existing-export-tests.xml",
+      "tests": "10",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "1.444",
+      "timestamp": "2026-09-15T09:04:26.472379-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scoped-tests.xml",
+      "tests": "16",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "47.093",
+      "timestamp": "2026-09-15T09:04:46.089880-05:00"
+    },
+    {
+      "path": ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scope-repeat.xml",
+      "tests": "1",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "46.552",
+      "timestamp": "2026-09-15T09:06:06.220932-05:00"
+    }
+  ],
+  "fixture_expectation_checks": {
+    "fixture_checks": {
+      "adamas_ng_pipeline_row": {
+        "hash_passed": true,
+        "tracked": true
+      },
+      "adamas_ng_pipeline_row_centerlines": {
+        "hash_passed": true,
+        "tracked": true
+      }
+    },
+    "negative_both_modes": [
+      {
+        "state_breakdown": false,
+        "passed": true,
+        "diagnostic_counts": {
+          "selected_primary_kml": 1,
+          "unsupported_geometry": 281,
+          "no_supported_features": 1
+        }
+      },
+      {
+        "state_breakdown": true,
+        "passed": true,
+        "diagnostic_counts": {
+          "selected_primary_kml": 1,
+          "unsupported_geometry": 281,
+          "no_supported_features": 1
+        }
+      }
+    ],
+    "positive_per_source_independent_expectations_passed": true,
+    "positive_sources_checked": 281,
+    "positive_paths_checked": 4827,
+    "positive_package_roundtrips_passed": true
+  },
+  "centerline_analysis": {
+    "seconds": 21.814686300000176,
+    "combined_complete": true,
+    "geography_status": "complete",
+    "original_meters": 1965917.8631994629,
+    "original_survey_miles": 1221.5622833678003,
+    "reconciliation": {
+      "source_meters": 1965917.8631994629,
+      "interior_meters": 1965917.863199462,
+      "shared_meters": 0.0,
+      "outside_meters": 0.0,
+      "unresolved_meters": 0.0,
+      "attributed_state_meters": 1965917.863199462,
+      "delta_meters": -9.313225746154785e-10,
+      "tolerance_meters": 0.001,
+      "passed": true
+    },
+    "combined_diagnostic_counts": {
+      "selected_primary_kml": 1
+    },
+    "geography_diagnostic_counts": {},
+    "states": [
+      {
+        "state_code": "LA",
+        "analysis_complete": true,
+        "total_meters": 1255195.5030877413,
+        "interior_savings_meters": 0.0,
+        "adjusted_total_meters": 1255195.5030877413
+      },
+      {
+        "state_code": "TX",
+        "analysis_complete": true,
+        "total_meters": 335084.0137085223,
+        "interior_savings_meters": 0.0,
+        "adjusted_total_meters": 335084.0137085223
+      },
+      {
+        "state_code": "WY",
+        "analysis_complete": true,
+        "total_meters": 375638.3464031984,
+        "interior_savings_meters": 0.0,
+        "adjusted_total_meters": 375638.3464031984
+      }
+    ]
+  },
+  "centerline_exports": {
+    "package": ".validation-output\\state-boundary-readiness-6bc6e5f\\fixtures\\adamas_ng_pipeline_row_centerlines_analysis_20260915_090457",
+    "roundtrips": [
+      {
+        "scope": "Combined",
+        "expected_meters": 1965917.8631994629,
+        "reimported_meters": 1965917.8631994403,
+        "difference_meters": -2.2584572434425354e-08,
+        "passed": true
+      },
+      {
+        "scope": "LA",
+        "expected_meters": 1255195.5030877413,
+        "reimported_meters": 1255195.5030877378,
+        "difference_meters": -3.4924596548080444e-09,
+        "passed": true
+      },
+      {
+        "scope": "TX",
+        "expected_meters": 335084.0137085223,
+        "reimported_meters": 335084.0137085062,
+        "difference_meters": -1.6123522073030472e-08,
+        "passed": true
+      },
+      {
+        "scope": "WY",
+        "expected_meters": 375638.3464031984,
+        "reimported_meters": 375638.346403198,
+        "difference_meters": -3.4924596548080444e-10,
+        "passed": true
+      }
+    ],
+    "files": [
+      "analysis.json",
+      "analysis.xlsx",
+      "Combined\\analysis.kmz",
+      "States\\Louisiana\\analysis.kmz",
+      "States\\Texas\\analysis.kmz",
+      "States\\Wyoming\\analysis.kmz"
+    ]
+  },
+  "cancellation_retry": [
+    {
+      "target": "Loading state boundaries",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Splitting geometry",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Analyzing A State",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Analyzing B State",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    },
+    {
+      "target": "Finalizing state results",
+      "cancelled": true,
+      "retry_complete": "complete",
+      "reached": true
+    }
+  ],
+  "historical_ui_evidence": {
+    "recorded_full_suite": {
+      "tests": "366",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "201.958",
+      "timestamp": "2026-09-14T16:47:57.084038-05:00"
+    },
+    "recorded_packaged_status": "passed",
+    "source_hashes_checked": 26,
+    "all_recorded_source_hashes_match_current": true,
+    "macos_verified": false,
+    "caveat": "Historical passes do not override the fresh native scope stress failures"
+  },
+  "evidence_files": {
+    "geometry": ".validation-output/state-boundary-readiness-6bc6e5f/geometry/recheck.json",
+    "export": ".validation-output/state-boundary-readiness-6bc6e5f/export/readiness.json",
+    "contracts": ".validation-output/state-boundary-readiness-6bc6e5f/contracts/readiness-contracts.json",
+    "first_native_failure": ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scoped-tests-failure.txt",
+    "repeat_native_failure": ".validation-output/state-boundary-readiness-6bc6e5f/contracts/scope-repeat-failure.txt",
+    "fixture_checks": ".validation-output/state-boundary-readiness-6bc6e5f/fixtures/expectation-checks.json"
+  },
+  "changes_made": "Plan/fixture documentation and this evidence summary only; no production/test changes, commits, pushes or builds"
+}

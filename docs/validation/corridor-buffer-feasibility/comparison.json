@@ -1,0 +1,20 @@
+[
+  {
+    "case": "L bend",
+    "qualified_length_m": 590.0,
+    "current_kind": "oriented_rectangle",
+    "current_area_m2": 111367.92787973589,
+    "reference_area_m2": 8445.005171861429,
+    "reference_valid": true,
+    "reference_covers_qualified_paths": true
+  },
+  {
+    "case": "U bend",
+    "qualified_length_m": 890.0,
+    "current_kind": "oriented_rectangle",
+    "current_area_m2": 114745.53270359084,
+    "reference_area_m2": 13752.448211806835,
+    "reference_valid": true,
+    "reference_covers_qualified_paths": true
+  }
+]

@@ -1,0 +1,52 @@
+{
+  "scenario": "offer-expanded",
+  "scale": 1,
+  "logical_client_size": [
+    900,
+    650
+  ],
+  "actual_client_size": [
+    900,
+    650
+  ],
+  "image_size": [
+    900,
+    650
+  ],
+  "file": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\repair-layout\\screenshots\\offer-expanded-900x650-100pct.png",
+  "synthetic_data": true,
+  "window_only_capture": true,
+  "callback_errors": [],
+  "actions": [
+    {
+      "text": "Repair & analyze",
+      "visible": true,
+      "bounds": [
+        109,
+        518,
+        682,
+        38
+      ]
+    },
+    {
+      "text": "Cancel",
+      "visible": true,
+      "bounds": [
+        109,
+        472,
+        336,
+        34
+      ]
+    },
+    {
+      "text": "Choose another file",
+      "visible": true,
+      "bounds": [
+        455,
+        472,
+        336,
+        34
+      ]
+    }
+  ]
+}

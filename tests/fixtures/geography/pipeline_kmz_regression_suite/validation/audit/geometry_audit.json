@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0.0",
+  "scope": "Independent geographic oracle adversarial audit; no production changes and no golden regeneration",
+  "passed": true,
+  "adversarial_test_count": 14,
+  "adversarial_runtime_seconds": 0.9826108000706881,
+  "adversarial_test_names": [
+    "test_altitude_is_ignored_when_reading_final_kmz",
+    "test_collinear_endpoint_touch_is_not_positive_coincidence",
+    "test_dateline_root_uses_unwrapped_geodesic_and_periodic_ownership",
+    "test_distinct_unresolvable_roots_fail_instead_of_erasing_a_visit",
+    "test_domain_limits_fail_before_certification",
+    "test_exact_native_shared_interval_and_centimeter_offsets",
+    "test_hole_and_disconnected_paths_preserve_gaps",
+    "test_latitude_endpoint_chord_is_never_assumed_shared",
+    "test_native_endpoint_touch_has_no_positive_foreign_length",
+    "test_native_longitude_is_not_perturbed_by_wrapping",
+    "test_real_ten_centimeter_crossing_is_retained",
+    "test_reversal_and_geodesic_vertex_preserve_ownership_and_original",
+    "test_shallow_crossing_cannot_claim_a_fixed_micrometer_certificate",
+    "test_sparse_geodesic_visits_state_without_endpoint_chord_intersection"
+  ],
+  "test_output": "..............\n----------------------------------------------------------------------\nRan 14 tests in 0.983s\n\nOK\n",
+  "golden_geometry_checks": [
+    {
+      "fixture": "fixtures/01_three_state_disconnected_networks.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/02_three_state_transverse_crossings.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/03_parallel_corridors_crossing_borders.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/04_shared_border_and_near_border.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/variants/01_three_state_disconnected_networks__source_order.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    },
+    {
+      "fixture": "fixtures/variants/04_shared_border_and_near_border__reversed.kmz",
+      "geometric_golden_difference_count": 0,
+      "errors": [],
+      "passed": true
+    }
+  ],
+  "reviewed_files_sha256": {
+    "reference/geometry.py": "aea04c6790113c45cf15f09e235518edf1935ae2a29b9fd9a6ea0890b92588a8",
+    "validation/test_geometry_reference.py": "d2a6e70867387bb08986134890ac19d6da8ba3212d3212e4c0e8cee0819eaa34"
+  },
+  "corrected_findings": [
+    {
+      "id": "canonical-longitude",
+      "before": "Wrapping native longitude 10.1 changed it to 10.099999999999994, misclassifying an exact boundary point as outside.",
+      "after": "Canonical longitudes remain unchanged; periodic queries continue to handle wrapping."
+    },
+    {
+      "id": "distinct-close-roots",
+      "before": "Two boundaries at 0 and 1e-12 degrees longitude produced overlapping station brackets and erased the real middle-state interval.",
+      "after": "Only geometrically identical boundary events can merge. Distinct cuts that cannot be ordered within reported uncertainty fail certification instead of silently dropping mileage."
+    },
+    {
+      "id": "collinear-endpoint-touch",
+      "before": "A source on longitude 10.1 from latitude 0 to 0.5 incorrectly rejected a boundary segment on the same meridian ending at latitude 0 as unproved positive coincidence.",
+      "after": "Exact meridian/equator disjoint segments and zero-length touches are handled explicitly."
+    },
+    {
+      "id": "shallow-root-certification",
+      "before": "A shallow latitude crossing of the (-0.1,40) to (0.1,40) geodesic understated station uncertainty: PROJ comparison differed by 0.000055640401114942506 m while the claimed bound was 0.0000021249991328222676 m.",
+      "after": "Coordinate evaluation allowance is converted to station uncertainty using a derivative lower bound; roots exceeding the 0.01 m cut target fail certification. The 2 micrometer minimum and all existing core expectations remain unchanged."
+    }
+  ],
+  "limitations": [
+    "Coordinate evaluation allowance remains an explicit engineering assumption, not formal interval arithmetic proof.",
+    "Synthetic dateline and hole polygons test algorithms; they do not certify ownership of an actual Alaska, Hawaii, or boundary-hole fixture.",
+    "Unresolvable submicrometer visits are rejected instead of being promoted to complete goldens; the 10 cm real crossing and 3 cm exclusive offsets remain accepted."
+  ]
+}

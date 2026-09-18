@@ -16,18 +16,24 @@ def bent_pair():
             for i in range(2)]
 
 
-def test_fallback_rectangle_contains_all_qualified_midpoints():
+def test_buffered_bend_contains_all_qualified_midpoints():
     analyzer = PipelineAnalyzer(min_parallel_length=10)
     pipes = bent_pair()
     matches = analyzer.find_parallel_segments(pipes)
     result = analyzer.calculate_overlap_results(pipes, matches)
     for section in result['bundled_sections']:
-        origin = (section['center_lon'], section['center_lat'])
-        ring = local_points(section['oriented_polygon'], origin)
+        from shapely.geometry import Point, Polygon
+        from shapely.ops import unary_union
+        origin = pipes[0]['coordinates'][0]
+        shape = unary_union([Polygon(local_points(p['outer'], origin),
+                                      [local_points(h, origin) for h in p['holes']])
+                             for p in section['visualization_polygons']])
         # Both source lines qualify throughout this right angle.
         for pipe in pipes:
             for point in local_points([s['midpoint'] for s in pipe['segments']], origin):
-                assert inside(point, ring), point
+                assert shape.covers(Point(point)), point
+        # A bend's empty interior is no longer filled by an enclosing rectangle.
+        assert not shape.covers(Point(local_points([geographic((75, 75))], origin)[0]))
 
 
 def test_straight_outline_covers_sampled_segment_ends():
@@ -36,7 +42,7 @@ def test_straight_outline_covers_sampled_segment_ends():
              for i in range(2)]
     result = analyzer.calculate_overlap_results(pipes, analyzer.find_parallel_segments(pipes))
     section = result['bundled_sections'][0]
-    origin = (section['center_lon'], section['center_lat'])
+    origin = pipes[0]['coordinates'][0]
     ring = local_points(prepare_geometry(section)[0], origin)
     for pipe in pipes:
         assert all(inside(point, ring) for point in local_points(pipe['coordinates'], origin))

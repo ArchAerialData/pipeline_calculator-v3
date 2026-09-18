@@ -1,0 +1,22 @@
+scope,source_1,source_2,path_1,path_2,qualified,length_meters,sample_count_1,sample_count_2,ranges_1,ranges_2,eligible_match_count,minimum_transverse_meters,maximum_transverse_meters,maximum_longitudinal_meters
+Combined,04_centimeter_east,04_centimeter_west,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,0.05999999819759288,0.06000000140478129,1.0478821524158145e-11
+Combined,04_centimeter_east,04_interior_shared_interior,0,0,True,320.0,64,64,"[[16, 80]]","[[32, 96]]",64,0.029999999098796432,0.030000000595196568,3.842814268802439e-09
+Combined,04_centimeter_east,04_near_east,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.969999999565874,7.970000006438873,6.35148268119265e-09
+Combined,04_centimeter_east,04_near_west,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,8.02999999909059,8.030000005786261,6.751063617346826e-09
+Combined,04_centimeter_east,04_shared_long,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,0.029999999098796436,0.030000000702390638,1.458197701095425e-09
+Combined,04_centimeter_west,04_interior_shared_interior,0,0,True,320.0,64,64,"[[16, 80]]","[[32, 96]]",64,0.029999999098796432,0.030000000595196568,3.842814268802439e-09
+Combined,04_centimeter_west,04_near_east,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,8.02999999909059,8.030000005786261,6.751063617346826e-09
+Combined,04_centimeter_west,04_near_west,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.969999999565874,7.970000006438873,6.35148268119265e-09
+Combined,04_centimeter_west,04_shared_long,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,0.029999999098796436,0.030000000702390638,1.4581977017819676e-09
+Combined,04_interior_shared_interior,04_near_east,0,0,True,320.0,64,64,"[[32, 96]]","[[16, 80]]",64,8.000000001123976,8.000000005949701,7.149015115636349e-09
+Combined,04_interior_shared_interior,04_near_west,0,0,True,320.0,64,64,"[[32, 96]]","[[16, 80]]",64,8.000000001123976,8.000000005949701,7.149015115636349e-09
+Combined,04_interior_shared_interior,04_shared_long,0,0,True,320.0,64,64,"[[32, 96]]","[[16, 80]]",64,0.0,4.756487259850837e-25,3.88396659605242e-09
+Combined,04_near_east,04_shared_long,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.999999999858612,8.000000006116025,5.470819754296633e-09
+Combined,04_near_west,04_shared_long,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.999999999858612,8.000000006116025,5.470819754296633e-09
+Combined,04_shared_qualification_partner,04_shared_qualification_route,0,0,False,60.0,12,12,"[[0, 12]]","[[0, 12]]",12,7.999999999704076,8.000000003139945,3.243922954617021e-09
+Combined,04_shared_qualification_partner,04_shared_qualification_route,0,0,True,260.0,52,52,"[[12, 64]]","[[13, 65]]",103,11.500000002007008,12.000000006478208,4.000000003134851
+Combined,04_shared_qualification_partner,04_shared_qualification_route,0,0,False,55.0,12,11,"[[64, 76]]","[[66, 77]]",22,7.999999998991814,8.0000000021648,3.0000000005861724
+NM,04_centimeter_west,04_near_west,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.969999999565874,7.970000006438873,6.35148268119265e-09
+TX,04_centimeter_east,04_near_east,0,0,True,430.0,86,86,"[[0, 86]]","[[0, 86]]",86,7.969999999565874,7.970000006438873,6.35148268119265e-09
+TX,04_shared_qualification_partner,04_shared_qualification_route,0,0,False,60.0,12,12,"[[0, 12]]","[[0, 12]]",12,7.999999999704076,8.000000003139945,3.243922954617021e-09
+TX,04_shared_qualification_partner,04_shared_qualification_route,0,1,False,55.0,12,11,"[[64, 76]]","[[1, 12]]",22,8.000000000900538,8.000000003154778,3.9999999994617093

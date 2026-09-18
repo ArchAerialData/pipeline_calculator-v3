@@ -1,0 +1,575 @@
+{
+  "application_defect": "A boundary crossing root immediately before an already exact source endpoint creates a spurious unresolved positive-length interval and incomplete geography",
+  "baseline_commit": "71da499d5756648ae395660f0a241ea00edbea4f",
+  "boundary_sha256": "55d4bb65ae174f1b1cf9fd4e012ef6b8a166ae8ee4538a0a1205ce2d45697539",
+  "expectations_established_before_application_run": true,
+  "native_vertex_shift_defect": {
+    "boundary_evidence": [
+      {
+        "application_covers_original_endpoint": false,
+        "application_vertices": [
+          [
+            -103.04170300000001,
+            36.478411
+          ]
+        ],
+        "native_covers_original_endpoint": true,
+        "native_vertices": [
+          [
+            -103.041703,
+            36.478411
+          ]
+        ],
+        "state_code": "NM",
+        "symmetric_difference_area_degrees_squared": 1.4180708079720763e-14
+      },
+      {
+        "application_covers_original_endpoint": true,
+        "application_vertices": [
+          [
+            -103.04170300000001,
+            36.478411
+          ]
+        ],
+        "native_covers_original_endpoint": true,
+        "native_vertices": [
+          [
+            -103.041703,
+            36.478411
+          ]
+        ],
+        "state_code": "TX",
+        "symmetric_difference_area_degrees_squared": 4.0048059439683016e-14
+      }
+    ],
+    "cause": "Application _unwrap_ring applies degrees(unwrap(radians(longitude))) to already canonical continental coordinates, moving this native vertex one ULP west",
+    "native_endpoint": [
+      -103.041703,
+      36.478411
+    ]
+  },
+  "rejected_fixture_construction": {
+    "canonical_edge": [
+      [
+        -103.041729,
+        36.48707
+      ],
+      [
+        -103.041703,
+        36.478411
+      ]
+    ],
+    "correction": "Use exact native boundary vertex (-103.041703,36.478411), then regenerate from final saved XML",
+    "exact_binary_determinant_degrees_squared": "3.104315856863637227743422911823735488301423401935608126223087310791015E-17",
+    "initial_reference_defect": "Overlapping root bracket incorrectly consumed the canonical source endpoint and classified a truncated path as an endpoint touch",
+    "point_memberships": [
+      "TX"
+    ],
+    "reference_correction": "Preserve canonical source endpoints, use 80-digit exact-binary endpoint predicates, and reject a root bracket overlapping an unproved endpoint",
+    "reference_rejects_uncertifiable_endpoint": true,
+    "rejected_coordinate": [
+      -103.04170777115063,
+      36.4799999766659
+    ],
+    "rejection": "Root uncertainty overlaps a source endpoint without exact boundary identity; redesign the endpoint",
+    "source_key": "02_endpoint_touch"
+  },
+  "reproductions": [
+    {
+      "archive": "04_endpoint_roundoff.kmz",
+      "expected": {
+        "crossing_count": 0,
+        "endpoint_touches": [
+          {
+            "chainage_meters": 4.000000000333733,
+            "coordinate": [
+              -103.064732,
+              32.7496252813174
+            ],
+            "endpoint": "end",
+            "interior_states": [
+              "TX"
+            ],
+            "path_index": 0,
+            "positive_length_in_touched_states_meters": 0.0,
+            "source_key": "04_shared_qualification_route",
+            "touched_states": [
+              "NM"
+            ]
+          }
+        ],
+        "intervals": [
+          {
+            "coordinates": [
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ],
+              [
+                -103.064732,
+                32.7496252813174
+              ]
+            ],
+            "cut_error_bound_meters": 2e-06,
+            "end_error_bound_meters": 2e-06,
+            "end_m": 4.000000000333733,
+            "id": "04_shared_qualification_route:p0:i0",
+            "key": "04_shared_qualification_route",
+            "kind": "interior",
+            "length_meters": 4.000000000333733,
+            "path_index": 0,
+            "source_key": "04_shared_qualification_route",
+            "start_error_bound_meters": 0.0,
+            "start_m": 0.0,
+            "state_codes": [
+              "TX"
+            ]
+          }
+        ],
+        "original_meters": 4.000000000333733,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "observed": {
+        "crossing_count": 0,
+        "diagnostics": [
+          {
+            "code": "ambiguous_state_coverage",
+            "level": "error",
+            "message": "State membership could not be uniquely verified; the affected geometry remains unresolved."
+          },
+          {
+            "code": "state_geometry_unresolved",
+            "context": {},
+            "level": "error",
+            "message": "Some geometry could not be assigned to a state. Its mileage is retained separately."
+          }
+        ],
+        "fragments": [
+          {
+            "coordinates": [
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ],
+              [
+                -103.064732,
+                32.749625281317385
+              ]
+            ],
+            "end_m": 4.000000000333732,
+            "id": "f0",
+            "kind": "state",
+            "length_meters": 4.000000000333732,
+            "objectid": "6",
+            "path_index": 0,
+            "placemark_id": "p_04_shared_qualification_route",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "04 shared qualification route",
+            "start_m": 0.0,
+            "state_codes": [
+              "TX"
+            ]
+          },
+          {
+            "coordinates": [
+              [
+                -103.064732,
+                32.749625281317385
+              ],
+              [
+                -103.064732,
+                32.7496252813174
+              ]
+            ],
+            "end_m": 4.000000000333733,
+            "id": "f1",
+            "kind": "unresolved",
+            "length_meters": 8.881784197001252e-16,
+            "objectid": "6",
+            "path_index": 0,
+            "placemark_id": "p_04_shared_qualification_route",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "04 shared qualification route",
+            "start_m": 4.000000000333732,
+            "state_codes": [
+              "NM",
+              "TX"
+            ]
+          }
+        ],
+        "original_meters": 4.000000000333733,
+        "status": "incomplete",
+        "unresolved_meters": 8.881784197001252e-16
+      },
+      "original_path_index": 0,
+      "original_vertex_indices": [
+        1,
+        2
+      ],
+      "path_count": 1,
+      "sha256": "0bb3855bf0aea96301b5ec1da2b9f0a056a7bebdbb4ba62f24d8db4e03b1ec3d",
+      "source_count": 1,
+      "source_key": "04_shared_qualification_route",
+      "vertex_count": 2
+    },
+    {
+      "archive": "04_endpoint_roundoff_reversed.kmz",
+      "expected": {
+        "crossing_count": 0,
+        "endpoint_touches": [
+          {
+            "chainage_meters": 0.0,
+            "coordinate": [
+              -103.064732,
+              32.7496252813174
+            ],
+            "endpoint": "start",
+            "interior_states": [
+              "TX"
+            ],
+            "path_index": 0,
+            "positive_length_in_touched_states_meters": 0.0,
+            "source_key": "04_shared_qualification_route",
+            "touched_states": [
+              "NM"
+            ]
+          }
+        ],
+        "intervals": [
+          {
+            "coordinates": [
+              [
+                -103.064732,
+                32.7496252813174
+              ],
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ]
+            ],
+            "cut_error_bound_meters": 2e-06,
+            "end_error_bound_meters": 0.0,
+            "end_m": 4.000000000333733,
+            "id": "04_shared_qualification_route:p0:i0",
+            "key": "04_shared_qualification_route",
+            "kind": "interior",
+            "length_meters": 4.000000000333733,
+            "path_index": 0,
+            "source_key": "04_shared_qualification_route",
+            "start_error_bound_meters": 2e-06,
+            "start_m": 0.0,
+            "state_codes": [
+              "TX"
+            ]
+          }
+        ],
+        "original_meters": 4.000000000333733,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "observed": {
+        "crossing_count": 0,
+        "diagnostics": [],
+        "fragments": [
+          {
+            "coordinates": [
+              [
+                -103.064732,
+                32.7496252813174
+              ],
+              [
+                -103.06468931797826,
+                32.74962528131012
+              ]
+            ],
+            "end_m": 4.000000000333733,
+            "id": "f0",
+            "kind": "state",
+            "length_meters": 4.000000000333733,
+            "objectid": "6",
+            "path_index": 0,
+            "placemark_id": "p_04_shared_qualification_route",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "04 shared qualification route",
+            "start_m": 0.0,
+            "state_codes": [
+              "TX"
+            ]
+          }
+        ],
+        "original_meters": 4.000000000333733,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "original_path_index": 0,
+      "original_vertex_indices": [
+        1,
+        2
+      ],
+      "path_count": 1,
+      "sha256": "0d419f938e7f34be1731986a9d47946b75c2c19a176bdf16bdc77ee54f3ade54",
+      "source_count": 1,
+      "source_key": "04_shared_qualification_route",
+      "vertex_count": 2
+    },
+    {
+      "archive": "02_native_vertex_shift.kmz",
+      "expected": {
+        "crossing_count": 0,
+        "endpoint_touches": [
+          {
+            "chainage_meters": 363.24999999948784,
+            "coordinate": [
+              -103.041703,
+              36.478411
+            ],
+            "endpoint": "end",
+            "interior_states": [
+              "NM"
+            ],
+            "path_index": 0,
+            "positive_length_in_touched_states_meters": 0.0,
+            "source_key": "02_endpoint_touch",
+            "touched_states": [
+              "TX"
+            ]
+          }
+        ],
+        "intervals": [
+          {
+            "coordinates": [
+              [
+                -103.04575640720749,
+                36.47841093115979
+              ],
+              [
+                -103.041703,
+                36.478411
+              ]
+            ],
+            "cut_error_bound_meters": 2e-06,
+            "end_error_bound_meters": 2e-06,
+            "end_m": 363.24999999948784,
+            "id": "02_endpoint_touch:p0:i0",
+            "key": "02_endpoint_touch",
+            "kind": "interior",
+            "length_meters": 363.24999999948784,
+            "path_index": 0,
+            "source_key": "02_endpoint_touch",
+            "start_error_bound_meters": 0.0,
+            "start_m": 0.0,
+            "state_codes": [
+              "NM"
+            ]
+          }
+        ],
+        "original_meters": 363.24999999948784,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "observed": {
+        "crossing_count": 1,
+        "diagnostics": [],
+        "fragments": [
+          {
+            "coordinates": [
+              [
+                -103.04575640720749,
+                36.47841093115979
+              ],
+              [
+                -103.04170300000001,
+                36.478411
+              ]
+            ],
+            "end_m": 363.24999999821426,
+            "id": "f0",
+            "kind": "state",
+            "length_meters": 363.24999999821426,
+            "objectid": "3",
+            "path_index": 0,
+            "placemark_id": "p_02_endpoint_touch",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "02 endpoint touch",
+            "start_m": 0.0,
+            "state_codes": [
+              "NM"
+            ]
+          },
+          {
+            "coordinates": [
+              [
+                -103.04170300000001,
+                36.478411
+              ],
+              [
+                -103.041703,
+                36.478411
+              ]
+            ],
+            "end_m": 363.24999999948784,
+            "id": "f1",
+            "kind": "state",
+            "length_meters": 1.2735767995764036e-09,
+            "objectid": "3",
+            "path_index": 0,
+            "placemark_id": "p_02_endpoint_touch",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "02 endpoint touch",
+            "start_m": 363.24999999821426,
+            "state_codes": [
+              "TX"
+            ]
+          }
+        ],
+        "original_meters": 363.24999999948784,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "original_path_index": 0,
+      "original_vertex_indices": [
+        0,
+        1
+      ],
+      "path_count": 1,
+      "sha256": "578364e6744e61e9ac5a5ad386e378323a83879afe9e33c9448178af3aef330c",
+      "source_count": 1,
+      "source_key": "02_endpoint_touch",
+      "vertex_count": 2
+    },
+    {
+      "archive": "02_native_vertex_shift_reversed.kmz",
+      "expected": {
+        "crossing_count": 0,
+        "endpoint_touches": [
+          {
+            "chainage_meters": 0.0,
+            "coordinate": [
+              -103.041703,
+              36.478411
+            ],
+            "endpoint": "start",
+            "interior_states": [
+              "NM"
+            ],
+            "path_index": 0,
+            "positive_length_in_touched_states_meters": 0.0,
+            "source_key": "02_endpoint_touch",
+            "touched_states": [
+              "TX"
+            ]
+          }
+        ],
+        "intervals": [
+          {
+            "coordinates": [
+              [
+                -103.041703,
+                36.478411
+              ],
+              [
+                -103.04575640720749,
+                36.47841093115979
+              ]
+            ],
+            "cut_error_bound_meters": 2e-06,
+            "end_error_bound_meters": 0.0,
+            "end_m": 363.24999999948784,
+            "id": "02_endpoint_touch:p0:i0",
+            "key": "02_endpoint_touch",
+            "kind": "interior",
+            "length_meters": 363.24999999948784,
+            "path_index": 0,
+            "source_key": "02_endpoint_touch",
+            "start_error_bound_meters": 2e-06,
+            "start_m": 0.0,
+            "state_codes": [
+              "NM"
+            ]
+          }
+        ],
+        "original_meters": 363.24999999948784,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "observed": {
+        "crossing_count": 1,
+        "diagnostics": [],
+        "fragments": [
+          {
+            "coordinates": [
+              [
+                -103.041703,
+                36.478411
+              ],
+              [
+                -103.04170300000001,
+                36.478411
+              ]
+            ],
+            "end_m": 1.2735194635029486e-09,
+            "id": "f0",
+            "kind": "state",
+            "length_meters": 1.2735194635029486e-09,
+            "objectid": "3",
+            "path_index": 0,
+            "placemark_id": "p_02_endpoint_touch",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "02 endpoint touch",
+            "start_m": 0.0,
+            "state_codes": [
+              "TX"
+            ]
+          },
+          {
+            "coordinates": [
+              [
+                -103.04170300000001,
+                36.478411
+              ],
+              [
+                -103.04575640720749,
+                36.47841093115979
+              ]
+            ],
+            "end_m": 363.24999999948784,
+            "id": "f1",
+            "kind": "state",
+            "length_meters": 363.2499999982143,
+            "objectid": "3",
+            "path_index": 0,
+            "placemark_id": "p_02_endpoint_touch",
+            "source_id": 0,
+            "source_kml": "doc.kml",
+            "source_name": "02 endpoint touch",
+            "start_m": 1.2735194635029486e-09,
+            "state_codes": [
+              "NM"
+            ]
+          }
+        ],
+        "original_meters": 363.24999999948784,
+        "status": "complete",
+        "unresolved_meters": 0.0
+      },
+      "original_path_index": 0,
+      "original_vertex_indices": [
+        0,
+        1
+      ],
+      "path_count": 1,
+      "sha256": "c30d38b054c9a6c30e50e8a1d8cb060842dcdb276076cfc6c66f6d027ca8c663",
+      "source_count": 1,
+      "source_key": "02_endpoint_touch",
+      "vertex_count": 2
+    }
+  ],
+  "schema_version": "1.0.0"
+}

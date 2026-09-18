@@ -61,8 +61,10 @@ def test_shifted_partner_endpoint_is_inside_serialized_corridor(step, reverse):
         path = MeasuredPath(geod, p['coordinates'])
         for point in path.span(min(ids)*step, (max(ids)+1)*step):
             assert inside(local_points([point], start)[0], xy)
-    # Regular coarse samples must not be misclassified as zigzags.
-    assert 'Geometry: sampled_curve.' in doc.find('.//{*}description').text
+    # Every sample size uses the same qualified-path buffer contract.
+    assert section['visualization_kind'] == 'qualified_path_buffer'
+    assert section['visualization_metadata']['padding_m'] == 5
+    assert '5 m padding' in ' '.join(node.text or '' for node in doc.findall('.//{*}description'))
 
 
 def test_parser_can_be_imported_first_in_fresh_interpreter():

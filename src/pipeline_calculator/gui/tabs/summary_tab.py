@@ -2,10 +2,14 @@
 from __future__ import annotations
 
 import math
-import tkinter as tk
 import customtkinter as ctk
+from pipeline_calculator.gui.disclosure import DisclosureButton
 from pipeline_calculator.gui.layout import WrappedLabel
 from pipeline_calculator.gui.scrolling import AutoScrollFrame
+from pipeline_calculator.gui.bindings import ConfigureBinding
+from pipeline_calculator.core.constants import SURVEY_MILE_METERS
+from pipeline_calculator.gui.tables import create_table
+from pipeline_calculator.export.corridor_metadata import corridor_detail_text, has_corridor_metadata
 
 BACKGROUND = '#20252C'
 CARD = '#272D35'
@@ -32,7 +36,12 @@ def add_status_notice(parent, current_results: dict) -> None:
 def number(value, places=3):
     """Never substitute a plausible zero for a missing or non-finite estimate."""
     try:
-        return f'{float(value):,.{places}f}' if math.isfinite(float(value)) else 'Unavailable'
+        actual = float(value)
+        if not math.isfinite(actual):
+            return 'Unavailable'
+        if 0 < actual < 10 ** -places:
+            return '<' + f'{10 ** -places:.{places}f}'
+        return f'{actual:,.{places}f}'
     except (TypeError, ValueError):
         return 'Unavailable'
 
@@ -80,6 +89,11 @@ class InlinePair(DeferredLayoutFrame):
                                  text_color=color if metric else TEXT, font=self.label_font)
         self.value = ctk.CTkLabel(self, text=value, width=1, anchor='sw' if metric else 'w', justify='left',
                                  text_color=MUTED if metric else color, font=self.value_font)
+        # Establish visible content before the first deferred width measurement.
+        # Map/Configure timers can be delayed during DPI or scope transitions.
+        self.grid_columnconfigure(1, weight=1)
+        self.label.grid(row=0, column=0, sticky='w')
+        self.value.grid(row=0, column=1, sticky='ew')
 
     def _arrange(self, event=None):
         scale = ctk.ScalingTracker.get_widget_scaling(self)
@@ -93,7 +107,8 @@ class InlinePair(DeferredLayoutFrame):
             size = 40 if width >= 340 else 32
             if self.label.cget('text') in ('Unavailable', 'Not applicable'):
                 size = 28
-            self.label_font.configure(size=size)
+            if self.label_font.cget('size') != size:
+                self.label_font.configure(size=size)
             # Keep units beside the value; let the unit phrase wrap on phones.
             while size > 26 and self.label_font.measure(self.label.cget('text')) + gap + 72 > width:
                 size -= 2
@@ -103,8 +118,10 @@ class InlinePair(DeferredLayoutFrame):
             stacked = False
         else:
             size = 18 if width >= 340 else 16
-            self.label_font.configure(size=size)
-            self.value_font.configure(size=size)
+            if self.label_font.cget('size') != size:
+                self.label_font.configure(size=size)
+            if self.value_font.cget('size') != size:
+                self.value_font.configure(size=size)
             label_width = self.label_font.measure(self.label.cget('text')) + 2
             stacked = label_width + gap + min(140, self.value_font.measure(self.value.cget('text'))) > width
         self.grid_columnconfigure(0, weight=int(stacked))
@@ -156,17 +173,27 @@ class EstimateCard(DeferredLayoutFrame):
 
 
 class SummaryView(AutoScrollFrame):
-    def __init__(self, parent, results):
+    def __init__(self, parent, results, *, on_select_state=None):
         super().__init__(parent, fg_color=BACKGROUND, corner_radius=12,
                          scrollbar_button_color=OUTLINE, scrollbar_button_hover_color='#637083')
         self.results = results
+        self.geography = results.get('_geography') or results.get('geography')
+        self.state_view = bool(results.get('state_code'))
+        self.on_select_state = on_select_state
         self.expanded = False
+        self._outer_padding = None
+        self._padding_id = None
         self._arrangement = None
         self.inner = ctk.CTkFrame(self, fg_color='transparent')
         self.inner.pack(fill='x', padx=20, pady=(16, 24))
         text_label(self.inner, 'Analysis Summary', size=26, color=TEXT, bold=True, pady=(0, 4))
         text_label(self.inner, 'Original mileage and the estimate after qualifying overlaps are removed.', pady=(0, 20))
         add_status_notice(self.inner, results)
+        if self.geography and self.geography.get('status') != 'complete':
+            text_label(self.inner, 'State breakdown ' + str(self.geography.get('status', 'incomplete')) +
+                       ('. Select Combined to review all state results and their status.' if self.state_view else
+                        '. Combined analysis remains available. Review state statuses and diagnostics.'),
+                       color='#FFB993', pady=(0, 12))
         self.cards = ctk.CTkFrame(self.inner, fg_color='transparent')
         self.cards.pack(fill='x')
         pipelines = results.get('pipelines') or []
@@ -178,39 +205,111 @@ class SummaryView(AutoScrollFrame):
         status += f' · {errors} error' + ('' if errors == 1 else 's')
         if warnings:
             status += f' · {warnings} warning' + ('' if warnings == 1 else 's')
-        self.original = EstimateCard(self.cards, 'Total Pipeline Mileage', number(results.get('total_miles')))
+        original_title = ('Mileage assigned to ' + results['state_name']
+                          if self.state_view else 'Total Pipeline Mileage')
+        self.original = EstimateCard(self.cards, original_title, number(results.get('total_miles')))
         self.original.fact(f'Pipelines Analyzed: {len(pipelines):,}', TEXT)
         status_color = '#FFB993' if incomplete else ('#E5C783' if warnings else
                        (GREEN if results.get('analysis_complete') is True else MUTED))
         self.original.fact(f'Run Status: {status}', status_color)
+        if self.state_view and results.get('shared_allocation_meters', 0) > 0:
+            allocation = number(results['shared_allocation_meters'] / SURVEY_MILE_METERS)
+            self.original.fact(f'Includes {allocation} mi of shared-border allocation.')
         overlap = results.get('overlap_analysis')
         has_estimate = overlap is not None and number(overlap.get('effective_total_miles')) != 'Unavailable'
         self.adjusted = EstimateCard(self.cards, 'Overlap Adjusted Mileage',
-            number(overlap.get('effective_total_miles')) if has_estimate else ('Not applicable' if len(pipelines) < 2 else 'Unavailable'),
+            number(overlap.get('effective_total_miles')) if has_estimate else
+            (number(results['adjusted_total_meters'] / SURVEY_MILE_METERS)
+             if self.state_view and results.get('adjusted_total_meters') is not None else
+             ('Not applicable' if len(pipelines) < 2 and not self.state_view else 'Unavailable')),
             adjusted=True)
         if has_estimate:
             savings, percent = number(overlap.get('savings_miles')), number(overlap.get('savings_percentage'), 1)
             self.adjusted.fact(f'Mileage Removed: {savings} mi ({percent}%)' if savings != 'Unavailable' and percent != 'Unavailable'
                                else 'Mileage Removed: not recorded', RED)
             self.adjusted.fact(f'Bundled Sections: {len(overlap.get("bundled_sections") or []):,}')
+        elif self.state_view and results.get('adjusted_total_meters') is not None:
+            self.adjusted.fact('Mileage Removed: 0.000 mi (0.0%)', RED)
+            self.adjusted.fact('No qualifying interior overlap.')
         else:
             self.adjusted.unit.configure(text='No adjusted estimate')
-            self.adjusted.fact('Overlap analysis requires at least two pipelines.' if len(pipelines) < 2
+            self.adjusted.fact('Overlap analysis requires at least two pipelines.' if len(pipelines) < 2 and not self.state_view
                                else 'Adjusted mileage was not produced for this run.')
             self.adjusted.fact('See the run status and Diagnostics for details.' if incomplete else 'Original mileage is shown in the first card.')
+        if self.state_view and results.get('shared_allocation_meters', 0) > 0:
+            text_label(self.inner, 'Shared-border overlap: Not calculated. Shared allocations receive no state overlap discount.',
+                       color=MUTED, pady=(12, 0))
+        if self.geography and not self.state_view:
+            self._create_state_comparison()
         self.disclosure = ctk.CTkFrame(self.inner, fg_color=CARD, corner_radius=14, border_width=1, border_color=OUTLINE)
         self.disclosure.pack(fill='x', pady=(20, 0))
-        # Native button supplies Tab/Space activation and a visible focus outline.
-        self.toggle = tk.Button(self.disclosure, command=self.toggle_details, text='Additional details & run settings  ▸',
+        self.toggle = DisclosureButton(self.disclosure, command=self.toggle_details, text='Additional details & run settings  ▸',
                                 anchor='w', justify='left', bg=CARD, fg=TEXT, activebackground='#34404E',
                                 activeforeground=TEXT, relief='flat', borderwidth=0, highlightthickness=1,
                                 highlightbackground=CARD, highlightcolor=BLUE, takefocus=True, cursor='hand2', padx=8, pady=8)
         self.toggle.pack(fill='x', padx=12, pady=12)
-        self.toggle.bind('<Return>', self.toggle_details)
-        self.toggle.bind('<FocusIn>', self._reveal_toggle)
+        self.toggle.bind('<FocusIn>', self._reveal_toggle, add='+')
         self.details = ctk.CTkFrame(self.disclosure, fg_color='transparent')
-        self._create_details(diagnostics, overlap)
-        self.bind('<Configure>', self._arrange, add='+')
+        self._details_created = False
+        self._arrange_id = None
+        self.bind('<Configure>', self._queue_arrange, add='+')
+        self.bind('<Map>', self._queue_arrange, add='+')
+        self.bind('<Unmap>', self._cancel_arrange, add='+')
+        # Start with a valid stacked layout, then adapt to the mapped width.
+        # A new scope must never depend on a timer just to display its cards.
+        self.cards.grid_columnconfigure(0, weight=1)
+        self.original.grid(row=0, column=0, sticky='nsew', pady=(0, 16))
+        self.adjusted.grid(row=1, column=0, sticky='nsew')
+        # A short parent can initially leave the canvas unmapped. Its margins
+        # must recover from the live parent's size, without waiting for Map.
+        self._viewport_parent_binding = ConfigureBinding(parent, self._queue_padding)
+        self._queue_padding()
+
+    def _queue_padding(self, event=None):
+        if not self._disposed and self._padding_id is None:
+            self._padding_id = self._callback_host.after(20, self._apply_padding)
+
+    def _apply_padding(self):
+        self._padding_id = None
+        if not self._disposed and self.winfo_exists():
+            self._resize_viewport()
+            self._schedule_scrollbar()
+
+    def _resize_viewport(self):
+        # Preserve breathing room on normal windows, but don't spend most of a
+        # short results viewport on margins before any mileage can be read.
+        scale = ctk.ScalingTracker.get_widget_scaling(self)
+        available = self._parent_frame.master.winfo_height() / scale
+        padding, radius = (0, 0) if available < 80 else ((8, 12) if available < 160 else (16, 12))
+        key = (padding, scale, radius)
+        if key != self._outer_padding:
+            self._outer_padding = key
+            self.configure(corner_radius=radius)
+            if self._disposed:
+                return
+            self.pack(fill='both', expand=True, padx=16, pady=padding)
+
+    def _queue_arrange(self, event=None):
+        if self.winfo_viewable() and self._arrange_id is None:
+            self._arrange_id = self._callback_host.after(20, self._apply_arrange)
+
+    def _apply_arrange(self):
+        self._arrange_id = None
+        if self.winfo_viewable():
+            self._arrange()
+
+    def _cancel_arrange(self, event=None):
+        if self._arrange_id is not None:
+            self._callback_host.after_cancel(self._arrange_id)
+            self._arrange_id = None
+
+    def destroy(self):
+        self._viewport_parent_binding.close()
+        if self._padding_id is not None:
+            self._callback_host.after_cancel(self._padding_id)
+            self._padding_id = None
+        self._cancel_arrange()
+        super().destroy()
 
     def _create_details(self, diagnostics, overlap):
         text_label(self.details, 'Run settings', size=16, color=TEXT, bold=True, pady=(0, 8))
@@ -221,7 +320,11 @@ class SummaryView(AutoScrollFrame):
                                  ('Angular tolerance', 'angular_tolerance', '°')]:
             value = params.get(key)
             text_label(self.details, f'{title}: {value} {unit}' if value is not None else f'{title}: Not recorded', pady=2)
+        if has_corridor_metadata(self.results):
+            text_label(self.details, 'Corridor maps', size=16, color=TEXT, bold=True, pady=(20, 8))
+            text_label(self.details, corridor_detail_text(self.results), pady=2)
         text_label(self.details, 'Run details', size=16, color=TEXT, bold=True, pady=(20, 8))
+        text_label(self.details, f'Application build: {self.results.get("application_version") or "Not recorded"}', pady=2)
         counts = {level: sum(d.get('level') == level for d in diagnostics) for level in ('error', 'warning', 'info')}
         text_label(self.details, f'Diagnostics: {counts["error"]} errors · {counts["warning"]} warnings · {counts["info"]} informational', pady=2)
         text_label(self.details, f'Placemarks: {len(self.results.get("placemarks") or []):,}', pady=2)
@@ -236,12 +339,82 @@ class SummaryView(AutoScrollFrame):
                    'so their count does not represent unique geographic areas. Pairwise bundled length can exceed the mileage removed.', pady=(0, 8))
         text_label(self.details, 'Mileage removed is the reduction from original to adjusted mileage. Corridors are approximate visual guides; '
                    'KML descriptions identify rectangle fallbacks. See Diagnostics for individual notices.')
+        if self.geography:
+            text_label(self.details, 'State boundary analysis', size=16, color=TEXT, bold=True, pady=(20, 8))
+            provenance = self.geography.get('boundary_source') or {}
+            for label, key in [('Boundary source', 'name'), ('Boundary vintage', 'vintage'),
+                                ('Source URL', 'source_url'), ('Resource checksum', 'resource_sha256')]:
+                if provenance.get(key):
+                    text_label(self.details, f'{label}: {provenance[key]}', pady=2)
+            text_label(self.details, 'State original mileage includes interior mileage plus an equal share of verified shared borders. '
+                       'State overlaps qualify independently, so state adjusted mileage and savings may differ from the Combined result.', pady=(4, 8))
+            text_label(self.details, 'State pipeline counts represent original source pipelines, including pipelines with shared allocations. '
+                       'Map line mileage represents interior mileage; shared lines appear once in the Combined map.', pady=(0, 8))
+            reconciliation = self.geography.get('reconciliation') or {}
+            for label, key in [('Original', 'source_meters'), ('Assigned to states', 'attributed_state_meters'),
+                                ('Outside coverage', 'outside_meters'), ('Unresolved', 'unresolved_meters')]:
+                if reconciliation.get(key) is not None:
+                    text_label(self.details, f'{label}: {number(reconciliation[key] / SURVEY_MILE_METERS)} mi', pady=2)
+            text_label(self.details, 'Mileage reconciliation: ' + ('Passed' if reconciliation.get('passed') else 'Incomplete'), pady=2)
+            text_label(self.details, 'Boundary precision is limited by the source data. These results do not establish surveyed ownership.', pady=(8, 0))
+
+    def _create_state_comparison(self):
+        states = sorted(self.geography.get('states') or [], key=lambda row: row['state_name'])
+        crossings = self.geography.get('crossing_count')
+        heading = f'States represented: {len(states)}'
+        if crossings is not None:
+            heading += f' · Border crossings: {crossings}'
+        text_label(self.inner, heading, size=18, color=TEXT, bold=True, pady=(20, 6))
+        reconciliation = self.geography.get('reconciliation') or {}
+        shared = reconciliation.get('shared_meters', 0)
+        if shared > 0:
+            text_label(self.inner, f'{number(shared / SURVEY_MILE_METERS)} mi follows shared borders and is divided equally '
+                       'among adjoining states. Shared allocations receive no state overlap discount.', pady=(0, 6))
+        exceptions = [f'{label}: {number(reconciliation[key] / SURVEY_MILE_METERS)} mi'
+                      for label, key in [('Outside coverage', 'outside_meters'), ('Unresolved', 'unresolved_meters')]
+                      if reconciliation.get(key, 0) > 0]
+        if exceptions:
+            text_label(self.inner, ' · '.join(exceptions) + '. This mileage is retained separately from state totals.',
+                       color='#FFB993', pady=(0, 6))
+        if reconciliation.get('passed') is False:
+            text_label(self.inner, 'State mileage does not reconcile. The state breakdown is incomplete.',
+                       color=RED, pady=(0, 6))
+        text_label(self.inner, 'Select a state to inspect its mileage and overlaps. Separate paths may occupy different states without crossing a border.',
+                   pady=(0, 6))
+        if not states:
+            text_label(self.inner, 'No state mileage is available for this input.', pady=(0, 8))
+            return
+        table = create_table(self.inner, ('State', 'Original (mi)', 'Adjusted (mi)', 'Removed (mi)', 'Status'),
+                             (160, 130, 130, 130, 150), vertical_padding=0, compact=True)
+        table.configure(height=min(6, max(1, len(states))))
+        self.state_table = table
+        self.state_rows = {}
+        for state in states:
+            adjusted = state.get('adjusted_total_meters')
+            savings = state.get('interior_savings_meters')
+            status = state.get('status') or ('Complete' if state.get('analysis_complete') else 'Incomplete')
+            item = table.insert('', 'end', values=(state['state_name'], number(state.get('total_miles')),
+                number(adjusted / SURVEY_MILE_METERS if adjusted is not None else None),
+                number(savings / SURVEY_MILE_METERS if savings is not None else None), str(status).capitalize()))
+            self.state_rows[item] = state['state_name']
+        def choose(event=None):
+            row = (table.identify_row(event.y) if event is not None and hasattr(event, 'y') and event.type.name == 'ButtonRelease'
+                   else next(iter(table.selection()), None))
+            if row in self.state_rows and self.on_select_state is not None:
+                self.on_select_state(self.state_rows[row])
+            return 'break'
+        table.bind('<ButtonRelease-1>', choose)
+        table.bind('<Return>', choose)
+        table.bind('<FocusIn>', lambda event: self._reveal_widget(table), add='+')
 
     def _reveal_toggle(self, event=None):
         """Tab navigation must reveal the disclosure even below a short viewport."""
+        self._reveal_widget(self.toggle)
+
+    def _reveal_widget(self, widget):
         canvas = self._parent_canvas
-        top = self.toggle.winfo_rooty() - self.winfo_rooty()
-        bottom = top + self.toggle.winfo_height()
+        top = widget.winfo_rooty() - self.winfo_rooty()
+        bottom = top + widget.winfo_height()
         start, height = canvas.canvasy(0), canvas.winfo_height()
         if top < start:
             canvas.yview_moveto(top / max(1, self.winfo_height()))
@@ -252,6 +425,9 @@ class SummaryView(AutoScrollFrame):
         self.expanded = not self.expanded
         self.toggle.configure(text='Additional details & run settings  ' + ('▾' if self.expanded else '▸'))
         if self.expanded:
+            if not self._details_created:
+                self._create_details(self.results.get('diagnostics') or [], self.results.get('overlap_analysis'))
+                self._details_created = True
             self.details.pack(fill='x', padx=24, pady=(0, 24))
         else:
             self.details.pack_forget()
@@ -281,5 +457,5 @@ class SummaryView(AutoScrollFrame):
                               padx=round(8*scale), pady=round(8*scale))
 
 
-def create(parent, current_results: dict) -> None:
-    SummaryView(parent, current_results).pack(fill='both', expand=True, padx=16, pady=16)
+def create(parent, current_results: dict, *, on_select_state=None) -> None:
+    SummaryView(parent, current_results, on_select_state=on_select_state).pack(fill='both', expand=True, padx=16, pady=16)

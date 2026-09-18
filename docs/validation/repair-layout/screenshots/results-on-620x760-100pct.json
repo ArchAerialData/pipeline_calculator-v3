@@ -1,0 +1,20 @@
+{
+  "scenario": "results-on",
+  "scale": 1,
+  "logical_client_size": [
+    620,
+    760
+  ],
+  "actual_client_size": [
+    620,
+    760
+  ],
+  "image_size": [
+    620,
+    760
+  ],
+  "file": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\repair-layout\\screenshots\\results-on-620x760-100pct.png",
+  "synthetic_data": true,
+  "window_only_capture": true,
+  "callback_errors": []
+}

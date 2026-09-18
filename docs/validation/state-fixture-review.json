@@ -1,0 +1,245 @@
+{
+  "application_source_sha256": {
+    "src/pipeline_calculator/__init__.py": "fc835191b7c828a2e508f6a95323b722bfffa9260a16eeec8fe6dea978123408",
+    "src/pipeline_calculator/__main__.py": "9169c6b50c33eaf0af60a2737724fe0b2994e29fe83bf453fb7fa63d8f0a27de",
+    "src/pipeline_calculator/app.py": "5a05233da009277fc4c0c714cc75b1cd1af3d15f63a1658b12b4d1a74ceb0ee5",
+    "src/pipeline_calculator/core/__init__.py": "02622e39e1876ac139eb9854084499efe8678b067b334e0d3ba2d147dbd2b288",
+    "src/pipeline_calculator/core/analyzer.py": "13bff29580161959d32a51ae1fa7ff90e348beedb8f1a9671e35495961b06cea",
+    "src/pipeline_calculator/core/angles.py": "4c09740586312cb337a89d9675003f871a16929adf8bf145df0bdc4548746abe",
+    "src/pipeline_calculator/core/bundling.py": "5573b2ac187aa0aa1ee18c726531ecfb429b26d927ea97c47660780adc31f7c1",
+    "src/pipeline_calculator/core/constants.py": "2d811258d93dc7405cbe0448d777b8f51b5dfd8e43b0d0fdaffa0453a7a19f0d",
+    "src/pipeline_calculator/core/coordinates.py": "8ae867b2fa7eb72154f07f48acac2bd75f53b2d402792ffd237256296701120d",
+    "src/pipeline_calculator/core/corridor_coverage.py": "b467e29a7ceb4b299d26a2798107089752290edffe514546eb4557e9cdddf134",
+    "src/pipeline_calculator/core/corridor_geometry.py": "f88cdf9988f89aeebf5b3d2cc75cc3ac8138b50de6f4254158fa6bdd16b82576",
+    "src/pipeline_calculator/core/effective_length.py": "fedeedbb2cfb1263ee3b68f8de63308782191c8799cb0f956a35a725161dddbc",
+    "src/pipeline_calculator/core/execution.py": "e7297c05bc1c48d57191f953291563d546f1e97cc9e2d6ecaf18ab0320926f48",
+    "src/pipeline_calculator/core/geography/__init__.py": "f83a3f869c185d8b6b7a077c9799e26eb1b228361808e1e0fda3ba5022a530d7",
+    "src/pipeline_calculator/core/geography/boundaries.py": "f150b3abd67fb1107e69a7d9e965f069b63fb8f0310ffd43b9be6ed7072bfe4d",
+    "src/pipeline_calculator/core/geography/corridors.py": "d32f7a4c3d7315dfd4c3195958e9858f5fceb2f434c7087015a84d3aa7571cea",
+    "src/pipeline_calculator/core/geography/partition.py": "df6ee63debdfa934d52a0b7477dd486a80f651dbfc83339951856e97895234db",
+    "src/pipeline_calculator/core/options.py": "3b1661f6430a564e6b4e6886282a77d9a14db7b95d4444969cdf443b480c4322",
+    "src/pipeline_calculator/core/overlap.py": "2eef0586eab343e956ce0118e8ecbdb903397263e45d0ede1f214af49ca69795",
+    "src/pipeline_calculator/core/progress.py": "b972dad309555b30eb5baa3cdab0fcc60372598488e3eedc9331ebf4672efb0f",
+    "src/pipeline_calculator/core/segmentation.py": "9ee7027a4fb94ecf74a085667b1cdacde684a892dbdec27f12c40c5db443a598",
+    "src/pipeline_calculator/core/spatial.py": "735f871e01dd764a45cfa237af544ffc666b9e89ad7bdda1d57afd4c7e5db84a",
+    "src/pipeline_calculator/core/state_analysis.py": "511025f6a6e7bf86021b8415557585bcc3d14d594ea5e37cdd162f0019e52794",
+    "src/pipeline_calculator/core/workload.py": "dda2806c597f280ca0d4106baf1dfb58b6a4bd78750130857869d61e01430c3c",
+    "src/pipeline_calculator/export/__init__.py": "22861872ae2f1ed17646bbceaf6f199eeaadcba560c9314724ed42e7c400520b",
+    "src/pipeline_calculator/export/corridor_kml.py": "0b6968a27775856c7a62b2a36d643d14d5b9f6059d7f68504b8571bc56e0e223",
+    "src/pipeline_calculator/export/geography_kmz.py": "2eed02a278c2a51d80b5d1ae7f94f1a26dd3549c58eee7e0a9f399c47232d2df",
+    "src/pipeline_calculator/export/geography_xlsx.py": "b1ba634636ad78ce120caa692851293a50fe167a04e62af7aeadbcfce89555d4",
+    "src/pipeline_calculator/export/geometry_validation.py": "ec8d6514c680f30dfa6b2f123ce1d6c472fea582331f5ab2a614bde227525578",
+    "src/pipeline_calculator/export/package.py": "e250d0ef64228a62541c4b02a2d503d660255e4aa0d280d07d4f5d4d55b1d709",
+    "src/pipeline_calculator/export/xlsx.py": "f8ad61449f774871cdc978d22c98b6b1b4b8070ad5d27e61d9ad93080ce8751b",
+    "src/pipeline_calculator/gui/__init__.py": "a2e46a0e9fba3f4fcb352b0ad3ed9d3e10c2ea3f28d341e5aaff493a9fedaa77",
+    "src/pipeline_calculator/gui/actions/__init__.py": "114d5f5b07f8eb9296903e31b2b5591dda1eef721c173d84631b233dbf1b9815",
+    "src/pipeline_calculator/gui/actions/corridor_launch.py": "89b120a9a049ff815e4e594074b849fcfdb0c02f4a28bb950212c2813cf552e0",
+    "src/pipeline_calculator/gui/actions/export_actions.py": "0e6175a8dd895a5d225c68147dd10112d58ff8de2a5aa5c258c479fe090351dd",
+    "src/pipeline_calculator/gui/actions/open_kml_action.py": "9deef338e8ee8739668f3925c10f003d827c9bdf1a1d16a51ac070faafb38c81",
+    "src/pipeline_calculator/gui/background_action.py": "a46701c7a79625f47750b37b8ca125c8f2b43fe9fe6579adf499e26a5b9560f7",
+    "src/pipeline_calculator/gui/bindings.py": "91c3852af826da2e191a9f063fd10d0f3d3f913600211611ba9f82a79bdbae18",
+    "src/pipeline_calculator/gui/config.py": "9e442e3feb6581da01b43b54814d3c5dfa3386bef37f94098092256d99733e96",
+    "src/pipeline_calculator/gui/controllers/__init__.py": "e7b58e0b73c0bf5e2b8e00ccd890b15417e6e717e85635a9104101e772633cbf",
+    "src/pipeline_calculator/gui/controllers/analysis_controller.py": "d5736e4c5ff0f3179842e445ee649cee4a5e09b8047a08712c55b40939b66a0f",
+    "src/pipeline_calculator/gui/controllers/analysis_session.py": "2c0d3b239fefec52b8d533358299e3ed70fa900362288753875f5f099ef5fb2f",
+    "src/pipeline_calculator/gui/dialogs/__init__.py": "1f96d114c30ffe8b515908033db7a2c190b17914b5969918ce3fdc03dd0a561d",
+    "src/pipeline_calculator/gui/dialogs/corridor_dialog.py": "0942156388e3d294372befc2f9947c1a36e1abcdbba6e2f609462ff8396df024",
+    "src/pipeline_calculator/gui/dialogs/params_dialog.py": "a59d751e5d3eaa815cf61df8011bc0548b96fb139ea95c14b8ee3f8f00dc5a50",
+    "src/pipeline_calculator/gui/disclosure.py": "fe8201c038fdbc9cf340994ea3631b500df0136ae7a984ff6d7e618b9e6379a8",
+    "src/pipeline_calculator/gui/layout.py": "07d56797e718af9a6f62b049da46e62605adbadeb154d9cbe137eace1fd51591",
+    "src/pipeline_calculator/gui/main_window.py": "8fdbfc5c85ce5171e5fe8ad5003dae72332fa94a5fa277f3c0d1bb79386e2f20",
+    "src/pipeline_calculator/gui/modal.py": "896900da3c1a7bec62efda2c467f2eb0f22040f808a4e4fafeb9b1ef75cee5b5",
+    "src/pipeline_calculator/gui/pages/__init__.py": "08cf7bb53067fe2321a06932b262ff6813fda82fb1a10adfcc254dd40da1a290",
+    "src/pipeline_calculator/gui/pages/file_select_page.py": "a083d4f92932812602c872469d599a31c3a9e0f993dd031b48794bb06066ceab",
+    "src/pipeline_calculator/gui/pages/results_page.py": "b224a50cba21ab43203f714b511b83b95baeffbd6c98a460db6ea4cf294459c3",
+    "src/pipeline_calculator/gui/preferences.py": "c823e92a038d1b42d26dada2bfba0e4425fddd7f235ad80756c4488a10301566",
+    "src/pipeline_calculator/gui/resources.py": "c2a7092c0e202a2e66169dfbdf4e1f96a74807afd2dc6c025f2a5c4479381a59",
+    "src/pipeline_calculator/gui/scrolling.py": "d0d697c39e75ffda8ec318d63acb96d0229e60fabab09d16c8c8d79270bdd7fe",
+    "src/pipeline_calculator/gui/settings_panel.py": "2d75b8de9bbedf0f0081bda9c1fc77856682dcd527eb16682073ff58b0123466",
+    "src/pipeline_calculator/gui/sorting.py": "5e812d74f60c9847b412e82ff6ca5aadb85dafcb5f46c2ee8e48321e9ae68918",
+    "src/pipeline_calculator/gui/state.py": "bd6b469eb86de9e0255b011591abbd044dd2636d5f025a8836f65412d1b3b975",
+    "src/pipeline_calculator/gui/styles.py": "76260faae11da38e7fcb6b9259468454eebf7ef7481029b033e16fd818b3e85b",
+    "src/pipeline_calculator/gui/table_loading.py": "9055e0971e81058f2fa37c965935ae27f4dd94c3ec4eaabaa796d2ec268c01c3",
+    "src/pipeline_calculator/gui/tables.py": "0755f50f1cba049dfd30d31c2e826a7e5f9ed2a4e643a225a61d4ea2080886a2",
+    "src/pipeline_calculator/gui/tabs/__init__.py": "2b7775ff62815853055c594b7a6be69944284d0551ed654a0f691882e3bc0853",
+    "src/pipeline_calculator/gui/tabs/diagnostics_tab.py": "b29858443967d1e7c212d0f8d942bcc330fce10aa179b4b4c0234b70ad7720c8",
+    "src/pipeline_calculator/gui/tabs/overlap_tab.py": "7a3977fc54fd66b787d308f9705ca164fa55b7eb65c4f63b7064352695331ecf",
+    "src/pipeline_calculator/gui/tabs/pipelines_tab.py": "3c729b61e6ae1c8e7d27299f2fa31b0fa386da1b3de156ca703e02ca67ac0690",
+    "src/pipeline_calculator/gui/tabs/placemarks_tab.py": "6422050e8d1cbb37189ea6f002bca3c31f816c995b470f72c946b5e644a923e5",
+    "src/pipeline_calculator/gui/tabs/summary_tab.py": "8b412a17d4f0b919a014671dd91a9a829f12047aa23b3c0605de224f5b6ffa2c",
+    "src/pipeline_calculator/gui/window.py": "eac8fe380367176f4350716c73f9be63499da53c206e1b464e53af6e95e5fd46",
+    "src/pipeline_calculator/legacy.py": "c0591de4ae6bcd882e83a5178813a443b14ec1730ca9a198067747932fcf3109",
+    "src/pipeline_calculator/parsers/__init__.py": "bf9c5682b9a3076b61551a900a155e25c8655280820c6c2c1823111af1efa03b",
+    "src/pipeline_calculator/parsers/kml_kmz.py": "9783d6c08b5253156d36184b2b0f322b64abf6a12cbddf5798f56df0902135b0",
+    "src/pipeline_calculator/smoke.py": "639ecdc8a1bc58ec66ebb9aeb802f2219fbb6c6dba85d1a01551c93f90eab7c4",
+    "src/pipeline_calculator/util/__init__.py": "0f8f28db5c4f7b69476809a0242df85e38286c1d438902a782d0866472d55b2c",
+    "src/pipeline_calculator/versioning.py": "060656acb8a3749df35c89836cdee70f34d96223ec2586e912d935f87cc056d1",
+    "src/pipeline_calculator_entry.py": "1af56557971dae5c8d55f9d2e6a69eefc830a0484361714db81edd16d0fc7959",
+    "src/pipeline_calculator_v3.py": "b590c95ecce144c5f7127d08325431cb138fa213f19602554af8a86da0b02637"
+  },
+  "application_tests": {
+    "errors": 0,
+    "failed": 0,
+    "passed": 468,
+    "skipped_optional_modules": [
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_application_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_geometry_reference",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_sampled_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_stress_contract",
+      "tests.fixtures.geography.pipeline_kmz_regression_suite.validation.test_suite_validation"
+    ]
+  },
+  "audit": {
+    "adversarial_tests": {
+      "counts_by_module": {
+        "test_application_contract.py": 22,
+        "test_geometry_reference.py": 14,
+        "test_sampled_contract.py": 26,
+        "test_stress_contract.py": 13,
+        "test_suite_validation.py": 29
+      },
+      "passed": true,
+      "test_count": 104
+    },
+    "application": {
+      "check_count": 10175,
+      "fixtures": [
+        {
+          "check_count": 2609,
+          "defect_id": null,
+          "fixture": "01_three_state_disconnected_networks.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 1310,
+          "defect_id": null,
+          "fixture": "02_three_state_transverse_crossings.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 1490,
+          "defect_id": null,
+          "fixture": "03_parallel_corridors_crossing_borders.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "04_shared_border_and_near_border.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 2609,
+          "defect_id": null,
+          "fixture": "variants/01_three_state_disconnected_networks__source_order.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "variants/04_shared_border_and_near_border__redundant_vertices.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        },
+        {
+          "check_count": 719,
+          "defect_id": null,
+          "fixture": "variants/04_shared_border_and_near_border__reversed.kmz",
+          "mismatch_count": 0,
+          "status": "passed",
+          "unexpected_assertions": []
+        }
+      ],
+      "fully_passing": true,
+      "known_defect_ids": [],
+      "known_failure_fixture_count": 0,
+      "unexpected_failure_fixture_count": 0
+    },
+    "elapsed_seconds": 54.46304089995101,
+    "reference_verification": {
+      "fixture_count": 7,
+      "hand_worked_control_count": 9,
+      "intent_assertion_count": 383,
+      "passed": true,
+      "stress_reference": {
+        "deterministic_archive_checked": true,
+        "expectation_sha256": "1daf22033181942b42436cffb0f20a9d3cea1ed7755484e679456c4881fda6c1",
+        "passed": true,
+        "sample_count": 27120,
+        "sha256": "be5ed9dbdcce34b892c971fbfa7b9a57141a7e806bdbbfc983c0ca4f51868c42",
+        "source_count": 96,
+        "status": "reference-verified"
+      }
+    },
+    "stress_application": {
+      "application_runtime_seconds": 7.179869499988854,
+      "check_count": 2050,
+      "passed": true,
+      "report_sha256": "7ea45ac6d42b572bc665121bf9e2f1e64343cfdcf8d4dfb17c0b5f001c097b4f",
+      "sample_count": 27120,
+      "source_count": 96
+    }
+  },
+  "date": "2026-09-15",
+  "evidence_sha256": {
+    ".validation-output/state-fixture-review/final-audit.log": "a920f36a34e1b4bac8722098246b27e1d1b352447893f0c0a5128f37cd8b7144",
+    ".validation-output/state-fixture-review/full-suite.xml": "f413eb8595a938b71153cd0eb3c1835e578684f9175ba47c179df355b78b631f",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/application_comparison.json": "69b3d8946e17fe5cae8a7832b94e60d31f8f30c1d93f9de2b8088ae5860c9aaf",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/audit/audit_report.json": "b7621225eb9e1b812efd88a0c2fc9b511c5edc021f39c531110d0a6c4b6330ca",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/reference_report.json": "f0c1bdfc0f06545f7273d76b2f10f4a6f9d3b22dc9ac066cc4fb8c8c34279f3b",
+    "tests/fixtures/geography/pipeline_kmz_regression_suite/validation/stress_report.json": "7ea45ac6d42b572bc665121bf9e2f1e64343cfdcf8d4dfb17c0b5f001c097b4f"
+  },
+  "frozen_asset_count": 37,
+  "frozen_assets_changed": [],
+  "git_base": "26d585c06f1faa39f730a3fba2ccf81e4c9092eb",
+  "limitations": [
+    "The ordinary Python 3.11 run skips five optional reference test modules; all 104 audit tests run without skips in the pinned Python 3.13 environment.",
+    "Two near-tangent Hawaii endpoint cases are uncertified by the independent reference and are not counted as passing.",
+    "This pass does not certify new packaged builds, native macOS, arbitrary boundary topologies or all workload sizes."
+  ],
+  "native_endpoint_followup": {
+    "case_count": 100,
+    "limitations": "Only selected native vertices and four long dateline traversals were sampled. The bundled AK/HI components require no ring longitude unwrapping; this does not establish arbitrary synthetic wrapped-ring endpoint identity.",
+    "mismatches": 0,
+    "native_geometry": [
+      {
+        "components_requiring_longitude_unwrap": [],
+        "invented_vertices": 0,
+        "missing_native_vertices": 0,
+        "parts": 50,
+        "state": "AK",
+        "unique_native_vertices": 15282
+      },
+      {
+        "components_requiring_longitude_unwrap": [],
+        "invented_vertices": 0,
+        "missing_native_vertices": 0,
+        "parts": 17,
+        "state": "HI",
+        "unique_native_vertices": 3502
+      }
+    ],
+    "passed": 98,
+    "reference_uncertified": 2
+  },
+  "production_fixes": [
+    "Preserve native boundary vertices during degree-based unwrapping",
+    "Retain exact canonical endpoint stations without discarding short positive crossings"
+  ],
+  "schema_version": 1,
+  "validator_fixes": [
+    "Independent corridor section extent and one-to-one correspondence checks",
+    "Require valid coordinate paths before interval geometry can pass"
+  ]
+}

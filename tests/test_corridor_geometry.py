@@ -56,10 +56,28 @@ def test_gallery_exports_are_valid_and_approximations_are_disclosed(tmp_path):
     from scripts.validation.build_gallery import run
     assert run(tmp_path)==0
     rows=json.loads((tmp_path/'report.json').read_text())['cases']
-    assert {'right_angle','hairpin','loop','dateline','pole'} <= {row['fixture'] for row in rows}
+    assert {'right_angle','hairpin','loop','dateline','pole','separate_buffer_parts','unavailable_map'} <= {row['fixture'] for row in rows}
     for row in rows:
-        assert row['status']=='validated-approximation'
-        assert row['serialized']['self_intersections']==0
-        assert 'Approximate visualization' in row['description']
-        if 'Geometry: oriented_rectangle' in row['description']:
-            assert 'Rectangle approximation' in row['description']
+        assert row['analysis_complete']
+        if row['status'] == 'unavailable':
+            assert row['expected_omission'] and row['diagnostics']
+            assert row['fixture'] in {'pole', 'unavailable_map'}
+            continue
+        assert row['status'] == 'ready'
+        assert row['passed'] and row['valid_polygon'] and row['part_count'] > 0
+        assert row['geometry_policy'] == 'qualified_path_buffer_v1'
+        assert row['padding_m'] == 5
+        assert row['source_coverage_passed'] and row['inner_radius_passed'] and row['outer_radius_passed']
+        preview = (tmp_path / row['preview']).read_text()
+        assert '5 m padding around qualifying paths' in preview
+        assert not ET.fromstring(preview).findall('.//{*}LineString')
+    assert any(row.get('part_count', 0) > 1 for row in rows)
+    assert any(row.get('hole_count', 0) > 0 for row in rows)
+    branch_rows = [row for row in rows if row['fixture'] == 'branch_rejoin']
+    assert len(branch_rows) == 2
+    from scripts.validation.corridor_audit import document_polygons, metric_polygons
+    from scripts.validation.common import geographic
+    from shapely.geometry import Point
+    for row in branch_rows:
+        polygons = metric_polygons(document_polygons((tmp_path / row['preview']).read_text()), geographic((0, 0)))
+        assert all(not polygon.covers(Point(0, 350)) for polygon in polygons)

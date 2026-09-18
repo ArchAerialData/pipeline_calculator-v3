@@ -28,7 +28,7 @@ class AnalysisSession:
         self.surface = None
         self.presented_warning = None
 
-    def start(self, path, params):
+    def start(self, path, params, *, options=None, source_session=None, approve_repair=False):
         if self.closed or self.job is not None:
             raise RuntimeError('Analysis session already started or closed')
         self.surface = ModalSurface(self.root)
@@ -105,7 +105,12 @@ class AnalysisSession:
         self.resize_binding = self.root.bind('<Configure>', self._queue_resize, add='+')
         self._resize_panel()
         try:
-            self.job = self.controller.start(path, params)
+            kwargs = {'options': options} if options is not None else {}
+            if source_session is not None:
+                kwargs['source_session'] = source_session
+            if approve_repair:
+                kwargs['approve_repair'] = True
+            self.job = self.controller.start(path, params, **kwargs)
             self._poll(self.job.job_id)
         except BaseException:
             self.close()
@@ -155,7 +160,11 @@ class AnalysisSession:
         if columns != self.guidance_columns:
             self.guidance_columns = columns
             for index in range(2):
-                self.guidance.grid_columnconfigure(index, weight=int(index < columns), uniform='guidance')
+                # An empty column in a uniform group still reserves a share of
+                # the width. At narrow/high-DPI sizes that feeds label wrapping
+                # back into grid's natural widths and keep Tk recomputing layout.
+                self.guidance.grid_columnconfigure(index, weight=int(index < columns),
+                                                   uniform='guidance' if index < columns else '')
             for index, section in enumerate(self.guidance_cards):
                 section.grid(row=index // columns, column=index % columns, sticky='new',
                              padx=(0, 24) if columns == 2 and index == 0 else 0,

@@ -1,0 +1,34 @@
+{
+  "finding": "primary_document_can_change_after_repair",
+  "parser_sha256": "9783d6c08b5253156d36184b2b0f322b64abf6a12cbddf5798f56df0902135b0",
+  "root_bytes": 515,
+  "child_before_bytes": 505,
+  "child_after_bytes": 559,
+  "patch_bytes": 54,
+  "inputs": {
+    "root.kml": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><Placemark><name>Root line</name><LineString><coordinates>-100,30 -100.01,30</coordinates></LineString></Placemark><NetworkLink><Link><href>child.kml</href></Link></NetworkLink></Document><!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx--></kml>",
+    "child.kml": "<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document xsi:schemaLocation=\"http://www.opengis.net/kml/2.2 schema.xsd\"><Placemark><name>Child line</name><LineString><coordinates>-100,30 -100.01,30</coordinates></LineString></Placemark></Document><!--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx--></kml>"
+  },
+  "original_primary": "root.kml",
+  "original_documents": [
+    "root.kml"
+  ],
+  "original_pipelines": [
+    "Root line"
+  ],
+  "original_diagnostic_codes": [
+    "selected_primary_kml",
+    "linked_kml_parse_error"
+  ],
+  "repaired_primary": "child.kml",
+  "repaired_documents": [
+    "child.kml"
+  ],
+  "repaired_pipelines": [
+    "Child line"
+  ],
+  "repaired_diagnostic_codes": [
+    "selected_primary_kml",
+    "unparsed_kml_file"
+  ]
+}

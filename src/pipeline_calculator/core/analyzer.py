@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from pipeline_calculator.core.execution import AnalysisCancelled
+from pipeline_calculator.core.execution import (
+    AnalysisCancelled, CallbackExecutionContext, ExecutionContext, ScopedExecutionContext,
+)
+from pipeline_calculator.core.options import AnalysisOptions
 
 import math
 
@@ -136,7 +139,8 @@ class PipelineAnalyzer:
             context=self._context,
         )
 
-    def calculate_overlap_results(self, pipelines, parallel_groups, progress_callback=None):
+    def calculate_overlap_results(self, pipelines, parallel_groups, progress_callback=None, *,
+                                  corridor_options=None, corridor_budget=None, corridor_scope='Combined'):
         return calculate_overlap_results(
             pipelines,
             parallel_groups,
@@ -148,6 +152,9 @@ class PipelineAnalyzer:
             angular_tolerance=self.angular_tolerance,
             progress_callback=progress_callback,
             context=self._context,
+            corridor_options=corridor_options,
+            corridor_budget=corridor_budget,
+            corridor_scope=corridor_scope,
         )
 
     def compute_effective_length_by_clusters(self, pipelines, per_pipeline_total_meters, progress_callback=None):
@@ -163,15 +170,87 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
 
-    def analyze_complete(self, file_path, progress_callback=None, *, context=None):
-        """Complete analysis; an optional per-call context supports cooperative control."""
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None):
+        """Parse once, retaining the ordinary result and optional state breakdown."""
+        options = options or AnalysisOptions()
+        if not isinstance(options, AnalysisOptions):
+            raise TypeError('options must be AnalysisOptions')
+        callback_context = None
+        if options.state_breakdown and progress_callback is not None:
+            callback_context = CallbackExecutionContext(
+                context if context is not None else ExecutionContext(), progress_callback)
+            context = callback_context
+            # Every stage now reports through the job context. An individual
+            # overlap pass must not publish its local 100% to the public API.
+            progress_callback = None
+        try:
+            parse_context = (ScopedExecutionContext(context, 0, .03)
+                             if context is not None and options.state_breakdown else context)
+            parsed = extract_features_from_file_with_diagnostics(
+                file_path, progress_callback=progress_callback, context=parse_context)
+            combined = self.analyze_parsed(parsed, progress_callback, context=context, options=options)
+            if callback_context is not None:
+                callback_context.report('Complete', 1, 1, fraction=1.0)
+            return combined
+        except AnalysisCancelled:
+            raise
+        except Exception as exc:
+            raise ValueError(f'Analysis failed: {exc}') from exc
+
+    def analyze_parsed(self, parsed, progress_callback=None, *, context=None, options=None):
+        """Analyze fresh normalized source records, without reopening source files.
+
+        Callers own these mutable records. Retained source sessions must supply a
+        fresh copy for every run because overlap calculations cache segments.
+        """
+        options = options or AnalysisOptions()
+        if not isinstance(options, AnalysisOptions):
+            raise TypeError('options must be AnalysisOptions')
+        from pipeline_calculator.core.corridor_buffer import CorridorGeometryBudget
+        corridor_budget = CorridorGeometryBudget()
+        callback_context = None
+        if options.state_breakdown and progress_callback is not None:
+            callback_context = CallbackExecutionContext(
+                context if context is not None else ExecutionContext(), progress_callback)
+            context = callback_context
+            progress_callback = None
+        try:
+            combined_context = (ScopedExecutionContext(context, .03, .43, 'Combined')
+                                if context is not None and options.state_breakdown else context)
+            combined = self.analyze_features(
+                parsed.pipelines, parsed.placemarks, diagnostics=parsed.diagnostics,
+                parsed_kml_files=parsed.parsed_kml_files, progress_callback=progress_callback,
+                context=combined_context, corridor_options=options.corridor_display,
+                corridor_budget=corridor_budget)
+            if options.state_breakdown:
+                # These samples belong to the completed combined pass. State
+                # runs produce their own; retaining both doubles peak memory.
+                for pipeline in parsed.pipelines:
+                    pipeline.pop('segments', None)
+                from pipeline_calculator.core.state_analysis import build_state_breakdown
+                combined['geography'] = build_state_breakdown(
+                    self, parsed.pipelines, combined, context=context,
+                    corridor_options=options.corridor_display, corridor_budget=corridor_budget)
+            from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+            combined = prepare_scope_visualizations(combined, context=context)
+            if callback_context is not None:
+                # Optional geography failures still yield a finished, explicitly
+                # incomplete result. Cancellation raises before completion.
+                callback_context.report('Complete', 1, 1, fraction=1.0)
+            return combined
+        except AnalysisCancelled:
+            raise
+        except Exception as exc:
+            raise ValueError(f'Analysis failed: {exc}') from exc
+
+    def analyze_features(self, pipelines, placemarks=None, *, diagnostics=None,
+                         parsed_kml_files=None, progress_callback=None, context=None,
+                         corridor_options=None, corridor_budget=None, corridor_scope='Combined'):
+        """Analyze normalized features without XML round trips or identity changes."""
         previous_context = self._context
         self._context = context
+        diagnostics = list(diagnostics or [])
         try:
-            parsed = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=self._context)
-            pipelines = parsed.pipelines
-            placemarks = parsed.placemarks
-
             pipeline_data, total_meters, total_miles = self.calculate_pipeline_lengths(pipelines)
 
             overlap_results = None
@@ -181,7 +260,10 @@ class PipelineAnalyzer:
                     if self._estimated_segments > MAX_ANALYSIS_SEGMENTS:
                         raise ValueError('Analysis segment limit exceeded; split the dataset or increase segment length')
                     parallel_groups = self.find_parallel_segments(pipelines, progress_callback)
-                    overlap_results = self.calculate_overlap_results(pipelines, parallel_groups, progress_callback)
+                    overlap_results = self.calculate_overlap_results(
+                        pipelines, parallel_groups, progress_callback,
+                        corridor_options=corridor_options, corridor_budget=corridor_budget,
+                        corridor_scope=corridor_scope)
                     eff_total_m = total_meters - overlap_results["savings_meters"]
 
                     eff_total_m = max(0.0, min(float(total_meters), float(eff_total_m)))
@@ -198,7 +280,7 @@ class PipelineAnalyzer:
                 except AnalysisCancelled:
                     raise
                 except Exception as e:
-                    parsed.diagnostics.append({
+                    diagnostics.append({
                         "level": "error",
                         "code": "overlap_analysis_failed",
                         "message": "Overlap calculation failed; adjusted mileage and savings are unavailable.",
@@ -208,15 +290,17 @@ class PipelineAnalyzer:
 
             if context is not None:
                 context.report("Finalizing results")
-            return {
+            from pipeline_calculator import __version__
+            result = {
+                "application_version": __version__,
                 "pipelines": pipeline_data,
-                "placemarks": placemarks,
+                "placemarks": list(placemarks or []),
                 "total_meters": total_meters,
                 "total_miles": total_miles,
                 "overlap_analysis": overlap_results,
-                "analysis_complete": not any(d.get("level") == "error" for d in parsed.diagnostics),
-                "diagnostics": parsed.diagnostics,
-                "parsed_kml_files": parsed.parsed_kml_files,
+                "analysis_complete": not any(d.get("level") == "error" for d in diagnostics),
+                "diagnostics": diagnostics,
+                "parsed_kml_files": list(parsed_kml_files or []),
                 "analysis_parameters": {
                     "detection_range": self.detection_range,
                     "min_parallel_length": self.min_parallel_length,
@@ -224,6 +308,10 @@ class PipelineAnalyzer:
                     "angular_tolerance": self.angular_tolerance,
                 },
             }
+            if corridor_scope == 'Combined':
+                from pipeline_calculator.core.corridor_geometry import prepare_scope_visualizations
+                result = prepare_scope_visualizations(result, context=context)
+            return result
         except AnalysisCancelled:
             raise
         except Exception as e:

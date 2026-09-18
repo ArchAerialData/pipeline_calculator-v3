@@ -51,7 +51,7 @@ def test_clock_starts_with_worker_and_new_job_resets(monkeypatch):
     from pipeline_calculator.gui.state import AnalysisParameters
     clock = [0.0]
     seen = []
-    def analyze(*args, context):
+    def analyze(*args, context, **kwargs):
         seen.append(context.elapsed_seconds())
         clock[0] += 2
         context.report('Searching neighbors', 5, 10)

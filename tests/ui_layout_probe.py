@@ -20,7 +20,7 @@ def descendants(node):
         yield from descendants(child)
 
 
-def run(scale, width, height, capture=None, legacy=False):
+def run(scale, width, height, capture=None, legacy=False, size_limit=None):
     # Exercise the actual CTk DPI path without changing the user's OS settings.
     ctk.ScalingTracker.get_window_dpi_scaling = classmethod(lambda cls, window: scale)
     if legacy:
@@ -31,13 +31,19 @@ def run(scale, width, height, capture=None, legacy=False):
     root = app.root
     errors = []
     root.report_callback_exception = lambda *args: errors.append(''.join(traceback.format_exception(*args)))
-    if scale == 2.5 and height == 288 and width in (408, 512):
+    if size_limit is not None or (scale == 2.5 and height == 288 and width in (408, 512)):
         # Simulate 1020/1280x720 physical windows on larger developer monitors.
         root.minsize(1, 1)
-        root.maxsize(width, height)
-    root.geometry(f'{width}x{height}+{50 if capture else -8000}+100')
-    # Keep validation windows offscreen instead of refitting them onto the desktop.
-    root._display_changed = lambda event: None
+        root.maxsize(*(size_limit or (width, height)))
+    # run_gui/isolate_probe already places native windows on an undisplayed
+    # desktop. Keep them on that desktop's monitor: a window at -8000 can be
+    # denied real keyboard focus on hosted Windows workers.
+    from pipeline_calculator.gui.window import work_area
+    left, top, _, _ = work_area(root)
+    position = (left + 16, top + 16)
+    root.geometry(f'{width}x{height}+{position[0]}+{position[1]}')
+    # Preserve CTk/native Configure bindings. Cancel only any initial monitor
+    # fit; subsequent geometry stays on the same monitor at the selected DPI.
     if root._fit_id:
         root.after_cancel(root._fit_id)
         root._fit_id = None
@@ -52,6 +58,11 @@ def run(scale, width, height, capture=None, legacy=False):
             root.update()
             time.sleep(.005)
         assert not errors, errors
+
+    def viewport_size():
+        # The native WM may clamp a requested high-DPI window to the CI monitor.
+        # Layout expectations must use the resulting logical viewport.
+        return root.winfo_width() / scale, root.winfo_height() / scale
 
     def check(page, target=None):
         target = target or root
@@ -128,9 +139,10 @@ def run(scale, width, height, capture=None, legacy=False):
         pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
         settle()
         # Navigation must adapt without changing the active page.
-        if width >= 800:
+        viewport_width, _ = viewport_size()
+        if viewport_width >= 800:
             assert pages.tabs.winfo_viewable(), 'Tabs should fit at desktop widths'
-        elif width <= 408:
+        elif viewport_width <= 408:
             assert pages.selector.winfo_viewable(), 'Narrow windows need the menu'
         if scale == 1 and width == 1800:
             pages.set('Diagnostics')
@@ -151,9 +163,10 @@ def run(scale, width, height, capture=None, legacy=False):
                 from pipeline_calculator.gui.tabs.summary_tab import SummaryView
                 summary = next(w for w in descendants(pages.pages[name]) if isinstance(w, SummaryView))
                 assert not summary.expanded and not summary.details.winfo_manager()
-                if width >= 1280:
+                viewport_width, _ = viewport_size()
+                if viewport_width >= 1280:
                     assert summary.original.grid_info()['row'] == summary.adjusted.grid_info()['row']
-                elif width <= 640:
+                elif viewport_width <= 640:
                     assert summary.original.grid_info()['row'] != summary.adjusted.grid_info()['row']
                     assert abs(summary.original.winfo_width() - summary.cards.winfo_width()) <= 2
                 summary.toggle.invoke()
@@ -164,16 +177,23 @@ def run(scale, width, height, capture=None, legacy=False):
                 pages.set('Diagnostics')
                 pages.set('Summary')
                 assert summary.expanded, 'Tab switches must retain the disclosure state'
-                summary.toggle.focus_force()
+                root.lift()
+                root.focus_force()
                 settle()
+                summary.toggle.focus_set()
+                settle()
+                assert root.focus_get() is summary.toggle, ('Disclosure did not receive keyboard focus', root.focus_get())
                 toggle_y = summary.toggle.winfo_rooty() - summary._parent_canvas.winfo_rooty()
                 toggle_height, viewport_height = summary.toggle.winfo_height(), summary._parent_canvas.winfo_height()
                 visible_height = min(toggle_y + toggle_height, viewport_height) - max(0, toggle_y)
                 assert visible_height >= min(toggle_height, viewport_height)-2, (toggle_y, toggle_height, viewport_height)
-                summary.toggle.event_generate('<Return>')
+                summary.toggle.event_generate('<KeyPress-Return>')
+                summary.toggle.event_generate('<KeyRelease-Return>')
                 settle()
                 assert not summary.expanded, 'Return must toggle the disclosure'
                 summary.toggle.event_generate('<KeyPress-space>')
+                settle()
+                assert not summary.expanded, 'Space must activate on release, not press'
                 summary.toggle.event_generate('<KeyRelease-space>')
                 settle()
                 assert summary.expanded, 'Space must activate the disclosure'
@@ -204,7 +224,7 @@ def run(scale, width, height, capture=None, legacy=False):
         from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
         with patch.object(CorridorDialog, 'retry'):
             dialog = CorridorDialog(root, {}, 1)
-        dialog.window.geometry(f'{width}x{height}+{60 if capture else -8000}+100')
+        dialog.window.geometry(f'{width}x{height}+{position[0]+10}+{position[1]+10}')
         dialog.label.configure(text='Example viewer error and temporary file information. ' * 50)
         check('corridor-dialog', dialog.window)
         dialog.close()
@@ -221,13 +241,18 @@ def run(scale, width, height, capture=None, legacy=False):
         session = AnalysisSession(root, lambda job: None, SimpleNamespace(start=lambda *args: job))
         session.start('Q3 - WWM Pipelines.kmz', AnalysisParameters())
         check('caution')
+        if session.guidance_columns == 1:
+            for card in session.guidance_cards:
+                assert abs(card.winfo_width() - session.guidance.winfo_width()) <= 2, \
+                    'Single-column guidance must use the available width'
         assert session.continue_button.winfo_viewable()
         assert not session.bar.winfo_viewable(), 'No progress animation while waiting for a decision'
-        if width >= 800 and height >= 600:
+        viewport_width, viewport_height = viewport_size()
+        if viewport_width >= 800 and viewport_height >= 600:
             assert session.frame.winfo_width() <= 842*scale
             # The structured notice includes separate guidance sections. It
             # should fit its content, while reserving the actions on short screens.
-            assert session.frame.winfo_height() <= height*scale*.9+2
+            assert session.frame.winfo_height() <= viewport_height*scale*.9+2
         if scale == 1 and width == 1800:
             from PIL import ImageGrab, ImageColor
             from pipeline_calculator.gui.modal import BACKDROP, SURFACE
@@ -248,8 +273,13 @@ def run(scale, width, height, capture=None, legacy=False):
         session.filename_label.configure(text='Extremely long input filename ' * 30 + '.kmz')
         settle()
         check('caution-long')
+        if session.guidance_columns == 1:
+            for card in session.guidance_cards:
+                assert abs(card.winfo_width() - session.guidance.winfo_width()) <= 2, \
+                    'Long guidance must not reserve an empty second column'
         session.close()
-        return {'scale': scale, 'logical_size': [width, height], 'legacy': legacy, 'status': 'passed'}
+        return {'scale': scale, 'logical_size': [width, height], 'actual_logical_size': list(viewport_size()),
+                'legacy': legacy, 'status': 'passed'}
     finally:
         app.close()
 
@@ -260,4 +290,5 @@ if __name__ == '__main__':
     isolate_probe()
     print(json.dumps(run(float(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]),
                          sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] != '-' else None,
-                         len(sys.argv) > 5 and sys.argv[5] == 'legacy')))
+                         len(sys.argv) > 5 and sys.argv[5] == 'legacy',
+                         tuple(map(int, sys.argv[6].split('x'))) if len(sys.argv) > 6 else None)))

@@ -1,0 +1,1094 @@
+{
+  "sample": "Pipelines August 2023.kmz",
+  "sha256": "92bea274a0e588e2611e4a46b96b8a8f48d3b26f9089533a1b9dfbbd89f1eb4c",
+  "original_unchanged": true,
+  "only_patch": "54-byte missing xsi namespace insertion at byte211",
+  "coverage": {
+    "placemarks": 42,
+    "LineStrings": 44,
+    "coordinate_blocks": 44,
+    "vertices": 2139,
+    "altitudes": [
+      0.0
+    ],
+    "all_source_coordinate_sequences_match_application": true,
+    "duplicate_ids_matched_by_document_order_not_deduplicated": true,
+    "maximum_per_record_direct_vs_app_disagreement_meters": 0.0
+  },
+  "totals": {
+    "stored_MILES_decimal": "648.601713",
+    "app_meters": 920747.8695152604,
+    "app_US_survey_miles": 572.1250571784351,
+    "stored_minus_calculated_miles": 76.47665582156492,
+    "gap_percent_of_stored": 11.791004292578073
+  },
+  "outlier_grouping_threshold_miles": 0.1,
+  "outlier_record_numbers": [
+    34,
+    36,
+    41,
+    42
+  ],
+  "outlier_gap_miles": 76.44848646944392,
+  "outlier_share_of_net_gap_percent": 99.96316607751949,
+  "remaining_records": 38,
+  "remaining_stored_miles": "453.163760",
+  "remaining_calculated_miles": 453.13559064787904,
+  "remaining_maximum_absolute_gap_miles": 0.005657425476723432,
+  "remaining_maximum_relative_gap_percent": 0.03062363244923072,
+  "records": [
+    {
+      "record_number": 1,
+      "name": "30_INGLESIDE, 8\" C2",
+      "placemark_id": "ID_00000",
+      "stored_MILES": "29.13183",
+      "stored_FEET": "153816.064137",
+      "calculated_US_survey_miles": 29.12666491379051,
+      "stored_minus_calculated_miles": 0.0051650862094909655,
+      "direct_GRS80_meters": 46874.917168840875,
+      "direct_GRS80_US_survey_miles": 29.126664913782598,
+      "path_count": 1,
+      "vertex_count": 133,
+      "path_meters": [
+        46874.917168840875
+      ],
+      "longitude_range": [
+        -97.58078002999991,
+        -97.23793454799994
+      ],
+      "latitude_range": [
+        27.81332272900005,
+        27.91167119800008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 2,
+      "name": "31_CORPUS TO WOODSBORO, 8\"",
+      "placemark_id": "ID_00000",
+      "stored_MILES": "36.356771",
+      "stored_FEET": "191963.749108",
+      "calculated_US_survey_miles": 36.35189129038223,
+      "stored_minus_calculated_miles": 0.004879709617775063,
+      "direct_GRS80_meters": 58502.81514244328,
+      "direct_GRS80_US_survey_miles": 36.35189129037235,
+      "path_count": 1,
+      "vertex_count": 143,
+      "path_meters": [
+        58502.81514244328
+      ],
+      "longitude_range": [
+        -97.58064956599992,
+        -97.25558423799993
+      ],
+      "latitude_range": [
+        27.81317114800004,
+        28.18937452000006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 3,
+      "name": "31_GREEN LAKE LATERAL (IDLE), 4\" C2",
+      "placemark_id": "ID_00001",
+      "stored_MILES": "0.174699",
+      "stored_FEET": "922.411068",
+      "calculated_US_survey_miles": 0.17470818618432823,
+      "stored_minus_calculated_miles": -9.186184328241476e-06,
+      "direct_GRS80_meters": 281.16613351882216,
+      "direct_GRS80_US_survey_miles": 0.17470818618428077,
+      "path_count": 1,
+      "vertex_count": 5,
+      "path_meters": [
+        281.16613351882216
+      ],
+      "longitude_range": [
+        -96.8388839129999,
+        -96.83692931999991
+      ],
+      "latitude_range": [
+        28.58610725100004,
+        28.58743824700008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 4,
+      "name": "31_PLACEDO TO MARKHAM, 8\" C2",
+      "placemark_id": "ID_00007",
+      "stored_MILES": "45.561615",
+      "stored_FEET": "240565.329207",
+      "calculated_US_survey_miles": 45.56611786970901,
+      "stored_minus_calculated_miles": -0.004502869709007484,
+      "direct_GRS80_meters": 73331.70506029917,
+      "direct_GRS80_US_survey_miles": 45.566117869696626,
+      "path_count": 1,
+      "vertex_count": 126,
+      "path_meters": [
+        73331.70506029917
+      ],
+      "longitude_range": [
+        -96.77074735799994,
+        -96.14356294499993
+      ],
+      "latitude_range": [
+        28.65341015600006,
+        28.98478675500007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 5,
+      "name": "31_TIVOLI TO PLACEDO, 8\"",
+      "placemark_id": "ID_00008",
+      "stored_MILES": "16.508505",
+      "stored_FEET": "87164.906169",
+      "calculated_US_survey_miles": 16.50925886458815,
+      "stored_minus_calculated_miles": -0.0007538645881517425,
+      "direct_GRS80_meters": 26569.129836424207,
+      "direct_GRS80_US_survey_miles": 16.509258864583668,
+      "path_count": 1,
+      "vertex_count": 40,
+      "path_meters": [
+        26569.129836424207
+      ],
+      "longitude_range": [
+        -96.93290600199994,
+        -96.77074735799994
+      ],
+      "latitude_range": [
+        28.46696014400004,
+        28.65341015600006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 6,
+      "name": "31_WOODSBORO TO TIVOLI, 8\"",
+      "placemark_id": "ID_00009",
+      "stored_MILES": "27.658047",
+      "stored_FEET": "146034.489628",
+      "calculated_US_survey_miles": 27.657567304051163,
+      "stored_minus_calculated_miles": 0.0004796959488366781,
+      "direct_GRS80_meters": 44510.629016616855,
+      "direct_GRS80_US_survey_miles": 27.65756730404365,
+      "path_count": 1,
+      "vertex_count": 62,
+      "path_meters": [
+        44510.629016616855
+      ],
+      "longitude_range": [
+        -97.25558423799993,
+        -96.93290600199994
+      ],
+      "latitude_range": [
+        28.18937452000006,
+        28.46696014400004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 7,
+      "name": "32_CORPUS TO VIDAURI, 6\" C3",
+      "placemark_id": "ID_00005",
+      "stored_MILES": "47.580535",
+      "stored_FEET": "251225.226545",
+      "calculated_US_survey_miles": 47.575182379860394,
+      "stored_minus_calculated_miles": 0.005352620139603914,
+      "direct_GRS80_meters": 76564.98744188812,
+      "direct_GRS80_US_survey_miles": 47.57518237984747,
+      "path_count": 1,
+      "vertex_count": 171,
+      "path_meters": [
+        76564.98744188812
+      ],
+      "longitude_range": [
+        -97.58062518999992,
+        -97.1256500149999
+      ],
+      "latitude_range": [
+        27.81316014800007,
+        28.30145990300008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 8,
+      "name": "32_GARCITAS TO MARKHAM, 6\" C3",
+      "placemark_id": "ID_00006",
+      "stored_MILES": "36.70548",
+      "stored_FEET": "193804.933155",
+      "calculated_US_survey_miles": 36.70931594666698,
+      "stored_minus_calculated_miles": -0.0038359466669817266,
+      "direct_GRS80_meters": 59078.03551892781,
+      "direct_GRS80_US_survey_miles": 36.70931594665701,
+      "path_count": 1,
+      "vertex_count": 107,
+      "path_meters": [
+        59078.03551892781
+      ],
+      "longitude_range": [
+        -96.66235000799992,
+        -96.14356360599993
+      ],
+      "latitude_range": [
+        28.73836000000006,
+        28.98477658900005
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 9,
+      "name": "32_GREEN LAKE LATERAL (IDLE), 4\" C3",
+      "placemark_id": "ID_00002",
+      "stored_MILES": "0.188156",
+      "stored_FEET": "993.46602",
+      "calculated_US_survey_miles": 0.18816626192519353,
+      "stored_minus_calculated_miles": -1.0261925193544297e-05,
+      "direct_GRS80_meters": 302.82485028135693,
+      "direct_GRS80_US_survey_miles": 0.1881662619251424,
+      "path_count": 1,
+      "vertex_count": 7,
+      "path_meters": [
+        302.82485028135693
+      ],
+      "longitude_range": [
+        -96.83884544599994,
+        -96.83693818999991
+      ],
+      "latitude_range": [
+        28.58590603800008,
+        28.58742523000007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 10,
+      "name": "33_VICTORIA LATERAL, 8\" C2",
+      "placemark_id": "ID_00003",
+      "stored_MILES": "11.50453",
+      "stored_FEET": "60743.916117",
+      "calculated_US_survey_miles": 11.505263759589754,
+      "stored_minus_calculated_miles": -0.0007337595897531912,
+      "direct_GRS80_meters": 18515.964231836646,
+      "direct_GRS80_US_survey_miles": 11.50526375958663,
+      "path_count": 1,
+      "vertex_count": 48,
+      "path_meters": [
+        18515.964231836646
+      ],
+      "longitude_range": [
+        -96.94743000599993,
+        -96.83832390299996
+      ],
+      "latitude_range": [
+        28.58747678500004,
+        28.68943999900006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 11,
+      "name": "155AC_EQU(VCT4)-FORMOSA(VCT5), 6\" C2",
+      "placemark_id": "ID_00004",
+      "stored_MILES": "9.160709",
+      "stored_FEET": "48368.543945",
+      "calculated_US_survey_miles": 9.16148470787916,
+      "stored_minus_calculated_miles": -0.0007757078791588157,
+      "direct_GRS80_meters": 14744.00993373294,
+      "direct_GRS80_US_survey_miles": 9.16148470787667,
+      "path_count": 1,
+      "vertex_count": 59,
+      "path_meters": [
+        14744.00993373294
+      ],
+      "longitude_range": [
+        -96.55661061299993,
+        -96.55149660999989
+      ],
+      "latitude_range": [
+        28.68464271200008,
+        28.81540583500004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 12,
+      "name": "2_CORPUS INTER LN2, (IDLE), 4\"",
+      "placemark_id": "ID_00000",
+      "stored_MILES": "2.659427",
+      "stored_FEET": "14041.776682",
+      "calculated_US_survey_miles": 2.658871564327239,
+      "stored_minus_calculated_miles": 0.00055543567276084,
+      "direct_GRS80_meters": 4279.047556914607,
+      "direct_GRS80_US_survey_miles": 2.6588715643265166,
+      "path_count": 1,
+      "vertex_count": 7,
+      "path_meters": [
+        4279.047556914607
+      ],
+      "longitude_range": [
+        -97.5189927159999,
+        -97.51635570899994
+      ],
+      "latitude_range": [
+        27.80142779600004,
+        27.83910470400008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 13,
+      "name": "2_CORPUS INTERCON LN2, 4\" C3",
+      "placemark_id": "ID_00015",
+      "stored_MILES": "4.189148",
+      "stored_FEET": "22118.701378",
+      "calculated_US_survey_miles": 4.18823656775204,
+      "stored_minus_calculated_miles": 0.0009114322479604198,
+      "direct_GRS80_meters": 6740.32687154425,
+      "direct_GRS80_US_survey_miles": 4.188236567750902,
+      "path_count": 1,
+      "vertex_count": 13,
+      "path_meters": [
+        6740.32687154425
+      ],
+      "longitude_range": [
+        -97.58077415899993,
+        -97.51893681199995
+      ],
+      "latitude_range": [
+        27.79904021800007,
+        27.8121303810001
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 14,
+      "name": "3_CORPUS INTER LN3, 6\" CRUDE C4",
+      "placemark_id": "ID_00001",
+      "stored_MILES": "6.855729",
+      "stored_FEET": "36198.249652",
+      "calculated_US_survey_miles": 6.854260271584505,
+      "stored_minus_calculated_miles": 0.0014687284154950575,
+      "direct_GRS80_meters": 11030.884704279304,
+      "direct_GRS80_US_survey_miles": 6.854260271582643,
+      "path_count": 1,
+      "vertex_count": 19,
+      "path_meters": [
+        11030.884704279304
+      ],
+      "longitude_range": [
+        -97.58077763099993,
+        -97.51634771199991
+      ],
+      "latitude_range": [
+        27.79903453400004,
+        27.83910293600007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 15,
+      "name": "4_CORPUS INTER LN4 (IDLE), 4\"",
+      "placemark_id": "ID_00002",
+      "stored_MILES": "6.858251",
+      "stored_FEET": "36211.567685",
+      "calculated_US_survey_miles": 6.8567820612191355,
+      "stored_minus_calculated_miles": 0.001468938780864626,
+      "direct_GRS80_meters": 11034.943139413928,
+      "direct_GRS80_US_survey_miles": 6.856782061217272,
+      "path_count": 2,
+      "vertex_count": 19,
+      "path_meters": [
+        4278.679713331744,
+        6756.263426082184
+      ],
+      "longitude_range": [
+        -97.5807830359999,
+        -97.51634171399992
+      ],
+      "latitude_range": [
+        27.79902884800003,
+        27.83909881100004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 16,
+      "name": "5_CORPUS INTER LN5, 8\" BUTANE",
+      "placemark_id": "ID_00003",
+      "stored_MILES": "4.198969",
+      "stored_FEET": "22170.555866",
+      "calculated_US_survey_miles": 4.198055323483956,
+      "stored_minus_calculated_miles": 0.0009136765160437932,
+      "direct_GRS80_meters": 6756.128658772445,
+      "direct_GRS80_US_survey_miles": 4.198055323482816,
+      "path_count": 1,
+      "vertex_count": 12,
+      "path_meters": [
+        6756.128658772445
+      ],
+      "longitude_range": [
+        -97.58078612099989,
+        -97.51875027999994
+      ],
+      "latitude_range": [
+        27.79902261800004,
+        27.81211671100004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 17,
+      "name": "5_CORPUS INTER LN5 VS-1 (IDLE), 8\"",
+      "placemark_id": "ID_00004",
+      "stored_MILES": "2.65542",
+      "stored_FEET": "14020.618618",
+      "calculated_US_survey_miles": 2.65486521447135,
+      "stored_minus_calculated_miles": 0.0005547855286498482,
+      "direct_GRS80_meters": 4272.599948916917,
+      "direct_GRS80_US_survey_miles": 2.654865214470629,
+      "path_count": 1,
+      "vertex_count": 7,
+      "path_meters": [
+        4272.599948916917
+      ],
+      "longitude_range": [
+        -97.51897263399991,
+        -97.5163356549999
+      ],
+      "latitude_range": [
+        27.80147460200004,
+        27.83909524500007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 18,
+      "name": "6_CORPUS INTER LN6 DOCK (IDLE), 6\"",
+      "placemark_id": "ID_00005",
+      "stored_MILES": "6.858723",
+      "stored_FEET": "36214.054979",
+      "calculated_US_survey_miles": 6.857253010983121,
+      "stored_minus_calculated_miles": 0.0014699890168792251,
+      "direct_GRS80_meters": 11035.701061106744,
+      "direct_GRS80_US_survey_miles": 6.857253010981259,
+      "path_count": 2,
+      "vertex_count": 21,
+      "path_meters": [
+        4302.388230541621,
+        6733.312830565123
+      ],
+      "longitude_range": [
+        -97.5807911399999,
+        -97.5163277769999
+      ],
+      "latitude_range": [
+        27.79901724700005,
+        27.83909278900006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 19,
+      "name": "6_CORPUS INTER LN6 MAIN, 6\" C3",
+      "placemark_id": "ID_00006",
+      "stored_MILES": "4.155667",
+      "stored_FEET": "21941.924229",
+      "calculated_US_survey_miles": 4.154764009538745,
+      "stored_minus_calculated_miles": 0.0009029904612551931,
+      "direct_GRS80_meters": 6686.457903081111,
+      "direct_GRS80_US_survey_miles": 4.154764009537616,
+      "path_count": 1,
+      "vertex_count": 22,
+      "path_meters": [
+        6686.457903081111
+      ],
+      "longitude_range": [
+        -97.51895270099995,
+        -97.45818630899993
+      ],
+      "latitude_range": [
+        27.80037740600005,
+        27.80629293200008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 20,
+      "name": "6_CORPUS INTERCON LN6 MAIN(IDLE), 6\"",
+      "placemark_id": "ID_00016",
+      "stored_MILES": "2.14653",
+      "stored_FEET": "11333.675995",
+      "calculated_US_survey_miles": 2.1460662939457413,
+      "stored_minus_calculated_miles": 0.00046370605425849476,
+      "direct_GRS80_meters": 3453.765821294519,
+      "direct_GRS80_US_survey_miles": 2.1460662939451582,
+      "path_count": 1,
+      "vertex_count": 25,
+      "path_meters": [
+        3453.765821294519
+      ],
+      "longitude_range": [
+        -97.45818630899993,
+        -97.43224219799993
+      ],
+      "latitude_range": [
+        27.80331930300008,
+        27.80907553700007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 21,
+      "name": "7_CORPUS INTERCON WATER EFFLUENT, 12\"",
+      "placemark_id": "ID_00018",
+      "stored_MILES": "8.096824",
+      "stored_FEET": "42751.231309",
+      "calculated_US_survey_miles": 8.095065947105867,
+      "stored_minus_calculated_miles": 0.0017580528941323337,
+      "direct_GRS80_meters": 13027.77186711934,
+      "direct_GRS80_US_survey_miles": 8.095065947103668,
+      "path_count": 1,
+      "vertex_count": 49,
+      "path_meters": [
+        13027.77186711934
+      ],
+      "longitude_range": [
+        -97.5807948449999,
+        -97.47372951099993
+      ],
+      "latitude_range": [
+        27.79901031400004,
+        27.81760687100007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 22,
+      "name": "8_CORPUS INTER L8 CCO-VS01, 6\" PROPANE",
+      "placemark_id": "ID_00008",
+      "stored_MILES": "4.18883",
+      "stored_FEET": "22117.023563",
+      "calculated_US_survey_miles": 4.18791881069763,
+      "stored_minus_calculated_miles": 0.000911189302370552,
+      "direct_GRS80_meters": 6739.815490112515,
+      "direct_GRS80_US_survey_miles": 4.187918810696492,
+      "path_count": 1,
+      "vertex_count": 16,
+      "path_meters": [
+        6739.815490112515
+      ],
+      "longitude_range": [
+        -97.58079824899994,
+        -97.51895742099993
+      ],
+      "latitude_range": [
+        27.79900399400009,
+        27.81210525800009
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 23,
+      "name": "8_CORPUS INTER L8 VS-1 TO CIT (IDLE), 6\"",
+      "placemark_id": "ID_00007",
+      "stored_MILES": "6.298435",
+      "stored_FEET": "33255.739004",
+      "calculated_US_survey_miles": 6.297069496115995,
+      "stored_minus_calculated_miles": 0.0013655038840045819,
+      "direct_GRS80_meters": 10134.171279497104,
+      "direct_GRS80_US_survey_miles": 6.297069496114284,
+      "path_count": 1,
+      "vertex_count": 45,
+      "path_meters": [
+        10134.171279497104
+      ],
+      "longitude_range": [
+        -97.51892959399993,
+        -97.43224823199995
+      ],
+      "latitude_range": [
+        27.80036592400006,
+        27.80906808600008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 24,
+      "name": "9_CORPUS INTERC LN9, 6\" HYDROGEN [1:LineString]",
+      "placemark_id": "ID_00017",
+      "stored_MILES": "10.486014",
+      "stored_FEET": "55366.154764",
+      "calculated_US_survey_miles": 10.48373706179961,
+      "stored_minus_calculated_miles": 0.0022769382003904326,
+      "direct_GRS80_meters": 16871.97308192641,
+      "direct_GRS80_US_survey_miles": 10.483737061796763,
+      "path_count": 1,
+      "vertex_count": 55,
+      "path_meters": [
+        16871.97308192641
+      ],
+      "longitude_range": [
+        -97.5808019289999,
+        -97.43225426499993
+      ],
+      "latitude_range": [
+        27.79899837500005,
+        27.81210106600007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 25,
+      "name": "10_CORPUS INTER LN10, 6\" GASOLINE",
+      "placemark_id": "ID_00009",
+      "stored_MILES": "10.486723",
+      "stored_FEET": "55369.894901",
+      "calculated_US_survey_miles": 10.484445234107609,
+      "stored_minus_calculated_miles": 0.002277765892390704,
+      "direct_GRS80_meters": 16873.112777060644,
+      "direct_GRS80_US_survey_miles": 10.48444523410476,
+      "path_count": 1,
+      "vertex_count": 55,
+      "path_meters": [
+        16873.112777060644
+      ],
+      "longitude_range": [
+        -97.5808095569999,
+        -97.43226083999991
+      ],
+      "latitude_range": [
+        27.79899336400007,
+        27.81209733600008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 26,
+      "name": "11_CORPUS INTER LN11, 10\" CONDENSATE",
+      "placemark_id": "ID_00010",
+      "stored_MILES": "10.487846",
+      "stored_FEET": "55375.825424",
+      "calculated_US_survey_miles": 10.485568163764533,
+      "stored_minus_calculated_miles": 0.0022778362354660686,
+      "direct_GRS80_meters": 16874.919960780804,
+      "direct_GRS80_US_survey_miles": 10.485568163761684,
+      "path_count": 1,
+      "vertex_count": 55,
+      "path_meters": [
+        16874.919960780804
+      ],
+      "longitude_range": [
+        -97.58081477499991,
+        -97.43226653999994
+      ],
+      "latitude_range": [
+        27.79898707000007,
+        27.81209378900007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 27,
+      "name": "11_CORPUS LAT VS 9 LN11, 8\" CONDENSATE",
+      "placemark_id": "ID_00019",
+      "stored_MILES": "0.006577",
+      "stored_FEET": "34.729188",
+      "calculated_US_survey_miles": 0.00657607951926691,
+      "stored_minus_calculated_miles": 9.204807330902287e-07,
+      "direct_GRS80_meters": 10.583195284242779,
+      "direct_GRS80_US_survey_miles": 0.006576079519265123,
+      "path_count": 1,
+      "vertex_count": 2,
+      "path_meters": [
+        10.583195284242779
+      ],
+      "longitude_range": [
+        -97.4382101619999,
+        -97.43815869299993
+      ],
+      "latitude_range": [
+        27.80600655600006,
+        27.80609037800008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 28,
+      "name": "12_CORPUS INTER LN12, 10\" CONDENSATE",
+      "placemark_id": "ID_00011",
+      "stored_MILES": "10.487688",
+      "stored_FEET": "55374.994863",
+      "calculated_US_survey_miles": 10.48541086287223,
+      "stored_minus_calculated_miles": 0.0022771371277698904,
+      "direct_GRS80_meters": 16874.66680902728,
+      "direct_GRS80_US_survey_miles": 10.485410862869381,
+      "path_count": 1,
+      "vertex_count": 56,
+      "path_meters": [
+        16874.66680902728
+      ],
+      "longitude_range": [
+        -97.58082071399991,
+        -97.43227070899991
+      ],
+      "latitude_range": [
+        27.79898127800004,
+        27.81208760900006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 29,
+      "name": "12_CORPUS LAT VS 9 LN12, 8\" CONDENSATE",
+      "placemark_id": "ID_00020",
+      "stored_MILES": "0.006055",
+      "stored_FEET": "31.972057",
+      "calculated_US_survey_miles": 0.006054008158284532,
+      "stored_minus_calculated_miles": 9.918417154678241e-07,
+      "direct_GRS80_meters": 9.743001191485996,
+      "direct_GRS80_US_survey_miles": 0.006054008158282886,
+      "path_count": 1,
+      "vertex_count": 2,
+      "path_meters": [
+        9.743001191485996
+      ],
+      "longitude_range": [
+        -97.43820044199992,
+        -97.43815424099996
+      ],
+      "latitude_range": [
+        27.80600332900008,
+        27.80608106100004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 30,
+      "name": "13_CORPUS INTERCON POTABLE WATER, 3\"",
+      "placemark_id": "ID_00021",
+      "stored_MILES": "1.070537",
+      "stored_FEET": "5652.434965",
+      "calculated_US_survey_miles": 1.0703186554518869,
+      "stored_minus_calculated_miles": 0.00021834454811320292,
+      "direct_GRS80_meters": 1722.514351267796,
+      "direct_GRS80_US_survey_miles": 1.0703186554515962,
+      "path_count": 1,
+      "vertex_count": 9,
+      "path_meters": [
+        1722.514351267796
+      ],
+      "longitude_range": [
+        -97.51878528499992,
+        -97.51627433599991
+      ],
+      "latitude_range": [
+        27.82444003900008,
+        27.83913430600006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 31,
+      "name": "15_TICONA LAT CCO - VS2 (CELAN), 4\" C2",
+      "placemark_id": "ID_00012",
+      "stored_MILES": "8.445366",
+      "stored_FEET": "44591.532643",
+      "calculated_US_survey_miles": 8.443339943664467,
+      "stored_minus_calculated_miles": 0.0020260563355325445,
+      "direct_GRS80_meters": 13588.265654824367,
+      "direct_GRS80_US_survey_miles": 8.443339943662174,
+      "path_count": 1,
+      "vertex_count": 41,
+      "path_meters": [
+        13588.265654824367
+      ],
+      "longitude_range": [
+        -97.58123750199991,
+        -97.57858581099994
+      ],
+      "latitude_range": [
+        27.69433540200004,
+        27.81324834000009
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 32,
+      "name": "15_TICONA LAT VS2-PLANT, 4\" C2",
+      "placemark_id": "ID_00013",
+      "stored_MILES": "18.474051",
+      "stored_FEET": "97542.987948",
+      "calculated_US_survey_miles": 18.468393574523276,
+      "stored_minus_calculated_miles": 0.005657425476723432,
+      "direct_GRS80_meters": 29722.057832905175,
+      "direct_GRS80_US_survey_miles": 18.46839357451826,
+      "path_count": 1,
+      "vertex_count": 56,
+      "path_meters": [
+        29722.057832905175
+      ],
+      "longitude_range": [
+        -97.82776827399994,
+        -97.5793549839999
+      ],
+      "latitude_range": [
+        27.56242544300005,
+        27.69433540200004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 33,
+      "name": "16_CORPUS, ETHANE IMPORT (IDLE), 6\"",
+      "placemark_id": "ID_00014",
+      "stored_MILES": "2.286821",
+      "stored_FEET": "12074.414128",
+      "calculated_US_survey_miles": 2.2863315298463585,
+      "stored_minus_calculated_miles": 0.0004894701536417578,
+      "direct_GRS80_meters": 3679.501288570635,
+      "direct_GRS80_US_survey_miles": 2.286331529845737,
+      "path_count": 1,
+      "vertex_count": 20,
+      "path_meters": [
+        3679.501288570635
+      ],
+      "longitude_range": [
+        -97.6286121629999,
+        -97.59711875499994
+      ],
+      "latitude_range": [
+        27.80803487700007,
+        27.81409810200006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 34,
+      "name": "31_MARKHAM TO RAMSEY, 8\" C2",
+      "placemark_id": "ID_00009",
+      "stored_MILES": "48.522005",
+      "stored_FEET": "256196.185642",
+      "calculated_US_survey_miles": 41.66992017184735,
+      "stored_minus_calculated_miles": 6.852084828152648,
+      "direct_GRS80_meters": 67061.37013176354,
+      "direct_GRS80_US_survey_miles": 41.66992017183603,
+      "path_count": 1,
+      "vertex_count": 137,
+      "path_meters": [
+        67061.37013176354
+      ],
+      "longitude_range": [
+        -96.14353639899991,
+        -95.5798711729999
+      ],
+      "latitude_range": [
+        28.98478626200004,
+        29.30803354800007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 35,
+      "name": "32_MARKHAM TO RAMSEY, 6\" C3",
+      "placemark_id": "ID_00005",
+      "stored_MILES": "37.767731",
+      "stored_FEET": "199413.621348",
+      "calculated_US_survey_miles": 37.77261629632521,
+      "stored_minus_calculated_miles": -0.004885296325213062,
+      "direct_GRS80_meters": 60789.25497928664,
+      "direct_GRS80_US_survey_miles": 37.77261629631495,
+      "path_count": 1,
+      "vertex_count": 122,
+      "path_meters": [
+        60789.25497928664
+      ],
+      "longitude_range": [
+        -96.14353473699991,
+        -95.63526154499995
+      ],
+      "latitude_range": [
+        28.98477395200007,
+        29.28054889000003
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 36,
+      "name": "32_RAMSEY TO DEER PARK, 6\" C3",
+      "placemark_id": "ID_00006",
+      "stored_MILES": "54.797756",
+      "stored_FEET": "289332.152903",
+      "calculated_US_survey_miles": 3.8112590305506355,
+      "stored_minus_calculated_miles": 50.98649696944936,
+      "direct_GRS80_meters": 6133.639120539056,
+      "direct_GRS80_US_survey_miles": 3.8112590305496004,
+      "path_count": 1,
+      "vertex_count": 16,
+      "path_meters": [
+        6133.639120539056
+      ],
+      "longitude_range": [
+        -95.63526154499995,
+        -95.58084209399993
+      ],
+      "latitude_range": [
+        29.28054889000003,
+        29.30711734600004
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 37,
+      "name": "50_CELAN BC TO MKO (COMMON), 10\" C2",
+      "placemark_id": "ID_00010",
+      "stored_MILES": "13.047901",
+      "stored_FEET": "68892.914829",
+      "calculated_US_survey_miles": 13.049327049412954,
+      "stored_minus_calculated_miles": -0.0014260494129541001,
+      "direct_GRS80_meters": 21000.89819280112,
+      "direct_GRS80_US_survey_miles": 13.049327049409408,
+      "path_count": 1,
+      "vertex_count": 47,
+      "path_meters": [
+        21000.89819280112
+      ],
+      "longitude_range": [
+        -96.14344605899993,
+        -96.01668257099992
+      ],
+      "latitude_range": [
+        28.86545043400008,
+        28.98472630100008
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 38,
+      "name": "50_MATAGORDA (MTO) LATERAL, 6\" C2",
+      "placemark_id": "ID_00001",
+      "stored_MILES": "0.738434",
+      "stored_FEET": "3898.930496",
+      "calculated_US_survey_miles": 0.7385021685016065,
+      "stored_minus_calculated_miles": -6.816850160651367e-05,
+      "direct_GRS80_meters": 1188.5064108775482,
+      "direct_GRS80_US_survey_miles": 0.7385021685014058,
+      "path_count": 1,
+      "vertex_count": 9,
+      "path_meters": [
+        1188.5064108775482
+      ],
+      "longitude_range": [
+        -95.94093000099991,
+        -95.93315000599993
+      ],
+      "latitude_range": [
+        28.79138383000009,
+        28.79595000000007
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 39,
+      "name": "50_MATAGORDA (MTO) LATERAL, 8\" C2",
+      "placemark_id": "ID_00002",
+      "stored_MILES": "0.73209",
+      "stored_FEET": "3865.433346",
+      "calculated_US_survey_miles": 0.7321574192641792,
+      "stored_minus_calculated_miles": -6.741926417919153e-05,
+      "direct_GRS80_meters": 1178.2955063389836,
+      "direct_GRS80_US_survey_miles": 0.7321574192639803,
+      "path_count": 1,
+      "vertex_count": 10,
+      "path_meters": [
+        1178.2955063389836
+      ],
+      "longitude_range": [
+        -95.94088800099989,
+        -95.93317100699994
+      ],
+      "latitude_range": [
+        28.79146721700005,
+        28.79590099600006
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 40,
+      "name": "50_MKO TO CELANESE, 10\" C2",
+      "placemark_id": "ID_00012",
+      "stored_MILES": "8.947096",
+      "stored_FEET": "47240.667538",
+      "calculated_US_survey_miles": 8.947982544815346,
+      "stored_minus_calculated_miles": -0.0008865448153461131,
+      "direct_GRS80_meters": 14400.410821421037,
+      "direct_GRS80_US_survey_miles": 8.947982544812914,
+      "path_count": 1,
+      "vertex_count": 50,
+      "path_meters": [
+        14400.410821421037
+      ],
+      "longitude_range": [
+        -96.01668257099992,
+        -95.9329154639999
+      ],
+      "latitude_range": [
+        28.79593213800007,
+        28.87127294600009
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 41,
+      "name": "50_SR - HWY 60, 10\" C2",
+      "placemark_id": "ID_00000",
+      "stored_MILES": "43.037097",
+      "stored_FEET": "227235.872523",
+      "calculated_US_survey_miles": 36.635168287368586,
+      "stored_minus_calculated_miles": 6.401928712631417,
+      "direct_GRS80_meters": 58958.706189663266,
+      "direct_GRS80_US_survey_miles": 36.63516828735863,
+      "path_count": 1,
+      "vertex_count": 113,
+      "path_meters": [
+        58958.706189663266
+      ],
+      "longitude_range": [
+        -95.93331000999989,
+        -95.43604801999993
+      ],
+      "latitude_range": [
+        28.79498309100006,
+        29.00408359000005
+      ],
+      "coordinate_sequence_matches_application": true
+    },
+    {
+      "record_number": 42,
+      "name": "51_STRAT RIDGE TO BAY CITY (IDLE), 4\" C2",
+      "placemark_id": "ID_00003",
+      "stored_MILES": "49.081095",
+      "stored_FEET": "259148.181961",
+      "calculated_US_survey_miles": 36.873119040789504,
+      "stored_minus_calculated_miles": 12.207975959210493,
+      "direct_GRS80_meters": 59341.65157286736,
+      "direct_GRS80_US_survey_miles": 36.873119040779486,
+      "path_count": 1,
+      "vertex_count": 128,
+      "path_meters": [
+        59341.65157286736
+      ],
+      "longitude_range": [
+        -96.01688482799996,
+        -95.52975867899994
+      ],
+      "latitude_range": [
+        28.86798821100007,
+        29.03935557300008
+      ],
+      "coordinate_sequence_matches_application": true
+    }
+  ],
+  "limitations": "Stored attributes cannot establish whether the client exported its full routes. No overlap deductions or state allocations are applied in this original-length comparison."
+}

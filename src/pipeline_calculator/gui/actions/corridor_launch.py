@@ -7,7 +7,19 @@ from pipeline_calculator.gui import config
 from pipeline_calculator.gui.actions import open_kml_action
 
 
+def corridor_is_omitted(section):
+    return (section.get('visualization_status') == 'omitted'
+            or section.get('clipped_polygons') == []
+            or section.get('visualization_polygons') == []
+            or ('visualization_schema_version' in section and
+                (type(section['visualization_schema_version']) is not int or
+                 section['visualization_schema_version'] != 1 or
+                 section.get('visualization_status') != 'ready')))
+
+
 def launch_corridor(root, section, index):
+    if corridor_is_omitted(section):
+        raise ValueError('This corridor map is unavailable. See Diagnostics for details.')
     if config.SHOW_CORRIDOR_LAUNCH_DIALOG:
         from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
         return CorridorDialog(root, section, index)

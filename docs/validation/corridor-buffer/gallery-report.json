@@ -1,0 +1,983 @@
+{
+  "environment": {
+    "commit": "9aa8698da15097eea60ee5fe5890a79042252186",
+    "dirty": true,
+    "source_sha256": "a035a2c32a0b834c10adbd32f873c116fe5b404d6f93e9fd5e79801a11d2c6c1",
+    "python": "3.13.3 (tags/v3.13.3:6280bb5, Apr  8 2025, 14:47:33) [MSC v.1943 64 bit (AMD64)]",
+    "platform": "Windows-10-10.0.19045-SP0",
+    "cpu": "Intel64 Family 6 Model 151 Stepping 2, GenuineIntel",
+    "packages": {
+      "numpy": "2.2.6",
+      "scipy": "1.16.0",
+      "pyproj": "3.7.1",
+      "pytest": "8.4.1",
+      "customtkinter": "5.2.2",
+      "pyinstaller": "6.14.2"
+    }
+  },
+  "cases": [
+    {
+      "fixture": "straight",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 295.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 99,
+      "valid_polygon": true,
+      "area_m2": 3683.94334140761,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 299.99999999965576,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3684.061544279791,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893079203057,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 59,
+          "start_m": 0.0,
+          "end_m": 295.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "straight-01-preview.kml",
+      "image": "straight-01.svg"
+    },
+    {
+      "fixture": "curve",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 305.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 99,
+      "valid_polygon": true,
+      "area_m2": 3739.574214573909,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 301.73005408093036,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3739.691479817362,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.00608704680552497,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 61,
+          "start_m": 0.0,
+          "end_m": 305.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 61,
+          "start_m": 0.0,
+          "end_m": 305.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "curve-01-preview.kml",
+      "image": "curve-01.svg"
+    },
+    {
+      "fixture": "right_angle",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 295.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 115,
+      "valid_polygon": true,
+      "area_m2": 3342.976797435316,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 210.02142754634522,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3343.1051097699187,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758892864925246,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 59,
+          "start_m": 0.0,
+          "end_m": 295.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 59,
+          "start_m": 0.0,
+          "end_m": 295.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "right_angle-01-preview.kml",
+      "image": "right_angle-01.svg"
+    },
+    {
+      "fixture": "hairpin",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 405.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 115,
+      "valid_polygon": true,
+      "area_m2": 4149.090539443739,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 200.24984397454878,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 4149.22318414353,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758894075388674,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 81,
+          "start_m": 0.0,
+          "end_m": 405.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 81,
+          "start_m": 0.0,
+          "end_m": 405.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "hairpin-01-preview.kml",
+      "image": "hairpin-01.svg"
+    },
+    {
+      "fixture": "hairpin",
+      "section": 2,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 405.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 152,
+      "valid_polygon": true,
+      "area_m2": 4106.880330678535,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 199.99999999921536,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 4107.075683613236,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893320236551,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 40,
+          "start_m": 0.0,
+          "end_m": 200.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 42,
+          "sample_end": 81,
+          "start_m": 210.0,
+          "end_m": 405.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "hairpin-02-preview.kml",
+      "image": "hairpin-02.svg"
+    },
+    {
+      "fixture": "hairpin",
+      "section": 3,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 405.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 112,
+      "valid_polygon": true,
+      "area_m2": 3298.5808351487394,
+      "origin": [
+        -99.99990631400863,
+        40.001783227095
+      ],
+      "maximum_reference_radius_m": 198.0908882413206,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3298.7225950977663,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.005014551138308597,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 42,
+          "sample_end": 81,
+          "start_m": 210.0,
+          "end_m": 405.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 40,
+          "start_m": 0.0,
+          "end_m": 200.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "hairpin-03-preview.kml",
+      "image": "hairpin-03.svg"
+    },
+    {
+      "fixture": "loop",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 395.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 1,
+      "vertex_count": 111,
+      "valid_polygon": true,
+      "area_m2": 4378.130621041021,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 142.84257066086363,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 4378.242314822369,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004932415026652737,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 79,
+          "start_m": 0.0,
+          "end_m": 395.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 79,
+          "start_m": 0.0,
+          "end_m": 395.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "loop-01-preview.kml",
+      "image": "loop-01.svg"
+    },
+    {
+      "fixture": "short",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 15.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 93,
+      "valid_polygon": true,
+      "area_m2": 323.94334155227546,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 19.999999999619625,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 324.06154490318363,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758892588543164,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 4,
+          "start_m": 0.0,
+          "end_m": 20.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 3,
+          "start_m": 0.0,
+          "end_m": 15.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "short-01-preview.kml",
+      "image": "short-01.svg"
+    },
+    {
+      "fixture": "multipart",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 295.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 89,
+      "valid_polygon": true,
+      "area_m2": 1898.293694269992,
+      "origin": [
+        -100.0,
+        40.003602478488
+      ],
+      "maximum_reference_radius_m": 150.01333278277346,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 1898.4034454695764,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.0047588927998435645,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 1,
+          "sample_start": 0,
+          "sample_end": 30,
+          "start_m": 0.0,
+          "end_m": 150.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 1,
+          "sample_start": 0,
+          "sample_end": 30,
+          "start_m": 0.0,
+          "end_m": 150.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "multipart-01-preview.kml",
+      "image": "multipart-01.svg"
+    },
+    {
+      "fixture": "multipart",
+      "section": 2,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 295.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 89,
+      "valid_polygon": true,
+      "area_m2": 1838.2936933151777,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 145.01379248768603,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 1838.40344454224,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758892544801108,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 29,
+          "start_m": 0.0,
+          "end_m": 145.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 29,
+          "start_m": 0.0,
+          "end_m": 145.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "multipart-02-preview.kml",
+      "image": "multipart-02.svg"
+    },
+    {
+      "fixture": "reversed",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 295.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 99,
+      "valid_polygon": true,
+      "area_m2": 3683.943341939308,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 300.0066665521965,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3684.0615448456224,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893079203142,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 59,
+          "start_m": 0.0,
+          "end_m": 295.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "reversed-01-preview.kml",
+      "image": "reversed-01.svg"
+    },
+    {
+      "fixture": "dateline",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 300.0,
+      "analysis_complete": true,
+      "part_count": 2,
+      "hole_count": 0,
+      "vertex_count": 102,
+      "valid_polygon": true,
+      "area_m2": 3698.2936859656747,
+      "origin": [
+        179.999,
+        60.0
+      ],
+      "maximum_reference_radius_m": 300.00666659306324,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3698.4034373133763,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893003371803,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "dateline-01-preview.kml",
+      "image": "dateline-01.svg"
+    },
+    {
+      "fixture": "pole",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 300.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 213,
+      "valid_polygon": true,
+      "area_m2": 3698.289034524034,
+      "origin": [
+        0.0,
+        89.99
+      ],
+      "maximum_reference_radius_m": 300.006666592853,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3698.40345163172,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758892788384477,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "pole-01-preview.kml",
+      "image": "pole-01.svg"
+    },
+    {
+      "fixture": "U_shape",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 545.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 147,
+      "valid_polygon": true,
+      "area_m2": 6327.512701723607,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 251.20509548119384,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 6327.672379199985,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893173194016,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 109,
+          "start_m": 0.0,
+          "end_m": 545.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 109,
+          "start_m": 0.0,
+          "end_m": 545.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "U_shape-01-preview.kml",
+      "image": "U_shape-01.svg"
+    },
+    {
+      "fixture": "S_shape",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 450.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 132,
+      "valid_polygon": true,
+      "area_m2": 5388.319261928256,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 397.4021165679607,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 5388.4764595471415,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.005044841674698768,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 90,
+          "start_m": 0.0,
+          "end_m": 450.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 90,
+          "start_m": 0.0,
+          "end_m": 450.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "S_shape-01-preview.kml",
+      "image": "S_shape-01.svg"
+    },
+    {
+      "fixture": "branch_rejoin",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 495.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 100,
+      "valid_polygon": true,
+      "area_m2": 3143.943155947483,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 255.00000000026958,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3144.0615429894733,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893317752659,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 51,
+          "start_m": 0.0,
+          "end_m": 255.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 50,
+          "start_m": 0.0,
+          "end_m": 250.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "branch_rejoin-01-preview.kml",
+      "image": "branch_rejoin-01.svg"
+    },
+    {
+      "fixture": "branch_rejoin",
+      "section": 2,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 495.0,
+      "analysis_complete": true,
+      "part_count": 1,
+      "hole_count": 0,
+      "vertex_count": 95,
+      "valid_polygon": true,
+      "area_m2": 3047.4084771604125,
+      "origin": [
+        -100.0,
+        40.00405278814131
+      ],
+      "maximum_reference_radius_m": 247.1653795792248,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 3047.524989121247,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893798591549,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 90,
+          "sample_end": 139,
+          "start_m": 450.0,
+          "end_m": 695.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 107,
+          "sample_end": 156,
+          "start_m": 535.0,
+          "end_m": 780.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "branch_rejoin-02-preview.kml",
+      "image": "branch_rejoin-02.svg"
+    },
+    {
+      "fixture": "separate_buffer_parts",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "ready",
+      "savings_m": 300.0,
+      "analysis_complete": true,
+      "part_count": 2,
+      "hole_count": 0,
+      "vertex_count": 162,
+      "valid_polygon": true,
+      "area_m2": 6156.880338116145,
+      "origin": [
+        -100.0,
+        40.0
+      ],
+      "maximum_reference_radius_m": 300.2399040985297,
+      "uncovered_source_length_m": 0.0,
+      "generating_run_count": 2,
+      "source_coverage_passed": true,
+      "reference_step_m": 2.0,
+      "target_m": 0.05,
+      "padding_m": 5.0,
+      "reference_area_m2": 6157.075690061715,
+      "missing_inner_neighborhood_m2": 0.0,
+      "excess_outer_neighborhood_m2": 0.0,
+      "inner_radius_passed": true,
+      "outer_radius_passed": true,
+      "boundary_hausdorff_m": 0.004758893079203142,
+      "passed": true,
+      "qualified_runs": [
+        {
+          "source_id": 0,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        },
+        {
+          "source_id": 1,
+          "scope_path_index": 0,
+          "sample_start": 0,
+          "sample_end": 60,
+          "start_m": 0.0,
+          "end_m": 300.0
+        }
+      ],
+      "geometry_policy": "qualified_path_buffer_v1",
+      "preview": "separate_buffer_parts-01-preview.kml",
+      "image": "separate_buffer_parts-01.svg"
+    },
+    {
+      "fixture": "unavailable_map",
+      "section": 1,
+      "viewer": "reviewed local metric polygon render; every part and hole",
+      "status": "unavailable",
+      "savings_m": 300.0,
+      "analysis_complete": true,
+      "diagnostics": [
+        {
+          "level": "warning",
+          "code": "corridor_visualization_omitted",
+          "message": "A corridor map is unavailable; mileage is unaffected.",
+          "context": {
+            "error": "gallery injected map failure",
+            "error_type": "RuntimeError",
+            "section_index": 0,
+            "scope": "Combined"
+          }
+        }
+      ],
+      "part_count": 0,
+      "hole_count": 0,
+      "expected_omission": true
+    }
+  ],
+  "passed": true,
+  "visual_review": "reviewed all 19 rows in contact-sheet-1.png and contact-sheet-2.png; numerical geometry reference passed separately",
+  "reference": "Independent 2 m GRS80 paths; 128-quadrant buffer; all exterior/interior rings"
+}

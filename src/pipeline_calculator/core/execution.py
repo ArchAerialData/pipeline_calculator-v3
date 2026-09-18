@@ -106,7 +106,7 @@ class ExecutionContext:
         if self._ticks & 255 == 0:
             self.check()
 
-    def report(self, stage, completed=0, total=None):
+    def report(self, stage, completed=0, total=None, *, fraction=None):
         self.check()
         self.begin()
         now = self._clock()
@@ -115,9 +115,13 @@ class ExecutionContext:
             old = self._snapshot
             if old is not None and old.stage == stage and now - self._last_emit < 0.1:
                 return
+            if fraction is None:
+                progress = self.progress.update(stage, completed, total)
+            else:
+                progress = max(self.progress.fraction, min(1.0, max(0.0, fraction)))
+                self.progress.fraction = progress
             self._snapshot = ProgressSnapshot(self.job_id, 1 if old is None else old.sequence + 1,
-                                              stage, completed, total, elapsed,
-                                              self.progress.update(stage, completed, total))
+                                              stage, completed, total, elapsed, progress)
             self._last_emit = now
         if self.interactive and not self.workload_accepted:
             estimate = self.runtime_projection.observe(stage, completed, total, elapsed)
@@ -128,3 +132,61 @@ class ExecutionContext:
     def snapshot(self):
         with self._lock:
             return self._snapshot
+
+
+class CallbackExecutionContext:
+    """Mirror published job progress to a legacy float callback.
+
+    The parent retains cancellation, throttling and runtime-warning ownership.
+    Callbacks observe the same aggregate fractions as desktop consumers rather
+    than the individual overlap passes' local completion notifications.
+    """
+
+    def __init__(self, parent, callback):
+        self.parent = parent
+        self.callback = callback
+        self._last_sequence = None
+
+    def __getattr__(self, name):
+        return getattr(self.parent, name)
+
+    def report(self, stage, completed=0, total=None, *, fraction=None):
+        self.parent.report(stage, completed, total, fraction=fraction)
+        snapshot = self.parent.snapshot()
+        if snapshot is not None and snapshot.sequence != self._last_sequence:
+            self._last_sequence = snapshot.sequence
+            self.callback(float(snapshot.fraction))
+
+
+class ScopedExecutionContext:
+    """Map a sequential sub-analysis into one interval of its parent's progress.
+
+    Cancellation, warnings and elapsed time belong to the parent job. A child
+    completing never completes the job or resets its clock. This adapter also
+    lets geometry stages report work counts without extending the ordinary
+    analyzer's fixed progress schedule.
+    """
+
+    def __init__(self, parent, start, end, label=''):
+        if not 0 <= start <= end <= 1:
+            raise ValueError('Invalid progress interval')
+        self.parent, self.start, self.end, self.label = parent, start, end, label
+        self.progress = WorkProgress()
+
+    def __getattr__(self, name):
+        return getattr(self.parent, name)
+
+    def report(self, stage, completed=0, total=None, *, fraction=None):
+        from pipeline_calculator.core.progress import STAGES
+        if fraction is not None:
+            self.progress.fraction = max(self.progress.fraction, min(1.0, max(0.0, fraction)))
+        elif stage in STAGES:
+            self.progress.update(stage, completed, total)
+        elif total and total > 0:
+            self.progress.fraction = max(self.progress.fraction, min(1.0, completed / total))
+        label = f'{self.label}: {stage}' if self.label else stage
+        self.parent.report(label, completed, total,
+                           fraction=self.start + (self.end-self.start)*self.progress.fraction)
+
+    def finish(self):
+        self.report('Complete', 1, 1)

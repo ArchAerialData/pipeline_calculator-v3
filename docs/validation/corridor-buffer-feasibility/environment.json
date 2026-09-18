@@ -1,0 +1,39 @@
+{
+  "recorded": "2026-09-18",
+  "repository_commit": "552191dac8e723d32819e38f6c1647d039d6038b",
+  "reference_commit": "fd33dbf1d5bc1e00737f633bd5b57c31c78202a5",
+  "reference_dirty": true,
+  "python": "3.11.9",
+  "shapely": "2.1.2",
+  "geos": "3.13.1",
+  "pyproj": "3.7.2",
+  "proj": "9.5.1",
+  "files": [
+    {
+      "path": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\src\\pipeline_calculator\\core\\overlap.py",
+      "sha256": "2eef0586eab343e956ce0118e8ecbdb903397263e45d0ede1f214af49ca69795"
+    },
+    {
+      "path": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\src\\pipeline_calculator\\core\\corridor_geometry.py",
+      "sha256": "f88cdf9988f89aeebf5b3d2cc75cc3ac8138b50de6f4254158fa6bdd16b82576"
+    },
+    {
+      "path": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\src\\pipeline_calculator\\core\\corridor_coverage.py",
+      "sha256": "b467e29a7ceb4b299d26a2798107089752290edffe514546eb4557e9cdddf134"
+    },
+    {
+      "path": "C:\\Users\\rbake\\Desktop\\VS Code Shortcuts\\Create-Polygon-Border-From-JPGs\\src\\polyline_boundary.py",
+      "sha256": "08d764b8fe3c7a702bbc9962316bf5286261f901dc10760947e87ded12100e14"
+    },
+    {
+      "path": "C:\\Users\\rbake\\Desktop\\VS Code Shortcuts\\Create-Polygon-Border-From-JPGs\\src\\geometry_hardening.py",
+      "sha256": "ee0422ff668a385c961977b4427b344a411f0f56ea16d8aa58b16ffd62b3d89c"
+    }
+  ],
+  "baseline_tests": {
+    "passed": 61,
+    "native_gui_deselected": 5,
+    "seconds": 4.89
+  },
+  "new_implementation_test_status": "Not implemented. Feasibility is not release acceptance."
+}

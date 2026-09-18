@@ -9,10 +9,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build-macos:
-    # Pin a specific runner to avoid surprises when `macos-latest` advances.
-    runs-on: macos-14
+    # Build on the oldest supported Sales OS; run this same app on newer OSes.
+    runs-on: macos-15
     timeout-minutes: 60
     env:
       MACOSX_DEPLOYMENT_TARGET: "13.0"
@@ -20,6 +23,7 @@ jobs:
       BUNDLE_ID: "com.archaerial.pipelinecalculator"
       # Build the modular (refactored) GUI by default in CI.
       PIPELINE_CALCULATOR_BUILD_IMPL: "new"
+      ARTIFACT_ARCH: arm64
     
     steps:
     - uses: actions/checkout@v4
@@ -30,6 +34,7 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
+        architecture: arm64
         cache: "pip"
 
     - name: Build app
@@ -39,8 +44,12 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-macos
-        path: .validation-output/ci-test-results.xml
+        name: test-results-macos-arm64
+        path: |
+          .validation-output/build-dependencies.txt
+          .validation-output/macos-bundle.json
+          .validation-output/ci-test-results.xml
+          .validation-output/packaged-smoke/
         include-hidden-files: true
         if-no-files-found: warn
 
@@ -81,7 +90,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: pipeline-calculator-macos
+        name: pipeline-calculator-macos-arm64
         path: dist/Pipeline_Calculator_v*.dmg
         if-no-files-found: error
 
@@ -89,12 +98,69 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: pipeline-calculator-macos-app
-        path: dist/Pipeline_Calculator.app
+        name: pipeline-calculator-macos-app-arm64
+        # A ZIP created by ditto preserves app executable bits and symlinks.
+        path: dist/Pipeline_Calculator_v*.app.zip
+        if-no-files-found: error
+
+    - name: Upload signed macOS smoke report
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: signed-smoke-macos-arm64
+        path: .validation-output/packaged-smoke-signed/
+        include-hidden-files: true
+        if-no-files-found: ignore
+
+  verify-newer-macos:
+    needs: build-macos
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-26
+            os_major: '26'
+          # The published xcode-27 image currently runs macOS 27. The helper
+          # asserts the actual OS, so an SDK label cannot falsely pass this gate.
+          - runner: xcode-27
+            os_major: '27'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        architecture: arm64
+    - uses: actions/download-artifact@v4
+      with:
+        name: pipeline-calculator-macos-app-arm64
+        path: .validation-output/downloaded-app
+    - name: Verify the distributed app on this macOS release
+      shell: bash
+      run: |
+        set -euo pipefail
+        archives=(.validation-output/downloaded-app/*.app.zip)
+        [[ ${#archives[@]} -eq 1 && -f "${archives[0]}" ]]
+        version="$(python src/pipeline_calculator/versioning.py)"
+        bash scripts/ci/macos_verify_distribution.sh "${archives[0]}" \
+          '${{ matrix.os_major }}' "$version" .validation-output/distribution-runtime
+    - name: Upload macOS runtime verification
+      if: ${{ always() }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: distribution-runtime-macos-${{ matrix.os_major }}-arm64
+        path: |
+          .validation-output/distribution-runtime/runtime.json
+          .validation-output/distribution-runtime/smoke/
+        include-hidden-files: true
         if-no-files-found: error
 
   build-windows:
     runs-on: windows-latest
+    timeout-minutes: 60
     env:
       # Build the modular (refactored) GUI by default in CI.
       PIPELINE_CALCULATOR_BUILD_IMPL: "new"
@@ -120,20 +186,26 @@ jobs:
       with:
         name: windows-exe
         path: dist/Pipeline_Calculator_v*.exe
+        if-no-files-found: error
 
     - name: Upload Windows test report
       if: ${{ always() }}
       uses: actions/upload-artifact@v4
       with:
         name: test-results-windows
-        path: .validation-output/ci-test-results.xml
+        path: |
+          .validation-output/build-dependencies.txt
+          .validation-output/ci-test-results.xml
+          .validation-output/packaged-smoke/
         include-hidden-files: true
         if-no-files-found: warn
 
   create-release:
-    needs: [build-macos, build-windows]
+    needs: [build-macos, build-windows, verify-newer-macos]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: write
     
     steps:
     - name: Download all artifacts
@@ -143,9 +215,10 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          pipeline-calculator-macos/Pipeline_Calculator_v*.dmg
+          pipeline-calculator-macos-*/Pipeline_Calculator_v*.dmg
           windows-exe/Pipeline_Calculator_v*.exe
-        draft: false
+        # Notarization/stapling is manual; review artifacts before distribution.
+        draft: true
         prerelease: false
         generate_release_notes: true
       env:

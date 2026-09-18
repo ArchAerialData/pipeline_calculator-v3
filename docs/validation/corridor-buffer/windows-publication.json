@@ -1,0 +1,13 @@
+{
+  "status": "published",
+  "version": "4.24-dev.9aa8698da150.dirty",
+  "sha256": "418C2363C54545DD02EFF8202B22E05801A1B1CCC61AEA2251A8D6AFAA48BC3B",
+  "bytes": 102622252,
+  "tested_executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\package\\dist\\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.exe",
+  "versioned_executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.exe",
+  "default_executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\Pipeline_Calculator_v4.exe",
+  "archived_previous_executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\dist\\archive\\Pipeline_Calculator_v4_before_corridor_buffer_20260918_100729.exe",
+  "previous_sha256": "9745FCDCDD406A58B00D9FEE8CB8958FDC94C4654AD4CB0A7190973A73EC6F3B",
+  "frozen_smoke": "passed",
+  "proj_network": "OFF"
+}

@@ -1,4 +1,4 @@
-# Pipeline Calculator v4.0 - With Overlap Analysis
+# Pipeline Calculator v5.0 - With Overlap Analysis
 
 A comprehensive GUI application for calculating pipeline lengths and analyzing overlaps from KMZ/KML files. Designed for GIS professionals and aerial survey planning to optimize flight paths by identifying bundled pipeline sections.
 
@@ -6,32 +6,39 @@ A comprehensive GUI application for calculating pipeline lengths and analyzing o
 
 ## Automatic build versions
 
-The app and package filenames share a Git-derived version. No version-bump commit
-is created. Baseline `fc4cc05108dda7ae2f61be4a763eb34f5f1ebb0e` represents **4.0**.
+The first commit introducing `MAJOR = 5` on a branch's first-parent history
+establishes version **5.0**. A normal merge introducing v5 into main starts main
+at 5.0 even if the feature branch had multiple preview commits. Later main
+first-parent commits advance to 5.1, 5.2, and so on; rebuilding does not increment.
+Use a normal or squash merge for the first 5.0 release. Fast-forward/rebase merges
+retain the feature branch's counter and can introduce several increments.
 
-- Each main first-parent commit after the baseline adds one: `4.1`, `4.2`, through
-  `4.9`, then `4.10`. These are version components, not decimal numbers.
-- Normal merge commits and squash merges count once per merged PR. Fast-forward
-  and rebase merges may advance several numbers. Prefer normal merge commits or
-  squash merges for one increment per PR.
-- Pushing alone does not increment anything. Rebuilding a clean main commit gives
-  the same version; pushing several main commits at once can skip build numbers.
-- Branch/PR builds use `4.N-dev.<12-character-commit-hash>`. Their count follows
-  their own first-parent history and does not reserve a future release number.
-  Branches can share numeric prefixes; hashes distinguish commits. PR context
-  always produces a preview, even for a commit also on main. Branches forked before
-  the baseline stay previews; update from main before relying on the count.
-- Uncommitted changes, including untracked files, add `.dirty`. Different dirty
-  edits can share the same version: commit before sharing reproducible builds.
-  CI main/tag builds reject dirty trees.
-- Detached builds get release versions only on `origin/main` first-parent history.
-  Fetch first so this reference is current; other detached commits are previews.
+The application title shows the clean numeric version. Run details, Excel
+Analysis Details, JSON results, repair provenance and embedded metadata retain
+the full build identifier. Branch/PR artifact filenames retain the
+`5.N-dev.<commit>` suffix; uncommitted changes add `.dirty`. An uncommitted major
+bump starts a 5.0 preview. CI main/tag builds reject dirty trees. Detached releases
+must be on origin/main's first-parent history; tags must exactly match the version.
+Full Git history is required. Do not rewrite main or reuse published tags.
 
-Windows downloads use `Pipeline_Calculator_v4.N.exe`; macOS downloads use
-`Pipeline_Calculator_v4.N.dmg`, including preview suffixes when applicable.
-The macOS bundle remains `Pipeline_Calculator.app`, with updated display name and
-version metadata. DMG packaging reads the actual app's embedded version, preserving
+Windows downloads use `Pipeline_Calculator_v5.N.exe`; macOS downloads use
+`Pipeline_Calculator_v5.N_arm64.dmg` (Apple Silicon), including preview suffixes when applicable.
+CI builds on macOS 15 and verifies the same archived app on macOS 26 and 27.
+Sales uses Apple Silicon; Intel is outside this rollout's verification scope. Local packaging without
+`ARTIFACT_ARCH` retains the unsuffixed `.dmg` filename.
+The macOS bundle is `Pipeline_Calculator_v5.app`, with a clean display name and
+version metadata. Its bundle identifier and user settings locations are unchanged. DMG packaging reads the actual app's embedded version, preserving
 it even after switching branches. Pass the exact DMG path to notarization.
+The optional app download is a `.app.zip` archive that preserves executable
+permissions. CI verifies offline analysis before and after Developer ID signing;
+notarization and stapling remain a separate required step before macOS rollout.
+
+Each Mac build inventories its bundled native libraries and records their actual
+minimum macOS version in the app's `LSMinimumSystemVersion` and the CI test report.
+Setting `MACOSX_DEPLOYMENT_TARGET` alone cannot make newer prebuilt libraries run
+on an older OS. The macOS 27 runner currently uses GitHub's `xcode-27` preview
+label; verification asserts its actual OS major version and retains its OS build
+number. A newer SDK alone does not establish runtime compatibility.
 
 ### Building and publishing safely
 
@@ -44,20 +51,27 @@ it even after switching branches. Pass the exact DMG path to notarization.
    against force pushes/history rewrites, which can change or reuse version numbers.
    Do not move the baseline to renumber releases. Deleting merged branches does not
    affect numbering because main's history remains intact.
-4. Tag the exact clean main commit as `v4.N`, matching the version command's output,
+4. Tag the exact clean main commit as `v5.N`, matching the version command's output,
    then push the tag. CI rejects mismatched tags and tags off main's first-parent
    history. Never move/reuse published tags. Existing main/PR/tag/manual triggers
    remain in effect; this does not add CI builds on every feature-branch push.
 
-Major versions remain intentional: to start 5.0, update `MAJOR` and `BASELINE` in
-`src/pipeline_calculator/versioning.py`, along with tests and documentation.
-Generated metadata stays in ignored `build/`; no tracked version file is rewritten.
-Installed apps read bundled metadata and need no Git. Source runs without usable
-Git/history show `4.0-dev.unknown`; packaging fails rather than shipping that fallback.
-For a given clean commit and build context the version is deterministic.
+Future major releases change `MAJOR` in `src/pipeline_calculator/versioning.py`.
+Update the stable major-specific macOS bundle name and its packaging checks too.
+The introducing commit automatically establishes the new baseline, including when
+merged into main. Generated metadata stays in ignored `build/`. Installed apps
+need no Git. Source runs without metadata/history display 5.0 and retain
+`5.0-dev.unknown` in build details; packaging fails rather than shipping that fallback.
+For a given clean commit/context, the version is deterministic.
 
 References: [Git first-parent traversal](https://git-scm.com/docs/git-rev-list)
 and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-information.html#using-file).
+
+### New in v5.0
+- State mileage breakdowns and scoped overlaps.
+- Verified geometry-preserving input repair and provenance.
+- Improved corridor maps, exports, and responsive result views.
+- Verified Windows and Apple Silicon builds, including macOS 27.
 
 ### New in v4.0
 - **Parser hardening**: Supports multipart LineStrings, local KMZ NetworkLinks, and gx:Track/gx:MultiTrack paths
@@ -81,6 +95,47 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - Dark mode interface for reduced eye strain
 - Cooperative cancellation and named processing stages with work counts and elapsed time
 
+### State breakdown
+
+Enable **State breakdown** in Analysis Settings before browsing or dropping a
+KML/KMZ. The switch starts off and remembers your choice across app sessions.
+**Adjust Parameters** also lets you change it before reanalysis.
+
+The app retains its combined analysis, clips pipeline paths at state boundaries,
+and independently analyzes each state's interior geometry. **View: Combined**
+switches the existing cards, pipeline table, overlaps and corridor previews to an
+encountered state. The Combined summary compares all states without adding a card
+for each one. Point placemarks remain available in the Combined view.
+
+Original state mileage reconciles to the original input mileage. Positive-length
+lines following a verified shared border are stored once and their mileage is
+allocated equally to adjoining states, with no state overlap discount. Outside
+coverage and unresolved mileage are shown separately. Short genuine crossings are
+preserved. State savings can differ from combined savings because overlap minimum
+lengths apply independently inside each state; the boundary split can make a
+previously qualifying overlap too short.
+
+Exports create one named package containing `analysis.xlsx`, optional JSON and
+optional `Combined/analysis.kmz` plus `States/<State>/analysis.kmz`. Maps are
+selected by default. State maps contain exclusive interior geometry, while shared
+border geometry appears once in the Combined map. Therefore state map line mileage
+matches the workbook's **Interior mileage**, while **Original attributed mileage**
+also includes any shared allocation. Export always includes the whole result,
+regardless of the selected state view.
+
+The bundled [2025 Census TIGER/Line state data](https://www2.census.gov/geo/tiger/TIGER2025/STATE/)
+covers the 50 states and Washington, DC without network access. Boundary provenance,
+datum operations and checksums appear in the export. Numerical clipping precision
+is separate from the source data's positional accuracy. Thirteen remote Alaska/
+Hawaii components outside the published datum-operation areas use explicitly
+approximate coordinate equivalence with unknown positional accuracy, recorded
+per component; results do not establish surveyed ownership. Boundary updates
+require a reviewed resource rebuild using `scripts/data/prepare_state_boundaries.py`
+and the original source archive; no runtime downloads occur.
+
+See the [approved specification](STATE_BOUNDARY_ANALYSIS_PLAN.md) and
+[implementation validation](docs/validation/state-boundary-analysis.md).
+
 ## 📊 Overlap Analysis Capabilities
 
 The overlap analysis feature helps optimize aerial survey planning by:
@@ -102,8 +157,8 @@ The overlap analysis feature helps optimize aerial survey planning by:
 
 ### Option 1: Download Pre-built Executables
 Download the latest release from the GitHub releases page:
-- **Windows**: `Pipeline_Calculator_v4.N.exe`
-- **macOS**: `Pipeline_Calculator_v4.N.dmg`
+- **Windows**: `Pipeline_Calculator_v5.N.exe`
+- **Apple Silicon Mac**: `Pipeline_Calculator_v5.N_arm64.dmg`
 
 ### Option 2: Run from Source
 Builds and automated validation use Python 3.11. Use the platform setup scripts to prepare that environment.
@@ -213,11 +268,17 @@ pipeline-calculator-v4/
 
 4. **Create a release** to trigger builds:
    ```bash
-   git tag v4.N  # Replace N with the generated version; see Automatic build versions
-   git push origin v4.N
+   git tag v5.N  # Replace N with the generated version; see Automatic build versions
+   git push origin v5.N
    ```
 
-The GitHub Actions workflow will automatically build executables for Windows and macOS when you push to main or create a tagged release.
+The GitHub Actions workflow builds Windows and Apple Silicon macOS artifacts on
+main pushes, pull requests, and tags. The same Mac app must pass native execution
+on Sequoia (15), Tahoe (26), and Golden Gate (27). A tag creates a **draft** release.
+Before publishing it, notarize and staple the signed DMG with
+`scripts/macos/notarize_dmg.sh`, replace the draft's DMG asset with that verified
+file, and check its launch on the target Macs. This keeps pre-notarized builds
+from being automatically offered as the latest sales release.
 
 ## 🔬 Technical Details
 
@@ -288,8 +349,8 @@ a conservative heuristic, not a flight-route optimization.
 Nearby finite segment tangents are compared so that offset sampling positions do
 not hide overlaps. Their endpoints must overlap longitudinally; lines merely
 meeting end-to-end are not bundled. Segment length still controls approximation
-at endpoints and bends. Corridor centers and polygons use local geodesic
-coordinates, including across the dateline.
+at endpoints and bends. Corridor polygons use local geodesic coordinates,
+including across the dateline.
 
 If a LineString or gx:Track contains an invalid coordinate, that geometry is
 rejected rather than connecting across the missing vertex. Other valid geometries
@@ -351,15 +412,21 @@ If opening fails, the dialog retains the generated file and offers **Copy Path**
 Earth rendered the file. Temporary files remain available after closing the dialog;
 use Save As for a lasting copy because the operating system may clean temp storage.
 
-Corridors are approximate visualizations of sampled paths, not surveyed boundaries.
-KML descriptions identify rectangle fallbacks and invalid preferred geometry.
-Non-finite, out-of-range, collapsed and unusable rings are rejected. All ring sizes
-receive local-plane topology checks within 100,000 raw points and 250,000 active-edge
-inspections; a shape that exceeds either budget uses a disclosed simpler outline.
-Point limits apply before projection/sorting, including duplicate coordinates. Right-angle,
-hairpin and loop examples can require broad rectangles enclosing the qualified
-samples. End padding helps outlines show the ends of sampled sections. These
-visual changes preserve original pipeline distance and sampled overlap/savings rules.
+Corridor maps follow the path portions that qualified for overlap, with **5 m
+padding** and rounded ends and bends. They preserve separate pieces and open
+centers. Padding is independent of Detection Range and does not change pipeline
+mileage, overlap qualification or savings. These are approximate display areas,
+not surveyed boundaries or rights-of-way. State maps are clipped to their state.
+
+The completed analysis prepares each map before displaying results. If a map
+cannot be constructed and verified within the accuracy and resource limits, its
+row shows **Map unavailable** and Diagnostics explains why. Mileage and savings
+remain available. New maps never substitute broad rectangles or silently drop
+components. Previews and package exports preserve every polygon and hole, without
+adding extra centerlines that could be counted as pipeline mileage on reimport.
+
+See [corridor implementation and verification](docs/validation/corridor-buffer-implementation.md)
+for the current geometry policy, comparisons, resource limits and sample exports.
 
 See [automated improvement verification](docs/validation/automated-improvements.md),
 [subsequent workload/corridor hardening](docs/validation/workload-corridor-hardening.md),

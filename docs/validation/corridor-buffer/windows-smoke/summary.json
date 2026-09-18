@@ -1,0 +1,17 @@
+{
+  "status": "passed",
+  "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\corridor-buffer\\package\\dist\\Pipeline_Calculator_v4.24-dev.9aa8698da150.dirty.exe",
+  "proj_network": "OFF",
+  "implementations": [
+    {
+      "implementation": "new",
+      "status": "passed",
+      "exit_code": 0
+    },
+    {
+      "implementation": "legacy",
+      "status": "passed",
+      "exit_code": 0
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 """Opt-in real-dataset audit; writes local evidence and never opens a viewer.
 
-Requires Shapely as an independent validation-only geometry engine. Production
-calculations and KML generation do not import this module or depend on Shapely.
+Uses a separate dense-source Shapely reference for complete polygon checks.
+Production calculations and KML generation do not import this audit module.
 """
 from pathlib import Path
 import argparse
@@ -17,6 +17,7 @@ import xml.etree.ElementTree as ET
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / 'src'))
 import numpy as np
 from pyproj import Geod
@@ -104,59 +105,41 @@ class CapturedAnalyzer(PipelineAnalyzer):
         self.audit_groups = groups
         return groups
 
-    def calculate_overlap_results(self, pipelines, groups, progress_callback=None):
+    def calculate_overlap_results(self, pipelines, groups, progress_callback=None, **kwargs):
         self.audit_sections = qualifying_sections(pipelines, groups, self.segment_length, self.min_parallel_length)
-        return super().calculate_overlap_results(pipelines, groups, progress_callback)
+        return super().calculate_overlap_results(pipelines, groups, progress_callback, **kwargs)
 
 
 def inspect_corridors(analyzer, result, output):
-    import shapely
+    from scripts.validation.corridor_audit import inspect_document, section_runs
     qualified = sorted(analyzer.audit_sections, key=lambda s: s['length'], reverse=True)
     exported = result['overlap_analysis']['bundled_sections']
     assert len(qualified) == len(exported)
     rows = []
     for index, (source, section) in enumerate(zip(qualified, exported), 1):
+        if section.get('visualization_status') == 'omitted':
+            try:
+                build_overlap_corridor_kml(section, index)
+            except ValueError:
+                rows.append({'index': index, 'status': 'omitted', 'diagnostics': section.get('diagnostics', []),
+                             'passed': bool(section.get('diagnostics')), 'part_count': 0, 'hole_count': 0,
+                             'uncovered_source_length_m': 0, 'outside_points': 0, 'max_outside_m': 0})
+                continue
+            raise AssertionError('An omitted section unexpectedly exported a map')
         kml = build_overlap_corridor_kml(section, index)
         (output/f'corridor-{index:03}.kml').write_text(kml, encoding='utf-8')
         doc = ET.fromstring(kml)
-        coords = [tuple(map(float, token.split(',')[:2]))
-                  for token in doc.find('.//k:Polygon//k:coordinates', NS).text.split()]
-        center = (section['center_lon'], section['center_lat'])
-        polygon = shapely.Polygon(project(coords, center))
-        assert polygon.is_valid and polygon.area > 0 and coords[0] == coords[-1]
-        # 2 cm accommodates serialized 7-decimal rounding and projection noise.
-        boundary = shapely.buffer(polygon, .02)
-        shapely.prepare(boundary)
-        outside = []
-        uncovered_length = 0.0
-        test_count = 0
-        ranges = []
-        for pipeline_index, path_index, ids in zip(source['pair'], source['paths'], source['segment_ids']):
-            pipeline = analyzer.audit_pipelines[pipeline_index]
-            path_ids = sorted(pipeline['segments'][i]['path_segment_index'] for i in ids)
-            values = np.unique(np.array([j+f for j in path_ids for f in (0, .5, 1)])*analyzer.segment_length)
-            path = pipeline['coordinate_paths'][path_index]
-            raw = np.asarray(path)
-            _, _, edge_lengths = GEOD.inv(raw[:-1, 0], raw[:-1, 1], raw[1:, 0], raw[1:, 1])
-            chainage = np.r_[0, np.cumsum(edge_lengths)]
-            values = np.unique(np.r_[values, chainage[(chainage > values[0]) & (chainage < values[-1])]])
-            points = stations(path, values)
-            xy = project(points, center)
-            # Test continuous source paths too, not only selected sample points.
-            uncovered_length += shapely.difference(shapely.LineString(xy), boundary).length
-            covered = shapely.contains_xy(boundary, xy[:, 0], xy[:, 1])
-            test_count += len(xy)
-            if not np.all(covered):
-                outside.extend(shapely.distance(polygon, shapely.points(xy[~covered])).tolist())
-            ranges.append({'pipeline_index': pipeline_index, 'path_index': path_index,
-                           'start_m': float(values[0]), 'end_m': float(values[-1]), 'segments': len(ids)})
+        paths, ranges = section_runs(analyzer.audit_pipelines, source, analyzer.segment_length)
+        metadata = section.get('visualization_metadata', {})
+        padding = metadata.get('padding_m') if metadata.get('policy') == 'qualified_path_buffer_v1' else None
+        verified, _, _ = inspect_document(kml, paths, padding_m=padding)
         desc = doc.find('.//k:description', NS).text
         row = {'index': index, 'pair': [section['pipeline_1'], section['pipeline_2']],
                'length_m': section['bundled_length_meters'], 'separation_m': section['average_separation'],
-               'ranges': ranges, 'checked_points': test_count, 'outside_points': len(outside),
-               'uncovered_source_length_m': uncovered_length,
-               'max_outside_m': max(outside, default=0), 'valid_polygon': True,
-               'vertices': len(coords), 'area_m2': polygon.area, 'description': desc}
+               'ranges': ranges, 'description': desc, 'status': 'ready',
+               'outside_points': int(not verified['source_coverage_passed']),
+               'max_outside_m': 0 if verified['source_coverage_passed'] else None,
+               'geometry_policy': metadata.get('policy', 'legacy'), **verified}
         rows.append(row)
     return rows
 
@@ -192,8 +175,12 @@ def run_case(path, name, output, reference=False):
                    sections=len(corridors), invalid_polygons=0,
                    clipped_corridors=sum(c['outside_points'] > 0 or c['uncovered_source_length_m'] > .01 for c in corridors),
                    uncovered_source_length_m=sum(c['uncovered_source_length_m'] for c in corridors),
-                   max_outside_m=max((c['max_outside_m'] for c in corridors), default=0),
-                   fallback_rectangles=sum('Geometry: sampled_curve.' not in c['description'] for c in corridors),
+                   max_outside_m=max((c['max_outside_m'] or 0 for c in corridors), default=0),
+                   geometry_checks_passed=all(c['passed'] for c in corridors),
+                   polygon_parts=sum(c['part_count'] for c in corridors),
+                   polygon_holes=sum(c['hole_count'] for c in corridors),
+                   omitted_maps=sum(c['status'] == 'omitted' for c in corridors),
+                   legacy_maps=sum(c.get('geometry_policy') == 'legacy' for c in corridors),
                    match_pairs=sum(map(len, analyzer.audit_groups.values())),
                    segment_count=sum(len(p['segments']) for p in analyzer.audit_pipelines))
     row['elapsed_seconds'] = time.monotonic()-started
@@ -221,7 +208,7 @@ def main():
         assert abs(rows[-1]['source_meters']-source['raw_geodesic_meters']) < 1e-6
         save(args.output/'matrix.json', rows)
         gc.collect()
-    failed = [row['case'] for row in rows if row.get('clipped_corridors', 0) or
+    failed = [row['case'] for row in rows if row.get('clipped_corridors', 0) or not row.get('geometry_checks_passed', True) or
               (not row['complete'] and row['case'] != 'step2-limit')]
     if failed:
         raise SystemExit('Audit failed: '+', '.join(failed))

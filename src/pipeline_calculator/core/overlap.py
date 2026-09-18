@@ -9,9 +9,12 @@ import numpy as np
 from scipy.spatial import KDTree
 
 from pipeline_calculator.core.angles import bearing_orientation_diff
-from pipeline_calculator.core.coordinates import segment_pipeline_paths, coordinate_paths_for_pipeline
-from pipeline_calculator.core.corridor_coverage import MeasuredPath, covers_paths
-from pipeline_calculator.core.spatial import lonlat_array_to_ecef, compute_origin
+from pipeline_calculator.core.coordinates import segment_pipeline_paths
+from pipeline_calculator.core.corridor_coverage import qualified_path_runs
+from pipeline_calculator.core.corridor_buffer import (
+    CorridorDisplayOptions, CorridorGeometryBudget, build_buffered_corridor,
+)
+from pipeline_calculator.core.spatial import lonlat_array_to_ecef
 from pipeline_calculator.core.bundling import qualifying_sections, savings_from_sections
 from pipeline_calculator.core.workload import check_density_workload
 from pipeline_calculator.core.segmentation import MAX_ANALYSIS_SEGMENTS
@@ -177,6 +180,13 @@ def find_parallel_segments(pipelines, geod, segment_length, detection_range, ang
     return parallel_groups
 
 
+def _build_section_corridor(pipelines, qualified, geod, segment_length,
+                            options, budget, cache, scope, context):
+    runs = qualified_path_runs(pipelines, qualified, segment_length, geod,
+                               scope=scope, cache=cache, context=context, budget=budget)
+    return build_buffered_corridor(runs, geod=geod, options=options, budget=budget, context=context)
+
+
 def calculate_overlap_results(
     pipelines,
     parallel_groups,
@@ -187,7 +197,7 @@ def calculate_overlap_results(
     detection_range,
     angular_tolerance,
     progress_callback=None,
-    *, context=None,
+    *, context=None, corridor_options=None, corridor_budget=None, corridor_scope='Combined',
 ):
     """Calculate bundled lengths and overlap statistics."""
     if not math.isfinite(float(min_parallel_length)) or min_parallel_length <= 0:
@@ -195,6 +205,7 @@ def calculate_overlap_results(
     results = {
         "bundled_sections": [],
         "pipeline_overlaps": {},
+        "pipeline_overlaps_by_id": {},
         "total_bundled_length": 0,
         "effective_total_length": 0,
         "savings_meters": 0,
@@ -204,311 +215,28 @@ def calculate_overlap_results(
     }
 
     bundled_segments = defaultdict(set)
-    measured_paths = {}
-
     sections = qualifying_sections(pipelines, parallel_groups, segment_length, min_parallel_length, context=context)
-    if context is not None:
-        context.report("Building corridors", 0, len(sections))
-    for section_index, qualified in enumerate(sections):
-        if context is not None and section_index % 256 == 0:
-            context.check()
+    # Finish every numerical section before attempting any optional map work.
+    records = []
+    for index, qualified in enumerate(sections):
         if context is not None:
-            context.report("Building corridors", section_index, len(sections))
-        p1_idx, p2_idx = qualified["pair"]
-        section = qualified["representatives"]
-        try:
-            bundled_length = qualified["length"]
-            avg_distance = np.mean([s["distance"] for s in section])
-
-            all_points = []
-            pair_midpoints = []
-            for match_position, seg in enumerate(section):
-                if context is not None and match_position % 256 == 0:
-                    context.check()
-                seg1_idx = seg["pipeline_1_segment"]
-                seg2_idx = seg["pipeline_2_segment"]
-
-                p1_segments = pipelines[p1_idx]["segments"]
-                p2_segments = pipelines[p2_idx]["segments"]
-
-                if seg1_idx >= len(p1_segments) or seg2_idx >= len(p2_segments):
-                    print(f"Warning: Invalid segment indices {seg1_idx}, {seg2_idx}")
-                    continue
-
-                mid1 = p1_segments[seg1_idx]["midpoint"]
-                mid2 = p2_segments[seg2_idx]["midpoint"]
-                all_points.extend([mid1, mid2])
-                pair_midpoints.append((mid1, mid2))
-
-            # Bounds must include every qualified sample, including partner
-            # samples not chosen for the representative centerline.
-            all_points = []
-            for pipe_index, segment_ids in zip((p1_idx, p2_idx), qualified['segment_ids']):
-                for position, segment_id in enumerate(sorted(segment_ids)):
-                    if context is not None and position % 256 == 0:
-                        context.check()
-                    all_points.append(pipelines[pipe_index]['segments'][segment_id]['midpoint'])
-            if not all_points:
-                continue
-            # Retain original vertices and true section endpoints. Representative
-            # midpoint pairs may omit a partner's last matched segment, and a
-            # chord between samples may cut across an original bend.
-            source_paths = []
-            for pipe_index, path_index, segment_ids in zip(
-                    (p1_idx, p2_idx), qualified['paths'], qualified['segment_ids']):
-                key = (pipe_index, path_index)
-                if key not in measured_paths:
-                    coords = coordinate_paths_for_pipeline(pipelines[pipe_index], context=context)[path_index]
-                    measured_paths[key] = MeasuredPath(geod, coords, context=context)
-                path_ids = [pipelines[pipe_index]['segments'][i]['path_segment_index'] for i in segment_ids]
-                points = measured_paths[key].span(min(path_ids)*segment_length, (max(path_ids)+1)*segment_length)
-                source_paths.append(points)
-                all_points.extend(points)
-
-            origin_lon, _ = compute_origin(all_points)
-            # Unwrap around this corridor, not Greenwich, before finding bounds.
-            lons = [origin_lon + (p[0] - origin_lon + 180) % 360 - 180 for p in all_points]
-            lats = [p[1] for p in all_points]
-            min_lon, max_lon = min(lons) - 0.001, max(lons) + 0.001
-            min_lat, max_lat = max(-90, min(lats) - 0.001), min(90, max(lats) + 0.001)
-            center_lon = ((min_lon + max_lon) / 2 + 180) % 360 - 180
-            center_lat = (min_lat + max_lat) / 2
-            # Wrapped west/east bounds may have west > east at the dateline.
-            min_lon = (min_lon + 180) % 360 - 180
-            max_lon = (max_lon + 180) % 360 - 180
-
-            centerline_pts = []
-            for midpoint_position, (mid1, mid2) in enumerate(pair_midpoints):
-                if context is not None and midpoint_position % 256 == 0:
-                    context.check()
-                bearing, _, distance = geod.inv(*mid1, *mid2)
-                cl_lon, cl_lat, _ = geod.fwd(*mid1, bearing, distance / 2)
-                centerline_pts.append((cl_lon, cl_lat))
-
-            def to_xy(lon, lat):
-                bearing, _, distance = geod.inv(center_lon, center_lat, lon, lat)
-                radians = math.radians(bearing)
-                return distance * math.sin(radians), distance * math.cos(radians)
-
-            def to_lonlat(x, y):
-                lon, lat, _ = geod.fwd(center_lon, center_lat,
-                                       math.degrees(math.atan2(x, y)), math.hypot(x, y))
-                return lon, lat
-
-            cl_xy = [to_xy(lon, lat) for lon, lat in centerline_pts]
-            source_xy = [[to_xy(*point) for point in path] for path in source_paths]
-
-            if len(cl_xy) >= 2:
-                x0, y0 = cl_xy[0]
-                x1, y1 = cl_xy[-1]
-                vx, vy = (x1 - x0), (y1 - y0)
-                norm = math.hypot(vx, vy)
-                if norm < 1e-6:
-                    u = (1.0, 0.0)
-                else:
-                    u = (vx / norm, vy / norm)
-            else:
-                u = (1.0, 0.0)
-
-            v = (-u[1], u[0])
-
-            t_vals = []
-            s_vals = []
-            for point_position, (x, y) in enumerate(cl_xy):
-                if context is not None and point_position % 256 == 0:
-                    context.check()
-                t = x * u[0] + y * u[1]
-                s = x * v[0] + y * v[1]
-                t_vals.append(t)
-                s_vals.append(s)
-            if not t_vals:
-                t_vals = [0.0, bundled_length]
-                s_vals = [0.0, 0.0]
-
-            s_mean = float(np.mean(s_vals))
-
-            max_sep_m = 0.0
-            for midpoint_position, (mid1, mid2) in enumerate(pair_midpoints):
-                if context is not None and midpoint_position % 256 == 0:
-                    context.check()
-                x1, y1 = to_xy(mid1[0], mid1[1])
-                x2, y2 = to_xy(mid2[0], mid2[1])
-                sep = math.hypot(x2 - x1, y2 - y1)
-                if sep > max_sep_m:
-                    max_sep_m = sep
-
-            margin_m = 10.0
-            width_m = max(max_sep_m + margin_m, segment_length)
-            if detection_range > 0:
-                width_m = min(width_m, 2.0 * detection_range)
-
-            pad_m = max(segment_length * 1.5, 5.0)
-            # A fallback rectangle encloses a bent group, rather than a narrow
-            # strip through its average lateral position. Keep nominal strip
-            # width separate from this rectangle's potentially broader extent.
-            along, across = [], []
-            for position, point in enumerate(all_points):
-                if context is not None and position % 256 == 0:
-                    context.check()
-                x, y = to_xy(*point)
-                along.append(x*u[0] + y*u[1])
-                across.append(x*v[0] + y*v[1])
-            t1 = min(along) - pad_m
-            t2 = max(along) + pad_m
-            half_w = width_m / 2.0
-            s1 = min(min(across) - pad_m, s_mean - half_w)
-            s2 = max(max(across) + pad_m, s_mean + half_w)
-
-            A = (u[0] * t1 + v[0] * s1, u[1] * t1 + v[1] * s1)
-            B = (u[0] * t2 + v[0] * s1, u[1] * t2 + v[1] * s1)
-            C = (u[0] * t2 + v[0] * s2, u[1] * t2 + v[1] * s2)
-            D = (u[0] * t1 + v[0] * s2, u[1] * t1 + v[1] * s2)
-
-            oriented_polygon = [
-                to_lonlat(A[0], A[1]),
-                to_lonlat(B[0], B[1]),
-                to_lonlat(C[0], C[1]),
-                to_lonlat(D[0], D[1]),
-                to_lonlat(A[0], A[1]),
-            ]
-
-            def unit(vec):
-                vx, vy = vec
-                nrm = math.hypot(vx, vy)
-                if nrm < 1e-9:
-                    return (0.0, 0.0)
-                return (vx / nrm, vy / nrm)
-
-            def line_intersection(p, d, q, e):
-                cross = d[0] * e[1] - d[1] * e[0]
-                if abs(cross) < 1e-9:
-                    return None
-                r = (q[0] - p[0], q[1] - p[1])
-                t = (r[0] * e[1] - r[1] * e[0]) / cross
-                return (p[0] + t * d[0], p[1] + t * d[1])
-
-            N = len(cl_xy)
-            curved_polygon = None
-            if N >= 2:
-                dirs = []
-                norms = []
-                valid_idx = []
-                for i in range(N - 1):
-                    if context is not None and i % 256 == 0:
-                        context.check()
-                    dx = cl_xy[i + 1][0] - cl_xy[i][0]
-                    dy = cl_xy[i + 1][1] - cl_xy[i][1]
-                    udir = unit((dx, dy))
-                    if udir == (0.0, 0.0):
-                        continue
-                    dirs.append(udir)
-                    norms.append((-udir[1], udir[0]))
-                    valid_idx.append(i)
-
-                if not dirs:
-                    curved_polygon = [to_lonlat(px, py) for px, py in [A, B, C, D, A]]
-                else:
-                    miter_limit = 6.0
-                    left_pts = []
-                    right_pts = []
-
-                    i0 = valid_idx[0]
-                    start_caps = [min((path[0], path[-1]), key=lambda p: math.dist(p, cl_xy[i0])) for path in source_xy]
-                    start_pad = max(pad_m, max(
-                        (cl_xy[i0][0]-p[0])*dirs[0][0] + (cl_xy[i0][1]-p[1])*dirs[0][1]
-                        for p in start_caps) + 1.0)
-                    p0 = (cl_xy[i0][0] - dirs[0][0]*start_pad,
-                          cl_xy[i0][1] - dirs[0][1]*start_pad)
-                    n0 = norms[0]
-                    left_pts.append((p0[0] + n0[0] * half_w, p0[1] + n0[1] * half_w))
-                    right_pts.append((p0[0] - n0[0] * half_w, p0[1] - n0[1] * half_w))
-
-                    for k in range(1, len(dirs)):
-                        if context is not None and k % 256 == 0:
-                            context.check()
-                        i_curr = valid_idx[k]
-                        pi = cl_xy[i_curr]
-                        d_prev = dirs[k - 1]
-                        d_curr = dirs[k]
-                        n_prev = norms[k - 1]
-                        n_curr = norms[k]
-
-                        Lp = (pi[0] + n_prev[0] * half_w, pi[1] + n_prev[1] * half_w)
-                        Lc = (pi[0] + n_curr[0] * half_w, pi[1] + n_curr[1] * half_w)
-                        left_int = line_intersection(Lp, d_prev, Lc, d_curr)
-
-                        Rp = (pi[0] - n_prev[0] * half_w, pi[1] - n_prev[1] * half_w)
-                        Rc = (pi[0] - n_curr[0] * half_w, pi[1] - n_curr[1] * half_w)
-                        right_int = line_intersection(Rp, d_prev, Rc, d_curr)
-
-                        def safe_join(prev_pt, cand, curr_pt):
-                            if cand is None:
-                                return [prev_pt, curr_pt]
-                            ml = math.hypot(cand[0] - pi[0], cand[1] - pi[1])
-                            if ml > miter_limit * half_w:
-                                return [prev_pt, curr_pt]
-                            return [cand]
-
-                        left_join = safe_join(Lp, left_int, Lc)
-                        right_join = safe_join(Rp, right_int, Rc)
-
-                        left_pts.extend(left_join)
-                        right_pts.extend(right_join)
-
-                    i_last = valid_idx[-1] + 1
-                    end_caps = [min((path[0], path[-1]), key=lambda p: math.dist(p, cl_xy[i_last])) for path in source_xy]
-                    end_pad = max(pad_m, max(
-                        (p[0]-cl_xy[i_last][0])*dirs[-1][0] + (p[1]-cl_xy[i_last][1])*dirs[-1][1]
-                        for p in end_caps) + 1.0)
-                    pend = (cl_xy[i_last][0] + dirs[-1][0]*end_pad,
-                            cl_xy[i_last][1] + dirs[-1][1]*end_pad)
-                    n_last = norms[-1]
-                    left_pts.append((pend[0] + n_last[0] * half_w, pend[1] + n_last[1] * half_w))
-                    right_pts.append((pend[0] - n_last[0] * half_w, pend[1] - n_last[1] * half_w))
-
-                    ring_xy = list(left_pts) + list(reversed(right_pts))
-
-                    if ring_xy[0] != ring_xy[-1]:
-                        ring_xy.append(ring_xy[0])
-                    # Sample spacing alone is not evidence of a zigzag. Keep
-                    # valid curves even with coarse analysis steps. Use the
-                    # enclosing rectangle if the strip cuts across either path.
-                    if covers_paths(ring_xy, source_xy, context=context):
-                        curved_polygon = [to_lonlat(px, py) for px, py in ring_xy]
-
-            bundled_segments[p1_idx].update(qualified["segment_ids"][0])
-            bundled_segments[p2_idx].update(qualified["segment_ids"][1])
-
-            results["bundled_sections"].append(
-                {
-                    "pipeline_1": pipelines[p1_idx]["name"],
-                    "pipeline_2": pipelines[p2_idx]["name"],
-                    "source_path_indices": list(qualified["paths"]),
-                    "bundled_length_meters": bundled_length,
-                    "bundled_length_miles": bundled_length / survey_mile_m,
-                    "average_separation": avg_distance,
-                    "segment_count": min(map(len, qualified["segment_ids"])),
-                    "center_lon": center_lon,
-                    "center_lat": center_lat,
-                    "bbox": {
-                        "min_lon": min_lon,
-                        "max_lon": max_lon,
-                        "min_lat": min_lat,
-                        "max_lat": max_lat,
-                    },
-                    "oriented_polygon": oriented_polygon,
-                    "oriented_width_m": width_m,
-                    "corridor_polygon": curved_polygon if curved_polygon else oriented_polygon,
-                    "corridor_geometry_kind": "sampled_curve" if curved_polygon else "oriented_rectangle",
-                    "corridor_approximation": "Sampled midpoint visualization; not a surveyed boundary.",
-                }
-            )
-        except AnalysisCancelled:
-            raise
-        except Exception as e:
-            raise ValueError(f"Could not construct bundled section for pipelines {p1_idx}, {p2_idx}") from e
-
-    results["bundled_sections"].sort(key=lambda s: s["bundled_length_miles"], reverse=True)
+            context.report('Recording bundled sections', index, len(sections))
+        p1_idx, p2_idx = qualified['pair']
+        length = qualified['length']
+        record = {
+            'pipeline_1': pipelines[p1_idx]['name'], 'pipeline_2': pipelines[p2_idx]['name'],
+            'pipeline_1_id': pipelines[p1_idx].get('id', p1_idx),
+            'pipeline_2_id': pipelines[p2_idx].get('id', p2_idx),
+            'source_path_indices': list(qualified['paths']),
+            'bundled_length_meters': length, 'bundled_length_miles': length / survey_mile_m,
+            'average_separation': float(np.mean([s['distance'] for s in qualified['representatives']])),
+            'segment_count': min(map(len, qualified['segment_ids'])),
+        }
+        bundled_segments[p1_idx].update(qualified['segment_ids'][0])
+        bundled_segments[p2_idx].update(qualified['segment_ids'][1])
+        records.append((record, qualified))
+        results['bundled_sections'].append(record)
+    results['bundled_sections'].sort(key=lambda s: s['bundled_length_miles'], reverse=True)
 
     for p_idx, pipeline in enumerate(pipelines):
         if context is not None and p_idx % 256 == 0:
@@ -516,15 +244,47 @@ def calculate_overlap_results(
         bundled_count = len(bundled_segments[p_idx])
         bundled_length = bundled_count * segment_length
 
-        results["pipeline_overlaps"][pipeline["name"]] = {
+        detail = {
             "bundled_segments": bundled_count,
             "bundled_length_meters": bundled_length,
             "bundled_length_miles": bundled_length / survey_mile_m,
         }
+        results["pipeline_overlaps"][pipeline["name"]] = detail
+        source_id = pipeline.get("id", p_idx)
+        results["pipeline_overlaps_by_id"][str(source_id)] = dict(
+            detail, source_id=source_id, source_name=pipeline["name"])
 
     total_bundled = sum(section["bundled_length_meters"] for section in results["bundled_sections"])
     results["total_bundled_length"] = total_bundled
     results["savings_meters"] = savings_from_sections(pipelines, sections, segment_length, context=context)
+
+    measured_paths = {}
+    corridor_options = corridor_options or CorridorDisplayOptions()
+    corridor_budget = corridor_budget or CorridorGeometryBudget()
+    for index, (record, qualified) in enumerate(records):
+        if context is not None:
+            context.report('Building corridor maps', index, len(records))
+        try:
+            record.update(_build_section_corridor(
+                pipelines, qualified, geod, segment_length, corridor_options, corridor_budget,
+                measured_paths, corridor_scope, context))
+        except AnalysisCancelled:
+            raise
+        except Exception as exc:
+            record.update(visualization_schema_version=1, visualization_kind='qualified_path_buffer',
+                          visualization_status='omitted', visualization_polygons=[], corridor_polygon=[],
+                          visualization_metadata={
+                              'policy': 'qualified_path_buffer_v1', 'padding_m': corridor_options.padding_m,
+                              'approximation_target_m': corridor_options.approximation_target_m,
+                              'cap_style': 'round', 'join_style': 'round', 'source_runs': [],
+                              'part_count': 0, 'hole_count': 0, 'vertex_count': 0, 'chart_count': 0,
+                          }, diagnostics=[{
+                'level': 'warning', 'code': getattr(exc, 'code', 'corridor_visualization_omitted'),
+                'message': 'A corridor map is unavailable; mileage is unaffected.',
+                'context': {'error': str(exc), 'error_type': type(exc).__name__},
+            }])
+    if context is not None:
+        context.report('Building corridor maps', len(records), len(records))
 
     if progress_callback:
         progress_callback(1.0)

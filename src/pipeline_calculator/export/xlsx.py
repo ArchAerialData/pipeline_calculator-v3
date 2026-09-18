@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from pipeline_calculator.export.corridor_metadata import (
+    add_corridor_details, bounded_geometry_text, compatibility_ring_text, corridor_map_status,
+    has_corridor_metadata, is_versioned_corridor, validate_corridor_results,
+)
 
 def build_analysis_workbook(current_results):
     """Build an XLSX workbook (openpyxl) from an analysis results dict.
@@ -7,6 +11,8 @@ def build_analysis_workbook(current_results):
     Kept as a pure function so it can be unit-tested and used by both the legacy
     monolith and the refactored package modules.
     """
+    validate_corridor_results(current_results)
+    include_map_status = has_corridor_metadata(current_results)
     try:
         from openpyxl import Workbook
         from openpyxl.styles import Font, Alignment, PatternFill
@@ -91,6 +97,8 @@ def build_analysis_workbook(current_results):
         "oriented_width_m",
         "corridor_polygon",
     ]
+    if include_map_status:
+        headers_poa.append('Corridor Map')
     ws2.append(headers_poa)
 
     for col_idx in range(1, len(headers_poa) + 1):
@@ -104,6 +112,8 @@ def build_analysis_workbook(current_results):
     widths2 = [44.89, 13.0, 20.33, 28.11, 21.0, 19.11, 20.78, 17.11, 20.0, 107.89, 194.55, 16.44, 255.78]
     for i, w in enumerate(widths2, start=1):
         ws2.column_dimensions[get_column_letter(i)].width = w
+    if include_map_status:
+        ws2.column_dimensions['N'].width = 36
 
     def _serialize_bbox(b):
         if not isinstance(b, dict):
@@ -127,6 +137,8 @@ def build_analysis_workbook(current_results):
         bundled = []
 
     for s in bundled:
+        versioned = is_versioned_corridor(s)
+        geometry_text = bounded_geometry_text if versioned else _serialize_points
         row = [
             s.get('pipeline_1', ''),
             s.get('pipeline_2', ''),
@@ -135,13 +147,15 @@ def build_analysis_workbook(current_results):
             int(round(float(s.get('bundled_length_meters', 0.0) or 0.0))),
             float(s.get('average_separation', 0.0) or 0.0),
             int(s.get('segment_count', 0) or 0),
-            float(s.get('center_lon', 0.0) or 0.0),
-            float(s.get('center_lat', 0.0) or 0.0),
-            _serialize_bbox(s.get('bbox')),
-            _serialize_points(s.get('oriented_polygon')),
-            float(s.get('oriented_width_m', 0.0) or 0.0),
-            _serialize_points(s.get('corridor_polygon')),
+            (None if versioned and s.get('center_lon') is None else float(s.get('center_lon', 0.0) or 0.0)),
+            (None if versioned and s.get('center_lat') is None else float(s.get('center_lat', 0.0) or 0.0)),
+            bounded_geometry_text(s.get('bbox')) if versioned else _serialize_bbox(s.get('bbox')),
+            geometry_text(s.get('oriented_polygon')),
+            (None if versioned and s.get('oriented_width_m') is None else float(s.get('oriented_width_m', 0.0) or 0.0)),
+            compatibility_ring_text(s) if versioned else geometry_text(s.get('corridor_polygon')),
         ]
+        if include_map_status:
+            row.append(corridor_map_status(s))
         ws2.append(row)
 
     max_row2 = ws2.max_row
@@ -149,6 +163,9 @@ def build_analysis_workbook(current_results):
         for c in (1, 2, 10, 11, 13):
             ws2.cell(row=r, column=c).font = body_font
             ws2.cell(row=r, column=c).alignment = left
+        if include_map_status:
+            ws2.cell(row=r, column=14).font = body_font
+            ws2.cell(row=r, column=14).alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
         fmt_map = {
             3: '0.000',
             4: '0.000',
@@ -214,6 +231,31 @@ def build_analysis_workbook(current_results):
             for c in range(1, len(headers_diag) + 1):
                 ws3.cell(row=r, column=c).font = body_font
                 ws3.cell(row=r, column=c).alignment = left
+
+    if isinstance(current_results.get("geography"), dict):
+        from pipeline_calculator.export.geography_xlsx import add_geography_sheets
+        add_geography_sheets(wb, current_results)
+
+    from pipeline_calculator.export.repair_provenance import add_repair_details
+    add_repair_details(wb, current_results)
+    add_corridor_details(wb, current_results)
+    if current_results.get('application_version'):
+        if 'Analysis Details' in wb:
+            build_sheet = wb['Analysis Details']
+        else:
+            build_sheet = wb.create_sheet('Analysis Details')
+            build_sheet.append(['Detail', 'Value'])
+            build_sheet.freeze_panes = 'A2'
+            build_sheet.column_dimensions['A'].width = 45
+            build_sheet.column_dimensions['B'].width = 110
+            for cell in build_sheet[1]:
+                cell.font = header_font
+                cell.fill = gray
+        build_sheet.append(['Application build', str(current_results['application_version'])])
+        for cell in build_sheet[build_sheet.max_row]:
+            cell.font = body_font
+            cell.alignment = left
+        build_sheet.auto_filter.ref = build_sheet.dimensions
 
     # Source names/IDs/diagnostics are data, even if they begin with '='.
     # Preserve only the totals formula that this exporter intentionally creates.

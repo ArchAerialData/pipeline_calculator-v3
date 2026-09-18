@@ -9,6 +9,7 @@ from tkinter import filedialog, messagebox
 import customtkinter as ctk
 from pipeline_calculator.gui.layout import WrappedLabel, ActionBar
 from pipeline_calculator.gui.window import fit_window
+from pipeline_calculator.gui.scrolling import AutoScrollFrame
 
 from pipeline_calculator.gui.actions.open_kml_action import create_and_launch_corridor, launch_saved_corridor
 
@@ -30,7 +31,7 @@ class CorridorDialog:
             button.configure(state='disabled')
         self.path_entry = ctk.CTkEntry(self.window)
         self.path_entry.pack(side='bottom', fill='x', padx=20, pady=5)
-        body = ctk.CTkScrollableFrame(self.window)
+        body = AutoScrollFrame(self.window)
         body.pack(fill='both', expand=True, padx=10, pady=10)
         self.label = WrappedLabel(body, text='Preparing corridor...', justify='left')
         self.label.pack(fill='x', padx=10, pady=10)
