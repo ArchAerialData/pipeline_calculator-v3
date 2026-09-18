@@ -139,6 +139,7 @@ def test_repair_primary_stays_below_secondary_actions_and_details_scroll():
             filename='Long client pipeline name ' * 12 + '.kmz',
             message='We will verify that geometry is unchanged before analyzing it.',
             details='Original coordinates and repair verification details.\n' * 150,
+            explanation='A required file-format declaration is missing. Repair can restore it without editing pipeline coordinates.',
             actions=[('Cancel', lambda: calls.append('cancel')),
                      ('Choose another file', lambda: calls.append('choose'))],
             primary_action=('Repair & analyze', lambda: calls.append('repair')),
@@ -169,12 +170,19 @@ def test_repair_primary_stays_below_secondary_actions_and_details_scroll():
                     assert button.winfo_rooty()+button.winfo_height() <= root.winfo_rooty()+root.winfo_height()
                     assert button._text_label.winfo_reqwidth() <= button.winfo_width()-8*scale
                 if expanded:
+                    assert panel.detail_intro.winfo_manager()
+                    assert panel.detail_intro.winfo_y() + panel.detail_intro.winfo_height() <= panel.detail_box.winfo_y()
+                    for label in panel.detail_intro.winfo_children():
+                        if isinstance(label, ctk.CTkLabel):
+                            assert label._label.winfo_reqwidth() <= label.winfo_width() + 2
                     assert panel.detail_box.winfo_viewable(), (scale, width, height,
                         panel.detail_box.winfo_manager(), panel.body.winfo_geometry(),
                         panel.body.winfo_reqheight(), panel.body._parent_canvas.winfo_geometry(),
                         panel.detail_box.winfo_geometry())
                     overflow = panel.body.winfo_reqheight() > panel.body._parent_canvas.winfo_height()+1
                     assert bool(panel.body._scrollbar.winfo_manager()) == overflow
+                else:
+                    assert panel.detail_intro is None or not panel.detail_intro.winfo_manager()
         assert not calls, 'Showing, resizing or expanding details must not approve a repair'
         tk.Misc.focus_set(cancel)
         cancel.event_generate('<Tab>')

@@ -16,6 +16,7 @@ import customtkinter as ctk
 from pipeline_calculator.core.execution import AnalysisCancelled, ExecutionContext
 from pipeline_calculator.gui.layout import ActionBar, WrappedLabel
 from pipeline_calculator.gui.modal import ModalBody, ModalSurface, MUTED, TEXT
+from pipeline_calculator.gui.repair_messages import failure_explanation, repair_explanation
 
 DETAIL_LIMIT = 24000
 
@@ -60,7 +61,7 @@ class RepairPanel:
     """One scrollable body and a permanently reachable responsive action footer."""
 
     def __init__(self, root, *, title, message, filename='', details='', actions=(),
-                 primary_action=None, on_cancel=None):
+                 primary_action=None, on_cancel=None, explanation=''):
         self.root = root
         self.closed = False
         self.on_cancel = on_cancel
@@ -92,6 +93,8 @@ class RepairPanel:
                                     anchor='w', justify='left', font=ctk.CTkFont(size=14))
         self.message.pack(fill='x', pady=(0, 12))
         self.detail_text = _details(details) if details else ''
+        self.explanation = explanation or message
+        self.detail_intro = None
         self.detail_box = None
         self.detail_button = None
         self.focus_controls = list(self.footer.visual_buttons if primary_action is not None
@@ -166,14 +169,23 @@ class RepairPanel:
 
     def toggle_details(self):
         if self.detail_box is None:
-            self.detail_box = ctk.CTkTextbox(self.body, height=190, wrap='word')
+            self.detail_intro = ctk.CTkFrame(self.body, fg_color='transparent', height=1)
+            ctk.CTkLabel(self.detail_intro, text='What this means', anchor='w', height=20,
+                text_color='#A9D9FF', font=ctk.CTkFont(size=14, weight='bold')).pack(fill='x')
+            WrappedLabel(self.detail_intro, text=self.explanation, anchor='w', justify='left',
+                text_color=TEXT, font=ctk.CTkFont(size=14), wrap_padding=0).pack(fill='x', pady=(2, 0))
+            ctk.CTkLabel(self.detail_intro, text='Technical details', anchor='w', height=20,
+                text_color=MUTED, font=ctk.CTkFont(size=12, weight='bold')).pack(fill='x', pady=(10, 2))
+            self.detail_box = ctk.CTkTextbox(self.body, height=170, wrap='word')
             self.detail_box.insert('1.0', self.detail_text)
             self.detail_box.configure(state='disabled')
             self.focus_controls.append(self.detail_box._textbox)
         if self.detail_box.winfo_manager():
+            self.detail_intro.pack_forget()
             self.detail_box.pack_forget()
             self.detail_button.configure(text='Show details')
         else:
+            self.detail_intro.pack(fill='x')
             self.detail_box.pack(fill='x', pady=(0, 12))
             self.detail_button.configure(text='Hide details')
 
@@ -316,7 +328,7 @@ class RepairWorkflow:
             filename=source.display_name,
             message=('We’ll verify that its geometry is unchanged before analyzing it.' if format_only else
                      'This file has a formatting error that may be safely repairable. We’ll verify that its geometry is unchanged before analyzing it.'),
-            details=report, actions=[('Cancel', self.cancel_decision),
+            details=report, explanation=repair_explanation(report), actions=[('Cancel', self.cancel_decision),
                                     ('Choose another file', self.choose_another)],
             primary_action=('Repair & analyze', approve), on_cancel=self.cancel_decision)
 
@@ -344,7 +356,8 @@ class RepairWorkflow:
         actions.extend([('Choose another file', self.choose_another), ('Cancel', self.cancel_decision)])
         self.panel = RepairPanel(self.root, title=title,
             filename=self.source.display_name if self.source is not None else self.display_name,
-            message=str(error), details=details, actions=actions, on_cancel=self.cancel_decision)
+            message=str(error), details=details, actions=actions, on_cancel=self.cancel_decision,
+            explanation=failure_explanation(error, client_request=bool(client_request)))
 
     def add_notice(self, parent, **pack_options):
         if not self.verified:
@@ -398,7 +411,8 @@ class RepairWorkflow:
         if not self.source.can_save:
             message += '\n\nSaving a copy is unavailable: ' + str(self.source.save_unavailable_reason)
         self.panel = RepairPanel(self.root, title='Verified file repair', filename=self.source.display_name,
-            message=message, details=self.source.report, actions=actions, on_cancel=done)
+            message=message, details=self.source.report, actions=actions, on_cancel=done,
+            explanation=repair_explanation(self.source.report))
 
     def save_copy(self):
         if self.closed or self.panel is not None or not self.verified or not self.source.can_save:
@@ -482,7 +496,10 @@ class RepairWorkflow:
         self.panel = RepairPanel(self.root,
             title='The repaired copy could not be saved' if error else 'Repaired copy saved',
             message=('Your analysis and verified input remain available.\n\n' + str(error)) if error else str(path),
-            details=str(error) if error else receipt, actions=actions, on_cancel=finish)
+            details=str(error) if error else receipt, actions=actions, on_cancel=finish,
+            explanation=('Saving could not be completed. Your analysis remains available. '
+                         'Retry saving, or share the technical details with support.') if error else
+                        'The repaired copy was saved and checked by reopening it. Your original file was preserved.')
 
     def close(self):
         if self.closed:
