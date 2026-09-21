@@ -107,6 +107,10 @@ switches the existing cards, pipeline table, overlaps and corridor previews to a
 encountered state. The Combined summary compares all states without adding a card
 for each one. Point placemarks remain available in the Combined view.
 
+The View selector sits on the left of the results tab row without increasing
+its height. Narrow windows show a section menu beside it; the helper text hides
+when space is limited.
+
 Original state mileage reconciles to the original input mileage. Positive-length
 lines following a verified shared border are stored once and their mileage is
 allocated equally to adjoining states, with no state overlap discount. Outside

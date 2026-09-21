@@ -22,7 +22,7 @@
     "analysis_complete": false,
     "diagnostic_counts": {
       "selected_primary_kml": 1,
-      "unsupported_geometry": 281,
+      "unsupported_geometry": 1,
       "no_supported_features": 1
     }
   },

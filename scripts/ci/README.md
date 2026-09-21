@@ -2,6 +2,25 @@
 
 This folder contains CI scripts used by the GitHub Actions workflow. The workflow file itself must live under `.github/workflows/` (GitHub requirement), but build/sign/package logic is kept here to reduce workflow clutter.
 
+## Which download to choose
+
+| Actions artifact | Contents and intended use |
+| --- | --- |
+| **macos-DMG** | The macOS installer disk image. Choose this for normal installation. |
+| **macos-APP** | The macOS application in an `.app.zip` archive, as an alternative to the DMG. |
+| **windows-exe** | The Windows executable. |
+
+GitHub downloads each artifact as a ZIP. Extract `macos-DMG.zip` on the Mac,
+open the versioned `.dmg` inside, and copy the app to Applications. For
+`macos-APP.zip`, extract the outer ZIP and then the enclosed versioned `.app.zip`
+on the Mac to preserve the application's permissions and links. Both macOS
+downloads contain the same Apple Silicon application; only one is needed.
+
+Artifacts named `test-results-*`, `signed-smoke-*`, or `distribution-runtime-*`
+contain verification reports, not installers. The shorter download labels apply
+to new workflow runs; previous runs retain their original labels. Versioned
+filenames inside the archives and signing/notarization behavior are unchanged.
+
 ## Scripts
 - `macos_build.sh` — creates `.venv`, installs deps, runs tests, builds the `.app`, and verifies both implementations in the frozen application.
 - `windows_build.ps1` — installs dependencies, runs tests, builds the versioned executable, and verifies both implementations in the frozen application.

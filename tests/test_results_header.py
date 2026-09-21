@@ -1,4 +1,4 @@
-"""Native repair notices share the results header without clipping or stale callbacks."""
+"""Persistent input notices coexist with result navigation without stale callbacks."""
 from tkinter import Misc, ttk
 import traceback
 
@@ -36,7 +36,7 @@ def assert_inside(widget, parent):
 
 @pytest.mark.native_gui
 @pytest.mark.parametrize('scale', [1, 1.5, 2, 2.5])
-def test_repair_notice_resizes_beside_scope_and_preserves_identity(monkeypatch, scale):
+def test_repair_notice_resizes_above_navigation_and_preserves_identity(monkeypatch, scale):
     monkeypatch.setattr(ctk.ScalingTracker, 'get_window_dpi_scaling', classmethod(lambda cls, window: scale))
     root = ctk.CTk()
     root.minsize(1, 1)
@@ -48,38 +48,22 @@ def test_repair_notice_resizes_beside_scope_and_preserves_identity(monkeypatch, 
     try:
         header = render(root, flow)
         notice = header.repair_notice
-        observed_layouts = set()
-        available_widths = []
+        pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+        selector = pages.scope_selector
         for _ in range(2):
             for width in (1200, 620, 1200):
                 root.geometry(f'{width}x760')
                 settle(root, .2)
-                assert_inside(header.selector, header)
+                assert_inside(selector, pages.navigation)
+                assert header.winfo_rooty() + header.winfo_height() <= pages.navigation.winfo_rooty()
                 if header._compact:
                     assert_inside(header.repair_button, header)
-                    assert not notice.winfo_viewable() and not header.scope_helper.winfo_viewable()
-                    assert next(w for w in root.winfo_children() if isinstance(w, ResultPages)).winfo_viewable()
-                    observed_layouts.add('compact')
+                    assert not notice.winfo_viewable()
+                    assert pages.winfo_viewable()
                     continue
                 assert_inside(notice, header)
-                # The window manager may clamp a 3000-pixel (1200 at 250%)
-                # request to the macOS display. Judge the responsive contract
-                # against the real available width, not the requested geometry.
-                factor = ctk.ScalingTracker.get_widget_scaling(header)
-                available = header.winfo_width() / factor
-                scope_minimum = max(360, (header.view_label.winfo_reqwidth() +
-                                         header.selector.winfo_reqwidth()) / factor + 16)
-                wide_enough = available >= scope_minimum + 24 + 440
-                available_widths.append((available, wide_enough))
-                if wide_enough:
-                    observed_layouts.add('beside')
-                    assert notice.winfo_rootx() >= header.scope.winfo_rootx() + header.scope.winfo_width()
-                    assert abs(notice.winfo_rooty() - header.scope.winfo_rooty()) <= 1
-                    assert header.winfo_height() <= max(header.scope.winfo_height(), notice.winfo_height()) + 2
-                else:
-                    observed_layouts.add('stacked')
-                    assert notice.winfo_rooty() >= header.scope.winfo_rooty() + header.scope.winfo_height(), (
-                        scale, root.winfo_width(), header.winfo_width(), header._layout_key)
+                assert header.notices.winfo_x() == 0
+                assert header.notices.winfo_width() == header.winfo_width()
                 for button in descendants(notice):
                     if isinstance(button, ctk.CTkButton):
                         assert_inside(button, notice)
@@ -87,14 +71,11 @@ def test_repair_notice_resizes_beside_scope_and_preserves_identity(monkeypatch, 
                 for label in descendants(header):
                     if isinstance(label, ctk.CTkLabel) and label.winfo_viewable():
                         assert label._label.winfo_reqwidth() <= label.winfo_width() + 2
-        assert observed_layouts.intersection({'stacked', 'compact'})
-        if any(wide_enough for _, wide_enough in available_widths):
-            assert 'beside' in observed_layouts
-        print(f'Header scale={scale}: widths/layouts={available_widths}, branches={sorted(observed_layouts)}')
         for state in ('Texas', 'Combined'):
-            header.selector.set(state)
-            header.selector.event_generate('<<ComboboxSelected>>')
+            selector.set(state)
+            selector.event_generate('<<ComboboxSelected>>')
             settle(root)
+            assert pages.scope_selector is selector
             assert header.repair_notice is notice
             assert (header.repair_button if header._compact else notice).winfo_viewable()
         assert not errors
@@ -114,7 +95,8 @@ def test_no_scope_or_notice_leaves_no_space_and_live_notices_clean_up(tmp_path):
     root.report_callback_exception = lambda *args: errors.append(args)
     try:
         header = render(root, flow, preference, geography=False)
-        assert header.selector is None and not header.winfo_manager()
+        pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+        assert pages.scope_selector is None and not header.winfo_manager()
         preference.notice.set('This setting is active for this session, but could not be saved.')
         settle(root)
         assert header.winfo_viewable() and header.notices.winfo_viewable()
@@ -125,14 +107,17 @@ def test_no_scope_or_notice_leaves_no_space_and_live_notices_clean_up(tmp_path):
         assert not header.winfo_manager()
         header.destroy()
         assert preference.notice.trace_info() == original_traces
-        # Restoring a notice with state scope places it alongside the selector.
+        # State navigation owns its selector; notices still collapse completely.
         header = render(root, flow, preference)
+        pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+        assert not header.winfo_manager()
+        assert_inside(pages.scope_selector, pages.navigation)
         preference.notice.set('Could not save this setting. ' * 4)
         settle(root)
-        assert header.notices.grid_info()['column'] == 1
+        assert header.notices.grid_info()['column'] == 0
         preference.notice.set('')
         settle(root)
-        assert not header.notices.winfo_manager() and header.scope.winfo_viewable()
+        assert not header.winfo_manager() and pages.scope.winfo_viewable()
         header._queue_layout()
         header.destroy()
         preference.notice.set('Late warning after navigation')
@@ -159,7 +144,8 @@ def test_repair_notice_variants_without_state_selector():
                                  report={'status': 'verified', 'rules': rules})
             flow.analysis_state = state
             header = render(root, flow, geography=False)
-            assert header.selector is None
+            pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+            assert pages.scope_selector is None
             assert not any(isinstance(w, ttk.Combobox) for w in descendants(root))
             assert header.notices.winfo_x() == 0
             assert header.notices.winfo_width() == header.winfo_width()
@@ -198,7 +184,8 @@ def test_compact_context_preserves_details_warnings_and_result_space(monkeypatch
         pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
         assert header._compact and not notice.winfo_viewable()
         assert status in header.repair_button.cget('text')
-        for widget in (header.selector, header.repair_button, header.preference_button):
+        assert_inside(pages.scope_selector, pages.navigation)
+        for widget in (header.repair_button, header.preference_button):
             assert_inside(widget, header)
         assert_inside(pages, root)
         assert pages.content.winfo_viewable()
@@ -235,7 +222,7 @@ def test_compact_context_preserves_details_warnings_and_result_space(monkeypatch
         settle(root, .4)
         assert not header._compact and header.repair_notice is notice
         assert_inside(notice, header)
-        assert header.scope_helper.winfo_viewable()
+        assert pages.scope_helper.winfo_viewable()
         assert root.focus_get() is header._first_button(notice)
         root.geometry('600x300+16+16')
         settle(root, .3)

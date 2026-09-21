@@ -90,7 +90,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: pipeline-calculator-macos-arm64
+        name: macos-DMG
         path: dist/Pipeline_Calculator_v*.dmg
         if-no-files-found: error
 
@@ -98,7 +98,7 @@ jobs:
       if: ${{ success() }}
       uses: actions/upload-artifact@v4
       with:
-        name: pipeline-calculator-macos-app-arm64
+        name: macos-APP
         # A ZIP created by ditto preserves app executable bits and symlinks.
         path: dist/Pipeline_Calculator_v*.app.zip
         if-no-files-found: error
@@ -136,7 +136,7 @@ jobs:
         architecture: arm64
     - uses: actions/download-artifact@v4
       with:
-        name: pipeline-calculator-macos-app-arm64
+        name: macos-APP
         path: .validation-output/downloaded-app
     - name: Verify the distributed app on this macOS release
       shell: bash
@@ -215,7 +215,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          pipeline-calculator-macos-*/Pipeline_Calculator_v*.dmg
+          macos-DMG/Pipeline_Calculator_v*.dmg
           windows-exe/Pipeline_Calculator_v*.exe
         # Notarization/stapling is manual; review artifacts before distribution.
         draft: true

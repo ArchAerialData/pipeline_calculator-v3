@@ -69,10 +69,10 @@ def corridor_button_style(widget, factor):
 
 def scope_style(widget, factor):
     style = dark_style(widget)
-    name = f'StateScope{round(14 * factor)}_{round(5 * factor)}.TCombobox'
+    name = f'StateScope{round(14 * factor)}_{round(5 * factor)}_{round(2 * factor)}.TCombobox'
     style.configure(name, foreground='#F1F4F8', fieldbackground='#18364D', background='#206CA4',
                     arrowcolor='#FFFFFF', bordercolor='#4696CF', lightcolor='#4696CF',
-                    darkcolor='#4696CF', padding=round(5 * factor),
+                    darkcolor='#4696CF', padding=(round(5 * factor), round(2 * factor)),
                     arrowsize=round(14 * factor))
     style.map(name, fieldbackground=[('disabled', '#343D47'), ('readonly', '#18364D')],
               foreground=[('disabled', '#B6C0CE'), ('readonly', '#F1F4F8')],

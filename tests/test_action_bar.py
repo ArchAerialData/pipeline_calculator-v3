@@ -6,7 +6,7 @@ import sys
 import customtkinter as ctk
 import pytest
 
-from pipeline_calculator.gui.layout import ActionBar
+from pipeline_calculator.gui.layout import ActionBar, ResultPages
 from pipeline_calculator.gui.tabs.summary_tab import SummaryView
 from pipeline_calculator.gui.window import fitted_geometry
 from test_results_header import assert_inside, render
@@ -151,7 +151,8 @@ def test_results_fit_actual_small_monitor_at_250_percent(monkeypatch):
         for button in bar.buttons:
             assert_inside(button, root)
             assert button.winfo_width() >= button._text_label.winfo_reqwidth() + 24 * 2.5 - 1
-        assert_inside(header.selector, header)
+        pages = next(w for w in root.winfo_children() if isinstance(w, ResultPages))
+        assert_inside(pages.scope_selector, pages.navigation)
         assert_inside(header.repair_button, header)
         assert canvas.winfo_viewable() and canvas.winfo_height() >= summary.original.metric.winfo_height()
         offset = summary.original.metric.winfo_rooty() - summary.winfo_rooty()
