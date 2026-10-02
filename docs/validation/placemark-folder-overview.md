@@ -94,3 +94,7 @@ do not contribute invented pins. See the [original archive audit](antero-kmz-aud
   runner; it cannot be validated on this Windows host. Windows-only probes
   supplement rather than stand in for that native macOS gate.
 - No executable or macOS app bundle was rebuilt for this source-level change.
+
+The subsequent macOS CI run exposed a shared viewport teardown leak during
+repeated view replacement. See the [follow-up investigation and fix](placemark-scroll-lifecycle.md)
+for reproduction evidence and the updated validation scope.

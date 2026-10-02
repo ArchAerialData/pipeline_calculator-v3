@@ -119,12 +119,15 @@ def test_long_names_duplicate_folders_and_unrecorded_or_empty_inventories(monkey
     points = [{'folder_name': long_name, 'folder_path': path, 'folder_id': index, 'source_kml': 'doc.kml'} for index in ('1', '2')]
     points.extend([{'folder_path': [], 'folder_id': '', 'source_kml': 'nested/second.kml'},
                    {'Name': 'Legacy', 'source_kml': 'nested/second.kml'}])
+    baseline = tuple(root.pack_slaves())
     try:
         for point_inventory, expected in [(points, '4'), ([{'Name': 'Legacy'}], '1'),
                                            ([], '0'), (None, 'Not recorded')]:
             view = PlacemarksView(root, {'placemarks': point_inventory})
             view.pack(fill='both', expand=True)
             settle(root, .6)
+            assert view._parent_canvas.winfo_viewable()
+            assert tuple(root.pack_slaves()) == (*baseline, view._parent_frame)
             assert view.total_card.value.cget('text') == expected
             check_labels(root, view)
             if point_inventory and len(point_inventory) == 4:
@@ -143,8 +146,12 @@ def test_long_names_duplicate_folders_and_unrecorded_or_empty_inventories(monkey
                 assert abs(view.folder_cards[0].winfo_width() - view.folder_grid.winfo_width() + 12) <= 2
             else:
                 assert not view.folder_cards
+            wrapper, canvas = view._parent_frame, view._parent_canvas
             view.destroy()
             settle(root)
+            assert not wrapper.winfo_exists()
+            assert not canvas.winfo_exists()
+            assert tuple(root.pack_slaves()) == baseline
         assert not errors, errors
     finally:
         root.destroy()

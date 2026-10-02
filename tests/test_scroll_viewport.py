@@ -138,7 +138,7 @@ def test_hidden_or_destroyed_viewport_cancels_pending_maintenance():
 
 
 @pytest.mark.native_gui
-def test_retired_summary_does_not_reschedule_from_surviving_canvas():
+def test_retired_summary_releases_canvas_with_queued_notifications():
     root = ctk.CTk()
     root.geometry('600x400')
     errors = []
@@ -152,14 +152,14 @@ def test_retired_summary_does_not_reschedule_from_surviving_canvas():
         padding_timer = view._padding_id
         parent_binding = view._viewport_parent_binding.token
         assert padding_timer
+        # Native layout notifications can already be queued during teardown.
+        canvas.event_generate('<Configure>', when='tail')
         view.destroy()
-        # CTk 5.2 destroys the content frame separately from its canvas wrapper.
-        # Real queued native canvas notifications must not revive maintenance.
-        assert canvas.winfo_exists() and not view.winfo_exists()
+        assert not canvas.winfo_exists() and not view.winfo_exists()
+        assert not view._parent_frame.winfo_exists()
         assert view._padding_id is None
         assert padding_timer not in root.tk.call('after', 'info')
         assert parent_binding not in str(root.bind('<Configure>'))
-        canvas.event_generate('<Configure>', when='tail')
         root.geometry('600x250')
         settle(root, .2)
         assert view._refresh_id is None and view._scroll_position_id is None

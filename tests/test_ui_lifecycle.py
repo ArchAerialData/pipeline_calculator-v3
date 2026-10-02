@@ -80,6 +80,114 @@ def test_retired_scroll_frames_release_global_bindings():
 
 
 @pytest.mark.native_gui
+@pytest.mark.parametrize('manager', ['pack', 'grid'])
+def test_direct_scroll_frame_teardown_releases_complete_viewport(manager):
+    root = ctk.CTk()
+    root.geometry('640x600')
+    errors, wheel_events = [], []
+    root.report_callback_exception = lambda *error: errors.append(error)
+    root.bind_all('<MouseWheel>', lambda event: wheel_events.append(event.delta), add='+')
+    baseline_binding = root.bind_all('<MouseWheel>')
+    sibling = ctk.CTkLabel(root, text='Unrelated content')
+    if manager == 'pack':
+        sibling.pack(fill='x')
+    else:
+        root.grid_columnconfigure(0, weight=1)
+        root.grid_rowconfigure(1, weight=1)
+        sibling.grid(row=0, column=0, sticky='ew')
+    managed_children = getattr(root, f'{manager}_slaves')
+    baseline_children = managed_children()
+    viewport_sizes = []
+    try:
+        for _ in range(5):
+            view = AutoScrollFrame(root)
+            if manager == 'pack':
+                view.pack(fill='both', expand=True)
+            else:
+                view.grid(row=1, column=0, sticky='nsew')
+            content = ctk.CTkLabel(view, text='Replacement viewport')
+            content.pack(fill='x')
+            settle(root)
+            assert view._parent_canvas.winfo_viewable()
+            viewport_sizes.append((view._parent_frame.winfo_width(), view._parent_frame.winfo_height()))
+            assert viewport_sizes[-1] == viewport_sizes[0]
+            # Retire while both root-owned maintenance timers are queued.
+            view._schedule_scrollbar()
+            view._painted_fraction = None
+            view._queue_scroll_position(0, .5)
+            timers = {view._refresh_id, view._scroll_position_id}
+            assert None not in timers
+            owned_widgets = (view, content, view._parent_frame, view._parent_canvas,
+                             view._scrollbar, view._label)
+            view.destroy()
+            view.destroy()
+            remaining_widgets = [str(widget) for widget in owned_widgets if widget.winfo_exists()]
+            assert not remaining_widgets, remaining_widgets
+            assert managed_children() == baseline_children
+            assert view._refresh_id is None and view._scroll_position_id is None
+            assert not timers.intersection(root.tk.call('after', 'info'))
+            assert root.bind_all('<MouseWheel>') == baseline_binding
+            settle(root)
+            assert sibling.winfo_viewable()
+        root.event_generate('<MouseWheel>', delta=120)
+        assert wheel_events == [120]
+        assert not errors, errors
+    finally:
+        root.destroy()
+
+
+@pytest.mark.native_gui
+@pytest.mark.parametrize('manager', ['pack', 'grid'])
+@pytest.mark.parametrize('destroy_owner', ['host', 'wrapper'])
+def test_scroll_frame_ancestor_teardown_is_idempotent(manager, destroy_owner):
+    root = ctk.CTk()
+    root.geometry('640x600')
+    errors = []
+    root.report_callback_exception = lambda *error: errors.append(error)
+    sibling = ctk.CTkLabel(root, text='Unrelated content')
+    sibling.pack(fill='x')
+    host = ctk.CTkFrame(root)
+    host.pack(fill='both', expand=True)
+    baseline_binding = root.bind_all('<MouseWheel>')
+    view = AutoScrollFrame(host)
+    if manager == 'pack':
+        view.pack(fill='both', expand=True)
+    else:
+        host.grid_rowconfigure(0, weight=1)
+        host.grid_columnconfigure(0, weight=1)
+        view.grid(row=0, column=0, sticky='nsew')
+    content = ctk.CTkLabel(view, text='Nested content')
+    content.pack(fill='x')
+    owned_widgets = (view, content, view._parent_frame, view._parent_canvas,
+                     view._scrollbar, view._label)
+    try:
+        settle(root)
+        view._schedule_scrollbar()
+        view._painted_fraction = None
+        view._queue_scroll_position(0, .5)
+        timers = {view._refresh_id, view._scroll_position_id}
+        assert None not in timers
+        owner = host if destroy_owner == 'host' else view._parent_frame
+        owner.destroy()
+        view.destroy()
+        view.destroy()
+        remaining_widgets = [str(widget) for widget in owned_widgets if widget.winfo_exists()]
+        assert not remaining_widgets, remaining_widgets
+        assert view._refresh_id is None and view._scroll_position_id is None
+        assert not timers.intersection(root.tk.call('after', 'info'))
+        assert root.bind_all('<MouseWheel>') == baseline_binding
+        if destroy_owner == 'wrapper':
+            assert host.winfo_exists() and getattr(host, f'{manager}_slaves')() == []
+        else:
+            assert not host.winfo_exists()
+        settle(root)
+        assert sibling.winfo_viewable()
+        assert not errors, errors
+    finally:
+        root.destroy()
+
+
+@pytest.mark.native_gui
 def test_retired_labels_detach_from_live_parent():
     root = ctk.CTk()
     host = ctk.CTkFrame(root)
