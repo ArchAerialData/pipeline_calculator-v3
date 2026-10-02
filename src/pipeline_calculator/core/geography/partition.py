@@ -17,6 +17,7 @@ from shapely.geometry import LineString, box
 
 from pipeline_calculator.core.coordinates import coordinate_paths_for_pipeline
 from pipeline_calculator.core.execution import AnalysisCancelled
+from pipeline_calculator.core.placemarks import copy_folder_provenance
 from .boundaries import load_boundaries
 
 MAX_CHUNK_METERS = 20_000.0
@@ -358,6 +359,7 @@ def partition_pipelines(pipelines, geod, *, context=None, boundaries=None):
                         current = {"id": f"f{len(fragments)}", "source_id": source_id,
                                    "source_name": pipeline.get("name", ""), "placemark_id": pipeline.get("placemark_id"),
                                    "objectid": pipeline.get("objectid", "N/A"), "source_kml": pipeline.get("source_kml", ""),
+                                   **copy_folder_provenance(pipeline),
                                    "path_index": path_index, "start_m": absolute_start, "end_m": absolute_end,
                                    "length_meters": b-a, "coordinates": [first, last], "kind": kind, "state_codes": codes}
                         prev = fragments[-1] if fragments else None

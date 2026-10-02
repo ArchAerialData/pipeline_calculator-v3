@@ -76,10 +76,17 @@ def run(scale, width, height, capture=None, legacy=False, size_limit=None):
             if not overflow:
                 assert viewport.winfo_height() - panel.winfo_reqheight() <= 2*scale, 'Excess settings gap'
             assert panel._parent_frame.winfo_width() == panel._parent_frame.master.winfo_width(), [(str(w), w.winfo_width(), w.winfo_height()) for w in panel._parent_frame.master.winfo_children()]
-        if page in ('Pipelines', 'Overlap Analysis', 'Placemarks', 'Diagnostics'):
+        if page in ('Pipelines', 'Overlap Analysis', 'Diagnostics'):
             selected = next(w for w in root.winfo_children() if isinstance(w, ResultPages)).pages[page]
             tree = next(w for w in descendants(selected) if isinstance(w, ttk.Treeview))
             assert tree.winfo_viewable(), (page, 'table hidden')
+        if page == 'Placemarks':
+            from pipeline_calculator.gui.tabs.placemarks_tab import PlacemarksView
+            selected = next(w for w in root.winfo_children() if isinstance(w, ResultPages)).pages[page]
+            overview = next(w for w in descendants(selected) if isinstance(w, PlacemarksView))
+            assert overview.total_card.winfo_viewable(), (page, 'combined total hidden')
+            assert overview.total_card.value.cget('text') == '1'
+            assert overview._parent_canvas.winfo_height() >= 42*scale, (page, 'viewport unusable')
         for widget in descendants(target):
             if not widget.winfo_viewable():
                 continue

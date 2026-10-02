@@ -76,7 +76,7 @@ def show(
                              for item in (displayed.get('diagnostics') or []))
         if displayed.get('overlap_analysis') or state_view or overlap_failed:
             create_overlap_tab(tabview.add('Overlap Analysis'), displayed, on_open_corridor=on_open_corridor)
-        if current_results.get('placemarks'):
+        if isinstance(current_results.get('placemarks'), list):
             placemark_tab = tabview.add('Placemarks')
             if state_view:
                 WrappedLabel(placemark_tab, text='Point placemarks are available in the Combined view only.',

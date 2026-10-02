@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pipeline_calculator.core.placemarks import folder_display_fields
 from pipeline_calculator.export.corridor_metadata import (
     add_corridor_details, bounded_geometry_text, compatibility_ring_text, corridor_map_status,
     has_corridor_metadata, is_versioned_corridor, validate_corridor_results,
@@ -34,6 +35,9 @@ def build_analysis_workbook(current_results):
         "Polyline Name (if available)",
         "Pipeline Lengths (US Survey)",
         "TOTAL MILEAGE",
+        "Subfolder",
+        "Folder Path",
+        "Source KML",
     ]
     ws.append(headers_pla)
 
@@ -53,7 +57,7 @@ def build_analysis_workbook(current_results):
     ws.cell(row=1, column=3).fill = yellow
     ws.cell(row=1, column=4).fill = green
 
-    widths = [25.11, 44.89, 29.55, 27.78]
+    widths = [25.11, 44.89, 29.55, 27.78, 36, 64, 44]
     for i, w in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = w
 
@@ -61,7 +65,7 @@ def build_analysis_workbook(current_results):
         placemark_id = p.get('Placemark_ID') or "N/A"
         name = p.get('Name', '')
         miles = float(p.get('pipelinelength', 0.0)) if p.get('pipelinelength') is not None else 0.0
-        ws.append([placemark_id, name, miles, None])
+        ws.append([placemark_id, name, miles, None, *folder_display_fields(p)])
 
     max_row = ws.max_row
     for r in range(2, max_row + 1):
@@ -73,6 +77,10 @@ def build_analysis_workbook(current_results):
         c3.alignment = center
         c3.font = body_font
         c3.number_format = '0.000'
+        for column in (5, 6, 7):
+            cell = ws.cell(row=r, column=column)
+            cell.alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
+            cell.font = body_font
 
     ws.cell(row=2, column=4).value = "=SUM(C2:C100000)"
     ws.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
@@ -215,12 +223,13 @@ def build_analysis_workbook(current_results):
                       if run_complete is False else 'Not recorded')
         point_sheet.append(['Overall run status', run_status])
         point_sheet.append([])
-        point_sheet.append(['Placemark ID', 'Name', 'Count'])
+        point_sheet.append(['Placemark ID', 'Name', 'Count', 'Subfolder', 'Folder Path', 'Source KML'])
         for pin in point_pins:
-            point_sheet.append([pin.get('Placemark_ID'), pin.get('Name', ''), pin.get('Count', 1)])
+            point_sheet.append([pin.get('Placemark_ID'), pin.get('Name', ''), pin.get('Count', 1),
+                                *folder_display_fields(pin)])
         point_sheet.freeze_panes = 'A8'
-        point_sheet.auto_filter.ref = f'A7:C{max(7, point_sheet.max_row)}'
-        for column, width in [('A', 28), ('B', 80), ('C', 12)]:
+        point_sheet.auto_filter.ref = f'A7:F{max(7, point_sheet.max_row)}'
+        for column, width in [('A', 28), ('B', 80), ('C', 12), ('D', 36), ('E', 64), ('F', 44)]:
             point_sheet.column_dimensions[column].width = width
         for row in point_sheet:
             for cell in row:

@@ -49,7 +49,9 @@ def test_nested_multipart_pins_count_individually_without_counting_shape_vertice
     # Three co-located pins remain three existing Point geometries. Their shared
     # source name/OBJECTID is not replaced or used to deduplicate the inventory.
     assert parsed.placemarks == [
-        {"Placemark_ID": "shared-id", "Name": "Shared feature", "Count": 1}
+        {"Placemark_ID": "shared-id", "Name": "Shared feature", "Count": 1,
+         "source_kml": "doc.kml" if container == "kmz" else str(path.resolve()),
+         "folder_path": [], "folder_name": "", "folder_id": ""}
     ] * 3
     assert len(parsed.pipelines) == 2
     assert parsed.pipelines[0]["placemark_id"] == "pipe"

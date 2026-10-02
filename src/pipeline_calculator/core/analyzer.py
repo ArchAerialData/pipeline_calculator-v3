@@ -16,6 +16,7 @@ from pipeline_calculator.core.constants import (
     SURVEY_MILE_METERS,
 )
 from pipeline_calculator.core.coordinates import coordinate_paths_for_pipeline
+from pipeline_calculator.core.placemarks import copy_folder_provenance
 from pipeline_calculator.core.effective_length import compute_effective_length_by_clusters
 from pipeline_calculator.core.overlap import calculate_overlap_results, find_parallel_segments
 from pipeline_calculator.core.segmentation import segment_pipeline
@@ -117,6 +118,7 @@ class PipelineAnalyzer:
                     "Name": pipeline.get("name", ""),
                     "Shape_Length": length_meters,
                     "pipelinelength": length_miles,
+                    **copy_folder_provenance(pipeline),
                 }
             )
 

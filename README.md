@@ -89,7 +89,7 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 ### Core Features
 - Drag-and-drop file support for KMZ/KML files
 - Calculates pipeline lengths in meters and US Survey Miles
-- Identifies and counts placemarks (point features)
+- Counts placemarks (point features) with a combined total and responsive subfolder cards
 - Tabbed interface for organized data viewing
 - Export results to CSV and JSON formats
 - Dark mode interface for reduced eye strain
@@ -204,7 +204,7 @@ Builds and automated validation use Python 3.11. Use the platform setup scripts 
    - **Summary**: Key metrics including original and adjusted totals
    - **Pipelines**: Individual pipeline lengths and details
    - **Overlap Analysis**: Bundled sections and savings
-   - **Placemarks**: Point features if present
+   - **Placemarks**: Combined point total and cards for each containing subfolder
 
 5. **Export or reanalyze**
    - Export results to CSV/JSON
@@ -212,6 +212,16 @@ Builds and automated validation use Python 3.11. Use the platform setup scripts 
    - Import new KMZ file
 
 ### Understanding the Results
+
+The Placemarks overview counts each valid Point geometry once in its immediate
+folder. Nested folders have separate cards with ancestor paths; root-level points
+appear under **No subfolder**. Older results without folder metadata show
+**Folder not recorded** until the source is reimported. Hidden KML folders remain
+included in the inventory, consistent with pipeline analysis.
+
+XLSX exports retain individual point and polyline records and include **Subfolder**,
+**Folder Path**, and **Source KML** columns, including state pipeline exports.
+Folder cards describe source organization; point pins are not allocated by state.
 
 - **Original Total Length**: Sum of all individual pipeline lengths
 - **Effective Survey Length**: Adjusted length accounting for overlaps
