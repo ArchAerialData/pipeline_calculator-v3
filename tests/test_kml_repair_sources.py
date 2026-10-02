@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 import stat
+import struct
 import zipfile
 
 import pytest
@@ -287,6 +288,74 @@ def test_save_preserves_archive_metadata_and_never_overwrites(tmp_path):
         session.save(output)
     assert output.read_bytes() == sentinel
     assert path.read_bytes() == original
+
+
+def unix_extra(payload):
+    return struct.pack("<HH", 0x7875, len(payload)) + payload
+
+
+@pytest.mark.parametrize("width", [1, 4, 8, 255])
+@pytest.mark.parametrize("broken", [False, True])
+def test_unix_ownership_metadata_is_preserved_without_creating_a_repair(tmp_path, width, broken):
+    path = tmp_path / "unix.kmz"
+    # Variable-width IDs are opaque bytes, not permissions to apply locally.
+    extra = unix_extra(bytes([1, width]) + b"\xff" * width + b"\x01\x02")
+    extra += struct.pack("<HHBI", 0x5455, 5, 1, 1_600_000_000)
+    entries = {"doc.kml": kml(broken=broken), "files/": b"", "files/icon.png": b"asset"}
+    with zipfile.ZipFile(path, "w") as archive:
+        for name, data in entries.items():
+            entry = zipfile.ZipInfo(name)
+            entry.extra = extra
+            archive.writestr(entry, data)
+    original = path.read_bytes()
+    session = source.prepare_source(path)
+    assert session.requires_repair is broken
+    assert session.report["rules"] == (["missing_xsi_schema_namespace_v1"] if broken else [])
+    session.approve()
+    assert len(session.fresh_parse().pipelines) == 1
+    if broken:
+        output = tmp_path / "repaired.kmz"
+        session.save(output)
+        with zipfile.ZipFile(output) as archive:
+            assert archive.namelist() == list(entries)
+            assert all(entry.extra == extra for entry in archive.infolist())
+            assert archive.read("files/icon.png") == entries["files/icon.png"]
+        assert not source.prepare_source(output).requires_repair
+    assert path.read_bytes() == original
+
+
+@pytest.mark.parametrize("payload,code", [
+    (b"", "invalid_archive_metadata"),
+    (b"\x02\x01\x00\x01\x00", "unsupported_archive_metadata"),
+    (b"\x01", "invalid_archive_metadata"),
+    (b"\x01\x00\x01\x00", "invalid_archive_metadata"),
+    (b"\x01\x04\x00", "invalid_archive_metadata"),
+    (b"\x01\x01\x00", "invalid_archive_metadata"),
+    (b"\x01\x01\x00\x00", "invalid_archive_metadata"),
+    (b"\x01\x01\x00\x04\x00", "invalid_archive_metadata"),
+    (b"\x01\x01\x00\x01\x00trailing", "invalid_archive_metadata"),
+])
+def test_invalid_unix_ownership_metadata_on_unused_asset_is_refused(tmp_path, payload, code):
+    path = tmp_path / "invalid.kmz"
+    with zipfile.ZipFile(path, "w") as archive:
+        archive.writestr("doc.kml", kml())
+        entry = zipfile.ZipInfo("unused.bin")
+        entry.extra = unix_extra(payload)
+        archive.writestr(entry, b"asset")
+    with pytest.raises(RepairFailure) as error:
+        source.prepare_source(path)
+    assert error.value.findings[0]["code"] == code
+    assert error.value.findings[0]["source"] == "unused.bin"
+
+
+def test_extra_metadata_still_refuses_unknown_fields_and_truncated_frames():
+    valid = unix_extra(b"\x01\x01\x00\x01\x00")
+    for suffix, code in [(struct.pack("<HH", 0xCAFE, 0), "unsupported_archive_metadata"),
+                         (b"x", "invalid_archive_metadata"),
+                         (struct.pack("<HH", 0x7875, 6) + b"x", "invalid_archive_metadata")]:
+        with pytest.raises(RepairFailure) as error:
+            source._safe_extra(valid + suffix, "doc.kml")
+        assert error.value.findings[0]["code"] == code
 
 
 def test_save_racing_collision_does_not_replace_other_file(tmp_path, monkeypatch):

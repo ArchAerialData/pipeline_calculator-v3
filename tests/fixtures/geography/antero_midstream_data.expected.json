@@ -1,0 +1,36 @@
+{
+  "fixture": "antero_midstream_data.kmz",
+  "bytes": 1910667,
+  "sha256": "a35f8ba2dbc653749e3ec835cdab53479f2184f53c66e72d25527ef08a9d4012",
+  "primary": "AnteroMidstreamData.kml",
+  "kml_sha256": "f06309b0781145af019654a8c19763e9667aa27fa073ac01bc5656f58ef3debd",
+  "xml_counts": {
+    "Placemark": 8238,
+    "LineString": 1113,
+    "Point": 7275,
+    "MultiGeometry": 53,
+    "Polygon": 0,
+    "NetworkLink": 0
+  },
+  "pipeline_count": 960,
+  "line_vertex_count": 231376,
+  "metadata_only_features": [
+    {
+      "feature_ordinal": 1492,
+      "name": "NALLEY",
+      "objectid": "7189"
+    },
+    {
+      "feature_ordinal": 2549,
+      "name": "HEASTER TO PIONEER",
+      "objectid": "11385"
+    },
+    {
+      "feature_ordinal": 4712,
+      "name": "10885",
+      "objectid": "10885"
+    }
+  ],
+  "archive_member_count": 10,
+  "unix_extra_hex": "75780b000104000000000400000000"
+}

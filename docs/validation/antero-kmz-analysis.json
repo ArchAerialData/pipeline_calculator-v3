@@ -1,0 +1,23 @@
+{
+  "analysis_complete": true,
+  "total_meters": 1776257.3752514147,
+  "total_miles": 1103.712955550303,
+  "seconds": 31.73399999999674,
+  "pipeline_count": 960,
+  "point_count": 7275,
+  "diagnostic_counts": {
+    "selected_primary_kml": 1,
+    "no_supported_geometry": 3,
+    "corridor_buffer_limit": 1007,
+    "corridor_visualization_omitted": 1007
+  },
+  "source_sha256": "a35f8ba2dbc653749e3ec835cdab53479f2184f53c66e72d25527ef08a9d4012",
+  "settings": {
+    "detection_range_m": 15,
+    "min_parallel_length_m": 200,
+    "segment_length_m": 5,
+    "angular_tolerance_degrees": 15,
+    "state_breakdown": false
+  },
+  "validation_scope": "Source-level preparation and default combined analysis; no packaged executable or state analysis tested."
+}

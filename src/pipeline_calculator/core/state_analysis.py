@@ -13,6 +13,7 @@ import math
 from pipeline_calculator.core.coordinates import coordinate_paths_for_pipeline
 from pipeline_calculator.core.corridor_coverage import MeasuredPath
 from pipeline_calculator.core.execution import AnalysisCancelled, ScopedExecutionContext
+from pipeline_calculator.core.placemarks import copy_folder_provenance
 
 
 ACCOUNTING_POLICY = (
@@ -51,6 +52,7 @@ def _unresolved_fragments(pipelines, geod, context):
                 'id': f'{source_id}:{path_index}:unresolved', 'source_id': source_id,
                 'source_name': pipeline.get('name', ''), 'placemark_id': pipeline.get('placemark_id', 'N/A'),
                 'objectid': pipeline.get('objectid', 'N/A'), 'source_kml': pipeline.get('source_kml', ''),
+                **copy_folder_provenance(pipeline),
                 'path_index': path_index, 'start_m': 0.0, 'end_m': length,
                 'length_meters': length, 'coordinates': [list(p) for p in coords],
                 'kind': 'unresolved', 'state_codes': [],
@@ -109,6 +111,7 @@ def _state_rows(fragments, sources, code, survey_mile):
             'Shape_Length': total, 'pipelinelength': total / survey_mile,
             'interior_meters': measured, 'shared_allocation_meters': allocated,
             'shared_border_allocations': references[source_id],
+            **copy_folder_provenance(source),
         })
     return rows
 

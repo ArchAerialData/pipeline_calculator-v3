@@ -198,6 +198,7 @@ def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch)
     from test_state_breakdown_ui import descendants
     from pipeline_calculator.gui.pages import results_page
     from pipeline_calculator.gui.tabs.summary_tab import SummaryView
+    from pipeline_calculator.gui.tabs.placemarks_tab import PlacemarksView
     root = ctk.CTk()
     root.geometry('1000x720')
     errors = []
@@ -234,6 +235,7 @@ def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch)
         replacements_started = time.perf_counter()
         for index in range(100):
             refs.append(weakref.ref(next(w for w in descendants(root) if isinstance(w, SummaryView))))
+            refs.extend(weakref.ref(w) for w in descendants(root) if isinstance(w, PlacemarksView))
             started = time.perf_counter()
             choose('Texas' if index % 2 == 0 else 'Combined')
             times.append(time.perf_counter() - started)
@@ -247,7 +249,11 @@ def test_scope_replacement_releases_views_and_recovers_from_failure(monkeypatch)
         gc.collect()
         assert not any(ref() is not None for ref in refs)
         bindings = root.bind_all('<MouseWheel>')
-        assert bindings.count('_mouse_wheel_all') == 1
+        live_scroll_frames = sum(isinstance(w, AutoScrollFrame) for w in descendants(root))
+        # Summary and the folder overview each own one wheel handler. Retired
+        # result scopes must leave no extra handlers behind.
+        assert live_scroll_frames == 2
+        assert bindings.count('_mouse_wheel_all') == live_scroll_frames
         assert not errors, errors
         # Sizes/styles plateau across view replacement rather than using widget IDs.
         assert len(root._pipeline_table_styles) <= 4

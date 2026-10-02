@@ -1,5 +1,20 @@
 # Geography regression fixtures
 
+## Antero original export
+
+`antero_midstream_data.kmz` is an unchanged copy of the user-provided original
+`AnteroMidstreamData.kmz`. Its [expectation manifest](antero_midstream_data.expected.json)
+records the checksum, geometry inventory, and three metadata-only facility records.
+All ten ZIP entries carry Info-ZIP Unix ownership extra field `0x7875`, which
+previously blocked source preparation despite successful ordinary parsing.
+
+[The regression test](../../test_antero_kmz.py) verifies no-repair preparation,
+all 960 pipeline features and their 1,113 paths / 231,376 vertices against direct
+XML inspection, 7,275 points, and the three existing missing-geometry warnings.
+This fixture is intentionally namespace-free; do not normalize its KML or ZIP
+metadata. See the [audit](../../../docs/validation/antero-kmz-audit.md) for analysis
+results and separate corridor visualization limits.
+
 ## Adamas NG pipeline ROW
 
 `adamas_ng_pipeline_row.kmz` is a byte-for-byte copy of the user-provided

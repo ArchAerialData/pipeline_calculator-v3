@@ -5,6 +5,7 @@ import json
 import math
 
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
+from pipeline_calculator.core.placemarks import folder_display_fields
 from pipeline_calculator.export.corridor_metadata import corridor_map_status, has_corridor_metadata
 
 
@@ -26,6 +27,7 @@ def add_geography_sheets(workbook, results):
     geography = results["geography"]
     states = sorted(geography.get("states", []), key=lambda s: s["state_name"])
     include_map_status = has_corridor_metadata(results)
+    folder_widths = {"Subfolder": 36, "Folder Path": 64, "Source KML": 44}
 
     def table(name, headers, rows, *, numeric=(), widths=None):
         sheet = workbook.create_sheet(name)
@@ -41,11 +43,11 @@ def add_geography_sheets(workbook, results):
         sheet.row_dimensions[1].height = 32
         for col, header in enumerate(headers, start=1):
             sheet.column_dimensions[get_column_letter(col)].width = (
-                widths[col - 1] if widths else min(42, max(18, len(header) + 2)))
+                widths[col - 1] if widths else folder_widths.get(header, min(42, max(18, len(header) + 2))))
         for row in sheet.iter_rows(min_row=2):
             for cell in row:
                 cell.font = Font(name="Aptos Narrow", size=11)
-                cell.alignment = Alignment(vertical="top")
+                cell.alignment = Alignment(vertical="top", wrap_text=headers[cell.column - 1] in folder_widths)
                 if cell.column in numeric:
                     # Keep the underlying number unrounded, while exposing tiny values.
                     cell.number_format = '[>=0.001]0.000;[>0]"<0.001";0.000'
@@ -120,6 +122,7 @@ def add_geography_sheets(workbook, results):
                 _miles(pipeline.get("interior_meters", 0)),
                 _miles(pipeline.get("shared_allocation_meters", 0)),
                 _miles(pipeline.get("Shape_Length", 0)),
+                *folder_display_fields(pipeline),
             ])
         overlap = state.get("overlap_analysis") or {}
         for section in overlap.get("bundled_sections", []):
@@ -134,6 +137,7 @@ def add_geography_sheets(workbook, results):
     table("State Pipeline Lengths", [
         "State", "Source ID", "Placemark ID", "Pipeline name", "Interior mileage (mi)",
         "Shared allocation (mi)", "Original attributed mileage (mi)",
+        "Subfolder", "Folder Path", "Source KML",
     ], pipeline_rows, numeric=(5, 6, 7))
     overlap_headers = [
         "State", "Source 1 ID", "Pipeline 1", "Source 2 ID", "Pipeline 2", "Bundled length (mi)",
@@ -154,11 +158,13 @@ def add_geography_sheets(workbook, results):
         table("Shared Borders", [
             "Fragment ID", "Source ID", "Pipeline name", "Adjoining states",
             "Physical mileage (mi)", "Allocation per state (mi)", "State overlap treatment", "Map location",
+            "Subfolder", "Folder Path", "Source KML",
         ], ([fragment["id"], fragment["source_id"], fragment.get("source_name", ""),
              ", ".join(names.get(code, code) for code in fragment["state_codes"]),
              _miles(fragment["length_meters"]),
              _miles(fragment["length_meters"] / len(fragment["state_codes"])),
-             "Not calculated", "Combined/analysis.kmz — Shared Borders"] for fragment in shared), numeric=(5, 6))
+             "Not calculated", "Combined/analysis.kmz — Shared Borders",
+             *folder_display_fields(fragment)] for fragment in shared), numeric=(5, 6))
 
     detail_rows = [
         ["Geography status", geography.get("status", "incomplete")],
