@@ -296,7 +296,9 @@ class SummaryView(AutoScrollFrame):
             text_label(self.details, 'Point pins: available in the Combined view only.', pady=2)
         elif isinstance(self.results.get('placemarks'), list):
             text_label(self.details, f'Point pins: {len(self.results["placemarks"]):,}', pady=2)
-        if self.results.get('parsed_kml_files') is not None:
+        if self.results.get('parsed_sources'):
+            text_label(self.details, f'Source layers read: {len(self.results["parsed_sources"]):,}', pady=2)
+        elif self.results.get('parsed_kml_files') is not None:
             text_label(self.details, f'KML documents read: {len(self.results["parsed_kml_files"]):,}', pady=2)
         sections = (overlap or {}).get('bundled_sections') or []
         if sections:

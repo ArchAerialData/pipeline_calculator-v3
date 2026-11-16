@@ -12,6 +12,11 @@ delegates to `pipeline_calculator.app.main()`.
 
 from __future__ import annotations
 
+if __name__ == '__main__':
+    # PyInstaller's spawn dispatch must run before loading the desktop app.
+    from multiprocessing import freeze_support
+    freeze_support()
+
 import os
 
 from pipeline_calculator.app import main

@@ -1,4 +1,4 @@
-# GitHub Actions CI (macOS)
+# GitHub Actions CI (macOS and Windows)
 
 This folder contains CI scripts used by the GitHub Actions workflow. The workflow file itself must live under `.github/workflows/` (GitHub requirement), but build/sign/package logic is kept here to reduce workflow clutter.
 
@@ -20,6 +20,26 @@ Artifacts named `test-results-*`, `signed-smoke-*`, or `distribution-runtime-*`
 contain verification reports, not installers. The shorter download labels apply
 to new workflow runs; previous runs retain their original labels. Versioned
 filenames inside the archives and signing/notarization behavior are unchanged.
+
+## Workflow compatibility checks
+
+The workflow uses Node 24 action releases: checkout 7.0.1, setup-python 7.1.0,
+upload-artifact 7.0.2, download-artifact 8.0.2, and action-gh-release 3.0.4.
+These exact releases were checked against their upstream action metadata.
+Named ZIP artifacts and the embedded `.app.zip` remain unchanged; direct-file
+upload mode is not enabled. Download digest mismatches fail the job.
+
+Run `actionlint` from the repository root to validate workflow expressions,
+action inputs, and embedded shell scripts (with ShellCheck installed).
+`.github/actionlint.yaml` recognizes the GitHub-hosted `xcode-27` label while
+actionlint's built-in runner list catches up. The configured matrix builds on
+macOS 15 ARM64 and checks that same distributed application on macOS 26 and 27;
+Windows has its own independent build and frozen smoke job.
+
+Local script tests and ARM64 wheel inspection are useful preflight checks, but
+macOS runtime, signing, and package validation require a GitHub run containing
+the exact source changes. A successful older commit does not validate a dirty
+local checkout.
 
 ## Scripts
 - `macos_build.sh` — creates `.venv`, installs deps, runs tests, builds the `.app`, and verifies both implementations in the frozen application.
@@ -45,6 +65,10 @@ with `PROJ_NETWORK=OFF`. Windows uses an isolated desktop; macOS uses its normal
 subprocess launch. The gate checks the frozen flag, 51 bundled jurisdictions,
 the Texas/Oklahoma crossing, mileage reconciliation, and combined/state KMZ
 roundtrips. Failure or timeout prevents distribution artifact upload.
+
+The same gate also reads SHP, direct ZIP, multi-layer GPKG, and GeoJSON using the
+packaged GDAL/PROJ libraries. Projected-coordinate conversion and captured-source
+reuse must pass in both interfaces, including the signed and newer-macOS runs.
 
 Reports, captured output, and the gate summary are saved in
 `.validation-output/packaged-smoke/` and uploaded alongside the test reports even

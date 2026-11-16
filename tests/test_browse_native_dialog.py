@@ -77,7 +77,7 @@ def test_native_browse_keeps_app_visible_and_owns_modal_picker(tmp_path, monkeyp
 
                 user.EnumThreadWindows(gui_thread, visit, 0)
                 for hwnd, title in dialogs:
-                    if title == 'Choose a KML or KMZ file' and user.IsWindowVisible(hwnd):
+                    if title == 'Choose a GIS file' and user.IsWindowVisible(hwnd):
                         observations.append({
                             'root_visible': bool(user.IsWindowVisible(root_hwnd)),
                             'root_enabled': bool(user.IsWindowEnabled(root_hwnd)),

@@ -186,6 +186,9 @@ def build_state_breakdown(analyzer, pipelines, combined, *, context=None, bounda
                              state=code, error=str(exc))],
                          'analysis_parameters': dict(combined['analysis_parameters']),
                          'parsed_kml_files': list(combined.get('parsed_kml_files', []))}
+            for key in ('parsed_sources', 'import_metadata'):
+                if key in combined:
+                    state[key] = deepcopy(combined[key])
             overlap = state.get('overlap_analysis')
             overlap_failed = any(d.get('code') in ('overlap_analysis_failed', 'state_analysis_failed')
                                  for d in state.get('diagnostics', []))

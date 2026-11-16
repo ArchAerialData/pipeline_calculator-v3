@@ -9,6 +9,7 @@ from pipeline_calculator.core.analyzer import PipelineAnalyzer
 from pipeline_calculator.gui.state import AnalysisParameters
 from pipeline_calculator.core.execution import AnalysisCancelled, ExecutionContext, ScopedExecutionContext
 from pipeline_calculator.core.options import AnalysisOptions
+from pipeline_calculator.importing.models import ImportDecisionRequired
 
 
 class RepairRequired(Exception):
@@ -21,7 +22,8 @@ class RepairRequired(Exception):
 
 def analyze_file(file_path: str, params: AnalysisParameters, *, context=None,
                  options: AnalysisOptions | None = None, prepare_repair=False,
-                 source_session=None, approve_repair=False, on_source=None) -> dict[str, Any]:
+                 source_session=None, approve_repair=False, on_source=None,
+                 import_selection=None) -> dict[str, Any]:
     """Library calls stay strict; desktop jobs enable the decision workflow.
 
     Source acquisition, approval and analysis all run on the worker. A completed
@@ -35,13 +37,20 @@ def analyze_file(file_path: str, params: AnalysisParameters, *, context=None,
         angular_tolerance=params.angular_tolerance,
     )
     kwargs = {'options': options} if options is not None else {}
-    if not prepare_repair and not approve_repair and source_session is None:
+    if not prepare_repair and not approve_repair and source_session is None and import_selection is None:
         return analyzer.analyze_complete(file_path, context=context, **kwargs)
-    from pipeline_calculator.parsers.source import prepare_source
     preparation = ScopedExecutionContext(context, 0, .12) if context is not None else None
-    source = source_session or prepare_source(file_path, context=preparation)
+    source = source_session
+    if source is None:
+        from pipeline_calculator.importing import prepare_import
+        source = prepare_import(file_path, context=preparation)
     if on_source is not None:
         on_source(source)
+    if import_selection is not None:
+        source = source.with_selection(import_selection['layer_ids'],
+            crs_overrides=import_selection.get('crs_overrides', {}), context=preparation)
+        if on_source is not None:
+            on_source(source)
     if source.requires_repair and not source.verified:
         if not approve_repair:
             raise RepairRequired(source)
@@ -66,6 +75,8 @@ class AnalysisJob:
     options: AnalysisOptions = field(default_factory=AnalysisOptions)
     source_session: Any = field(default=None, repr=False)
     approve_repair: bool = False
+    import_selection: Any = field(default=None, repr=False)
+    import_decision: Any = field(default=None, init=False, repr=False)
     done: threading.Event = field(default_factory=threading.Event, init=False)
     result: dict[str, Any] | None = field(default=None, init=False)
     error: BaseException | None = field(default=None, init=False)
@@ -80,6 +91,10 @@ class AnalysisJob:
         self._options = self.options
         self._source_request = self.source_session
         self._approve_request = bool(self.approve_repair)
+        self._import_request = None if self.import_selection is None else {
+            'layer_ids': tuple(self.import_selection['layer_ids']),
+            'crs_overrides': dict(self.import_selection.get('crs_overrides', {})),
+        }
         self.context = ExecutionContext(self.job_id, interactive=True)
 
     @property
@@ -93,7 +108,7 @@ class AnalysisJob:
 
     def cancel(self):
         with self._lock:
-            if self._state in ('completed', 'failed', 'cancelled', 'repair_required'):
+            if self._state in ('completed', 'failed', 'cancelled', 'repair_required', 'import_required'):
                 return
             self.context.cancel()
             if self._state == 'pending':
@@ -121,14 +136,20 @@ class AnalysisJob:
     def _worker(self) -> None:
         result = error = None
         awaiting_repair = False
+        awaiting_import = False
         try:
             self.context.check()
             self.context.begin()
             result = analyze_file(
                 *self._request, context=self.context, options=self._options,
                 prepare_repair=True, source_session=self._source_request,
-                approve_repair=self._approve_request, on_source=self._retain_source)
+                approve_repair=self._approve_request, on_source=self._retain_source,
+                import_selection=self._import_request)
             self.context.finish()
+        except ImportDecisionRequired as decision:
+            self.source_session = decision.source_session
+            self.import_decision = decision
+            awaiting_import = True
         except RepairRequired as decision:
             self.source_session = decision.source_session
             awaiting_repair = True
@@ -144,6 +165,8 @@ class AnalysisJob:
                     self._state, self.error = 'failed', error
                 elif awaiting_repair:
                     self._state = 'repair_required'
+                elif awaiting_import:
+                    self._state = 'import_required'
                 else:
                     self._state, self.result = 'completed', result
                 self.done.set()
@@ -159,9 +182,10 @@ class AnalysisController:
 
     def start(self, file_path: str, params: AnalysisParameters, *,
               options: AnalysisOptions | None = None, source_session=None,
-              approve_repair=False) -> AnalysisJob:
+              approve_repair=False, import_selection=None) -> AnalysisJob:
         job = AnalysisJob(file_path=file_path, params=params, options=options or AnalysisOptions(),
-                          source_session=source_session, approve_repair=approve_repair)
+                          source_session=source_session, approve_repair=approve_repair,
+                          import_selection=import_selection)
         job.start()
         return job
 

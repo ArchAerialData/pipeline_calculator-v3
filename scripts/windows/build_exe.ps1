@@ -72,6 +72,7 @@ try {
     --hidden-import "tkinterdnd2" `
     --hidden-import "PIL" `
     --collect-all "shapely" `
+    --hidden-import "pyogrio" `
     --additional-hooks-dir (Join-Path $RepoDir "scripts\\pyinstaller_hooks") `
     $Entry
   if ($LASTEXITCODE -ne 0) { throw "PyInstaller failed ($LASTEXITCODE)" }

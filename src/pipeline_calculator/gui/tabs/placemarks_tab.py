@@ -73,8 +73,9 @@ class PlacemarksView(AutoScrollFrame):
         self._parent_canvas.bind('<End>', lambda event: self._scroll_key(1))
         self.inventory = summarize_placemarks(results.get('placemarks'))
         self.groups = self.inventory['groups']
-        self._show_sources = len({group['source_kml'] for group in self.groups}) > 1
-        self._same_paths = Counter((group['source_kml'], tuple(group['folder_path']), group['name'])
+        self.has_layers = bool(self.inventory.get('layer_count'))
+        self._show_sources = len({group.get('source_dataset') or group['source_kml'] for group in self.groups}) > 1
+        self._same_paths = Counter((group.get('source_dataset') or group['source_kml'], tuple(group['folder_path']), group['name'])
                                    for group in self.groups)
         self._path_occurrences = Counter()
         self.inner = ctk.CTkFrame(self, fg_color='transparent', width=1)
@@ -89,15 +90,23 @@ class PlacemarksView(AutoScrollFrame):
             caption = 'No point pins were found in the loaded geometry.'
         else:
             count = self.inventory['folder_count']
-            caption = (f'{count:,} subfolder' + ('s' if count != 1 else '') + ' with point pins.'
-                       if count else 'Folder details appear below.')
+            layer_count = self.inventory.get('layer_count', 0)
+            if layer_count:
+                caption = f'{layer_count:,} GIS layer' + ('s' if layer_count != 1 else '') + ' with point pins.'
+                if count:
+                    caption += f' {count:,} KML subfolders also contain point pins.'
+            else:
+                caption = (f'{count:,} subfolder' + ('s' if count != 1 else '') + ' with point pins.'
+                           if count else 'Folder details appear below.')
         self.total_card = PointCountCard(self.inner, 'Combined total', total, caption=caption, combined=True)
         self.total_card.pack(fill='x', pady=(0, 16))
         self.folder_grid = FolderCardGrid(self.inner)
         self.folder_cards = self.folder_grid.cards
         if self.groups:
-            text_label(self.inner, 'By subfolder', size=20, color=TEXT, bold=True, pady=(0, 4))
-            text_label(self.inner, 'Each pin is counted once in its containing folder. Nested folders have separate cards.',
+            heading = 'By layer and subfolder' if self.has_layers and self.inventory['folder_count'] else 'By layer' if self.has_layers else 'By subfolder'
+            text_label(self.inner, heading, size=20, color=TEXT, bold=True, pady=(0, 4))
+            text_label(self.inner, 'Each point component is counted once in its source layer.' if self.has_layers else
+                       'Each pin is counted once in its containing folder. Nested folders have separate cards.',
                        size=14, pady=(0, 8))
             self.folder_grid.pack(fill='x')
         self.loading_label = text_label(self.inner, '', size=13, pady=(8, 0))
@@ -108,6 +117,8 @@ class PlacemarksView(AutoScrollFrame):
         self._parent_canvas.bind('<Map>', self._resume_cards, add='+')
 
     def _caption(self, group):
+        if group.get('grouping_kind') == 'layer':
+            return 'GIS layer\nSource: ' + str(group.get('source_dataset', ''))
         path = group['folder_path']
         parts = [' / '.join(path[:-1])] if len(path) > 1 else []
         if group['name'] == 'Folder not recorded' and not path:
@@ -142,7 +153,8 @@ class PlacemarksView(AutoScrollFrame):
             if time.perf_counter() >= deadline:
                 break
         if len(self.folder_cards) < len(self.groups):
-            self.loading_label.configure(text=f'Loading subfolders: {len(self.folder_cards):,} of {len(self.groups):,}')
+            label = 'groups' if self.has_layers else 'subfolders'
+            self.loading_label.configure(text=f'Loading {label}: {len(self.folder_cards):,} of {len(self.groups):,}')
             self.loading_label.pack(fill='x', pady=(8, 0))
         else:
             self.loading_label.pack_forget()

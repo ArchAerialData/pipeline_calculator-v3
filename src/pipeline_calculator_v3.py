@@ -5,6 +5,10 @@ Compatibility entrypoint for Pipeline Calculator v5
 Version: derived from Git or embedded build metadata
 """
 
+if __name__ == '__main__':
+    import multiprocessing
+    multiprocessing.freeze_support()
+
 import subprocess
 import sys
 import os
@@ -297,14 +301,9 @@ class PipelineCalculatorGUI:
             return
         
         try:
-            filetypes = [
-                ("All supported", "*.kmz *.kml"),
-                ("KMZ files", "*.kmz"),
-                ("KML files", "*.kml"),
-                ("All files", "*.*")
-            ]
-            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a KML or KMZ file",
-                                                   filetypes=filetypes)
+            from pipeline_calculator.importing.formats import FILE_TYPES
+            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a GIS file",
+                                                   filetypes=FILE_TYPES)
             
             if file_path:
                 self.process_file(file_path)
@@ -345,13 +344,16 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Processing Error", str(e))
             self.show_file_selection()
 
-    def _start_analysis(self, path, params, *, options=None, source_session=None, approve_repair=False):
+    def _start_analysis(self, path, params, *, options=None, source_session=None, approve_repair=False,
+                        import_selection=None):
         self._set_processing(True)
         kwargs = {'options': options} if options is not None else {}
         if source_session is not None:
             kwargs['source_session'] = source_session
         if approve_repair:
             kwargs['approve_repair'] = True
+        if import_selection is not None:
+            kwargs['import_selection'] = import_selection
         try:
             self._analysis_session = AnalysisSession(self.root, self._analysis_done)
             self._analysis_session.start(path, params, **kwargs)

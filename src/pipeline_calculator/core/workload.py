@@ -15,7 +15,7 @@ class WorkloadWarning(str):
     """Text-compatible notice with explicit sections for GUI presentation."""
     introduction = 'This analysis is expected to take longer than one minute at the current settings.'
     impact = 'Overlap analysis may take longer and use substantial memory. Progress may pause during intensive calculations.'
-    recommendation = 'Split the geometry into separate KML/KMZ files, or simplify a copy while preserving the accuracy you need.'
+    recommendation = 'Select fewer source layers, split the geometry into separate GIS files, or simplify a copy while preserving the accuracy you need.'
     decision = 'You can cancel now or continue with the current settings. Safety limits remain active.'
 
     def __new__(cls, detail):

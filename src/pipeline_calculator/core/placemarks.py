@@ -1,17 +1,35 @@
 """Folder provenance and disjoint point inventories shared by UI and exports."""
 from __future__ import annotations
 
+from copy import deepcopy
 
-def copy_folder_provenance(record):
-    """Detach folder paths while keeping missing legacy provenance distinguishable."""
-    copied = {key: record[key] for key in ('folder_name', 'folder_id', 'source_kml') if key in record}
+
+SOURCE_FIELDS = (
+    'source_dataset', 'source_layer', 'source_feature_id', 'source_component_path',
+    'source_format', 'source_crs', 'source_dimensions', 'attributes', 'internal_id',
+    'component_path', 'source_record_index', 'source_original_feature_id',
+    'path_component_paths', 'source_coordinate_operations',
+)
+
+
+def copy_source_provenance(record):
+    """Copy source identity without sharing mutable attributes across analyses."""
+    copied = {key: deepcopy(record[key]) for key in SOURCE_FIELDS if key in record}
+    copied.update({key: record[key] for key in ('folder_name', 'folder_id', 'source_kml') if key in record})
     if 'folder_path' in record:
         copied['folder_path'] = list(record['folder_path'])
     return copied
 
 
+def copy_folder_provenance(record):
+    """Compatibility name for source provenance, including original KML folders."""
+    return copy_source_provenance(record)
+
+
 def folder_display_fields(record):
     """Return the owning folder, readable full path, and source document."""
+    if 'source_dataset' in record:
+        return '', '', ''
     path = record.get('folder_path')
     source = record.get('source_kml', '')
     if not isinstance(path, (list, tuple)):
@@ -19,6 +37,14 @@ def folder_display_fields(record):
     if not path:
         return 'No subfolder', '', source
     return path[-1], ' / '.join(path), source
+
+
+def source_display_fields(record):
+    """Display a GIS layer or KML folder without conflating their identities."""
+    if 'source_dataset' in record:
+        layer = record.get('source_layer', '')
+        return layer or 'Unnamed layer', layer, record['source_dataset']
+    return folder_display_fields(record)
 
 
 def summarize_placemarks(records):
@@ -32,6 +58,17 @@ def summarize_placemarks(records):
         return {'total': None, 'groups': [], 'folder_count': 0}
     groups = {}
     for record in records:
+        if 'source_dataset' in record:
+            dataset, layer = record['source_dataset'], record.get('source_layer', '')
+            key = ('gis', dataset, layer)
+            if key not in groups:
+                groups[key] = {
+                    'name': layer or 'Unnamed layer', 'grouping_kind': 'layer',
+                    'source_dataset': dataset, 'source_layer': layer,
+                    'folder_path': [], 'source_kml': '', 'folder_id': '', 'count': 0,
+                }
+            groups[key]['count'] += 1
+            continue
         name, _, source = folder_display_fields(record)
         path = record.get('folder_path')
         known = isinstance(path, (list, tuple))
@@ -42,5 +79,9 @@ def summarize_placemarks(records):
             groups[key] = {'name': name, 'folder_path': path, 'source_kml': source,
                            'folder_id': folder_id, 'count': 0}
         groups[key]['count'] += 1
-    return {'total': len(records), 'groups': list(groups.values()),
-            'folder_count': sum(bool(group['folder_path']) for group in groups.values())}
+    result = {'total': len(records), 'groups': list(groups.values()),
+              'folder_count': sum(bool(group['folder_path']) for group in groups.values())}
+    layer_count = sum(group.get('grouping_kind') == 'layer' for group in groups.values())
+    if layer_count:
+        result['layer_count'] = layer_count
+    return result

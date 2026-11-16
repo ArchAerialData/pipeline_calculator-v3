@@ -76,6 +76,11 @@ def validate_report(report, implementation, expected_version=None):
     checks.update({f'corridor {key}': corridors.get(key) is True for key in (
         'curved_geometry', 'holes_preserved', 'multipart_preserved', 'polygon_only_preview',
         'state_containment', 'numeric_parity', 'map_roundtrips')})
+    gis_import = report.get('gis_import')
+    if not isinstance(gis_import, dict):
+        gis_import = {}
+    checks.update({f'GIS import {key}': gis_import.get(key) is True for key in (
+        'shapefile', 'direct_zip', 'gpkg_layer_selection', 'geojson', 'projected_crs', 'captured_source')})
     if expected_version is not None:
         checks["artifact version"] = report.get("version") == expected_version
     failed = [name for name, passed in checks.items() if not passed]

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import math
+import json
 from pathlib import Path
 import xml.etree.ElementTree as ET
 from zipfile import ZIP_DEFLATED, ZipFile
@@ -110,8 +111,16 @@ def _append_fragment(parent, fragment):
                         f"{miles / len(fragment['state_codes']):.9f} mi. State overlap: Not calculated.")
     element(placemark, "description", description)
     metadata = element(placemark, "ExtendedData")
-    for key in ("id", "source_id", "placemark_id", "objectid", "source_kml", "path_index", "start_m", "end_m", "length_meters"):
-        element(element(metadata, "Data", name=key), "value", fragment.get(key, ""))
+    keys = ("id", "source_id", "placemark_id", "objectid", "source_kml", "path_index", "start_m", "end_m", "length_meters")
+    keys += tuple(key for key in ('source_dataset', 'source_layer', 'source_feature_id',
+                                 'source_component_path', 'source_format', 'internal_id',
+                                 'path_component_paths', 'source_coordinate_operations',
+                                 'source_record_index', 'source_original_feature_id') if key in fragment)
+    for key in keys:
+        value = fragment.get(key, '')
+        if isinstance(value, (dict, list, tuple)):
+            value = json.dumps(value, ensure_ascii=False)
+        element(element(metadata, "Data", name=key), "value", value)
     paths = _map_line_paths(fragment['coordinates'])
     container = element(placemark, 'MultiGeometry') if len(paths) > 1 else placemark
     for path in paths:
@@ -205,6 +214,10 @@ def build_geography_kml(results, state_code=None):
                 parent = state_folders[code]
             _append_fragment(parent, fragment)
         scope = prepare_scope_visualizations(results)
+    if isinstance(results.get('import_metadata'), dict):
+        metadata = element(doc, 'ExtendedData')
+        element(element(metadata, 'Data', name='import_metadata'), 'value',
+                json.dumps(results['import_metadata'], ensure_ascii=False, allow_nan=False))
     sections = (scope.get('overlap_analysis') or {}).get('bundled_sections', [])
     omitted = sum(section.get('visualization_status') == 'omitted' for section in sections)
     if omitted:

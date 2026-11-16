@@ -1,6 +1,6 @@
 # Pipeline Calculator v5.0 - With Overlap Analysis
 
-A comprehensive GUI application for calculating pipeline lengths and analyzing overlaps from KMZ/KML files. Designed for GIS professionals and aerial survey planning to optimize flight paths by identifying bundled pipeline sections.
+A GUI application for calculating pipeline lengths and analyzing overlaps from KML/KMZ, SHP, GPKG, GeoJSON, and ZIP GIS packages. Designed for GIS professionals and aerial survey planning to optimize flight paths by identifying bundled pipeline sections.
 
 ## 🚀 Key Features
 
@@ -87,7 +87,7 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - **Native App Icons**: Displays `.ico` on Windows and `.icns` on macOS for proper branding
 
 ### Core Features
-- Drag-and-drop file support for KMZ/KML files
+- Browse and drag-and-drop support for KML/KMZ, SHP, GPKG, GeoJSON, and ZIP packages
 - Calculates pipeline lengths in meters and US Survey Miles
 - Counts placemarks (point features) with a combined total and responsive subfolder cards
 - Tabbed interface for organized data viewing
@@ -95,10 +95,49 @@ and [PyInstaller bundled data](https://pyinstaller.org/en/stable/runtime-informa
 - Dark mode interface for reduced eye strain
 - Cooperative cancellation and named processing stages with work counts and elapsed time
 
+### GIS files and ZIP packages
+
+Drop a ZIP directly onto the application; manual extraction is unnecessary.
+The importer finds complete shapefiles, GeoPackages, and GeoJSON datasets in
+the archive, including nested directories. A single usable layer proceeds
+automatically. For several usable layers, choose the layers to include before
+analysis. One outer file is accepted per import.
+
+For a loose shapefile, select its `.shp` file and keep the matching `.shx` and
+`.dbf` files beside it. Include `.prj` for its coordinate system and `.cpg` for
+text encoding when available. Missing coordinate-system metadata requires an
+explicit EPSG code or WKT assignment; the app does not guess a projection.
+GeoJSON uses RFC 7946 longitude/latitude coordinates.
+
+Lines contribute mileage, multipart lines retain their separate paths, and
+Point/MultiPoint geometries contribute individual pins. Polygon outlines do not
+become pipelines. Length is horizontal: Z/elevation and M measures are not used.
+Coordinates are transformed to longitude/latitude and the existing GRS80
+geodesic/US survey-mile convention measures consecutive source vertices. Source
+length attributes are not substituted for measured mileage. Sparse projected
+edges follow this vertex/geodesic convention rather than planar GIS length.
+
+Results and exports identify the dataset, layer, source feature, selected scope,
+and coordinate operation. Null/malformed geometries are reported as omissions;
+available mileage remains usable as a partial result, not a complete inventory.
+Parameter reanalysis reuses the captured input even if the original changes.
+
+Imports are local and bounded: 256 MiB source/expanded package size, 10,000 ZIP
+entries, 512 layers, 250,000 features, and 2,000,000 vertices. Additional attribute
+and worker-transfer limits apply. These are safeguards, not promises that every
+dataset at those limits can complete overlap analysis. Existing analysis workload
+limits remain independent. Encrypted/nested archives, live GeoPackage transaction
+files, unsupported curves/surfaces, and missing transformation resources produce
+actionable errors. The importer does not fetch coordinate grids or remote data.
+
+The [implementation specification](GIS_IMPORT_IMPLEMENTATION_PLAN.md) and
+[sample regression evidence](tests/fixtures/gis/customer_zip/README.md) document
+the format/geometry contracts and the supplied real-world ZIP fixtures.
+
 ### State breakdown
 
 Enable **State breakdown** in Analysis Settings before browsing or dropping a
-KML/KMZ. The switch starts off and remembers your choice across app sessions.
+supported GIS file. The switch starts off and remembers your choice across app sessions.
 **Adjust Parameters** also lets you change it before reanalysis.
 
 The app retains its combined analysis, clips pipeline paths at state boundaries,
@@ -196,7 +235,7 @@ Builds and automated validation use Python 3.11. Use the platform setup scripts 
    - Set Minimum Parallel Length based on project requirements
    - Modify Angular Tolerance for pipeline alignment sensitivity
 
-3. **Load a KMZ/KML file**
+3. **Load a GIS file or ZIP package**
    - Drag and drop onto the application window, or
    - Click "Browse Files" to select
 
@@ -209,7 +248,7 @@ Builds and automated validation use Python 3.11. Use the platform setup scripts 
 5. **Export or reanalyze**
    - Export results to CSV/JSON
    - Reanalyze with different parameters
-   - Import new KMZ file
+   - Import another GIS file or ZIP package
 
 ### Understanding the Results
 
@@ -470,6 +509,15 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
+
+Library integrations can call `pipeline_calculator.importing.prepare_import`,
+inspect `session.layers`, and use `session.with_selection(...)` followed by
+`session.fresh_parse()`. Selection and missing-CRS requirements are typed
+`ImportDecisionRequired` exceptions; readers do not open UI. Standalone scripts
+must call these APIs inside an `if __name__ == '__main__':` guard because native
+GIS reads run in spawned processes. Packaged entrypoints call
+`multiprocessing.freeze_support()` before loading the GUI. Keep the Pyogrio
+version pinned and run the offline packaged smoke checks when updating it.
 
 ## 📄 License
 

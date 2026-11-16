@@ -1,0 +1,168 @@
+{
+  "checked_on": "2026-11-16",
+  "artifact": ".validation-output/gis-build/dist/Pipeline_Calculator_v5.9-dev.7d6e68314148.dirty.exe",
+  "size_bytes": 122278618,
+  "sha256": "22ef24b72a6f6a1ed06d84473751b5e1497d795483af89d743d23907ba4eef31",
+  "build": {
+    "version": "5.9-dev.7d6e68314148.dirty",
+    "numeric_version": "5.9",
+    "commit": "7d6e68314148f659798e7ffb75f287b3f2a6f7fe",
+    "dirty": true,
+    "version_baseline": "f679424341ffea1e67057fa47f4007f1efc81278"
+  },
+  "summary": {
+    "status": "passed",
+    "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\gis-build\\dist\\Pipeline_Calculator_v5.9-dev.7d6e68314148.dirty.exe",
+    "proj_network": "OFF",
+    "implementations": [
+      {
+        "implementation": "new",
+        "status": "passed",
+        "exit_code": 0
+      },
+      {
+        "implementation": "legacy",
+        "status": "passed",
+        "exit_code": 0
+      }
+    ]
+  },
+  "reports": {
+    "new": {
+      "status": "passed",
+      "implementation": "new",
+      "frozen": true,
+      "version": "5.9-dev.7d6e68314148.dirty",
+      "total_meters": 111.03464218395374,
+      "icon": "icon.ico",
+      "tk_widgets": true,
+      "dnd_loaded": true,
+      "live_results": true,
+      "ui_reliability": {
+        "summary_returns": 20,
+        "callback_errors": [],
+        "tk_patchlevel": "8.6.12"
+      },
+      "pipeline_count": 1,
+      "placemark_ids": [
+        "N/A"
+      ],
+      "original_miles": 0.06899359000605187,
+      "geography": {
+        "boundary_jurisdictions": 51,
+        "state_codes": [
+          "OK",
+          "TX"
+        ],
+        "boundary_vintage": "2025",
+        "reconciliation_passed": true,
+        "package_map_roundtrips": true
+      },
+      "repair": {
+        "approval_required": true,
+        "source_unchanged": true,
+        "geometry_verified": true,
+        "saved_copy_roundtrip": true,
+        "provenance_exported": true
+      },
+      "gis_import": {
+        "shapefile": true,
+        "direct_zip": true,
+        "gpkg_layer_selection": true,
+        "geojson": true,
+        "projected_crs": true,
+        "captured_source": true,
+        "pyogrio": "0.13.0",
+        "gdal": "3.12.4",
+        "pyproj": "3.7.2",
+        "proj": "9.5.1",
+        "drivers": [
+          "ESRI Shapefile",
+          "GPKG",
+          "GeoJSON"
+        ]
+      },
+      "corridors": {
+        "policy": "qualified_path_buffer_v1",
+        "curved_geometry": true,
+        "holes_preserved": true,
+        "multipart_preserved": true,
+        "polygon_only_preview": true,
+        "state_containment": true,
+        "numeric_parity": true,
+        "map_roundtrips": true,
+        "state_polygon_count": 4
+      },
+      "adjusted_miles": null
+    },
+    "legacy": {
+      "status": "passed",
+      "implementation": "legacy",
+      "frozen": true,
+      "version": "5.9-dev.7d6e68314148.dirty",
+      "total_meters": 111.03464218395374,
+      "icon": "icon.ico",
+      "tk_widgets": true,
+      "dnd_loaded": true,
+      "live_results": true,
+      "ui_reliability": {
+        "summary_returns": 20,
+        "callback_errors": [],
+        "tk_patchlevel": "8.6.12"
+      },
+      "pipeline_count": 1,
+      "placemark_ids": [
+        "N/A"
+      ],
+      "original_miles": 0.06899359000605187,
+      "geography": {
+        "boundary_jurisdictions": 51,
+        "state_codes": [
+          "OK",
+          "TX"
+        ],
+        "boundary_vintage": "2025",
+        "reconciliation_passed": true,
+        "package_map_roundtrips": true
+      },
+      "repair": {
+        "approval_required": true,
+        "source_unchanged": true,
+        "geometry_verified": true,
+        "saved_copy_roundtrip": true,
+        "provenance_exported": true
+      },
+      "gis_import": {
+        "shapefile": true,
+        "direct_zip": true,
+        "gpkg_layer_selection": true,
+        "geojson": true,
+        "projected_crs": true,
+        "captured_source": true,
+        "pyogrio": "0.13.0",
+        "gdal": "3.12.4",
+        "pyproj": "3.7.2",
+        "proj": "9.5.1",
+        "drivers": [
+          "ESRI Shapefile",
+          "GPKG",
+          "GeoJSON"
+        ]
+      },
+      "corridors": {
+        "policy": "qualified_path_buffer_v1",
+        "curved_geometry": true,
+        "holes_preserved": true,
+        "multipart_preserved": true,
+        "polygon_only_preview": true,
+        "state_containment": true,
+        "numeric_parity": true,
+        "map_roundtrips": true,
+        "state_polygon_count": 4
+      },
+      "adjusted_miles": null
+    }
+  },
+  "distribution": "Local unsigned development preview; not published.",
+  "macos": "Not executed on this Windows host; platform builds, runtime checks, signing, and notarization remain release gates."
+}

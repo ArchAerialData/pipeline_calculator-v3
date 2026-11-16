@@ -118,7 +118,7 @@ else
   echo "Using existing venv at ${VENV_DIR}"
 fi
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 source "${VENV_DIR}/bin/activate"
 
 python -m pip install --upgrade pip wheel setuptools

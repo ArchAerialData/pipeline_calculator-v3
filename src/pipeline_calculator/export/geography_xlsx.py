@@ -6,6 +6,7 @@ import math
 
 from pipeline_calculator.core.constants import SURVEY_MILE_METERS
 from pipeline_calculator.core.placemarks import folder_display_fields
+from pipeline_calculator.export.import_provenance import SOURCE_HEADERS, has_gis_sources, source_values
 from pipeline_calculator.export.corridor_metadata import corridor_map_status, has_corridor_metadata
 
 
@@ -27,6 +28,8 @@ def add_geography_sheets(workbook, results):
     geography = results["geography"]
     states = sorted(geography.get("states", []), key=lambda s: s["state_name"])
     include_map_status = has_corridor_metadata(results)
+    include_source = has_gis_sources(results)
+    source_headers = SOURCE_HEADERS if include_source else []
     folder_widths = {"Subfolder": 36, "Folder Path": 64, "Source KML": 44}
 
     def table(name, headers, rows, *, numeric=(), widths=None):
@@ -123,6 +126,7 @@ def add_geography_sheets(workbook, results):
                 _miles(pipeline.get("shared_allocation_meters", 0)),
                 _miles(pipeline.get("Shape_Length", 0)),
                 *folder_display_fields(pipeline),
+                *(source_values(pipeline) if include_source else []),
             ])
         overlap = state.get("overlap_analysis") or {}
         for section in overlap.get("bundled_sections", []):
@@ -137,7 +141,7 @@ def add_geography_sheets(workbook, results):
     table("State Pipeline Lengths", [
         "State", "Source ID", "Placemark ID", "Pipeline name", "Interior mileage (mi)",
         "Shared allocation (mi)", "Original attributed mileage (mi)",
-        "Subfolder", "Folder Path", "Source KML",
+        "Subfolder", "Folder Path", "Source KML", *source_headers,
     ], pipeline_rows, numeric=(5, 6, 7))
     overlap_headers = [
         "State", "Source 1 ID", "Pipeline 1", "Source 2 ID", "Pipeline 2", "Bundled length (mi)",
@@ -158,13 +162,14 @@ def add_geography_sheets(workbook, results):
         table("Shared Borders", [
             "Fragment ID", "Source ID", "Pipeline name", "Adjoining states",
             "Physical mileage (mi)", "Allocation per state (mi)", "State overlap treatment", "Map location",
-            "Subfolder", "Folder Path", "Source KML",
+            "Subfolder", "Folder Path", "Source KML", *source_headers,
         ], ([fragment["id"], fragment["source_id"], fragment.get("source_name", ""),
              ", ".join(names.get(code, code) for code in fragment["state_codes"]),
              _miles(fragment["length_meters"]),
              _miles(fragment["length_meters"] / len(fragment["state_codes"])),
              "Not calculated", "Combined/analysis.kmz — Shared Borders",
-             *folder_display_fields(fragment)] for fragment in shared), numeric=(5, 6))
+             *folder_display_fields(fragment),
+             *(source_values(fragment) if include_source else [])] for fragment in shared), numeric=(5, 6))
 
     detail_rows = [
         ["Geography status", geography.get("status", "incomplete")],

@@ -17,6 +17,8 @@ from pipeline_calculator.core.execution import AnalysisCancelled, ExecutionConte
 from pipeline_calculator.gui.layout import ActionBar, WrappedLabel
 from pipeline_calculator.gui.modal import ModalBody, ModalSurface, MUTED, TEXT
 from pipeline_calculator.gui.repair_messages import failure_explanation, repair_explanation
+from pipeline_calculator.importing.formats import FILE_TYPES
+from pipeline_calculator.importing.models import ImportFailure
 
 DETAIL_LIMIT = 24000
 
@@ -230,7 +232,7 @@ class RepairPanel:
 
 
 class RepairWorkflow:
-    """Own the active source across preparation, analysis, retry, and optional save."""
+    """Own import/repair decisions and captured sources across analysis and retry."""
 
     def __init__(self, root, *, set_busy, on_return, on_replace, on_resume):
         self.root = root
@@ -245,22 +247,34 @@ class RepairWorkflow:
         self.analysis_state = None
         self.save_context = None
         self.save_poll = None
+        self.import_job = None
+        self.import_draft = None
+        self.import_missing_crs = set()
 
     @property
     def verified(self):
-        return self.source is not None and bool(getattr(self.source, 'verified', False))
+        return (self.source is not None and not hasattr(self.source, 'layers')
+                and bool(getattr(self.source, 'verified', False)))
 
     def session_for(self, path):
-        if self.verified and Path(path).resolve() == Path(self.source.original_path).resolve():
+        if self._reusable_source and Path(path).resolve() == Path(self.source.original_path).resolve():
             return self.source
         self.retire_source()
         return None
+
+    @property
+    def _reusable_source(self):
+        return self.source is not None and (self.verified or hasattr(self.source, 'layers')
+                                           or bool(getattr(self.source, 'approved', False)))
 
     def retire_source(self):
         # Worker closures retain their own reference; dropping the UI owner must
         # never invalidate a snapshot that a cancelling worker still consumes.
         self.source = None
         self.analysis_state = None
+        self.import_job = None
+        self.import_draft = None
+        self.import_missing_crs = set()
 
     def handle_done(self, job):
         self.display_name = Path(getattr(job, 'file_path', '')).name
@@ -268,10 +282,18 @@ class RepairWorkflow:
         if source is not None:
             self.source = source
         self.analysis_state = job.state
+        if job.state == 'import_required':
+            self.import_job = job
+            self.offer_import(job)
+            return True
         if job.state == 'repair_required':
             self.offer(job)
             return True
         error = job.error
+        if isinstance(error, ImportFailure):
+            self.import_job = job
+            self.show_import_failure(error)
+            return True
         if error is not None and hasattr(error, 'findings'):
             self.set_busy(False)
             self.on_return()
@@ -287,7 +309,7 @@ class RepairWorkflow:
 
     def cancel_decision(self):
         self._close_panel()
-        if not self.verified:
+        if not self._reusable_source:
             self.retire_source()
         self.set_busy(False)
         self.on_return()
@@ -296,8 +318,8 @@ class RepairWorkflow:
         panel = self.panel
         panel.suspend()
         try:
-            path = filedialog.askopenfilename(parent=self.root, title='Choose another KML or KMZ',
-                         filetypes=[('KML / KMZ files', '*.kml *.kmz'), ('All files', '*.*')])
+            path = filedialog.askopenfilename(parent=self.root, title='Choose another GIS file',
+                          filetypes=FILE_TYPES)
         except Exception as error:
             panel.message.configure(text=f'Could not open the file picker: {error}')
             panel.restore()
@@ -309,6 +331,37 @@ class RepairWorkflow:
         self.retire_source()
         self.set_busy(False)
         self.on_replace(path)
+
+    def offer_import(self, job):
+        from pipeline_calculator.gui.import_ui import ImportPanel
+        self._close_panel()
+        self.set_busy(True)
+        source = self.source
+        decision = getattr(job, 'import_decision', None)
+        self.import_missing_crs.update(getattr(decision, 'missing_crs', ()))
+
+        def apply(selection):
+            if self.closed or self.panel is None or self.source is not source:
+                return
+            self.import_draft = selection
+            self._close_panel()
+            self.on_resume(job.file_path, job.params, options=job.options,
+                           source_session=source, import_selection=selection)
+
+        self.panel = ImportPanel(self.root, source, on_apply=apply,
+            on_cancel=self.cancel_decision, on_choose_another=self.choose_another,
+            draft=self.import_draft, missing_crs=self.import_missing_crs)
+
+    def show_import_failure(self, error):
+        self._close_panel()
+        self.set_busy(True)
+        details = _details({'message': str(error), 'findings': getattr(error, 'findings', [])})
+        actions = [('Cancel', self.cancel_decision), ('Choose another file', self.choose_another)]
+        if self.source is not None and hasattr(self.source, 'layers') and self.import_job is not None:
+            actions.insert(0, ('Review layers', lambda: self.offer_import(self.import_job)))
+        self.panel = RepairPanel(self.root, title='Could not import this GIS file',
+            filename=self.display_name, message=str(error), details=details,
+            actions=actions, on_cancel=self.cancel_decision)
 
     def offer(self, job):
         self.set_busy(True)
