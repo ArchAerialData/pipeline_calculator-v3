@@ -56,6 +56,9 @@ def test_build_analysis_workbook_has_expected_structure(tmp_path: Path) -> None:
         "Polyline Name (if available)",
         "Pipeline Lengths (US Survey)",
         "TOTAL MILEAGE",
+        "Subfolder",
+        "Folder Path",
+        "Source KML",
     ]
     assert ws.cell(row=2, column=4).value == "=SUM(C2:C100000)"
 

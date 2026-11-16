@@ -1,0 +1,549 @@
+{
+  "checked_on": "2026-11-16",
+  "source_commit": "7d6e68314148f659798e7ffb75f287b3f2a6f7fe",
+  "local_changes_uncommitted": true,
+  "alias": {
+    "path": "C:/Users/rbake/.bashrc",
+    "name": "calc",
+    "line": 5,
+    "launches_current_source": true,
+    "changed": false,
+    "fresh_login_smoke": {
+      "status": "passed",
+      "implementation": "new",
+      "frozen": false,
+      "version": "5.9-dev.7d6e68314148.dirty",
+      "total_meters": 111.03464218395374,
+      "icon": "icon.ico",
+      "tk_widgets": true,
+      "dnd_loaded": true,
+      "live_results": true,
+      "ui_reliability": {
+        "summary_returns": 20,
+        "callback_errors": [],
+        "tk_patchlevel": "8.6.12"
+      },
+      "pipeline_count": 1,
+      "placemark_ids": [
+        "N/A"
+      ],
+      "original_miles": 0.06899359000605187,
+      "geography": {
+        "boundary_jurisdictions": 51,
+        "state_codes": [
+          "OK",
+          "TX"
+        ],
+        "boundary_vintage": "2025",
+        "reconciliation_passed": true,
+        "package_map_roundtrips": true
+      },
+      "repair": {
+        "approval_required": true,
+        "source_unchanged": true,
+        "geometry_verified": true,
+        "saved_copy_roundtrip": true,
+        "provenance_exported": true
+      },
+      "gis_import": {
+        "shapefile": true,
+        "direct_zip": true,
+        "gpkg_layer_selection": true,
+        "geojson": true,
+        "projected_crs": true,
+        "captured_source": true,
+        "pyogrio": "0.13.0",
+        "gdal": "3.12.4",
+        "pyproj": "3.7.2",
+        "proj": "9.5.1",
+        "drivers": [
+          "ESRI Shapefile",
+          "GPKG",
+          "GeoJSON"
+        ]
+      },
+      "corridors": {
+        "policy": "qualified_path_buffer_v1",
+        "curved_geometry": true,
+        "holes_preserved": true,
+        "multipart_preserved": true,
+        "polygon_only_preview": true,
+        "state_containment": true,
+        "numeric_parity": true,
+        "map_roundtrips": true,
+        "state_polygon_count": 4
+      },
+      "adjusted_miles": null
+    },
+    "home_directory_launch": {
+      "cwd": "C:/Users/rbake",
+      "report": {
+        "status": "passed",
+        "implementation": "new",
+        "frozen": false,
+        "version": "5.9-dev.7d6e68314148.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true,
+        "live_results": true,
+        "ui_reliability": {
+          "summary_returns": 20,
+          "callback_errors": [],
+          "tk_patchlevel": "8.6.12"
+        },
+        "pipeline_count": 1,
+        "placemark_ids": [
+          "N/A"
+        ],
+        "original_miles": 0.06899359000605187,
+        "geography": {
+          "boundary_jurisdictions": 51,
+          "state_codes": [
+            "OK",
+            "TX"
+          ],
+          "boundary_vintage": "2025",
+          "reconciliation_passed": true,
+          "package_map_roundtrips": true
+        },
+        "repair": {
+          "approval_required": true,
+          "source_unchanged": true,
+          "geometry_verified": true,
+          "saved_copy_roundtrip": true,
+          "provenance_exported": true
+        },
+        "gis_import": {
+          "shapefile": true,
+          "direct_zip": true,
+          "gpkg_layer_selection": true,
+          "geojson": true,
+          "projected_crs": true,
+          "captured_source": true,
+          "pyogrio": "0.13.0",
+          "gdal": "3.12.4",
+          "pyproj": "3.7.2",
+          "proj": "9.5.1",
+          "drivers": [
+            "ESRI Shapefile",
+            "GPKG",
+            "GeoJSON"
+          ]
+        },
+        "corridors": {
+          "policy": "qualified_path_buffer_v1",
+          "curved_geometry": true,
+          "holes_preserved": true,
+          "multipart_preserved": true,
+          "polygon_only_preview": true,
+          "state_containment": true,
+          "numeric_parity": true,
+          "map_roundtrips": true,
+          "state_polygon_count": 4
+        },
+        "adjusted_miles": null
+      }
+    }
+  },
+  "prior_github_run": {
+    "url": "https://github.com/ArchAerialData/pipeline_calculator-v3/actions/runs/37058844990",
+    "created_at": "2026-10-02T20:10:16Z",
+    "head_sha": "7d6e68314148f659798e7ffb75f287b3f2a6f7fe",
+    "conclusion": "success",
+    "includes_local_gis_changes": false,
+    "jobs": [
+      {
+        "name": "build-macos",
+        "conclusion": "success"
+      },
+      {
+        "name": "build-windows",
+        "conclusion": "success"
+      },
+      {
+        "name": "verify-newer-macos (macos-26, 26)",
+        "conclusion": "success"
+      },
+      {
+        "name": "verify-newer-macos (xcode-27, 27)",
+        "conclusion": "success"
+      },
+      {
+        "name": "create-release",
+        "conclusion": "skipped"
+      }
+    ]
+  },
+  "action_metadata": [
+    {
+      "action": "actions/checkout",
+      "ref": "v7.0.1",
+      "metadata_url": "https://github.com/actions/checkout/blob/v7.0.1/action.yml",
+      "metadata_blob": "5b0524f730db83f9513c18ab31a6c086c7239076",
+      "runtime": "node24"
+    },
+    {
+      "action": "actions/setup-python",
+      "ref": "v7.1.0",
+      "metadata_url": "https://github.com/actions/setup-python/blob/v7.1.0/action.yml",
+      "metadata_blob": "645de4f5108b28bcc7ed043ee171770b0754cc35",
+      "runtime": "node24"
+    },
+    {
+      "action": "actions/upload-artifact",
+      "ref": "v7.0.2",
+      "metadata_url": "https://github.com/actions/upload-artifact/blob/v7.0.2/action.yml",
+      "metadata_blob": "7cb4d1e81db55320b41217e1a78a1a46e3d2baef",
+      "runtime": "node24"
+    },
+    {
+      "action": "actions/download-artifact",
+      "ref": "v8.0.2",
+      "metadata_url": "https://github.com/actions/download-artifact/blob/v8.0.2/action.yml",
+      "metadata_blob": "8b8c65029ccad20750a29fecb438eca5a607fc57",
+      "runtime": "node24"
+    },
+    {
+      "action": "softprops/action-gh-release",
+      "ref": "v3.0.4",
+      "metadata_url": "https://github.com/softprops/action-gh-release/blob/v3.0.4/action.yml",
+      "metadata_blob": "ee219b7b52a2b6ed7e05142e004a85bd66db7caa",
+      "runtime": "node24"
+    }
+  ],
+  "lint": {
+    "actionlint": "1.7.12",
+    "shellcheck": "0.11.0",
+    "workflow": "passed",
+    "macos_shell_scripts": 10,
+    "macos_shell_syntax_and_lint": "passed",
+    "powershell_scripts": 5,
+    "powershell_syntax": "passed"
+  },
+  "macos_arm64_pyogrio_wheel": {
+    "wheel": "pyogrio-0.13.0-cp311-abi3-macosx_12_0_arm64.whl",
+    "wheel_sha256": "68e6bb9b8b14412311da69679333ad5408c0f9aa5b25d5837bbcba3dfa698109",
+    "architecture": "arm64",
+    "binaries": [
+      {
+        "member": "pyogrio/_geometry.abi3.so",
+        "sha256": "dedc40cad3a07467ce39c0af4d3e60554c4c34d0f772154296b7aba410b4b3f4",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "@loader_path/.dylibs/libgdal.38.3.12.4.dylib",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "rpaths": []
+      },
+      {
+        "member": "pyogrio/_vsi.abi3.so",
+        "sha256": "f5df4c7e1d88e3ffd3d3e265e58b929a97f878fbb4a347710ffcdd2bc1514902",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "@loader_path/.dylibs/libgdal.38.3.12.4.dylib",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "rpaths": []
+      },
+      {
+        "member": "pyogrio/_io.abi3.so",
+        "sha256": "e82f485b459e3d9b69e1ea4b764b18ebbbf6ee69bc7d017ea949a8614367727f",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "@loader_path/.dylibs/libgdal.38.3.12.4.dylib",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "rpaths": []
+      },
+      {
+        "member": "pyogrio/_ogr.abi3.so",
+        "sha256": "47f13e4889fbdeccaa972203e16e6663265b569ee2cf5a81d4316d8bacbad6e1",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "@loader_path/.dylibs/libgdal.38.3.12.4.dylib",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "rpaths": []
+      },
+      {
+        "member": "pyogrio/_err.abi3.so",
+        "sha256": "b007ca11c3f0b02228906517a42fc1a864ceaa1711c307883dd0a3d57ea9c2f5",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "@loader_path/.dylibs/libgdal.38.3.12.4.dylib",
+          "/usr/lib/libSystem.B.dylib"
+        ],
+        "rpaths": []
+      },
+      {
+        "member": "pyogrio/.dylibs/libgdal.38.3.12.4.dylib",
+        "sha256": "46da8a6212399a949f0d2e460095d36fb14f61f374d9ef79f703d8a0c129ea77",
+        "minimum_macos": "12.0.0",
+        "dependency_paths": [
+          "/usr/lib/libiconv.2.dylib",
+          "/usr/lib/libSystem.B.dylib",
+          "/usr/lib/libcharset.1.dylib",
+          "/usr/lib/libc++.1.dylib",
+          "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+          "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+          "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices"
+        ],
+        "rpaths": [
+          "@loader_path"
+        ]
+      }
+    ],
+    "runtime_validated": false
+  },
+  "macos_runtime_for_current_changes": "Not executed; requires a pushed commit on a macOS runner.",
+  "clean_windows": {
+    "production_script": "scripts/windows/build_exe.ps1",
+    "production_sha256": "d100d3a5d2319659b951b5d34056327ee8f7af2ca16af87832c914bff94fc735",
+    "harness": ".validation-output\\gis-ci-clean-windows-build.ps1",
+    "harness_sha256": "aecc3d3907303284abe8f3e10ac803159bd89fd6aba0d585fcbdb07ae75b0daf",
+    "changed_assignments": [
+      "RepoDir",
+      "Py"
+    ],
+    "output_root": ".validation-output/gis-ci-clean-windows-build",
+    "python": ".validation-output/gis-ci-clean-windows/Scripts/python.exe",
+    "version": "5.9-dev.7d6e68314148.dirty",
+    "artifact": ".validation-output\\gis-ci-clean-windows-build\\dist\\Pipeline_Calculator_v5.9-dev.7d6e68314148.dirty.exe",
+    "artifact_bytes": 121633956,
+    "artifact_sha256": "4cd8c8c96fbf3e12e44ec562e140171cab6b73c3d631943a30a1ce96f4373fca",
+    "smoke": {
+      "status": "passed",
+      "executable": "C:\\Users\\rbake\\Desktop\\GitHub Shortcuts\\.vscode repos\\pipeline_calculator-v3\\.validation-output\\gis-ci-clean-windows-build\\dist\\Pipeline_Calculator_v5.9-dev.7d6e68314148.dirty.exe",
+      "proj_network": "OFF",
+      "implementations": [
+        {
+          "implementation": "new",
+          "status": "passed",
+          "exit_code": 0
+        },
+        {
+          "implementation": "legacy",
+          "status": "passed",
+          "exit_code": 0
+        }
+      ]
+    },
+    "dependency_receipt": ".validation-output/gis-ci-clean-windows-dependencies.txt",
+    "tests": {
+      "focused": {
+        "receipt": ".validation-output\\gis-ci-clean-windows-focused.xml",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 57.902
+      },
+      "nonnative": {
+        "receipt": ".validation-output/gis-ci-clean-windows-nonnative.xml",
+        "tests": 1114,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 15,
+        "seconds": 374.458
+      },
+      "mac_inspection": {
+        "receipt": ".validation-output/gis-ci-clean-windows-mac-inspection.xml",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 2.135
+      },
+      "native": {
+        "receipt": ".validation-output/gis-ci-clean-windows-native.xml",
+        "tests": 113,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 5,
+        "seconds": 452.178
+      }
+    },
+    "limitations": [
+      "Local Windows execution; no GitHub Actions run was dispatched for this dirty source tree.",
+      "Mach-O/BUNDLE tests inspect packaging on Windows, not execution of a macOS application."
+    ],
+    "reports": {
+      "new": {
+        "status": "passed",
+        "implementation": "new",
+        "frozen": true,
+        "version": "5.9-dev.7d6e68314148.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true,
+        "live_results": true,
+        "ui_reliability": {
+          "summary_returns": 20,
+          "callback_errors": [],
+          "tk_patchlevel": "8.6.12"
+        },
+        "pipeline_count": 1,
+        "placemark_ids": [
+          "N/A"
+        ],
+        "original_miles": 0.06899359000605187,
+        "geography": {
+          "boundary_jurisdictions": 51,
+          "state_codes": [
+            "OK",
+            "TX"
+          ],
+          "boundary_vintage": "2025",
+          "reconciliation_passed": true,
+          "package_map_roundtrips": true
+        },
+        "repair": {
+          "approval_required": true,
+          "source_unchanged": true,
+          "geometry_verified": true,
+          "saved_copy_roundtrip": true,
+          "provenance_exported": true
+        },
+        "gis_import": {
+          "shapefile": true,
+          "direct_zip": true,
+          "gpkg_layer_selection": true,
+          "geojson": true,
+          "projected_crs": true,
+          "captured_source": true,
+          "pyogrio": "0.13.0",
+          "gdal": "3.12.4",
+          "pyproj": "3.7.2",
+          "proj": "9.5.1",
+          "drivers": [
+            "ESRI Shapefile",
+            "GPKG",
+            "GeoJSON"
+          ]
+        },
+        "corridors": {
+          "policy": "qualified_path_buffer_v1",
+          "curved_geometry": true,
+          "holes_preserved": true,
+          "multipart_preserved": true,
+          "polygon_only_preview": true,
+          "state_containment": true,
+          "numeric_parity": true,
+          "map_roundtrips": true,
+          "state_polygon_count": 4
+        },
+        "adjusted_miles": null
+      },
+      "legacy": {
+        "status": "passed",
+        "implementation": "legacy",
+        "frozen": true,
+        "version": "5.9-dev.7d6e68314148.dirty",
+        "total_meters": 111.03464218395374,
+        "icon": "icon.ico",
+        "tk_widgets": true,
+        "dnd_loaded": true,
+        "live_results": true,
+        "ui_reliability": {
+          "summary_returns": 20,
+          "callback_errors": [],
+          "tk_patchlevel": "8.6.12"
+        },
+        "pipeline_count": 1,
+        "placemark_ids": [
+          "N/A"
+        ],
+        "original_miles": 0.06899359000605187,
+        "geography": {
+          "boundary_jurisdictions": 51,
+          "state_codes": [
+            "OK",
+            "TX"
+          ],
+          "boundary_vintage": "2025",
+          "reconciliation_passed": true,
+          "package_map_roundtrips": true
+        },
+        "repair": {
+          "approval_required": true,
+          "source_unchanged": true,
+          "geometry_verified": true,
+          "saved_copy_roundtrip": true,
+          "provenance_exported": true
+        },
+        "gis_import": {
+          "shapefile": true,
+          "direct_zip": true,
+          "gpkg_layer_selection": true,
+          "geojson": true,
+          "projected_crs": true,
+          "captured_source": true,
+          "pyogrio": "0.13.0",
+          "gdal": "3.12.4",
+          "pyproj": "3.7.2",
+          "proj": "9.5.1",
+          "drivers": [
+            "ESRI Shapefile",
+            "GPKG",
+            "GeoJSON"
+          ]
+        },
+        "corridors": {
+          "policy": "qualified_path_buffer_v1",
+          "curved_geometry": true,
+          "holes_preserved": true,
+          "multipart_preserved": true,
+          "polygon_only_preview": true,
+          "state_containment": true,
+          "numeric_parity": true,
+          "map_roundtrips": true,
+          "state_polygon_count": 4
+        },
+        "adjusted_miles": null
+      }
+    },
+    "dependencies": [
+      "altgraph==0.17.5",
+      "certifi==2026.10.23",
+      "colorama==0.4.6",
+      "customtkinter==5.2.2",
+      "darkdetect==0.8.0",
+      "et_xmlfile==2.0.0",
+      "iniconfig==2.3.1",
+      "macholib==1.16.4",
+      "numpy==1.26.4",
+      "openpyxl==3.1.5",
+      "packaging==26.3",
+      "pandas==3.0.6",
+      "pefile==2024.8.26",
+      "pillow==13.0.0",
+      "pluggy==1.7.0",
+      "Pygments==2.21.0",
+      "pyinstaller==6.22.3",
+      "pyinstaller-hooks-contrib==2026.10",
+      "pyogrio==0.13.0",
+      "pyproj==3.7.2",
+      "pyshp==2.4.2",
+      "pytest==9.2.0",
+      "python-dateutil==4.0.0",
+      "pywin32-ctypes==0.2.3",
+      "scipy==1.17.1",
+      "shapely==2.2.0",
+      "tkinterdnd2==0.7.0",
+      "tzdata==2026.6"
+    ],
+    "combined_tests": {
+      "distinct_passed": 1217,
+      "distinct_still_skipped": 5,
+      "distinct_total": 1222
+    }
+  },
+  "repository": {
+    "full_name": "ArchAerialData/pipeline_calculator-v3",
+    "visibility": "public",
+    "verified_via": "GitHub repository metadata API",
+    "pull_request": "https://github.com/ArchAerialData/pipeline_calculator-v3/pull/21"
+  }
+}

@@ -18,6 +18,8 @@ def passed_report(implementation):
                       "reconciliation_passed": True, "package_map_roundtrips": True},
         "repair": {key: True for key in ('approval_required', 'source_unchanged',
                    'geometry_verified', 'saved_copy_roundtrip', 'provenance_exported')},
+        "gis_import": {key: True for key in ('shapefile', 'direct_zip', 'gpkg_layer_selection',
+                       'geojson', 'projected_crs', 'captured_source')},
         "corridors": {'policy': 'qualified_path_buffer_v1', **{key: True for key in (
             'curved_geometry', 'holes_preserved', 'multipart_preserved', 'polygon_only_preview',
             'state_containment', 'numeric_parity', 'map_roundtrips')}},
@@ -113,6 +115,15 @@ def test_report_validation_rejects_incomplete_evidence(defect):
 def test_each_new_corridor_smoke_flag_is_required(flag):
     report = passed_report('new')
     del report['corridors'][flag]
+    with pytest.raises(ValueError, match=flag):
+        smoke.validate_report(report, 'new', '4.16-test')
+
+
+@pytest.mark.parametrize('flag', ['shapefile', 'direct_zip', 'gpkg_layer_selection',
+                                 'geojson', 'projected_crs', 'captured_source'])
+def test_each_gis_smoke_flag_is_required(flag):
+    report = passed_report('new')
+    del report['gis_import'][flag]
     with pytest.raises(ValueError, match=flag):
         smoke.validate_report(report, 'new', '4.16-test')
 

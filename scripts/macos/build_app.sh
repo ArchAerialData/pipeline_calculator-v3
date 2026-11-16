@@ -23,7 +23,7 @@ if [[ ! -d "${VENV_DIR}" ]]; then
   exit 1
 fi
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1090,SC1091
 source "${VENV_DIR}/bin/activate"
 
 cd "${REPO_DIR}"
@@ -85,7 +85,7 @@ if [[ -f "${REPO_DIR}/icon.ico" ]]; then
 fi
 
 rm -rf build dist
-VERSION="$(python src/pipeline_calculator/versioning.py --output build/version.json)"
+python src/pipeline_calculator/versioning.py --output build/version.json
 DISPLAY_VERSION="$(python -c 'import json; print(json.load(open("build/version.json"))["numeric_version"])')"
 APP_DISPLAY_NAME="${APP_DISPLAY_NAME:-Pipeline Calculator v${DISPLAY_VERSION}}"
 
@@ -108,6 +108,7 @@ pyinstaller --noconfirm --clean \
   --hidden-import tkinterdnd2 \
   --hidden-import PIL \
   --collect-all shapely \
+  --hidden-import pyogrio \
   --additional-hooks-dir "${REPO_DIR}/scripts/pyinstaller_hooks" \
   "${ENTRY_SCRIPT}"
 

@@ -41,12 +41,16 @@ def write_source(path, content):
 
 
 def assert_pins(parsed):
-    assert parsed.placemarks == [
+    assert [{key: row[key] for key in ('Placemark_ID', 'Name', 'Count')}
+            for row in parsed.placemarks] == [
         {'Placemark_ID': 'PM_1', 'Name': 'Item_1', 'Count': 1},
         {'Placemark_ID': 'PM_2', 'Name': 'Item_1', 'Count': 1},
         {'Placemark_ID': 'PM_3', 'Name': 'Item_2', 'Count': 1},
         {'Placemark_ID': 'PM_4', 'Name': 'Item_2', 'Count': 1},
     ]
+    assert all(row['source_kml'] == parsed.parsed_kml_files[0]
+               and row['folder_path'] == [] and row['folder_name'] == '' and row['folder_id'] == ''
+               for row in parsed.placemarks)
     # Extra pins must not renumber the source pipelines' generated names/IDs.
     assert [(p['id'], p['name']) for p in parsed.pipelines] == [(0, 'Item_1'), (1, 'Item_3')]
 
@@ -83,7 +87,7 @@ def test_point_pins_survive_snapshot_retry_and_repaired_save(tmp_path, suffix, r
         assert receipt['ordinary_reimport_verified']
         reopened = parse_kml_kmz_with_diagnostics(output)
         assert_pins(reopened)
-        assert prepare_source(output).fresh_parse().placemarks == retry.placemarks
+        assert prepare_source(output).fresh_parse().placemarks == reopened.placemarks
 
 
 def test_independent_repair_inventory_has_all_pins_not_line_or_polygon_vertices():

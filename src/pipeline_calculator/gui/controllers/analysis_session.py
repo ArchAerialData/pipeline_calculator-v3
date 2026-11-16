@@ -28,7 +28,8 @@ class AnalysisSession:
         self.surface = None
         self.presented_warning = None
 
-    def start(self, path, params, *, options=None, source_session=None, approve_repair=False):
+    def start(self, path, params, *, options=None, source_session=None, approve_repair=False,
+              import_selection=None):
         if self.closed or self.job is not None:
             raise RuntimeError('Analysis session already started or closed')
         self.surface = ModalSurface(self.root)
@@ -110,6 +111,8 @@ class AnalysisSession:
                 kwargs['source_session'] = source_session
             if approve_repair:
                 kwargs['approve_repair'] = True
+            if import_selection is not None:
+                kwargs['import_selection'] = import_selection
             self.job = self.controller.start(path, params, **kwargs)
             self._poll(self.job.job_id)
         except BaseException:

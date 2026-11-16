@@ -108,7 +108,6 @@ class AutoScrollFrame(ctk.CTkScrollableFrame):
         """Optional content-sized viewport policy (used by input settings)."""
 
     def _viewport_active(self):
-        # CTk can leave the canvas wrapper alive after destroying its content.
         # The canvas must be visible, but live offscreen content still needs
         # maintenance to recover after a tab switch or a shorter scroll region.
         return (not self._disposed and self.winfo_exists()
@@ -123,7 +122,14 @@ class AutoScrollFrame(ctk.CTkScrollableFrame):
             self._refresh_id = None
 
     def destroy(self):
+        if self._disposed:
+            return
         self._disposed = True
         self._cancel_scroll_callbacks()
         self._global_bindings.close()
         super().destroy()
+        # CTk lays out an outer frame but only destroys the inner content.
+        # Remove the content first, so destroying its wrapper cannot reenter
+        # this view through the canvas's child list.
+        if self._parent_frame.winfo_exists():
+            self._parent_frame.destroy()

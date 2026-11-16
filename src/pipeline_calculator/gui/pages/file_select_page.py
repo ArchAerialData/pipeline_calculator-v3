@@ -5,6 +5,7 @@ from tkinter import Canvas, messagebox
 from tkinterdnd2 import DND_FILES
 from pipeline_calculator.gui.layout import ActionBar, WrappedLabel, parameter_fields
 from pipeline_calculator.gui.settings_panel import SettingsPanel
+from pipeline_calculator.importing.formats import is_supported_path
 
 
 def show(
@@ -37,7 +38,7 @@ def show(
         repair_notice = repair_workflow.add_notice(main_frame, padx=12, pady=(0, 4))
     browse_area = ctk.CTkFrame(main_frame, fg_color="#202D38", border_color="#4B91C2", border_width=2)
     browse_area.pack(fill="x", padx=12, pady=10)
-    WrappedLabel(browse_area, text="Choose a KMZ or KML file", font=("Arial", 18, "bold")).pack(
+    WrappedLabel(browse_area, text="Choose a GIS file or ZIP package", font=("Arial", 18, "bold")).pack(
         fill="x", padx=12, pady=(14, 0))
     WrappedLabel(browse_area, text="Use Browse Files to select a file from your computer.",
                  text_color="#B8C0CC").pack(fill="x", padx=12, pady=2)
@@ -65,7 +66,7 @@ def show(
     instructions = ctk.CTkFrame(drop_zone, fg_color="transparent", height=64)
     instructions.pack(expand=True, fill="x", padx=8)
     WrappedLabel(instructions, text="Drag and drop your file here", font=("Arial", 18, "bold")).pack(fill="x")
-    WrappedLabel(instructions, text="Drop one KMZ or KML file into this area to start analysis.",
+    WrappedLabel(instructions, text="KML, KMZ, SHP, GeoPackage, GeoJSON, or ZIP. No unzipping needed.",
                  text_color="#B8C0CC").pack(fill="x")
 
     body = SettingsPanel(main_frame)
@@ -119,15 +120,15 @@ def show(
         try:
             paths = root.tk.splitlist(event.data)
             if len(paths) != 1:
-                messagebox.showerror("Select One File", "Please drop one KMZ or KML file at a time.", parent=root)
+                messagebox.showerror("Select One File", "Please drop one GIS file or ZIP package at a time.", parent=root)
                 return
             file_path = paths[0]
-            if file_path.lower().endswith((".kmz", ".kml")):
+            if is_supported_path(file_path):
                 on_file_selected(file_path)
             else:
-                messagebox.showerror("Invalid File", "Please select a KMZ or KML file.")
+                messagebox.showerror("Invalid File", "Choose KML, KMZ, SHP, GeoPackage, GeoJSON, or a ZIP package.", parent=root)
         except Exception as e:
-            messagebox.showerror("Error", f"Failed to process dropped file: {str(e)}")
+            messagebox.showerror("Error", f"Failed to process dropped file: {str(e)}", parent=root)
 
     try:
         root.drop_target_register(DND_FILES)

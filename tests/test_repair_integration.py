@@ -63,7 +63,10 @@ def test_approval_is_a_distinct_job_and_analysis_matches_known_good(tmp_path, st
     actual = approved.result
     assert actual['total_meters'] == expected['total_meters']
     assert actual['overlap_analysis'] == expected['overlap_analysis']
-    assert actual['pipelines'] == expected['pipelines']
+    assert {p['source_kml'] for p in actual['pipelines']} == {str(original.resolve())}
+    assert {p['source_kml'] for p in expected['pipelines']} == {str(valid.resolve())}
+    assert [{k: v for k, v in p.items() if k != 'source_kml'} for p in actual['pipelines']] == [
+        {k: v for k, v in p.items() if k != 'source_kml'} for p in expected['pipelines']]
     if state_enabled:
         assert [s['state_code'] for s in actual['geography']['states']] == ['OK', 'TX']
         for a, b in zip(actual['geography']['states'], expected['geography']['states']):

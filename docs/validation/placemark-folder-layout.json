@@ -1,0 +1,279 @@
+{
+  "platform": "Windows",
+  "macos_native_verified": false,
+  "source": "tests/fixtures/geography/antero_midstream_data.kmz",
+  "cases": [
+    {
+      "platform": "win32",
+      "scale": 1,
+      "requested_physical": [
+        1920,
+        1080
+      ],
+      "actual_physical": [
+        1920,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "desktop-100"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.25,
+      "requested_physical": [
+        1920,
+        1080
+      ],
+      "actual_physical": [
+        1920,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "desktop-125"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.5,
+      "requested_physical": [
+        1920,
+        1080
+      ],
+      "actual_physical": [
+        1920,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "desktop-150"
+    },
+    {
+      "platform": "win32",
+      "scale": 2,
+      "requested_physical": [
+        1920,
+        1080
+      ],
+      "actual_physical": [
+        1920,
+        1080
+      ],
+      "columns": 3,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "desktop-200"
+    },
+    {
+      "platform": "win32",
+      "scale": 1,
+      "requested_physical": [
+        1366,
+        768
+      ],
+      "actual_physical": [
+        1366,
+        768
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "laptop-100"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.25,
+      "requested_physical": [
+        1366,
+        768
+      ],
+      "actual_physical": [
+        1366,
+        768
+      ],
+      "columns": 3,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "laptop-125"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.5,
+      "requested_physical": [
+        1366,
+        768
+      ],
+      "actual_physical": [
+        1366,
+        768
+      ],
+      "columns": 2,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "laptop-150"
+    },
+    {
+      "platform": "win32",
+      "scale": 2,
+      "requested_physical": [
+        1366,
+        768
+      ],
+      "actual_physical": [
+        1366,
+        768
+      ],
+      "columns": 2,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "laptop-200"
+    },
+    {
+      "platform": "win32",
+      "scale": 1,
+      "requested_physical": [
+        640,
+        640
+      ],
+      "actual_physical": [
+        640,
+        640
+      ],
+      "columns": 2,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "narrow-100"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.25,
+      "requested_physical": [
+        640,
+        640
+      ],
+      "actual_physical": [
+        640,
+        640
+      ],
+      "columns": 1,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "narrow-125"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.5,
+      "requested_physical": [
+        640,
+        640
+      ],
+      "actual_physical": [
+        640,
+        640
+      ],
+      "columns": 1,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "narrow-150"
+    },
+    {
+      "platform": "win32",
+      "scale": 2,
+      "requested_physical": [
+        640,
+        640
+      ],
+      "actual_physical": [
+        640,
+        640
+      ],
+      "columns": 1,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "narrow-200"
+    },
+    {
+      "platform": "win32",
+      "scale": 1,
+      "requested_physical": [
+        2560,
+        1080
+      ],
+      "actual_physical": [
+        2560,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "widescreen-100"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.25,
+      "requested_physical": [
+        2560,
+        1080
+      ],
+      "actual_physical": [
+        2560,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "widescreen-125"
+    },
+    {
+      "platform": "win32",
+      "scale": 1.5,
+      "requested_physical": [
+        2560,
+        1080
+      ],
+      "actual_physical": [
+        2560,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "widescreen-150"
+    },
+    {
+      "platform": "win32",
+      "scale": 2,
+      "requested_physical": [
+        2560,
+        1080
+      ],
+      "actual_physical": [
+        2560,
+        1080
+      ],
+      "columns": 4,
+      "total": 7275,
+      "groups": 6,
+      "status": "passed",
+      "case": "widescreen-200"
+    }
+  ]
+}

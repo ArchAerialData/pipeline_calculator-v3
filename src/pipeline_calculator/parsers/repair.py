@@ -706,6 +706,10 @@ def inspect_geometry(data_or_root, *, source="", context=None):
     structure = inspect_geometry_structure(root, source=source, context=context)
     result["findings"].extend(structure["findings"])
     result["counts"]["element_count"] = structure["element_count"]
+    # Independently reconstruct folder ancestry for comparison with extraction.
+    parents = {child: parent for parent in root.iter() for child in parent}
+    folder_ids = {folder: f"folder-{index}" for index, folder in enumerate(
+        (element for element in root.iter() if element.tag == f"{{{KML_NS}}}Folder"), 1)}
 
     def issue(code, message, ordinal=None, **details):
         if len(result["findings"]) >= MAX_FINDINGS:
@@ -799,8 +803,17 @@ def inspect_geometry(data_or_root, *, source="", context=None):
         # Multiple pins and line/point siblings share their source feature's
         # name. Preserve the historical generated-name slot independently of
         # the number of Point geometries now exposed by that feature.
+        folders = []
+        ancestor = parents.get(placemark)
+        while ancestor is not None:
+            if ancestor in folder_ids:
+                folders.append(ancestor)
+            ancestor = parents.get(ancestor)
+        folder_path = [text(direct(folder, "name")) or "Unnamed folder" for folder in reversed(folders)]
         common = {"name": name, "objectid": objectid, "feature_ordinal": ordinal,
-                  "legacy_name_slot": bool(paths or first_point_valid)}
+                  "legacy_name_slot": bool(paths or first_point_valid),
+                  "folder_path": folder_path, "folder_name": folder_path[-1] if folder_path else "",
+                  "folder_id": folder_ids[folders[0]] if folders else "", "source_kml": source}
         if paths:
             record = dict(common, placemark_id=(placemark.get("id") or "").strip() or "N/A", coordinate_paths=paths)
             result["pipelines"].append(record)

@@ -35,7 +35,7 @@ def test_saved_point_sheet_counts_actual_geometries_and_preserves_literals(point
     saved = load_workbook(output)
     points = saved['Point Pins']
     assert points['B2'].value == len(point_results['placemarks']) == 3
-    assert list(points.iter_rows(min_row=8, values_only=True)) == [
+    assert list(points.iter_rows(min_row=8, max_col=3, values_only=True)) == [
         ('=mixed', '=Mixed()', 1), ('pins', 'Two pins', 1), ('pins', 'Two pins', 1)]
     assert sum(points.cell(row, 3).value for row in range(8, 11)) == points['B2'].value
     assert 'Combined' in points['B3'].value and 'loaded source documents' in points['B3'].value
@@ -69,10 +69,10 @@ def test_incomplete_run_note_does_not_claim_points_are_state_allocated_or_incomp
 
 
 @pytest.mark.native_gui
-def test_summary_and_point_table_agree_with_workbook_without_state_zero(point_results):
+def test_summary_and_point_cards_agree_with_workbook_without_state_zero(point_results):
     import customtkinter as ctk
     from tkinter import ttk
-    from pipeline_calculator.gui.tabs.placemarks_tab import create
+    from pipeline_calculator.gui.tabs.placemarks_tab import create, PlacemarksView
     from pipeline_calculator.gui.tabs.summary_tab import SummaryView
     from test_summary_tab import labels
 
@@ -90,10 +90,12 @@ def test_summary_and_point_table_agree_with_workbook_without_state_zero(point_re
 
         parent = ctk.CTkFrame(root)
         create(parent, point_results)
-        tree = next(widget for widget in descendants(parent) if isinstance(widget, ttk.Treeview))
-        assert 'Point pins: 3' in labels(parent)
-        table_total = sum(int(tree.item(item, 'values')[2]) for item in tree.get_children())
-        assert table_total == build_analysis_workbook(point_results)['Point Pins']['B2'].value == 3
+        view = next(widget for widget in descendants(parent) if isinstance(widget, PlacemarksView))
+        assert view.total_card.title.cget('text') == 'Combined total'
+        assert view.total_card.value.cget('text') == '3'
+        assert not any(isinstance(widget, ttk.Treeview) for widget in descendants(parent))
+        card_total = sum(group['count'] for group in view.groups)
+        assert card_total == build_analysis_workbook(point_results)['Point Pins']['B2'].value == 3
         parent.destroy()
 
         state = SummaryView(root, {**point_results, 'state_code': 'TX', 'state_name': 'Texas', 'placemarks': []})

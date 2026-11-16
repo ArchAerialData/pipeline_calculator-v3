@@ -6,6 +6,8 @@ from pipeline_calculator.core.execution import (
 from pipeline_calculator.core.options import AnalysisOptions
 
 import math
+from copy import deepcopy
+from pathlib import Path
 
 from pipeline_calculator.core.constants import (
     ANGULAR_TOLERANCE,
@@ -16,6 +18,7 @@ from pipeline_calculator.core.constants import (
     SURVEY_MILE_METERS,
 )
 from pipeline_calculator.core.coordinates import coordinate_paths_for_pipeline
+from pipeline_calculator.core.placemarks import copy_folder_provenance
 from pipeline_calculator.core.effective_length import compute_effective_length_by_clusters
 from pipeline_calculator.core.overlap import calculate_overlap_results, find_parallel_segments
 from pipeline_calculator.core.segmentation import segment_pipeline
@@ -54,6 +57,10 @@ class PipelineAnalyzer:
         self.angular_tolerance = float(angular_tolerance)
 
     def extract_features_from_file(self, file_path, progress_callback=None):
+        if Path(file_path).suffix.lower() not in ('.kml', '.kmz'):
+            from pipeline_calculator.importing import prepare_import
+            parsed = prepare_import(file_path, context=self._context).fresh_parse(context=self._context)
+            return parsed.pipelines, parsed.placemarks
         return extract_features_from_file(file_path, progress_callback=progress_callback, context=self._context)
 
     def calculate_pipeline_lengths(self, pipelines):
@@ -117,6 +124,7 @@ class PipelineAnalyzer:
                     "Name": pipeline.get("name", ""),
                     "Shape_Length": length_meters,
                     "pipelinelength": length_miles,
+                    **copy_folder_provenance(pipeline),
                 }
             )
 
@@ -170,7 +178,8 @@ class PipelineAnalyzer:
             min_parallel_length=self.min_parallel_length,
         )
 
-    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None):
+    def analyze_complete(self, file_path, progress_callback=None, *, context=None, options=None,
+                         selected_layers=None, crs_overrides=None):
         """Parse once, retaining the ordinary result and optional state breakdown."""
         options = options or AnalysisOptions()
         if not isinstance(options, AnalysisOptions):
@@ -186,8 +195,17 @@ class PipelineAnalyzer:
         try:
             parse_context = (ScopedExecutionContext(context, 0, .03)
                              if context is not None and options.state_breakdown else context)
-            parsed = extract_features_from_file_with_diagnostics(
-                file_path, progress_callback=progress_callback, context=parse_context)
+            if Path(file_path).suffix.lower() in ('.kml', '.kmz'):
+                parsed = extract_features_from_file_with_diagnostics(
+                    file_path, progress_callback=progress_callback, context=parse_context)
+            else:
+                from pipeline_calculator.importing import prepare_import
+                source = prepare_import(file_path, context=parse_context)
+                if selected_layers is not None or crs_overrides:
+                    source = source.with_selection(
+                        selected_layers if selected_layers is not None else source.selected_layers,
+                        crs_overrides=crs_overrides)
+                parsed = source.fresh_parse(context=parse_context)
             combined = self.analyze_parsed(parsed, progress_callback, context=context, options=options)
             if callback_context is not None:
                 callback_context.report('Complete', 1, 1, fraction=1.0)
@@ -195,6 +213,9 @@ class PipelineAnalyzer:
         except AnalysisCancelled:
             raise
         except Exception as exc:
+            from pipeline_calculator.importing.models import ImportDecisionRequired, ImportFailure
+            if isinstance(exc, (ImportDecisionRequired, ImportFailure)):
+                raise
             raise ValueError(f'Analysis failed: {exc}') from exc
 
     def analyze_parsed(self, parsed, progress_callback=None, *, context=None, options=None):
@@ -222,6 +243,10 @@ class PipelineAnalyzer:
                 parsed_kml_files=parsed.parsed_kml_files, progress_callback=progress_callback,
                 context=combined_context, corridor_options=options.corridor_display,
                 corridor_budget=corridor_budget)
+            for key in ('parsed_sources', 'import_metadata'):
+                value = getattr(parsed, key, None)
+                if value is not None:
+                    combined[key] = deepcopy(value)
             if options.state_breakdown:
                 # These samples belong to the completed combined pass. State
                 # runs produce their own; retaining both doubles peak memory.

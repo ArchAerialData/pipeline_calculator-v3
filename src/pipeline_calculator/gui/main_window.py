@@ -24,6 +24,7 @@ from pipeline_calculator.gui.resources import set_window_icon
 from pipeline_calculator.gui.state import AnalysisParameters, AppState
 from pipeline_calculator.gui.preferences import StateBreakdownPreference
 from pipeline_calculator.gui.repair_ui import RepairWorkflow
+from pipeline_calculator.importing.formats import FILE_TYPES
 
 
 def _legacy_version() -> str:
@@ -108,15 +109,9 @@ class PipelineCalculatorGUI:
         if self._processing:
             return
         try:
-            filetypes = [
-                ("All supported", "*.kmz *.kml"),
-                ("KMZ files", "*.kmz"),
-                ("KML files", "*.kml"),
-                ("All files", "*.*"),
-            ]
             # Native ownership keeps the picker above the visible app on each OS.
-            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a KML or KMZ file",
-                                                   filetypes=filetypes)
+            file_path = filedialog.askopenfilename(parent=self.root, title="Choose a GIS file",
+                                                   filetypes=FILE_TYPES)
             if file_path:
                 self.process_file(file_path)
         except Exception as e:
@@ -164,13 +159,16 @@ class PipelineCalculatorGUI:
             messagebox.showerror("Processing Error", str(e))
             self.show_file_selection()
 
-    def _start_analysis(self, path, params, *, options=None, source_session=None, approve_repair=False):
+    def _start_analysis(self, path, params, *, options=None, source_session=None, approve_repair=False,
+                        import_selection=None):
         self._set_processing(True)
         kwargs = {'options': options} if options is not None else {}
         if source_session is not None:
             kwargs['source_session'] = source_session
         if approve_repair:
             kwargs['approve_repair'] = True
+        if import_selection is not None:
+            kwargs['import_selection'] = import_selection
         try:
             self._analysis_session = AnalysisSession(self.root, self._analysis_done, self.controller)
             self._analysis_session.start(path, params, **kwargs)

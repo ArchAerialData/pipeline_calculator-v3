@@ -107,6 +107,29 @@ def _find_child(elem, local_name: str, namespace: str | None = None):
     return None
 
 
+def _iter_placemarks_with_folders(root, *, context=None):
+    """Yield source features with their physical Folder ancestry in document order.
+
+    Folder ordinals are local to a KML document, so the complete owner identity
+    is (source_kml, folder_id). Names alone cannot distinguish same-named sibling
+    folders. An iterative walk also avoids adding a Python recursion limit to
+    otherwise valid deeply nested KML.
+    """
+    folder_count = 0
+    pending = [(root, (), "")]
+    while pending:
+        elem, folder_path, folder_id = pending.pop()
+        if context is not None:
+            context.checkpoint()
+        if _matches(elem, "Folder"):
+            folder_count += 1
+            folder_id = f"folder-{folder_count}"
+            folder_path = (*folder_path, _text(_find_child(elem, "name")) or "Unnamed folder")
+        if _matches(elem, "Placemark"):
+            yield elem, folder_path, folder_id
+        pending.extend((child, folder_path, folder_id) for child in reversed(list(elem)))
+
+
 def _text(elem) -> str:
     return (elem.text or "").strip() if elem is not None else ""
 
@@ -389,7 +412,7 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
     state.parsed_kml_files.append(source)
     excluded_features = {}
 
-    for placemark in _iter_desc(root, "Placemark", context=state.context):
+    for placemark, folder_path, folder_id in _iter_placemarks_with_folders(root, context=state.context):
         if state.context is not None:
             state.context.checkpoint()
         try:
@@ -429,6 +452,9 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                         "coordinates": coordinate_paths[0],
                         "coordinate_paths": coordinate_paths,
                         "source_kml": source,
+                        "folder_path": list(folder_path),
+                        "folder_name": folder_path[-1] if folder_path else "",
+                        "folder_id": folder_id,
                     }
                 )
 
@@ -441,6 +467,10 @@ def _parse_kml_bytes(data: bytes, state: _ParserState, *, source: str, required:
                         "Placemark_ID": objectid if objectid != "N/A" else f"PM_{state.placemark_count}",
                         "Name": name,
                         "Count": 1,
+                        "source_kml": source,
+                        "folder_path": list(folder_path),
+                        "folder_name": folder_path[-1] if folder_path else "",
+                        "folder_id": folder_id,
                     }
                 )
 
@@ -752,6 +782,10 @@ def extract_features_from_file(file_path, progress_callback=None, *, context=Non
       placemarks: one row per valid Point geometry with keys {Placemark_ID, Name, Count}.
         Multiple pins may share their source Placemark's name and OBJECTID; every
         Count is 1. Vertices in lines, polygons and rings are never point records.
+      Both record types include source_kml and Folder provenance: folder_path is
+        the list of ancestor Folder names, folder_name is the immediate owner's
+        name, and folder_id is its document-local traversal ordinal. Documents
+        are not Folders; features without a Folder have [], "", "" respectively.
     """
     result = extract_features_from_file_with_diagnostics(file_path, progress_callback=progress_callback, context=context)
     return result.pipelines, result.placemarks

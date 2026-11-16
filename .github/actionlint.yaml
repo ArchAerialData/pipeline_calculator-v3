@@ -1,0 +1,6 @@
+# GitHub-hosted ARM64 label absent from actionlint 1.7.12's built-in table.
+# This only extends lint recognition; the workflow still uses GitHub-hosted VMs.
+# https://github.com/actions/runner-images#available-images
+self-hosted-runner:
+  labels:
+    - xcode-27

@@ -37,6 +37,8 @@ def resolve_entrypoint() -> Callable[[], int]:
 
 
 def main() -> int:
+    from multiprocessing import freeze_support
+    freeze_support()
     if len(sys.argv) == 3 and sys.argv[1] == '--smoke-test':
         from pipeline_calculator.smoke import run
         return run(sys.argv[2], implementation='legacy' if _impl_from_env() in ('legacy', 'v3', 'monolith') else 'new')

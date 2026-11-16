@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from pipeline_calculator.core.placemarks import folder_display_fields
+from pipeline_calculator.export.import_provenance import (
+    SOURCE_HEADERS, add_import_details, has_gis_sources, source_values,
+)
 from pipeline_calculator.export.corridor_metadata import (
     add_corridor_details, bounded_geometry_text, compatibility_ring_text, corridor_map_status,
     has_corridor_metadata, is_versioned_corridor, validate_corridor_results,
@@ -13,6 +17,7 @@ def build_analysis_workbook(current_results):
     """
     validate_corridor_results(current_results)
     include_map_status = has_corridor_metadata(current_results)
+    include_source = has_gis_sources(current_results)
     try:
         from openpyxl import Workbook
         from openpyxl.styles import Font, Alignment, PatternFill
@@ -34,7 +39,12 @@ def build_analysis_workbook(current_results):
         "Polyline Name (if available)",
         "Pipeline Lengths (US Survey)",
         "TOTAL MILEAGE",
+        "Subfolder",
+        "Folder Path",
+        "Source KML",
     ]
+    if include_source:
+        headers_pla.extend(SOURCE_HEADERS)
     ws.append(headers_pla)
 
     header_font = Font(name="Aptos Display", size=11, bold=True)
@@ -53,7 +63,9 @@ def build_analysis_workbook(current_results):
     ws.cell(row=1, column=3).fill = yellow
     ws.cell(row=1, column=4).fill = green
 
-    widths = [25.11, 44.89, 29.55, 27.78]
+    widths = [25.11, 44.89, 29.55, 27.78, 36, 64, 44]
+    if include_source:
+        widths.extend([54, 36, 28, 18, 28])
     for i, w in enumerate(widths, start=1):
         ws.column_dimensions[get_column_letter(i)].width = w
 
@@ -61,7 +73,8 @@ def build_analysis_workbook(current_results):
         placemark_id = p.get('Placemark_ID') or "N/A"
         name = p.get('Name', '')
         miles = float(p.get('pipelinelength', 0.0)) if p.get('pipelinelength') is not None else 0.0
-        ws.append([placemark_id, name, miles, None])
+        ws.append([placemark_id, name, miles, None, *folder_display_fields(p),
+                   *(source_values(p) if include_source else [])])
 
     max_row = ws.max_row
     for r in range(2, max_row + 1):
@@ -73,6 +86,10 @@ def build_analysis_workbook(current_results):
         c3.alignment = center
         c3.font = body_font
         c3.number_format = '0.000'
+        for column in range(5, len(headers_pla) + 1):
+            cell = ws.cell(row=r, column=column)
+            cell.alignment = Alignment(horizontal='left', vertical='center', wrap_text=True)
+            cell.font = body_font
 
     ws.cell(row=2, column=4).value = "=SUM(C2:C100000)"
     ws.cell(row=2, column=4).font = Font(name="Aptos Narrow", size=11, bold=True)
@@ -206,7 +223,8 @@ def build_analysis_workbook(current_results):
         point_sheet = wb.create_sheet('Point Pins')
         point_sheet.append(['Point pins', 'Value'])
         point_sheet.append(['Total point pins', len(point_pins)])
-        point_sheet.append(['Scope', 'Combined: valid KML Point geometries in loaded source documents.'])
+        point_sheet.append(['Scope', 'Combined: valid point geometries in selected source layers.' if include_source
+                            else 'Combined: valid KML Point geometries in loaded source documents.'])
         point_sheet.append(['Coverage', 'Skipped or unreferenced documents and invalid Point geometries are excluded. '
                              'Line and polygon vertices are not pins.'])
         run_complete = current_results.get('analysis_complete')
@@ -215,13 +233,19 @@ def build_analysis_workbook(current_results):
                       if run_complete is False else 'Not recorded')
         point_sheet.append(['Overall run status', run_status])
         point_sheet.append([])
-        point_sheet.append(['Placemark ID', 'Name', 'Count'])
+        point_headers = ['Placemark ID', 'Name', 'Count', 'Subfolder', 'Folder Path', 'Source KML']
+        if include_source:
+            point_headers.extend(SOURCE_HEADERS)
+        point_sheet.append(point_headers)
         for pin in point_pins:
-            point_sheet.append([pin.get('Placemark_ID'), pin.get('Name', ''), pin.get('Count', 1)])
+            point_sheet.append([pin.get('Placemark_ID'), pin.get('Name', ''), pin.get('Count', 1),
+                                *folder_display_fields(pin), *(source_values(pin) if include_source else [])])
         point_sheet.freeze_panes = 'A8'
-        point_sheet.auto_filter.ref = f'A7:C{max(7, point_sheet.max_row)}'
-        for column, width in [('A', 28), ('B', 80), ('C', 12)]:
+        point_sheet.auto_filter.ref = f'A7:{get_column_letter(len(point_headers))}{max(7, point_sheet.max_row)}'
+        for column, width in [('A', 28), ('B', 80), ('C', 12), ('D', 36), ('E', 64), ('F', 44)]:
             point_sheet.column_dimensions[column].width = width
+        for column in range(7, len(point_headers) + 1):
+            point_sheet.column_dimensions[get_column_letter(column)].width = 36
         for row in point_sheet:
             for cell in row:
                 cell.font = body_font
@@ -274,6 +298,7 @@ def build_analysis_workbook(current_results):
 
     from pipeline_calculator.export.repair_provenance import add_repair_details
     add_repair_details(wb, current_results)
+    add_import_details(wb, current_results)
     add_corridor_details(wb, current_results)
     if current_results.get('application_version'):
         if 'Analysis Details' in wb:

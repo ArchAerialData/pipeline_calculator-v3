@@ -187,6 +187,78 @@ def _check_repair_packaging(directory):
             'geometry_verified': True, 'saved_copy_roundtrip': True, 'provenance_exported': True}
 
 
+def _check_gis_packaging(directory):
+    """Exercise shipped vector drivers, data files and worker processes offline."""
+    import numpy as np
+    import pyogrio
+    import pyogrio.raw
+    import pyproj
+    from shapely import to_wkb
+    from shapely.geometry import LineString, Point
+    from zipfile import ZipFile, ZIP_DEFLATED
+    from pipeline_calculator.importing import prepare_import
+    from pipeline_calculator.importing.models import ImportDecisionRequired
+    from pipeline_calculator.core.analyzer import PipelineAnalyzer
+
+    folder = Path(directory) / 'gis'
+    folder.mkdir()
+    expected = [(-100., 30.), (-100.001, 30.)]
+    transform = pyproj.Transformer.from_crs(4326, 32614, always_xy=True)
+    projected = LineString([transform.transform(*xy) for xy in expected])
+    crs = pyproj.CRS('EPSG:32614').to_wkt()
+    def write(path, geometry, layer, driver, coordinate_system):
+        pyogrio.raw.write(path, np.array([to_wkb(geometry)], dtype=object),
+            [np.array(['Packaging pipe'], dtype=object)], ['Name'], layer=layer,
+            driver=driver, geometry_type=geometry.geom_type, crs=coordinate_system,
+            encoding='UTF-8')
+    def verify(parsed):
+        assert len(parsed.pipelines) == 1
+        paths = parsed.pipelines[0]['coordinate_paths']
+        assert len(paths) == 1 and len(paths[0]) == len(expected)
+        for actual, reference in zip(paths[0], expected):
+            assert max(abs(a - b) for a, b in zip(actual, reference)) < 1e-8
+        _, meters, _ = PipelineAnalyzer().calculate_pipeline_lengths(parsed.pipelines)
+        assert 96 < meters < 97
+
+    shp = folder / 'projected.shp'
+    write(shp, projected, 'projected', 'ESRI Shapefile', crs)
+    verify(prepare_import(shp).fresh_parse())
+    zipped = folder / 'projected.zip'
+    with ZipFile(zipped, 'w', ZIP_DEFLATED) as archive:
+        for component in folder.glob('projected.*'):
+            if component.suffix.lower() in {'.shp', '.shx', '.dbf', '.prj', '.cpg'}:
+                archive.write(component, 'nested/' + component.name)
+    frozen = prepare_import(zipped)
+    zipped.unlink()
+    verify(frozen.fresh_parse())
+    gpkg = folder / 'multiple.gpkg'
+    write(gpkg, projected, 'pipes', 'GPKG', crs)
+    write(gpkg, Point(-100, 30), 'sites', 'GPKG', pyproj.CRS('EPSG:4326').to_wkt())
+    source = prepare_import(gpkg)
+    try:
+        source.fresh_parse()
+    except ImportDecisionRequired:
+        pass
+    else:
+        raise AssertionError('Multi-layer GeoPackage did not require layer selection')
+    selected = source.with_selection([item['id'] for item in source.layers if item['name'] in {'pipes', 'sites'}])
+    parsed = selected.fresh_parse()
+    verify(parsed)
+    assert len(parsed.placemarks) == 1
+    geojson = folder / 'one.geojson'
+    geojson.write_text(json.dumps({'type': 'FeatureCollection', 'features': [
+        {'type': 'Feature', 'properties': {'Name': 'Packaging pipe'},
+         'geometry': {'type': 'LineString', 'coordinates': expected}}]}), encoding='utf-8')
+    verify(prepare_import(geojson).fresh_parse())
+    drivers = pyogrio.list_drivers(read=True)
+    assert {'ESRI Shapefile', 'GPKG', 'GeoJSON'}.issubset(drivers)
+    return {'shapefile': True, 'direct_zip': True, 'gpkg_layer_selection': True,
+            'geojson': True, 'projected_crs': True, 'captured_source': True,
+            'pyogrio': pyogrio.__version__, 'gdal': pyogrio.__gdal_version_string__,
+            'pyproj': pyproj.__version__, 'proj': pyproj.proj_version_str,
+            'drivers': sorted(name for name in drivers if name in {'ESRI Shapefile', 'GPKG', 'GeoJSON'})}
+
+
 def _check_corridor_packaging(directory):
     """Exercise actual buffered bends, a loop, separate pieces and clipped exports."""
     import math
@@ -286,20 +358,22 @@ def _check_corridor_packaging(directory):
 
 
 def run(output_path, *, implementation='new'):
-    from pipeline_calculator.versioning import get_version
-    from pipeline_calculator.gui.resources import icon_path, resource_root
-    from pipeline_calculator.export.xlsx import build_analysis_workbook
-    from pipeline_calculator.export.corridor_kml import build_overlap_corridor_kml
-    from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
-    from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
-    from tkinterdnd2 import TkinterDnD
-    import customtkinter as ctk
-    if implementation == 'legacy':
-        from pipeline_calculator_v3 import PipelineAnalyzer
-    else:
-        from pipeline_calculator.core.analyzer import PipelineAnalyzer
     output=Path(output_path)
     try:
+        # Capture missing bundled modules/DLLs in the report too. Letting these
+        # escape in a windowed EXE can leave a modal error behind until timeout.
+        from pipeline_calculator.versioning import get_version
+        from pipeline_calculator.gui.resources import icon_path, resource_root
+        from pipeline_calculator.export.xlsx import build_analysis_workbook
+        from pipeline_calculator.export.corridor_kml import build_overlap_corridor_kml
+        from pipeline_calculator.gui.controllers.analysis_session import AnalysisSession
+        from pipeline_calculator.gui.dialogs.corridor_dialog import CorridorDialog
+        from tkinterdnd2 import TkinterDnD
+        import customtkinter as ctk
+        if implementation == 'legacy':
+            from pipeline_calculator_v3 import PipelineAnalyzer
+        else:
+            from pipeline_calculator.core.analyzer import PipelineAnalyzer
         # Both modes now exercise their real AppWindow below. A preliminary
         # throwaway Tk root leaves CTk's interpreter timers behind on teardown.
         with tempfile.TemporaryDirectory(prefix='pipeline-smoke-') as directory:
@@ -322,6 +396,7 @@ def run(output_path, *, implementation='new'):
             workbook.save(Path(directory)/'result.xlsx')
             geography_report = _check_geography_packaging(directory)
             repair_report = _check_repair_packaging(directory)
+            gis_report = _check_gis_packaging(directory)
             corridor_report, corridor_result = _check_corridor_packaging(directory)
         ui_report = _check_live_results(result if real_input else corridor_result, implementation)
         icon=icon_path()
@@ -335,6 +410,7 @@ def run(output_path, *, implementation='new'):
                 'original_miles': result['total_miles'],
                 'geography': geography_report,
                 'repair': repair_report,
+                'gis_import': gis_report,
                 'corridors': corridor_report,
                 'adjusted_miles': (result.get('overlap_analysis') or {}).get('effective_total_miles')}
     except Exception as exc:
